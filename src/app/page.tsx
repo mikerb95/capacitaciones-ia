@@ -1,42 +1,90 @@
 import Link from 'next/link';
-import { ComparisonView } from '@/components/comparison-view';
-import { SiteHeader } from '@/components/ui';
+import { LeaveButton } from '@/components/leave-button';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { PlatformMark, StatusBadge } from '@/components/ui';
 import { getComparison } from '@/db/queries';
+import { requireParticipant } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 
+/** Solo el primer nombre: la portada saluda, no llena un formulario. */
+const firstName = (name: string) => name.split(' ')[0];
+
 export default async function Home() {
+  const participant = await requireParticipant();
   const platforms = await getComparison();
   const totalModules = platforms.reduce((n, p) => n + p.modules.length, 0);
 
   return (
-    <div className="min-h-screen bg-bg">
-      <SiteHeader
-        title="Academia IA"
-        subtitle={`Comparativa de módulos · ${platforms.length} plataformas · ${totalModules} módulos`}
-      >
-        <Link
-          href="/admin"
-          className="rounded-[10px] border border-line bg-surface px-3 py-2 text-[12.5px] font-medium text-muted transition-colors hover:border-primary hover:text-text"
-        >
+    <div className="flex min-h-screen flex-col bg-bg">
+      <header className="flex items-center gap-3 px-4 py-4 sm:px-8">
+        <span className="flex-1 font-display text-[15px] font-semibold tracking-tight">
+          Academia IA
+        </span>
+        <LeaveButton name={participant.name} />
+        <ThemeToggle />
+      </header>
+
+      <main className="mx-auto w-full max-w-[1080px] flex-1 px-4 pb-16 pt-6 sm:px-8 sm:pt-14">
+        <section className="max-w-[62ch]">
+          <p className="font-mono text-[12px] uppercase tracking-[0.1em] text-faint">
+            Hola, {firstName(participant.name)}
+          </p>
+          <h1 className="mt-3 font-display text-[32px] font-semibold leading-[1.15] tracking-tight sm:text-[42px]">
+            Cuatro plataformas de IA, explicadas para tu trabajo
+          </h1>
+          <p className="mt-4 text-[15.5px] leading-relaxed text-muted">
+            Elige la herramienta con la que vamos a trabajar y entra a sus módulos: qué hace, qué
+            prompts usar y en qué casos conviene.
+          </p>
+        </section>
+
+        <section className="mt-10 grid gap-3 sm:grid-cols-2">
+          {platforms.map((platform) => (
+            <Link
+              key={platform.id}
+              href={`/${platform.id}`}
+              className="tone group flex items-start gap-4 rounded-card border border-line bg-surface p-5 shadow-card transition-[transform,box-shadow,background-color] duration-200 hover:-translate-y-0.5 hover:bg-[var(--tone-soft)] hover:shadow-lift focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tone)]"
+              style={{ ['--tone' as string]: platform.color }}
+            >
+              <PlatformMark initial={platform.initial} color={platform.color} size={40} />
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="font-display text-[17px] font-semibold tracking-tight">
+                    {platform.name}
+                  </h2>
+                  <StatusBadge status={platform.status} />
+                </div>
+                <p className="mt-1.5 line-clamp-2 text-[13.5px] leading-relaxed text-muted">
+                  {platform.tagline ?? platform.description}
+                </p>
+                <p className="mt-3 text-[12.5px] text-faint transition-colors group-hover:text-[var(--tone)]">
+                  {platform.modules.length} módulos
+                </p>
+              </div>
+            </Link>
+          ))}
+        </section>
+
+        <section className="mt-8 flex flex-wrap items-center justify-between gap-3 rounded-card border border-line bg-surface-2 px-5 py-4">
+          <p className="text-[13.5px] leading-relaxed text-muted">
+            ¿Quieres ver las cuatro en paralelo? La comparativa pone los {totalModules} módulos lado
+            a lado.
+          </p>
+          <Link
+            href="/comparativa"
+            className="rounded-[10px] bg-primary px-4 py-2 text-[13px] font-semibold text-white transition-opacity hover:opacity-90"
+          >
+            Ver comparativa
+          </Link>
+        </section>
+      </main>
+
+      <footer className="px-4 py-6 text-center sm:px-8">
+        <Link href="/admin" className="text-[12px] text-faint transition-colors hover:text-primary">
           Administrar
         </Link>
-      </SiteHeader>
-
-      <main className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6">
-        <div className="mb-6 max-w-[75ch]">
-          <h2 className="font-display text-[24px] font-semibold tracking-tight sm:text-[28px]">
-            Qué hace cada plataforma
-          </h2>
-          <p className="mt-1.5 text-[14.5px] leading-relaxed text-muted">
-            Una columna por herramienta, con sus módulos en el orden en que se dictan. Toca una
-            card para ver el detalle: prompts, casos por área, el antes y el después, y los errores
-            frecuentes.
-          </p>
-        </div>
-
-        <ComparisonView platforms={platforms} />
-      </main>
+      </footer>
     </div>
   );
 }
