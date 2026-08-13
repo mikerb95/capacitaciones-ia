@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { AdminLogoutButton } from '@/components/admin-logout-button';
 import { Abbr, LevelBadge, PlatformMark, SiteHeader, StatusBadge } from '@/components/ui';
 import { moduleLogo, platformLogo } from '@/lib/brand-logos';
 import { getComparison } from '@/db/queries';
@@ -40,7 +41,6 @@ export default async function AdminPage() {
         >
           Códigos de acceso
         </Link>
-        <AdminLogoutButton />
         <Link
           href="/admin/presentaciones"
           className="rounded-[10px] border border-line bg-surface px-3 py-2 text-[12.5px] font-medium text-muted transition-colors hover:border-primary hover:text-text"
@@ -53,6 +53,7 @@ export default async function AdminPage() {
         >
           Nuevo módulo
         </Link>
+        <AdminLogoutButton />
       </SiteHeader>
 
       <main className="mx-auto max-w-[1100px] px-4 py-8 sm:px-6">
