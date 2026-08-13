@@ -7,6 +7,7 @@ import { and, eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { accessCodes, participants } from '@/db/schema';
 import { DEFAULT_COUNTRY } from '@/lib/countries';
+import { DEMO_ACCESS } from '@/lib/demo-access';
 import { composePhone, expectedDigits } from '@/lib/phone';
 import { SESSION_COOKIE, SESSION_MAX_AGE } from '@/lib/session';
 
@@ -99,6 +100,63 @@ export async function enter(_prev: EnterState, formData: FormData): Promise<Ente
 
   const jar = await cookies();
   jar.set(SESSION_COOKIE, token, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    path: '/',
+    maxAge: SESSION_MAX_AGE,
+  });
+
+  redirect(safeDestination(str(formData, 'destino')));
+}
+
+/**
+ * Entrada de un clic para quien solo quiere mirar el portal: usa el código
+ * demo público, sin pedir ni código ni WhatsApp. Se autocrea si el seed
+ * todavía no corrió, para que nunca falle en un deploy nuevo.
+ */
+export async function enterDemo(formData: FormData) {
+  let accessCode = await db.query.accessCodes.findFirst({
+    where: eq(accessCodes.code, DEMO_ACCESS.code),
+  });
+
+  if (!accessCode) {
+    [accessCode] = await db
+      .insert(accessCodes)
+      .values({
+        code: DEMO_ACCESS.code,
+        label: DEMO_ACCESS.label,
+        active: true,
+        system: true,
+        updatedAt: new Date(),
+      })
+      .onConflictDoNothing()
+      .returning();
+
+    accessCode ??= await db.query.accessCodes.findFirst({
+      where: eq(accessCodes.code, DEMO_ACCESS.code),
+    });
+  }
+
+  if (!accessCode || !accessCode.active) redirect('/ingresar');
+
+  const [person] = await db
+    .insert(participants)
+    .values({
+      accessCodeId: accessCode.id,
+      name: DEMO_ACCESS.name,
+      phone: DEMO_ACCESS.phone,
+      token: randomUUID(),
+      updatedAt: new Date(),
+    })
+    .onConflictDoUpdate({
+      target: [participants.accessCodeId, participants.phone],
+      set: { lastSeenAt: new Date(), updatedAt: new Date() },
+    })
+    .returning({ token: participants.token });
+
+  const jar = await cookies();
+  jar.set(SESSION_COOKIE, person.token, {
     httpOnly: true,
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production',
