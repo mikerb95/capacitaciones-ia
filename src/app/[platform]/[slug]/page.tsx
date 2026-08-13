@@ -44,7 +44,12 @@ export default async function ModulePage({ params }: Params) {
         {/* Encabezado del módulo */}
         <div className="mb-8">
           <div className="mb-3 flex flex-wrap items-center gap-2.5">
-            <Abbr abbr={mod.abbr} color={mod.color} size={32} />
+            <Abbr
+              abbr={mod.abbr}
+              color={mod.color}
+              size={32}
+              logo={moduleLogo(platformId, mod.slug)}
+            />
             <LevelBadge level={mod.level} />
             {mod.category && (
               <span className="rounded-full bg-surface-2 px-2 py-0.5 text-[11.5px] font-medium text-muted">

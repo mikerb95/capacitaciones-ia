@@ -100,7 +100,7 @@ export default async function PlatformPage({ params }: Params) {
                 style={{ ['--tone' as string]: m.color }}
               >
                 <div className="mb-2.5 flex items-center gap-2.5">
-                  <Abbr abbr={m.abbr} color={m.color} />
+                  <Abbr abbr={m.abbr} color={m.color} logo={moduleLogo(platform.id, m.slug)} />
                   <h3 className="min-w-0 flex-1 truncate font-display text-[15px] font-semibold tracking-tight">
                     {m.name}
                   </h3>
