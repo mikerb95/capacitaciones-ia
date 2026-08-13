@@ -1,0 +1,1 @@
+ALTER TABLE `access_codes` ADD `system` integer DEFAULT false NOT NULL;
