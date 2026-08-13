@@ -7,7 +7,7 @@ import { participants } from '@/db/schema';
 
 /** La cookie solo lleva un token opaco: el nombre y el teléfono viven en la base. */
 export const SESSION_COOKIE = 'academia-acceso';
-export const SESSION_MAX_AGE = 60 * 60 * 24 * 30; // un mes de capacitación
+export const SESSION_MAX_AGE = 60 * 60 * 24 * 90; // el trimestre de capacitación
 
 /**
  * Sesión del asistente, verificada contra la base. El `cache` de React evita
