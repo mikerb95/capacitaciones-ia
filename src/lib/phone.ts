@@ -1,4 +1,4 @@
-import { findCountry, flagOf, COUNTRIES } from './countries';
+import { findCountry, COUNTRIES } from './countries';
 
 /**
  * Junta el país elegido con el número nacional y devuelve un E.164, que es lo
@@ -23,23 +23,31 @@ export function expectedDigits(countryCode: string): string {
 }
 
 /**
- * Para mostrar: bandera del país e indicativo separado del número nacional.
  * Se resuelve por el indicativo más largo que calce, así +1 no se come a +593.
  */
-export function formatPhone(phone: string): string {
+function matchCountry(phone: string) {
   const digits = phone.replace(/\D/g, '');
 
   const matches = [...COUNTRIES]
     .sort((a, b) => b.dial.length - a.dial.length)
     .filter((c) => digits.startsWith(c.dial) && c.lengths.includes(digits.length - c.dial.length));
 
-  const [match] = matches;
+  // Varios países comparten indicativo (+1): mejor sin país que uno errado.
+  return matches.length === 1 ? matches[0] : undefined;
+}
+
+/** Para mostrar: indicativo separado del número nacional. */
+export function formatPhone(phone: string): string {
+  const digits = phone.replace(/\D/g, '');
+  const match = matchCountry(phone);
   if (!match) return `+${digits}`;
 
-  // Varios países comparten indicativo (+1): sin bandera antes que una errada.
-  const flag = matches.length > 1 ? '' : `${flagOf(match.code)} `;
+  return `+${match.dial} ${digits.slice(match.dial.length)}`;
+}
 
-  return `${flag}+${match.dial} ${digits.slice(match.dial.length)}`;
+/** Código ISO del país del número, para mostrar la bandera al lado. */
+export function countryOf(phone: string): string | undefined {
+  return matchCountry(phone)?.code;
 }
 
 /** Enlace de chat directo, para el seguimiento posterior a la capacitación. */
