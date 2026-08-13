@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import { enterDemo } from '@/app/ingresar/actions';
 import { EnterForm } from '@/components/enter-form';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { getParticipant } from '@/lib/session';
