@@ -2,15 +2,15 @@ import { ComparisonView } from '@/components/comparison-view';
 import { LeaveButton } from '@/components/leave-button';
 import { SiteHeader } from '@/components/ui';
 import { getComparison } from '@/db/queries';
-import { requireParticipant } from '@/lib/session';
+import { requireScopedParticipant, scopeComparison } from '@/lib/scope';
 
 export const dynamic = 'force-dynamic';
 
 export const metadata = { title: 'Comparativa de módulos · Academia IA' };
 
 export default async function ComparativaPage() {
-  const participant = await requireParticipant();
-  const platforms = await getComparison();
+  const { participant, scope } = await requireScopedParticipant();
+  const platforms = scopeComparison(await getComparison(), scope);
   const totalModules = platforms.reduce((n, p) => n + p.modules.length, 0);
 
   return (

@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { Abbr, Card, LevelBadge, PlatformMark, SectionTitle, SiteHeader, StatusBadge } from '@/components/ui';
 import { getPlatform, getPlatformIds } from '@/db/queries';
 import { moduleLogo, platformLogo } from '@/lib/brand-logos';
-import { requireParticipant } from '@/lib/session';
+import { hasModule, hasPlatform, requireScopedParticipant } from '@/lib/scope';
 
 export const dynamic = 'force-dynamic';
 

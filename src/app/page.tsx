@@ -13,6 +13,10 @@ export const metadata = { title: 'Academia IA' };
 /** Solo el primer nombre: la portada saluda, no llena un formulario. */
 const firstName = (name: string) => name.split(' ')[0];
 
+/** El titular cuenta con palabras, y el alcance del código decide cuántas son. */
+const WORDS = ['Ninguna', 'Una', 'Dos', 'Tres', 'Cuatro', 'Cinco', 'Seis'];
+const spell = (n: number) => WORDS[n] ?? String(n);
+
 export default async function Home() {
   const { participant, scope } = await requireScopedParticipant();
   const platforms = scopeComparison(await getComparison(), scope);
@@ -34,7 +38,9 @@ export default async function Home() {
             Hola, {firstName(participant.name)}
           </p>
           <h1 className="mt-3 font-display text-[32px] font-semibold leading-[1.15] tracking-tight sm:text-[42px]">
-            Cuatro plataformas de IA, explicadas para tu trabajo
+            {spell(platforms.length)}{' '}
+            {platforms.length === 1 ? 'plataforma de IA, explicada' : 'plataformas de IA, explicadas'}{' '}
+            para tu trabajo
           </h1>
           <p className="mt-4 text-[15.5px] leading-relaxed text-muted">
             Elige la herramienta con la que vamos a trabajar y entra a sus módulos: qué hace, qué
@@ -76,8 +82,8 @@ export default async function Home() {
 
         <section className="mt-8 flex flex-wrap items-center justify-between gap-3 rounded-card border border-line bg-surface-2 px-5 py-4">
           <p className="text-[13.5px] leading-relaxed text-muted">
-            ¿Quieres ver las cuatro en paralelo? La comparativa pone los {totalModules} módulos lado
-            a lado.
+            ¿Quieres verlas en paralelo? La comparativa pone los {totalModules} módulos lado a
+            lado.
           </p>
           <Link
             href="/comparativa"
