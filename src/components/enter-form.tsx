@@ -1,7 +1,10 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import { enter, type EnterState } from '@/app/ingresar/actions';
+import { CountrySelect } from '@/components/country-select';
+import { DEFAULT_COUNTRY } from '@/lib/countries';
+import { expectedDigits } from '@/lib/phone';
 
 const field =
   'w-full rounded-[10px] border border-line bg-surface px-3 py-2.5 text-[14.5px] outline-none transition-colors placeholder:text-faint focus:border-primary';
@@ -13,6 +16,9 @@ function Error({ message }: { message?: string }) {
 
 export function EnterForm({ destination }: { destination: string }) {
   const [state, action, pending] = useActionState<EnterState, FormData>(enter, {});
+  // El país sobrevive a un envío fallido, para no volver a elegirlo.
+  const [country, setCountry] = useState(state.values?.country ?? DEFAULT_COUNTRY);
+  const digits = expectedDigits(country);
 
   return (
     <form action={action} className="flex flex-col gap-4">
