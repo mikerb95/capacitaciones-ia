@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import type { Comparison } from '@/db/queries';
 import type { Level } from '@/db/schema';
+import { moduleLogo, platformLogo } from '@/lib/brand-logos';
 import { Abbr, LevelBadge, PlatformMark, StatusBadge } from './ui';
 
 const LEVELS: Level[] = ['Básico', 'Intermedio', 'Avanzado'];
@@ -19,7 +20,7 @@ function ModuleCardLink({ platform, module }: { platform: Platform; module: Modu
       style={{ ['--tone' as string]: module.color }}
     >
       <div className="mb-2 flex items-start gap-2.5">
-        <Abbr abbr={module.abbr} color={module.color} />
+        <Abbr abbr={module.abbr} color={module.color} logo={moduleLogo(platform.id, module.slug)} />
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
             <span
@@ -48,7 +49,11 @@ function ModuleCardLink({ platform, module }: { platform: Platform; module: Modu
 function PlatformHeader({ platform, count }: { platform: Platform; count: number }) {
   return (
     <div className="mb-3 flex items-center gap-3 rounded-card border border-line bg-surface-2 px-4 py-3">
-      <PlatformMark initial={platform.initial} color={platform.color} />
+      <PlatformMark
+        initial={platform.initial}
+        color={platform.color}
+        logo={platformLogo(platform.id)}
+      />
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <Link

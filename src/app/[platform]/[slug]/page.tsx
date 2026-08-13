@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { PromptList } from '@/components/prompt-list';
 import { Abbr, Card, LevelBadge, SectionTitle, SiteHeader } from '@/components/ui';
+import { moduleLogo } from '@/lib/brand-logos';
 import { requireParticipant } from '@/lib/session';
 import { getModule, getPlatform } from '@/db/queries';
 
