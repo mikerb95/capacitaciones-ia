@@ -21,11 +21,18 @@ export async function generateMetadata({ params }: Params) {
 }
 
 export default async function PlatformPage({ params }: Params) {
-  await requireParticipant();
+  const { scope } = await requireScopedParticipant();
 
   const { platform: id } = await params;
-  const platform = await getPlatform(id);
-  if (!platform) notFound();
+  const found = await getPlatform(id);
+
+  // Fuera del alcance del código, el portal no existe para esta persona.
+  if (!found || !hasPlatform(scope, found.id)) notFound();
+
+  const platform = {
+    ...found,
+    modules: found.modules.filter((m) => hasModule(scope, m.id)),
+  };
 
   return (
     <div className="tone min-h-screen bg-bg" style={{ ['--tone' as string]: platform.color }}>

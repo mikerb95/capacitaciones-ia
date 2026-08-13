@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { PromptList } from '@/components/prompt-list';
 import { Abbr, Card, LevelBadge, SectionTitle, SiteHeader } from '@/components/ui';
 import { moduleLogo } from '@/lib/brand-logos';
-import { requireParticipant } from '@/lib/session';
+import { hasModule, requireScopedParticipant } from '@/lib/scope';
 import { getModule, getPlatform } from '@/db/queries';
 
 export const dynamic = 'force-dynamic';
@@ -19,16 +19,17 @@ export async function generateMetadata({ params }: Params) {
 
 export default async function ModulePage({ params }: Params) {
   const { platform: platformId, slug } = await params;
-  await requireParticipant();
+  const { scope } = await requireScopedParticipant();
 
   const [mod, platform] = await Promise.all([
     getModule(platformId, slug),
     getPlatform(platformId),
   ]);
 
-  if (!mod || !platform) notFound();
+  if (!mod || !platform || !hasModule(scope, mod.id)) notFound();
 
-  const siblings = platform.modules;
+  // La navegación anterior/siguiente solo salta entre módulos en alcance.
+  const siblings = platform.modules.filter((m) => hasModule(scope, m.id));
   const index = siblings.findIndex((m) => m.id === mod.id);
   const previous = siblings[index - 1];
   const next = siblings[index + 1];
