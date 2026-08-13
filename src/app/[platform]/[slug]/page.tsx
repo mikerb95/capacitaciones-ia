@@ -1,0 +1,280 @@
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { PromptList } from '@/components/prompt-list';
+import { Abbr, Card, LevelBadge, SectionTitle, SiteHeader } from '@/components/ui';
+import { getModule, getPlatform } from '@/db/queries';
+
+export const dynamic = 'force-dynamic';
+
+type Params = { params: Promise<{ platform: string; slug: string }> };
+
+export async function generateMetadata({ params }: Params) {
+  const { platform, slug } = await params;
+  const module = await getModule(platform, slug);
+  if (!module) return {};
+  return { title: `${module.name} · ${module.platform.portalName}` };
+}
+
+export default async function ModulePage({ params }: Params) {
+  const { platform: platformId, slug } = await params;
+  const [module, platform] = await Promise.all([
+    getModule(platformId, slug),
+    getPlatform(platformId),
+  ]);
+
+  if (!module || !platform) notFound();
+
+  const siblings = platform.modules;
+  const index = siblings.findIndex((m) => m.id === module.id);
+  const previous = siblings[index - 1];
+  const next = siblings[index + 1];
+
+  return (
+    <div className="tone min-h-screen bg-bg" style={{ ['--tone' as string]: module.color }}>
+      <SiteHeader
+        title={module.name}
+        subtitle={module.platform.portalName}
+        back={{ href: `/${platformId}`, label: `Volver a ${module.platform.name}` }}
+      />
+
+      <main className="mx-auto max-w-[1000px] px-4 py-8 sm:px-6">
+        {/* Encabezado del módulo */}
+        <div className="mb-8">
+          <div className="mb-3 flex flex-wrap items-center gap-2.5">
+            <Abbr abbr={module.abbr} color={module.color} size={32} />
+            <LevelBadge level={module.level} />
+            {module.category && (
+              <span className="rounded-full bg-surface-2 px-2 py-0.5 text-[11.5px] font-medium text-muted">
+                {module.category}
+              </span>
+            )}
+            {module.meta && <span className="text-[12.5px] text-faint">{module.meta}</span>}
+          </div>
+          <h1 className="font-display text-[30px] font-semibold leading-tight tracking-tight sm:text-[36px]">
+            {module.name}
+          </h1>
+          <p className="mt-2 max-w-[70ch] text-[16px] leading-relaxed text-muted">
+            {module.summary}
+          </p>
+          {module.intro && (
+            <p className="mt-3 max-w-[70ch] text-[14.5px] leading-relaxed text-muted">
+              {module.intro}
+            </p>
+          )}
+        </div>
+
+        {module.outcomes.length > 0 && (
+          <section className="mb-9">
+            <SectionTitle kicker="Al terminar" title="Qué se lleva cada quien" />
+            <ul className="grid gap-2.5 sm:grid-cols-3">
+              {module.outcomes.map((o) => (
+                <li
+                  key={o.id}
+                  className="rounded-card border border-line bg-surface p-4 text-[13.5px] leading-relaxed text-muted shadow-card"
+                >
+                  <span
+                    className="mb-2 block size-2 rounded-full"
+                    style={{ background: module.color }}
+                    aria-hidden="true"
+                  />
+                  {o.text}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {module.prompts.length > 0 && (
+          <section className="mb-9">
+            <SectionTitle
+              kicker="Para copiar"
+              title="Prompts del módulo"
+              intro="Reemplaza lo que está entre corchetes por los datos reales del área antes de usarlos."
+            />
+            <PromptList prompts={module.prompts} />
+          </section>
+        )}
+
+        {(module.before || module.after) && (
+          <section className="mb-9">
+            <SectionTitle kicker="El caso" title="Antes y después" intro={module.baIntro ?? undefined} />
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Card>
+                <div className="mb-2 font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-faint">
+                  Como se hace hoy
+                </div>
+                <p className="text-[14px] leading-relaxed text-muted">{module.before}</p>
+                {module.beforeTime && (
+                  <p className="mt-3 border-t border-line pt-3 text-[13px] font-medium text-text">
+                    {module.beforeTime}
+                  </p>
+                )}
+              </Card>
+              <Card
+                className="tone bg-[var(--tone-soft)]"
+                style={{ ['--tone' as string]: module.color }}
+              >
+                <div
+                  className="mb-2 font-mono text-[11px] font-medium uppercase tracking-[0.08em]"
+                  style={{ color: module.color }}
+                >
+                  Con la herramienta
+                </div>
+                <p className="text-[14px] leading-relaxed text-muted">{module.after}</p>
+                {module.afterTime && (
+                  <p
+                    className="mt-3 border-t pt-3 text-[13px] font-semibold"
+                    style={{
+                      borderColor: `color-mix(in srgb, ${module.color} 25%, transparent)`,
+                      color: module.color,
+                    }}
+                  >
+                    {module.afterTime}
+                  </p>
+                )}
+              </Card>
+            </div>
+          </section>
+        )}
+
+        {module.steps.length > 0 && (
+          <section className="mb-9">
+            <SectionTitle kicker="Cómo se hace" title="Paso a paso" />
+            <ol className="flex flex-col gap-2.5">
+              {module.steps.map((s, i) => (
+                <li key={s.id} className="flex gap-3.5 rounded-card border border-line bg-surface p-4 shadow-card">
+                  <span
+                    className="grid size-7 flex-none place-items-center rounded-full font-mono text-[12px] font-semibold"
+                    style={{
+                      background: `color-mix(in srgb, ${module.color} 14%, transparent)`,
+                      color: module.color,
+                    }}
+                  >
+                    {i + 1}
+                  </span>
+                  <div className="min-w-0">
+                    <h3 className="font-display text-[15px] font-semibold tracking-tight">
+                      {s.title}
+                    </h3>
+                    <p className="mt-0.5 text-[13.5px] leading-relaxed text-muted">
+                      {s.description}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
+
+        {module.roles.length > 0 && (
+          <section className="mb-9">
+            <SectionTitle kicker="Por área" title="Quién lo usa y para qué" />
+            <div className="overflow-x-auto rounded-card border border-line bg-surface shadow-card">
+              <table className="w-full min-w-[520px] border-collapse text-left">
+                <thead>
+                  <tr className="border-b border-line text-[11.5px] uppercase tracking-[0.06em] text-faint">
+                    <th className="px-4 py-2.5 font-medium">Área</th>
+                    <th className="px-4 py-2.5 font-medium">Caso de uso</th>
+                    <th className="px-4 py-2.5 font-medium">Detalle</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {module.roles.map((r) => (
+                    <tr key={r.id} className="border-b border-line last:border-0">
+                      <td className="px-4 py-3 text-[13.5px] font-semibold">{r.role}</td>
+                      <td className="px-4 py-3 text-[13.5px] text-muted">{r.task}</td>
+                      <td className="px-4 py-3 text-[13.5px] leading-relaxed text-muted">
+                        {r.detail}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {module.mistakes.length > 0 && (
+          <section className="mb-9">
+            <SectionTitle kicker="Ojo con esto" title="Errores frecuentes" />
+            <div className="flex flex-col gap-2.5">
+              {module.mistakes.map((m) => (
+                <div
+                  key={m.id}
+                  className="grid gap-3 rounded-card border border-line bg-surface p-4 shadow-card sm:grid-cols-2"
+                >
+                  <div>
+                    <div className="mb-1 flex items-center gap-1.5 text-[11.5px] font-semibold uppercase tracking-[0.06em] text-[#c2410c] dark:text-[#f4a06a]">
+                      <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />
+                      Así no
+                    </div>
+                    <p className="text-[13.5px] leading-relaxed text-muted">{m.bad}</p>
+                  </div>
+                  <div className="border-t border-line pt-3 sm:border-l sm:border-t-0 sm:pl-4 sm:pt-0">
+                    <div className="mb-1 flex items-center gap-1.5 text-[11.5px] font-semibold uppercase tracking-[0.06em] text-accent">
+                      <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />
+                      Así sí
+                    </div>
+                    <p className="text-[13.5px] leading-relaxed text-muted">{m.good}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {module.mockPrompt && (
+          <section className="mb-9">
+            <SectionTitle kicker="Ejemplo" title={module.mockTitle ?? 'Cómo se ve en pantalla'} />
+            <div className="grid gap-3 md:grid-cols-[1.2fr_1fr]">
+              <Card className="flex flex-col gap-3">
+                <div className="self-end max-w-[85%] rounded-2xl rounded-br-md bg-primary-soft px-3.5 py-2.5 text-[13.5px] leading-relaxed text-text">
+                  {module.mockPrompt}
+                </div>
+                <div className="self-start max-w-[90%] rounded-2xl rounded-bl-md bg-surface-2 px-3.5 py-2.5 text-[13.5px] leading-relaxed text-muted">
+                  {module.mockReply}
+                </div>
+              </Card>
+              {module.mockPanel && (
+                <Card className="bg-surface-2">
+                  <div className="mb-2 font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-faint">
+                    {module.mockPanelTitle ?? 'Panel'}
+                  </div>
+                  <pre className="overflow-x-auto whitespace-pre-wrap font-mono text-[12.5px] leading-relaxed text-muted">
+                    {module.mockPanel}
+                  </pre>
+                </Card>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* Navegación entre módulos, útil para dictar la sesión en orden */}
+        <nav className="no-print mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5">
+          {previous ? (
+            <Link
+              href={`/${platformId}/${previous.slug}`}
+              className="flex items-center gap-2 text-[13.5px] text-muted transition-colors hover:text-primary"
+            >
+              <span aria-hidden="true">&larr;</span>
+              {previous.name}
+            </Link>
+          ) : (
+            <span />
+          )}
+          {next ? (
+            <Link
+              href={`/${platformId}/${next.slug}`}
+              className="flex items-center gap-2 text-[13.5px] text-muted transition-colors hover:text-primary"
+            >
+              {next.name}
+              <span aria-hidden="true">&rarr;</span>
+            </Link>
+          ) : (
+            <span />
+          )}
+        </nav>
+      </main>
+    </div>
+  );
+}
