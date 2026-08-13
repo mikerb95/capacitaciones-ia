@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { accessCodes } from '@/db/schema';
+import { RESERVED_CODES } from '@/lib/master-access';
 
 const str = (data: FormData, key: string) => ((data.get(key) as string | null) ?? '').trim();
 
@@ -18,6 +19,7 @@ export async function createAccessCode(formData: FormData) {
   const wanted = str(formData, 'code').replace(/\D/g, '');
 
   if (wanted && wanted.length !== 4) redirect('/admin/accesos?error=formato');
+  if (wanted && RESERVED_CODES.includes(wanted)) redirect('/admin/accesos?error=reservado');
 
   let code = wanted || randomCode();
 
@@ -25,7 +27,11 @@ export async function createAccessCode(formData: FormData) {
     const taken = await db.query.accessCodes.findFirst({ where: eq(accessCodes.code, code) });
     if (taken) redirect('/admin/accesos?error=repetido');
   } else {
-    while (await db.query.accessCodes.findFirst({ where: eq(accessCodes.code, code) })) {
+    // El sorteo también esquiva los reservados.
+    while (
+      RESERVED_CODES.includes(code) ||
+      (await db.query.accessCodes.findFirst({ where: eq(accessCodes.code, code) }))
+    ) {
       code = randomCode();
     }
   }
@@ -42,7 +48,7 @@ export async function toggleAccessCode(formData: FormData) {
   if (!id) return;
 
   const current = await db.query.accessCodes.findFirst({ where: eq(accessCodes.id, id) });
-  if (!current) return;
+  if (!current || current.system) return;
 
   await db
     .update(accessCodes)

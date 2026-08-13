@@ -322,6 +322,9 @@ export const accessCodes = sqliteTable(
     code: text('code').notNull(),
     label: text('label').notNull(),
     active: integer('active', { mode: 'boolean' }).notNull().default(true),
+    // Código maestro de pruebas: no se cierra, no se borra y su número queda
+    // reservado, así nunca se le entrega a una capacitación real.
+    system: integer('system', { mode: 'boolean' }).notNull().default(false),
     ...timestamps,
   },
   (t) => [uniqueIndex('access_codes_code_idx').on(t.code)],
