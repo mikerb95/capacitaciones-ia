@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation';
 import { Audience } from '@/components/audience';
 import { getLiveByPin } from '@/db/queries';
 import { joinLive } from '@/app/admin/presentaciones/actions';
+import { getParticipant } from '@/lib/session';
+import { formatPhone } from '@/lib/phone';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,12 +20,17 @@ async function enter(formData: FormData) {
   'use server';
 
   const pin = ((formData.get('pin') as string) ?? '').trim();
-  const name = ((formData.get('nombre') as string) ?? '').trim();
-  const phone = ((formData.get('telefono') as string) ?? '').trim();
+
+  // La identidad se lee de la sesión, nunca del formulario: quien ya entró al
+  // portal no vuelve a escribir su nombre y tampoco puede entrar como otro.
+  const participant = await getParticipant();
+
+  const name = participant?.name ?? ((formData.get('nombre') as string) ?? '').trim();
+  const phone = participant?.phone ?? ((formData.get('telefono') as string) ?? '').trim();
 
   if (!pin || !name) redirect('/vivo?error=faltan');
 
-  const session = await joinLive(pin, name, phone);
+  const session = await joinLive({ pin, participantId: participant?.id, name, phone });
   if (!session) redirect('/vivo?error=pin');
 
   const jar = await cookies();
@@ -40,6 +47,7 @@ async function enter(formData: FormData) {
 export default async function LivePage({ searchParams }: Search) {
   const { error } = await searchParams;
   const pin = (await cookies()).get(JOINED)?.value;
+  const participant = await getParticipant();
 
   if (pin) {
     const session = await getLiveByPin(pin);
@@ -71,8 +79,9 @@ export default async function LivePage({ searchParams }: Search) {
             Entrar a la sesión
           </h1>
           <p className="mt-1.5 text-[14px] leading-relaxed text-muted">
-            Escribe el PIN que aparece en la pantalla del expositor y sigue las láminas desde tu
-            propio dispositivo.
+            {participant
+              ? 'Escribe el PIN que aparece en la pantalla del expositor y sigue las láminas desde tu propio dispositivo.'
+              : 'Escribe el PIN que aparece en la pantalla del expositor y déjanos tu nombre para la lista de asistencia.'}
           </p>
         </div>
 
@@ -99,25 +108,35 @@ export default async function LivePage({ searchParams }: Search) {
             />
           </label>
 
-          <label className="flex flex-col gap-1.5">
-            <span className="text-[12.5px] font-medium text-muted">Tu nombre</span>
-            <input
-              name="nombre"
-              required
-              className="w-full rounded-[10px] border border-line bg-surface px-3 py-2 text-[14px] outline-none focus:border-primary"
-            />
-          </label>
+          {participant ? (
+            <p className="rounded-[10px] bg-bg px-3 py-2.5 text-[13px] text-muted">
+              Entras como <span className="font-medium text-fg">{participant.name}</span>
+              <span className="mx-1.5 text-faint">·</span>
+              {formatPhone(participant.phone)}
+            </p>
+          ) : (
+            <>
+              <label className="flex flex-col gap-1.5">
+                <span className="text-[12.5px] font-medium text-muted">Tu nombre</span>
+                <input
+                  name="nombre"
+                  required
+                  className="w-full rounded-[10px] border border-line bg-surface px-3 py-2 text-[14px] outline-none focus:border-primary"
+                />
+              </label>
 
-          <label className="flex flex-col gap-1.5">
-            <span className="text-[12.5px] font-medium text-muted">
-              Teléfono <span className="font-normal text-faint">opcional</span>
-            </span>
-            <input
-              name="telefono"
-              inputMode="tel"
-              className="w-full rounded-[10px] border border-line bg-surface px-3 py-2 text-[14px] outline-none focus:border-primary"
-            />
-          </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="text-[12.5px] font-medium text-muted">
+                  Teléfono <span className="font-normal text-faint">opcional</span>
+                </span>
+                <input
+                  name="telefono"
+                  inputMode="tel"
+                  className="w-full rounded-[10px] border border-line bg-surface px-3 py-2 text-[14px] outline-none focus:border-primary"
+                />
+              </label>
+            </>
+          )}
 
           <button
             type="submit"
