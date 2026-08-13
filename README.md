@@ -100,7 +100,9 @@ un script que venga en el HTML importado nunca corre.
 ### Sesión en vivo
 
 1. Abres `/presentar/[slug]` y le das a **Transmitir en vivo**. Sale un PIN de cuatro dígitos.
-2. Los asistentes entran a `/vivo`, escriben el PIN y su nombre, y quedan registrados.
+2. Los asistentes entran a `/vivo`, escriben el PIN y su nombre, y quedan registrados. El PIN
+   queda en una cookie, no en la URL, así que el nombre no viaja en el enlace y solo ve las
+   láminas quien pasó por el registro.
 3. Cada vez que avanzas, sus pantallas siguen la tuya (revisan el estado cada dos segundos).
 4. Quien quiera adelantarse puede navegar por su cuenta y volver a seguirte con un botón.
 
