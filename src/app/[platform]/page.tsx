@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Abbr, Card, LevelBadge, PlatformMark, SectionTitle, SiteHeader, StatusBadge } from '@/components/ui';
 import { getPlatform, getPlatformIds } from '@/db/queries';
+import { moduleLogo, platformLogo } from '@/lib/brand-logos';
 import { requireParticipant } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
@@ -38,7 +39,12 @@ export default async function PlatformPage({ params }: Params) {
         {/* Hero */}
         <section className="mb-10">
           <div className="mb-4 flex items-center gap-3">
-            <PlatformMark initial={platform.initial} color={platform.color} size={44} />
+            <PlatformMark
+              initial={platform.initial}
+              color={platform.color}
+              size={44}
+              logo={platformLogo(platform.id)}
+            />
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-display text-[16px] font-semibold">{platform.name}</span>
