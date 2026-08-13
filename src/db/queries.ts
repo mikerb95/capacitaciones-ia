@@ -1,6 +1,6 @@
 import { asc, eq, and } from 'drizzle-orm';
 import { db } from './index';
-import { decks, liveSessions, modules, platforms } from './schema';
+import { accessCodeModules, accessCodes, decks, liveSessions, modules, platforms } from './schema';
 
 const bySort = <T extends { sortOrder: unknown }>(t: T) => asc(t.sortOrder as never);
 
@@ -147,11 +147,34 @@ export async function getActiveSession(deckId: number) {
 export async function getAccessCodes() {
   return db.query.accessCodes.findMany({
     orderBy: (c, { desc }) => [desc(c.active), desc(c.createdAt)],
-    with: { participants: { orderBy: (p, { desc }) => [desc(p.createdAt)] } },
+    with: {
+      participants: { orderBy: (p, { desc }) => [desc(p.createdAt)] },
+      scope: { columns: { moduleId: true } },
+    },
   });
 }
 
+/** Un código con su perfil de empresa y su alcance, para la pantalla de edición. */
+export async function getAccessCode(id: number) {
+  return db.query.accessCodes.findFirst({
+    where: eq(accessCodes.id, id),
+    with: { scope: { columns: { moduleId: true } } },
+  });
+}
+
+/** Los módulos de IA en scope de un código, con su plataforma. */
+export async function getScopeModuleIds(accessCodeId: number) {
+  const rows = await db
+    .select({ moduleId: accessCodeModules.moduleId, platformId: modules.platformId })
+    .from(accessCodeModules)
+    .innerJoin(modules, eq(accessCodeModules.moduleId, modules.id))
+    .where(eq(accessCodeModules.accessCodeId, accessCodeId));
+
+  return rows;
+}
+
 export type AccessCodeRow = Awaited<ReturnType<typeof getAccessCodes>>[number];
+export type AccessCodeFull = NonNullable<Awaited<ReturnType<typeof getAccessCode>>>;
 
 export type DeckRow = Awaited<ReturnType<typeof getDecks>>[number];
 export type DeckFull = NonNullable<Awaited<ReturnType<typeof getDeck>>>;

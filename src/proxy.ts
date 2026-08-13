@@ -1,29 +1,8 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { ADMIN_COOKIE, verifyAdminToken } from '@/lib/admin-auth';
 import { SESSION_COOKIE } from '@/lib/session';
 
-/**
- * Basic Auth para /admin, contra ADMIN_USER y ADMIN_PASS. Sin esas variables
- * configuradas, el candado queda cerrado a cal y canto (nadie entra) en vez
- * de dejar el panel abierto por accidente.
- */
-function hasValidAdminAuth(request: NextRequest) {
-  const adminUser = process.env.ADMIN_USER;
-  const adminPass = process.env.ADMIN_PASS;
-  if (!adminUser || !adminPass) return false;
-
-  const header = request.headers.get('authorization');
-  if (!header?.startsWith('Basic ')) return false;
-
-  const [user, pass] = Buffer.from(header.slice(6), 'base64').toString().split(':');
-  return user === adminUser && pass === adminPass;
-}
-
-function requireAdminAuth() {
-  return new NextResponse('Autenticación requerida', {
-    status: 401,
-    headers: { 'WWW-Authenticate': 'Basic realm="Admin"' },
-  });
-}
+const ADMIN_LOGIN = '/admin/login';
 
 /**
  * Chequeo optimista: solo mira si hay cookie, sin tocar la base. La sesión de
@@ -31,13 +10,24 @@ function requireAdminAuth() {
  *
  * Fuera del candado de sesión quedan /ingresar, /vivo y /presentar: las dos
  * últimas tienen su propio PIN de sesión en vivo. /admin tiene su propio
- * candado, Basic Auth, más arriba.
+ * candado: la cookie firmada que reparte la página de login.
  */
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
   if (pathname.startsWith('/admin')) {
-    return hasValidAdminAuth(request) ? NextResponse.next() : requireAdminAuth();
+    const admin = await verifyAdminToken(request.cookies.get(ADMIN_COOKIE)?.value);
+
+    // Quien ya entró no vuelve a ver el login.
+    if (pathname === ADMIN_LOGIN) {
+      return admin ? NextResponse.redirect(new URL('/admin', request.url)) : NextResponse.next();
+    }
+
+    if (admin) return NextResponse.next();
+
+    const login = new URL(ADMIN_LOGIN, request.url);
+    if (pathname !== '/admin') login.searchParams.set('destino', `${pathname}${search}`);
+    return NextResponse.redirect(login);
   }
 
   if (request.cookies.has(SESSION_COOKIE)) return NextResponse.next();

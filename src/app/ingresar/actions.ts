@@ -11,6 +11,8 @@ import { composePhone, expectedDigits } from '@/lib/phone';
 import { SESSION_COOKIE, SESSION_MAX_AGE } from '@/lib/session';
 
 export type EnterState = {
+  /** `nombre` solo aparece cuando el teléfono no estaba registrado en ese código. */
+  step?: 'nombre';
   errors?: { code?: string; name?: string; phone?: string };
   values?: { code: string; name: string; phone: string; country: string };
 };
@@ -32,7 +34,6 @@ export async function enter(_prev: EnterState, formData: FormData): Promise<Ente
   const errors: EnterState['errors'] = {};
 
   if (code.length !== 4) errors.code = 'El código son 4 dígitos.';
-  if (name.length < 2) errors.name = 'Escribe tu nombre completo.';
 
   const phone = composePhone(country, rawPhone);
   if (!phone) {
@@ -42,6 +43,8 @@ export async function enter(_prev: EnterState, formData: FormData): Promise<Ente
       : 'Elige un país de la lista.';
   }
 
+  // Un error de código o teléfono devuelve al primer paso: son justo los campos
+  // que hay que corregir, y el nombre ya escrito viaja en `values`.
   if (Object.keys(errors).length > 0) return { errors, values };
 
   const accessCode = await db.query.accessCodes.findFirst({
@@ -52,27 +55,46 @@ export async function enter(_prev: EnterState, formData: FormData): Promise<Ente
     return { errors: { code: 'Ese código no está activo. Confírmalo con el expositor.' }, values };
   }
 
-  // Si la persona ya entró antes con el mismo teléfono, se reusa su registro:
-  // así puede volver desde otro dispositivo sin duplicarse en la lista.
+  // El teléfono es la identidad dentro de un código: quien ya entró antes vuelve
+  // sin escribir el nombre otra vez, aunque sea desde otro dispositivo.
   const existing = await db.query.participants.findFirst({
     where: and(eq(participants.accessCodeId, accessCode.id), eq(participants.phone, phone!)),
   });
 
-  const token = existing?.token ?? randomUUID();
+  let token: string;
 
   if (existing) {
+    token = existing.token;
     await db
       .update(participants)
-      .set({ name, lastSeenAt: new Date(), updatedAt: new Date() })
+      .set({ lastSeenAt: new Date(), updatedAt: new Date() })
       .where(eq(participants.id, existing.id));
   } else {
-    await db.insert(participants).values({
-      accessCodeId: accessCode.id,
-      name,
-      phone: phone!,
-      token,
-      updatedAt: new Date(),
-    });
+    // Segundo paso: el campo solo existe en el formulario cuando ya sabemos que
+    // el número es nuevo, así que su ausencia no es un error, es que falta pedirlo.
+    if (!formData.has('nombre')) return { step: 'nombre', values };
+    if (name.length < 2) {
+      return { step: 'nombre', errors: { name: 'Escribe tu nombre completo.' }, values };
+    }
+
+    // `onConflictDoUpdate` cubre el doble envío: si la fila apareció entre la
+    // consulta y el insert, se devuelve el token que ya tenía.
+    const [row] = await db
+      .insert(participants)
+      .values({
+        accessCodeId: accessCode.id,
+        name,
+        phone: phone!,
+        token: randomUUID(),
+        updatedAt: new Date(),
+      })
+      .onConflictDoUpdate({
+        target: [participants.accessCodeId, participants.phone],
+        set: { lastSeenAt: new Date(), updatedAt: new Date() },
+      })
+      .returning({ token: participants.token });
+
+    token = row.token;
   }
 
   const jar = await cookies();
