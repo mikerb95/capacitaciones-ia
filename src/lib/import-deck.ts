@@ -43,23 +43,16 @@ export function parseDeck(source: string): ParsedDeck {
     .querySelectorAll('section')
     .filter((node) => !node.closest('section section'));
 
-  const slides = sections.length ? sections : fallbackSlides(root);
-
   return {
     title,
     styles,
-    slides: slides.map((node) => ({
-      title: headingOf(node),
-      html: stripEventHandlers(node.outerHTML).trim(),
-      notes: notesOf(node),
-    })),
+    slides: sections.map((node) => {
+      // Las notas se extraen y se sacan del HTML: son solo para el expositor.
+      const notes = takeNotes(node);
+      stripEventHandlers(node);
+      return { title: headingOf(node), html: node.outerHTML.trim(), notes };
+    }),
   };
-}
-
-/** Si no vino ninguna <section>, se trata el cuerpo entero como una sola lámina. */
-function fallbackSlides(root: HTMLElement): HTMLElement[] {
-  const body = root.querySelector('body') ?? root;
-  return body.innerHTML.trim() ? [body] : [];
 }
 
 function headingOf(node: HTMLElement): string | null {
@@ -68,16 +61,35 @@ function headingOf(node: HTMLElement): string | null {
   return text ? text.slice(0, 200) : null;
 }
 
-/** Notas del expositor: cualquier elemento marcado con data-notes o .notes. */
-function notesOf(node: HTMLElement): string | null {
-  const notes = node.querySelector('[data-notes], .notes');
-  const text = notes?.innerText?.trim();
-  return text ? text : null;
+/**
+ * Saca las notas del expositor de la lámina y devuelve su texto.
+ * El elemento se elimina para que la nota no acabe proyectada en la sala.
+ */
+function takeNotes(node: HTMLElement): string | null {
+  const holders = node.querySelectorAll('[data-notes], .notes');
+  if (holders.length === 0) return null;
+
+  const text = holders
+    .map((holder) => holder.innerText.trim())
+    .filter(Boolean)
+    .join('\n\n');
+
+  holders.forEach((holder) => holder.remove());
+  return text || null;
 }
 
-/** Quita los atributos on* por si el HTML se llegara a renderizar fuera del iframe. */
-function stripEventHandlers(html: string): string {
-  return html.replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+/**
+ * Quita los atributos on* recorriendo el DOM, no el texto serializado:
+ * una expresión regular sobre el HTML se come el contenido de las láminas
+ * (por ejemplo "online = 30 min" desaparecería).
+ */
+function stripEventHandlers(node: HTMLElement): void {
+  const nodes = [node, ...node.querySelectorAll('*')];
+  for (const element of nodes) {
+    for (const name of Object.keys(element.attributes)) {
+      if (/^on/i.test(name)) element.removeAttribute(name);
+    }
+  }
 }
 
 export function slugify(value: string): string {
