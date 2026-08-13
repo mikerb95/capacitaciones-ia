@@ -121,7 +121,7 @@ export function EnterForm({ destination }: { destination: string }) {
             defaultValue={state.values?.phone}
             aria-invalid={Boolean(state.errors?.phone)}
             className="w-full min-w-0 bg-transparent px-3 py-2.5 text-[14.5px] outline-none placeholder:text-faint"
-            placeholder="311 476 9114"
+            placeholder="300 000 0000"
           />
         </div>
         <Error message={state.errors?.phone} />
