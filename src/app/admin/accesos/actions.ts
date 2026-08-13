@@ -2,30 +2,111 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { db } from '@/db';
-import { accessCodes } from '@/db/schema';
+import { accessCodeModules, accessCodes, modules } from '@/db/schema';
 import { RESERVED_CODES } from '@/lib/master-access';
 
 const str = (data: FormData, key: string) => ((data.get(key) as string | null) ?? '').trim();
+const orNull = (value: string) => (value.length ? value : null);
+
+export type AccessCodeState = {
+  error?: string;
+  field?: 'code' | 'label' | 'contactEmail' | 'scope';
+};
+
+export type AccessCodeAction = (
+  prev: AccessCodeState,
+  formData: FormData,
+) => Promise<AccessCodeState>;
 
 function randomCode() {
   return String(Math.floor(1000 + Math.random() * 9000));
 }
 
-/** Crea un código de capacitación. Si no se escribe uno, se sortea libre. */
-export async function createAccessCode(formData: FormData) {
-  const label = str(formData, 'label') || 'Capacitación sin nombre';
+/** Perfil de la empresa: todo opcional menos el nombre de la capacitación. */
+function profileOf(formData: FormData) {
+  return {
+    label: str(formData, 'label') || 'Capacitación sin nombre',
+    company: orNull(str(formData, 'company')),
+    industry: orNull(str(formData, 'industry')),
+    contactName: orNull(str(formData, 'contactName')),
+    contactEmail: orNull(str(formData, 'contactEmail')),
+    notes: orNull(str(formData, 'notes')),
+  };
+}
+
+/**
+ * Alcance elegido en el formulario. `null` es "todo el catálogo": se guarda
+ * como ausencia de filas, no como la lista completa, así un módulo nuevo entra
+ * solo en los códigos que no tienen recorte.
+ */
+async function scopeOf(formData: FormData): Promise<number[] | null> {
+  if (str(formData, 'alcance') !== 'seleccion') return null;
+
+  const ids = formData
+    .getAll('modulos')
+    .map((value) => Number(value))
+    .filter((id) => Number.isInteger(id) && id > 0);
+
+  if (ids.length === 0) return [];
+
+  // Solo ids que existan de verdad: el formulario no decide qué es válido.
+  const found = await db
+    .select({ id: modules.id })
+    .from(modules)
+    .where(inArray(modules.id, ids));
+
+  return found.map((m) => m.id);
+}
+
+async function replaceScope(accessCodeId: number, moduleIds: number[] | null) {
+  await db.delete(accessCodeModules).where(eq(accessCodeModules.accessCodeId, accessCodeId));
+  if (!moduleIds?.length) return;
+
+  await db
+    .insert(accessCodeModules)
+    .values(moduleIds.map((moduleId) => ({ accessCodeId, moduleId })));
+}
+
+const emailLooksWrong = (value: string | null) => Boolean(value) && !/^\S+@\S+\.\S+$/.test(value!);
+
+/** Crea el PIN de una capacitación, con su perfil de empresa y su alcance. */
+export async function createAccessCode(
+  _prev: AccessCodeState,
+  formData: FormData,
+): Promise<AccessCodeState> {
+  const profile = profileOf(formData);
   const wanted = str(formData, 'code').replace(/\D/g, '');
 
-  if (wanted && wanted.length !== 4) redirect('/admin/accesos?error=formato');
-  if (wanted && RESERVED_CODES.includes(wanted)) redirect('/admin/accesos?error=reservado');
+  if (wanted && wanted.length !== 4) {
+    return { error: 'El PIN son exactamente 4 dígitos.', field: 'code' };
+  }
+  if (wanted && RESERVED_CODES.includes(wanted)) {
+    return {
+      error: 'Ese PIN está reservado para pruebas y no se puede asignar a una capacitación.',
+      field: 'code',
+    };
+  }
+  if (emailLooksWrong(profile.contactEmail)) {
+    return { error: 'Revisa el correo del contacto.', field: 'contactEmail' };
+  }
+
+  const scope = await scopeOf(formData);
+  if (scope !== null && scope.length === 0) {
+    return {
+      error: 'Elige al menos un módulo, o cambia el alcance a todo el catálogo.',
+      field: 'scope',
+    };
+  }
 
   let code = wanted || randomCode();
 
   if (wanted) {
     const taken = await db.query.accessCodes.findFirst({ where: eq(accessCodes.code, code) });
-    if (taken) redirect('/admin/accesos?error=repetido');
+    if (taken) {
+      return { error: 'Ese PIN ya existe. Elige otro o deja el campo vacío.', field: 'code' };
+    }
   } else {
     // El sorteo también esquiva los reservados.
     while (
@@ -36,10 +117,51 @@ export async function createAccessCode(formData: FormData) {
     }
   }
 
-  await db.insert(accessCodes).values({ code, label, updatedAt: new Date() });
+  const [created] = await db
+    .insert(accessCodes)
+    .values({ ...profile, code, updatedAt: new Date() })
+    .returning({ id: accessCodes.id });
+
+  await replaceScope(created.id, scope);
 
   revalidatePath('/admin/accesos');
   redirect(`/admin/accesos?creado=${code}`);
+}
+
+/** Edita el perfil y el alcance de un PIN ya creado. El número no se toca. */
+export async function updateAccessCode(
+  _prev: AccessCodeState,
+  formData: FormData,
+): Promise<AccessCodeState> {
+  const id = Number(str(formData, 'id'));
+  if (!id) return { error: 'No encuentro ese PIN.' };
+
+  const current = await db.query.accessCodes.findFirst({ where: eq(accessCodes.id, id) });
+  if (!current) return { error: 'No encuentro ese PIN.' };
+
+  const profile = profileOf(formData);
+  if (emailLooksWrong(profile.contactEmail)) {
+    return { error: 'Revisa el correo del contacto.', field: 'contactEmail' };
+  }
+
+  const scope = await scopeOf(formData);
+  if (scope !== null && scope.length === 0) {
+    return {
+      error: 'Elige al menos un módulo, o cambia el alcance a todo el catálogo.',
+      field: 'scope',
+    };
+  }
+
+  await db
+    .update(accessCodes)
+    .set({ ...profile, updatedAt: new Date() })
+    .where(eq(accessCodes.id, id));
+
+  await replaceScope(id, scope);
+
+  revalidatePath('/admin/accesos');
+  revalidatePath(`/admin/accesos/${id}`);
+  redirect(`/admin/accesos?guardado=${current.code}`);
 }
 
 /** Cerrar un código deja fuera a quien ya había entrado con él. */

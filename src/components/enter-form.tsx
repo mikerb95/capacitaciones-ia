@@ -29,8 +29,10 @@ export function EnterForm({ destination }: { destination: string }) {
     const values = state.values!;
     const dial = findCountry(values.country)?.dial;
 
+    // La `key` distinta fuerza un formulario nuevo: los `defaultValue` de un
+    // paso no se quedan pegados en los campos del otro.
     return (
-      <form action={action} className="flex flex-col gap-4">
+      <form key="paso-nombre" action={action} className="flex flex-col gap-4">
         <input type="hidden" name="destino" value={destination} />
         <input type="hidden" name="codigo" value={values.code} />
         <input type="hidden" name="pais" value={values.country} />
@@ -82,7 +84,7 @@ export function EnterForm({ destination }: { destination: string }) {
   }
 
   return (
-    <form action={action} className="flex flex-col gap-4">
+    <form key="paso-inicio" action={action} className="flex flex-col gap-4">
       <input type="hidden" name="destino" value={destination} />
       {/* El nombre ya escrito no se pierde si el código o el teléfono fallan. */}
       {state.values?.name ? <input type="hidden" name="nombre" value={state.values.name} /> : null}

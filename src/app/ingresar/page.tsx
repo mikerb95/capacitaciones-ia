@@ -27,7 +27,8 @@ export default async function IngresarPage({ searchParams }: Props) {
           <div className="mb-7 text-center">
             <h1 className="font-display text-[27px] font-semibold tracking-tight">Academia IA</h1>
             <p className="mt-2 text-[14.5px] leading-relaxed text-muted">
-              Escribe el código que te dieron al inicio de la capacitación para entrar al material.
+              Escribe el código que te dieron al inicio de la capacitación y tu WhatsApp para entrar
+              al material. Si ya entraste antes, con eso basta.
             </p>
           </div>
 
