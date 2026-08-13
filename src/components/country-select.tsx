@@ -39,9 +39,15 @@ export function CountrySelect({
     };
   }, [open]);
 
-  // Al abrir, la opción activa queda a la vista.
+  // Al abrir, la opción activa queda a la vista. Se mueve el scroll del menú a
+  // mano, no con scrollIntoView: ese llega tarde y desplaza la lista bajo el
+  // cursor, así que el primer clic terminaba cayendo en otro país.
   useEffect(() => {
-    if (open) list.current?.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'center' });
+    const menu = list.current;
+    if (!open || !menu) return;
+
+    const option = menu.querySelector<HTMLElement>('[aria-selected="true"]');
+    if (option) menu.scrollTop = option.offsetTop - menu.clientHeight / 2 + option.clientHeight / 2;
   }, [open]);
 
   const choose = (country: Country) => {
