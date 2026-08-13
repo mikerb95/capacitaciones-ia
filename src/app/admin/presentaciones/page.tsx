@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Card, PlatformMark, SectionTitle, SiteHeader } from '@/components/ui';
+import { platformLogo } from '@/lib/brand-logos';
 import { getDecks, getPlatformIds } from '@/db/queries';
 import { deleteDeck, importDeck } from './actions';
 
@@ -143,6 +144,7 @@ export default async function DecksPage({ searchParams }: Search) {
                       initial={deck.platform.initial}
                       color={deck.platform.color}
                       size={30}
+                      logo={platformLogo(deck.platform.id)}
                     />
                   ) : (
                     <span className="grid size-[30px] place-items-center rounded-[10px] bg-surface-2 font-mono text-[11px] text-faint">
