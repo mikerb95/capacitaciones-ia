@@ -116,10 +116,12 @@ src/
 │   ├── page.tsx                    comparativa
 │   ├── [platform]/page.tsx         portal de una IA
 │   ├── [platform]/[slug]/page.tsx  ficha del módulo
-│   └── admin/                      listado, formulario y server actions
+│   ├── admin/                      módulos, presentaciones y server actions
+│   ├── presentar/[slug]/           vista de expositor
+│   └── vivo/                       vista de audiencia
 ├── components/                     UI compartida
 └── db/
-    ├── schema.ts                   13 tablas normalizadas
+    ├── schema.ts                   17 tablas normalizadas
     ├── queries.ts                  consultas de lectura
     ├── index.ts                    cliente libSQL
     └── seed/                       contenido por plataforma
