@@ -125,13 +125,6 @@ export async function getDeck(slug: string) {
   });
 }
 
-export async function getDeckById(id: number) {
-  return db.query.decks.findFirst({
-    where: eq(decks.id, id),
-    with: { platform: true, slides: { orderBy: bySort } },
-  });
-}
-
 /** Sesión en vivo por PIN, con el mazo y sus láminas. */
 export async function getLiveByPin(pin: string) {
   return db.query.liveSessions.findFirst({
