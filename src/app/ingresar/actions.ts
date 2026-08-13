@@ -11,7 +11,7 @@ import { SESSION_COOKIE, SESSION_MAX_AGE } from '@/lib/session';
 
 export type EnterState = {
   errors?: { code?: string; name?: string; phone?: string };
-  values?: { code: string; name: string; phone: string };
+  values?: { code: string; name: string; phone: string; country: string };
 };
 
 const str = (data: FormData, key: string) => ((data.get(key) as string | null) ?? '').trim();
