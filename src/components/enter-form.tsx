@@ -47,25 +47,31 @@ export function EnterForm({ destination }: { destination: string }) {
         <Error message={state.errors?.name} />
       </label>
 
-      <label className="flex flex-col gap-1.5">
-        <span className="text-[12.5px] font-medium text-muted">WhatsApp</span>
-        <div className="flex items-center gap-2 rounded-[10px] border border-line bg-surface pl-3 transition-colors focus-within:border-primary">
-          <span className="font-mono text-[14.5px] text-faint">+</span>
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="telefono" className="text-[12.5px] font-medium text-muted">
+          WhatsApp
+        </label>
+        <div className="flex items-stretch rounded-[10px] border border-line bg-surface transition-colors focus-within:border-primary">
+          <CountrySelect name="pais" value={country} onChange={setCountry} />
+          <span className="my-2 w-px bg-line" aria-hidden="true" />
           <input
+            id="telefono"
             name="telefono"
             inputMode="tel"
-            autoComplete="tel"
+            autoComplete="tel-national"
+            maxLength={15}
             defaultValue={state.values?.phone}
             aria-invalid={Boolean(state.errors?.phone)}
-            className="w-full bg-transparent py-2.5 pr-3 text-[14.5px] outline-none placeholder:text-faint"
-            placeholder="51 987 654 321"
+            className="w-full min-w-0 bg-transparent px-3 py-2.5 text-[14.5px] outline-none placeholder:text-faint"
+            placeholder="311 476 9114"
           />
         </div>
         <Error message={state.errors?.phone} />
         <span className="text-[12px] text-faint">
-          Con el código de país. Lo usamos para enviarte el material de la sesión.
+          Tu celular a {digits} dígitos, sin el indicativo. Lo usamos para enviarte el material de
+          la sesión.
         </span>
-      </label>
+      </div>
 
       <button
         type="submit"
