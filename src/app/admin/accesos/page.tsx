@@ -25,35 +25,48 @@ function CodeCard({ code }: { code: AccessCodeRow }) {
         </span>
 
         <div className="min-w-0 flex-1">
-          <h2 className="truncate font-display text-[15.5px] font-semibold tracking-tight">
-            {code.label}
-          </h2>
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 className="truncate font-display text-[15.5px] font-semibold tracking-tight">
+              {code.label}
+            </h2>
+            {code.system && (
+              <span className="inline-flex items-center rounded-full bg-primary-soft px-2 py-0.5 text-[11px] font-semibold text-primary">
+                Reservado
+              </span>
+            )}
+          </div>
           <p className="text-[12.5px] text-faint">
             {code.active ? 'Activo' : 'Cerrado'} · {code.participants.length}{' '}
             {code.participants.length === 1 ? 'registrado' : 'registrados'}
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <form action={toggleAccessCode}>
-            <input type="hidden" name="id" value={code.id} />
-            <button
-              type="submit"
-              className="rounded-[10px] border border-line px-3 py-1.5 text-[12.5px] font-medium text-muted transition-colors hover:border-primary hover:text-primary"
-            >
-              {code.active ? 'Cerrar' : 'Reabrir'}
-            </button>
-          </form>
-          <form action={deleteAccessCode}>
-            <input type="hidden" name="id" value={code.id} />
-            <button
-              type="submit"
-              className="rounded-[10px] border border-line px-3 py-1.5 text-[12.5px] font-medium text-faint transition-colors hover:border-[#c2410c] hover:text-[#c2410c]"
-            >
-              Borrar
-            </button>
-          </form>
-        </div>
+        {code.system ? (
+          <span className="max-w-[240px] text-right text-[12px] leading-relaxed text-faint">
+            Código de pruebas. No se cierra ni se borra, y no puede asignarse a una capacitación.
+          </span>
+        ) : (
+          <div className="flex items-center gap-2">
+            <form action={toggleAccessCode}>
+              <input type="hidden" name="id" value={code.id} />
+              <button
+                type="submit"
+                className="rounded-[10px] border border-line px-3 py-1.5 text-[12.5px] font-medium text-muted transition-colors hover:border-primary hover:text-primary"
+              >
+                {code.active ? 'Cerrar' : 'Reabrir'}
+              </button>
+            </form>
+            <form action={deleteAccessCode}>
+              <input type="hidden" name="id" value={code.id} />
+              <button
+                type="submit"
+                className="rounded-[10px] border border-line px-3 py-1.5 text-[12.5px] font-medium text-faint transition-colors hover:border-[#c2410c] hover:text-[#c2410c]"
+              >
+                Borrar
+              </button>
+            </form>
+          </div>
+        )}
       </div>
 
       {code.participants.length === 0 ? (
@@ -94,7 +107,9 @@ export default async function AccesosPage({ searchParams }: Props) {
       ? 'Ese código ya existe. Elige otro o deja el campo vacío para que se sortee.'
       : error === 'formato'
         ? 'El código son exactamente 4 dígitos.'
-        : creado
+        : error === 'reservado'
+          ? 'Ese código está reservado para pruebas y no se puede asignar a una capacitación.'
+          : creado
           ? `Código ${creado} creado y activo.`
           : null;
 
