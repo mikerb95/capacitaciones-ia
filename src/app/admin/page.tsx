@@ -55,7 +55,7 @@ export default async function AdminPage() {
 
       <main className="mx-auto max-w-[1100px] px-4 py-8 sm:px-6">
         <div className="mb-6 rounded-card border border-line bg-surface-2 p-4 text-[13px] leading-relaxed text-muted">
-          Esta vista no tiene contraseña. Para cambios grandes o para dejar el contenido versionado,
+          Para cambios grandes o para dejar el contenido versionado,
           sigue usando los archivos de <code className="font-mono text-[12.5px]">src/db/seed</code> y
           corriendo <code className="font-mono text-[12.5px]">npm run db:seed</code>: el seed hace
           upsert por plataforma y slug, así que no duplica nada.
