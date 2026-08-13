@@ -28,12 +28,116 @@ export const platforms = sqliteTable('platforms', {
   helpTitle: text('help_title'),
   helpText: text('help_text'),
   description: text('description'),
+  // Aviso al pie del bloque de planes: desde cuándo está vigente lo que se
+  // muestra y de dónde salió. Los precios cambian seguido, conviene fecharlos.
+  plansNote: text('plans_note'),
   status: text('status', { enum: ['completo', 'en-redaccion', 'borrador'] })
     .notNull()
     .default('borrador'),
   sortOrder: integer('sort_order').notNull().default(0),
   ...timestamps,
 });
+
+/* ------------------------------------------------------- planes y modelos */
+
+/** Cómo se cobra el nivel de disponibilidad: se usa en modelos y en módulos. */
+export const AVAILABILITY = ['incluido', 'limitado', 'no'] as const;
+
+/**
+ * Plan de facturación de una plataforma. `tier` ordena de más barato a más
+ * caro dentro de cada público, y es lo que permite decir "desde el plan X".
+ */
+export const platformPlans = sqliteTable(
+  'platform_plans',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    platformId: text('platform_id')
+      .notNull()
+      .references(() => platforms.id, { onDelete: 'cascade' }),
+    key: text('key').notNull(), // 'free' | 'plus' | 'pro'...
+    name: text('name').notNull(),
+    price: text('price').notNull(),
+    audience: text('audience', { enum: ['Personal', 'Empresa'] })
+      .notNull()
+      .default('Personal'),
+    summary: text('summary'),
+    note: text('note'), // límite general del plan, en una línea
+    tier: integer('tier').notNull().default(0),
+    sortOrder: integer('sort_order').notNull().default(0),
+  },
+  (t) => [
+    uniqueIndex('platform_plans_key_idx').on(t.platformId, t.key),
+    index('platform_plans_platform_idx').on(t.platformId),
+  ],
+);
+
+/** Modelo que ofrece la plataforma (GPT-5.6 Sol, Opus 5, Gemini 3.1 Pro...). */
+export const platformModels = sqliteTable(
+  'platform_models',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    platformId: text('platform_id')
+      .notNull()
+      .references(() => platforms.id, { onDelete: 'cascade' }),
+    key: text('key').notNull(),
+    name: text('name').notNull(),
+    description: text('description'),
+    sortOrder: integer('sort_order').notNull().default(0),
+  },
+  (t) => [
+    uniqueIndex('platform_models_key_idx').on(t.platformId, t.key),
+    index('platform_models_platform_idx').on(t.platformId),
+  ],
+);
+
+/** Qué modelo alcanza cada plan, y con qué recorte. */
+export const platformModelPlans = sqliteTable(
+  'platform_model_plans',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    modelId: integer('model_id')
+      .notNull()
+      .references(() => platformModels.id, { onDelete: 'cascade' }),
+    planId: integer('plan_id')
+      .notNull()
+      .references(() => platformPlans.id, { onDelete: 'cascade' }),
+    availability: text('availability', { enum: AVAILABILITY })
+      .notNull()
+      .default('incluido'),
+    note: text('note'),
+  },
+  (t) => [
+    uniqueIndex('platform_model_plans_pair_idx').on(t.modelId, t.planId),
+    index('platform_model_plans_model_idx').on(t.modelId),
+    index('platform_model_plans_plan_idx').on(t.planId),
+  ],
+);
+
+/**
+ * Qué plan hace falta para el caso de uso de un módulo. Sin filas, el módulo
+ * se considera disponible en todos los planes: el contenido viejo no se rompe.
+ */
+export const modulePlans = sqliteTable(
+  'module_plans',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    moduleId: integer('module_id')
+      .notNull()
+      .references(() => modules.id, { onDelete: 'cascade' }),
+    planId: integer('plan_id')
+      .notNull()
+      .references(() => platformPlans.id, { onDelete: 'cascade' }),
+    availability: text('availability', { enum: AVAILABILITY })
+      .notNull()
+      .default('incluido'),
+    note: text('note'),
+  },
+  (t) => [
+    uniqueIndex('module_plans_pair_idx').on(t.moduleId, t.planId),
+    index('module_plans_module_idx').on(t.moduleId),
+    index('module_plans_plan_idx').on(t.planId),
+  ],
+);
 
 export const platformStats = sqliteTable(
   'platform_stats',
