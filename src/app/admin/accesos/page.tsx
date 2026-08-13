@@ -86,8 +86,11 @@ function CodeCard({ code }: { code: AccessCodeRow }) {
                 href={whatsappHref(p.phone)}
                 target="_blank"
                 rel="noreferrer"
-                className="font-mono text-[12.5px] text-muted transition-colors hover:text-primary"
+                className="flex items-center gap-1.5 font-mono text-[12.5px] text-muted transition-colors hover:text-primary"
               >
+                {countryOf(p.phone) && (
+                  <Flag code={countryOf(p.phone)!} className="h-3 w-4 shrink-0 rounded-[2px] object-cover" />
+                )}
                 {formatPhone(p.phone)}
               </a>
               <span className="text-[12px] text-faint">{fecha.format(p.createdAt)}</span>

@@ -8,15 +8,6 @@ export type Country = {
   lengths: number[];
 };
 
-/**
- * La bandera sale del código ISO: cada letra se mapea a su indicador regional.
- * En Windows no hay glifos de bandera y se ve el par de letras, que igual
- * identifica al país.
- */
-export function flagOf(code: string): string {
-  return String.fromCodePoint(...[...code.toUpperCase()].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65));
-}
-
 /** Países de la región más los que aparecen seguido en las capacitaciones. */
 export const COUNTRIES: Country[] = [
   { code: 'AR', name: 'Argentina', dial: '54', lengths: [10] },
