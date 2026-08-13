@@ -1018,6 +1018,114 @@ export const copilot: PlatformSeed = {
       "mockTitle": "Agente · Talento humano",
       "mockPrompt": "Arma un agente que responda las preguntas frecuentes del equipo.",
       "mockReply": "Agente creado con 3 fuentes. Falta definir qué no debe responder."
+    },
+    {
+      "slug": "researcher-analyst",
+      "name": "Researcher y Analyst",
+      "shortName": "Researcher",
+      "abbr": "RA",
+      "color": "#4338CA",
+      "level": "Avanzado",
+      "summary": "Los dos agentes que vienen dentro del chat para lo que un prompt suelto no resuelve: una investigación con fuentes citadas o un análisis de datos con el paso a paso a la vista.",
+      "intro": "Están adentro de Copilot Chat, en la sección Agents, y no reemplazan el chat normal: se usan cuando la pregunta necesita más tiempo de análisis. Researcher entrega un reporte con fuentes citadas, cruzando archivos de la empresa y la web. Analyst entrega un análisis de datos, con el código que corrió a la vista para poder revisarlo.",
+      "meta": "6 prompts · 40 min",
+      "outcomes": [
+        "Distinguir cuándo conviene un reporte de Researcher en vez de una respuesta rápida del chat.",
+        "Acotar las fuentes de Researcher a la empresa, a la web o a ambas, según el tema.",
+        "Usar Analyst para cruzar varios archivos y pedirle el paso a paso, no solo el resultado.",
+        "Revisar el código y las citas antes de dar por buena una conclusión."
+      ],
+      "prompts": [
+        {
+          "tag": "Researcher",
+          "text": "Investiga cómo están usando IA generativa las empresas de nuestro sector y dame un reporte con fuentes."
+        },
+        {
+          "tag": "Researcher",
+          "text": "Cruza los correos, actas y archivos del proyecto [X] y arma un reporte del estado real, con lo que quedó sin resolver."
+        },
+        {
+          "tag": "Researcher",
+          "text": "Antes de investigar, dime qué fuentes vas a usar: solo la empresa, solo la web o ambas."
+        },
+        {
+          "tag": "Analyst",
+          "text": "Con estos tres archivos de ventas, dime qué producto está cayendo y desde cuándo."
+        },
+        {
+          "tag": "Analyst",
+          "text": "Muéstrame el código que usaste para llegar a ese número antes de que lo dé por bueno."
+        },
+        {
+          "tag": "Analyst",
+          "text": "Con esta base, arma la proyección del próximo trimestre y el gráfico que la sustenta."
+        }
+      ],
+      "baIntro": "El caso de la sesión: entender por qué cayeron las ventas de una línea de producto en el último trimestre.",
+      "before": "Alguien abre los reportes de cada sucursal, los cruza a mano en una hoja aparte y arma una hipótesis sin poder mostrar cómo llegó a ella.",
+      "beforeTime": "Un cruce manual de varios archivos",
+      "after": "Se le pide a Analyst el cruce con el código a la vista, y a Researcher el contexto del sector con fuentes citadas para saber si es un problema propio o del mercado.",
+      "afterTime": "Un reporte y un análisis, los dos revisables",
+      "steps": [
+        {
+          "title": "Pregúntate primero si es una pregunta o una investigación",
+          "description": "Si se resuelve con dos líneas, es el chat normal. Si necesita cruzar varias fuentes y sustentar la respuesta, es Researcher o Analyst."
+        },
+        {
+          "title": "En Researcher, dile de dónde sacar la información",
+          "description": "Se puede acotar a los archivos y correos de la empresa, a la web, o a ambos. Sin esa precisión, el reporte sale más genérico de lo que hace falta."
+        },
+        {
+          "title": "Responde las preguntas que te haga de vuelta",
+          "description": "Researcher suele repreguntar para afinar el alcance antes de investigar. Contestarlas bien ahorra un reporte que hay que pedir de nuevo."
+        },
+        {
+          "title": "En Analyst, pide el código, no solo el número",
+          "description": "Analyst muestra el código que usó para llegar al resultado. Revisarlo es lo que separa confiar en el análisis de solo creerlo."
+        },
+        {
+          "title": "Verifica antes de compartir",
+          "description": "Un reporte con fuentes citadas y un análisis con código a la vista igual se revisan contra lo que ya sabes del tema antes de mandarlos para arriba."
+        }
+      ],
+      "roles": [
+        {
+          "role": "Estrategia",
+          "task": "Análisis de sector",
+          "detail": "Le pide a Researcher un panorama de la competencia con fuentes citadas antes de una decisión grande."
+        },
+        {
+          "role": "Finanzas",
+          "task": "Cruce de reportes",
+          "detail": "Usa Analyst para cruzar los archivos de varias sucursales y detectar dónde está la desviación."
+        },
+        {
+          "role": "Proyectos",
+          "task": "Estado real del proyecto",
+          "detail": "Le pide a Researcher que reconstruya el estado de un proyecto desde correos, actas y archivos dispersos."
+        }
+      ],
+      "mistakes": [
+        {
+          "bad": "Mandarle a Researcher una pregunta que el chat normal resuelve en una línea.",
+          "good": "Guardar Researcher para lo que de verdad necesita cruzar varias fuentes y un reporte sustentado."
+        },
+        {
+          "bad": "Dejar que Researcher busque en toda la web sin acotar el tema.",
+          "good": "Definir el alcance de fuentes antes de lanzar la investigación."
+        },
+        {
+          "bad": "Usar el número que entrega Analyst sin mirar el código que lo generó.",
+          "good": "Revisar el código o pedirle que explique el paso a paso antes de usar el resultado."
+        },
+        {
+          "bad": "Compartir el reporte o el análisis tal cual, sin contrastarlo con lo que ya se sabe del tema.",
+          "good": "Revisar las citas y los supuestos antes de mandarlo a alguien más."
+        }
+      ],
+      "mockTitle": "Researcher · Panorama del sector",
+      "mockPrompt": "Investiga cómo están usando IA generativa las empresas de nuestro sector.",
+      "mockReply": "Reporte listo con 12 fuentes citadas. ¿Lo acoto solo a la web o incluyo también nuestros archivos?"
     }
   ]
 };
