@@ -1,6 +1,6 @@
 import { asc, eq, and } from 'drizzle-orm';
 import { db } from './index';
-import { modules, platforms } from './schema';
+import { decks, liveSessions, modules, platforms } from './schema';
 
 const bySort = <T extends { sortOrder: unknown }>(t: T) => asc(t.sortOrder as never);
 
@@ -102,3 +102,51 @@ export type Comparison = Awaited<ReturnType<typeof getComparison>>;
 export type PlatformFull = NonNullable<Awaited<ReturnType<typeof getPlatform>>>;
 export type ModuleFull = NonNullable<Awaited<ReturnType<typeof getModule>>>;
 export type ModuleRow = Awaited<ReturnType<typeof getAllModules>>[number];
+
+/* ------------------------------------------------------------ presentaciones */
+
+export async function getDecks() {
+  return db.query.decks.findMany({
+    orderBy: (d) => [asc(d.sortOrder), asc(d.id)],
+    with: {
+      platform: { columns: { id: true, name: true, color: true, initial: true } },
+      slides: { columns: { id: true, title: true, sortOrder: true }, orderBy: bySort },
+    },
+  });
+}
+
+export async function getDeck(slug: string) {
+  return db.query.decks.findFirst({
+    where: eq(decks.slug, slug),
+    with: {
+      platform: true,
+      slides: { orderBy: bySort },
+    },
+  });
+}
+
+export async function getDeckById(id: number) {
+  return db.query.decks.findFirst({
+    where: eq(decks.id, id),
+    with: { platform: true, slides: { orderBy: bySort } },
+  });
+}
+
+/** Sesión en vivo por PIN, con el mazo y sus láminas. */
+export async function getLiveByPin(pin: string) {
+  return db.query.liveSessions.findFirst({
+    where: eq(liveSessions.pin, pin),
+    with: { deck: { with: { slides: { orderBy: bySort } } } },
+  });
+}
+
+export async function getActiveSession(deckId: number) {
+  return db.query.liveSessions.findFirst({
+    where: eq(liveSessions.deckId, deckId),
+    orderBy: (s, { desc }) => [desc(s.startedAt)],
+    with: { attendees: true },
+  });
+}
+
+export type DeckRow = Awaited<ReturnType<typeof getDecks>>[number];
+export type DeckFull = NonNullable<Awaited<ReturnType<typeof getDeck>>>;
