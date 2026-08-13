@@ -2,16 +2,16 @@ import type { PlatformSeed } from './types';
 
 export const copilot: PlatformSeed = {
   "id": "copilot",
-  "name": "Microsoft Copilot",
+  "name": "Microsoft 365 Copilot",
   "portalName": "Portal Copilot",
   "initial": "M",
   "color": "#0B63CE",
-  "description": "Word, Excel, PowerPoint, Teams y Outlook, con los casos del día a día de la empresa.",
+  "description": "Word, Excel, PowerPoint, Teams y Outlook, más Copilot Chat, Cowork y agentes, con los casos del día a día de la empresa.",
   "tagline": "Capacitación interna",
   "inputHint": "Escríbele a Copilot...",
-  "badge": "Programa interno · 6 módulos · en el orden que quieras",
+  "badge": "Programa interno · 8 módulos · en el orden que quieras",
   "heroTitle": "Aprende a usar Copilot en el trabajo del día a día",
-  "heroText": "Word, Excel, PowerPoint, Teams y Outlook, con los casos que ya existen en la empresa y prompts listos para copiar.",
+  "heroText": "Word, Excel, PowerPoint, Teams y Outlook, más el modo agente y Cowork, con los casos que ya existen en la empresa y prompts listos para copiar.",
   "specialTitle": "Lo que solo se hace acá",
   "specialIntro": "Los diferenciales de Copilot frente a los otros portales de la academia.",
   "helpTitle": "¿Dudas durante la práctica?",
@@ -19,15 +19,15 @@ export const copilot: PlatformSeed = {
   "status": "completo",
   "stats": [
     {
-      "value": "6",
-      "label": "módulos, uno por aplicación"
+      "value": "8",
+      "label": "módulos, de la aplicación al agente"
     },
     {
-      "value": "31",
+      "value": "45",
       "label": "prompts listos para copiar"
     },
     {
-      "value": "18",
+      "value": "24",
       "label": "casos de uso por área"
     },
     {
@@ -43,16 +43,22 @@ export const copilot: PlatformSeed = {
       "example": "\"Resume este documento en cinco puntos y deja el detalle al final.\""
     },
     {
+      "kicker": "Modo agente",
+      "title": "Le pides el resultado, no el paso",
+      "description": "En Word, Excel y PowerPoint el modo agente planea los pasos solo y los ejecuta dentro del archivo. Tú revisas el trabajo terminado.",
+      "example": "\"Limpia esta base, calcula el margen por producto y déjame el resumen en una hoja nueva.\""
+    },
+    {
       "kicker": "Permisos",
       "title": "Solo ve lo que tú ves",
       "description": "Respeta los permisos de tu cuenta: si no puedes abrir un archivo, Copilot tampoco.",
       "example": "\"¿Qué acordamos con este cliente en la última reunión?\""
     },
     {
-      "kicker": "Teams y Outlook",
-      "title": "La reunión y el correo, resueltos",
-      "description": "Resumen de reunión con compromisos y respuesta de correo con el tono de la empresa.",
-      "example": "\"Resume la reunión y sácame los compromisos con responsable.\""
+      "kicker": "Cowork",
+      "title": "Tareas que duran horas, no minutos",
+      "description": "Cowork encadena varias aplicaciones y te entrega el trabajo hecho, no un borrador. Se cobra aparte con créditos.",
+      "example": "\"Revisa los 40 contratos de esta carpeta y arma la matriz de vencimientos.\""
     }
   ],
   "downloads": [
@@ -70,6 +76,11 @@ export const copilot: PlatformSeed = {
       "title": "Política de uso de IA",
       "description": "Qué información se puede procesar y qué datos no salen del entorno de la empresa.",
       "meta": "PDF · 760 KB"
+    },
+    {
+      "title": "Cuándo usar chat, modo agente o Cowork",
+      "description": "Tabla de una página para decidir con qué herramienta se resuelve cada tarea.",
+      "meta": "PDF · 350 KB"
     },
     {
       "title": "Formato para tu caso",
@@ -95,6 +106,11 @@ export const copilot: PlatformSeed = {
     },
     {
       "number": "04",
+      "title": "Escoge la herramienta antes que el prompt",
+      "description": "Pregunta suelta en el chat, cambio dentro del archivo en modo agente, tarea larga en Cowork."
+    },
+    {
+      "number": "05",
       "title": "Guarda lo que te funcionó",
       "description": "Anota tus mejores prompts y pásalos al equipo: eso es lo que queda de la capacitación."
     }
@@ -102,7 +118,7 @@ export const copilot: PlatformSeed = {
   "faqs": [
     {
       "question": "¿Copilot puede ver todos los archivos de la empresa?",
-      "answer": "Solo los archivos y correos a los que tu cuenta ya tiene acceso. No abre nada de más: si tú no puedes abrir un documento, Copilot tampoco."
+      "answer": "Solo los archivos y correos a los que tu cuenta ya tiene acceso. No abre nada de más: si tú no puedes abrir un documento, Copilot tampoco. Eso sigue igual con el modo agente y con Cowork."
     },
     {
       "question": "¿Lo que escribo se usa para entrenar modelos públicos?",
@@ -110,7 +126,7 @@ export const copilot: PlatformSeed = {
     },
     {
       "question": "¿Puedo confiar en las cifras que genera?",
-      "answer": "No sin revisarlas. Precios, cantidades y fechas se confirman contra el sistema. La regla de la capacitación es simple: lo que sale con tu nombre lo revisas tú."
+      "answer": "No sin revisarlas. Precios, cantidades y fechas se confirman contra el sistema. La regla de la capacitación es simple: lo que sale con tu nombre lo revisas tú. En modo agente aplica igual, aunque el trabajo se vea terminado."
     },
     {
       "question": "¿Qué hago si la respuesta no sirve?",
@@ -118,13 +134,29 @@ export const copilot: PlatformSeed = {
     },
     {
       "question": "¿Necesito licencia especial?",
-      "answer": "Sí, la licencia va asignada a tu cuenta corporativa. Si no ves el panel en tus aplicaciones, pídela en el canal de soporte."
+      "answer": "Depende. Copilot Chat y Copilot Notebooks funcionan con tu cuenta corporativa sin licencia adicional. Copilot dentro de Word, Excel, PowerPoint, Teams y Outlook sí necesita la licencia de Microsoft 365 Copilot asignada a tu cuenta. Si no ves el panel en tus aplicaciones, pídela en el canal de soporte."
+    },
+    {
+      "question": "¿Puedo escoger el modelo?",
+      "answer": "Sí. En Copilot Chat, Word, PowerPoint y Cowork aparece un selector de modelo con las opciones de OpenAI y de Anthropic que la empresa tenga habilitadas. La regla práctica: el modelo rápido para redactar y resumir, el modelo de razonamiento para análisis largos y trabajo de varios pasos."
+    },
+    {
+      "question": "¿Cowork se cobra aparte?",
+      "answer": "Sí. Cowork necesita la licencia de Microsoft 365 Copilot y además consume créditos que se facturan por uso. Antes de lanzar una tarea larga, revisa con tu jefe el presupuesto de créditos del área."
+    },
+    {
+      "question": "¿Qué diferencia hay entre el chat, el modo agente y Cowork?",
+      "answer": "El chat responde preguntas y redacta. El modo agente hace el cambio dentro del archivo que tienes abierto y muestra los pasos que siguió. Cowork toma tareas de varias horas que cruzan varias aplicaciones y devuelve el entregable completo."
     }
   ],
   "links": [
     {
-      "label": "Microsoft Copilot: documentación oficial",
-      "href": "https://learn.microsoft.com/copilot/"
+      "label": "Microsoft 365 Copilot: documentación oficial",
+      "href": "https://learn.microsoft.com/copilot/microsoft-365/"
+    },
+    {
+      "label": "Novedades de Microsoft 365 Copilot (notas de versión)",
+      "href": "https://learn.microsoft.com/copilot/microsoft-365/release-notes"
     },
     {
       "label": "Copilot en Microsoft 365: guía de adopción",
@@ -135,11 +167,110 @@ export const copilot: PlatformSeed = {
       "href": "https://learn.microsoft.com/microsoft-copilot-studio/"
     },
     {
-      "label": "Novedades de Microsoft 365",
+      "label": "Blog de Microsoft 365: anuncios de producto",
       "href": "https://www.microsoft.com/microsoft-365/blog/"
     }
   ],
   "modules": [
+    {
+      "slug": "chat",
+      "name": "Copilot Chat y Notebooks",
+      "shortName": "Chat",
+      "abbr": "C",
+      "color": "#0B63CE",
+      "level": "Básico",
+      "summary": "El punto de entrada: preguntarle a los archivos y correos de la empresa, y armar un cuaderno con las fuentes de un tema.",
+      "intro": "Es el módulo con el que se empieza porque funciona con tu cuenta corporativa, sin licencia adicional. Acá aprendes a preguntarle a Copilot con las fuentes puestas, no de memoria.",
+      "meta": "6 prompts · 30 min",
+      "outcomes": [
+        "Preguntarle a Copilot apuntando a un archivo, una carpeta o una reunión concreta.",
+        "Armar un notebook con las fuentes de un tema y sacar de ahí el resumen, el documento o el audio.",
+        "Saber cuándo cambiar de modelo y cuándo no vale la pena."
+      ],
+      "prompts": [
+        {
+          "tag": "Búsqueda",
+          "text": "Busca en mis archivos y correos qué se acordó con [cliente] en los últimos dos meses y cítame las fuentes."
+        },
+        {
+          "tag": "Contexto",
+          "text": "Con esta carpeta de SharePoint, dime en qué se diferencian las tres propuestas y cuál conviene."
+        },
+        {
+          "tag": "Notebooks",
+          "text": "Con las fuentes de este notebook, arma un resumen ejecutivo de una página para gerencia."
+        },
+        {
+          "tag": "Notebooks",
+          "text": "Con este notebook, genera el mapa mental del tema y márcame lo que quedó sin respuesta."
+        },
+        {
+          "tag": "Puesta al día",
+          "text": "Dime qué pasó esta semana en los proyectos donde estoy, con lo que necesita respuesta mía."
+        },
+        {
+          "tag": "Visual",
+          "text": "Arma una infografía con estos datos aplicando el kit de marca de la empresa."
+        }
+      ],
+      "baIntro": "El caso de la sesión: preparar la reunión de un cliente al que no le hemos escrito en tres meses.",
+      "before": "Buscar en el correo, abrir tres carpetas de SharePoint, revisar el chat de Teams y reconstruir a mano en qué quedó la conversación.",
+      "beforeTime": "Se busca en cuatro lugares distintos",
+      "after": "Preguntar en el chat con las fuentes puestas, revisar las citas que devuelve y dejar el notebook armado para la próxima.",
+      "afterTime": "Una pregunta con fuentes citadas",
+      "steps": [
+        {
+          "title": "Apunta a la fuente antes de preguntar",
+          "description": "Con el menú de contexto adjuntas el archivo, la carpeta, la lista de SharePoint o la reunión. Sin fuente, Copilot contesta de forma general y sirve poco."
+        },
+        {
+          "title": "Revisa las citas",
+          "description": "Cada respuesta trae los documentos de donde salió. Ahora se abren dentro del mismo chat, así que revisar la fuente ya no cuesta nada."
+        },
+        {
+          "title": "Arma un notebook para los temas que vuelven",
+          "description": "Si un tema se repite todos los meses, junta ahí sus fuentes: el notebook queda listo para pedirle el resumen, el documento o el audio cada vez."
+        },
+        {
+          "title": "Cambia de modelo cuando el trabajo es largo",
+          "description": "Para redactar y resumir, el modelo rápido. Para análisis de varios pasos, escoge el modelo de razonamiento en el selector."
+        }
+      ],
+      "roles": [
+        {
+          "role": "Comercial",
+          "task": "Preparar reuniones",
+          "detail": "Recupera el estado de la relación con un cliente sin abrir cinco carpetas."
+        },
+        {
+          "role": "Talento humano",
+          "task": "Consultas del equipo",
+          "detail": "Arma un notebook con las políticas vigentes y responde con la fuente citada."
+        },
+        {
+          "role": "Proyectos",
+          "task": "Informe de avance",
+          "detail": "Junta actas, correos y archivos del proyecto y saca el estado de la semana."
+        }
+      ],
+      "mistakes": [
+        {
+          "bad": "Preguntar sin adjuntar ninguna fuente y creerle a la respuesta.",
+          "good": "Apuntar a un archivo, carpeta o reunión y revisar las citas que devuelve."
+        },
+        {
+          "bad": "Cambiar de modelo para cualquier cosa \"por si acaso\".",
+          "good": "Usar el modelo de razonamiento solo cuando la tarea tiene varios pasos."
+        },
+        {
+          "bad": "Pegar en el chat información de un cliente que no está en el entorno de la empresa.",
+          "good": "Trabajar con archivos que ya viven en OneDrive o SharePoint y seguir la política de datos."
+        }
+      ],
+      "mockTitle": "Copilot Chat",
+      "mockPrompt": "¿Qué se acordó con este cliente en los últimos dos meses?",
+      "mockReply": "Tres acuerdos, con 4 fuentes citadas. El de precios quedó sin confirmar."
+    },
     {
       "slug": "word",
       "name": "Copilot en Word",
@@ -148,12 +279,13 @@ export const copilot: PlatformSeed = {
       "color": "#2B6FE3",
       "level": "Básico",
       "summary": "Armar una propuesta para un cliente, reescribir un comunicado interno y resumir contratos largos sin salir del archivo.",
-      "intro": "Word es el mejor lugar para empezar: uno ve el resultado de una y todo se puede editar. Aquí pasas de las notas de la reunión a un documento que ya se puede mostrar.",
+      "intro": "Word es el mejor lugar para empezar dentro de Office: uno ve el resultado de una y todo se puede editar. Aquí pasas de las notas de la reunión a un documento que ya se puede mostrar.",
       "meta": "6 prompts · 35 min",
       "outcomes": [
         "Pasar de las notas de la reunión a una propuesta armada, con alcance, tiempos y precio.",
         "Reescribir un comunicado para el equipo en lenguaje claro, sin frases de manual.",
-        "Resumir un contrato largo y sacar lo que la empresa se compromete a cumplir."
+        "Resumir un contrato largo y sacar lo que la empresa se compromete a cumplir.",
+        "Aplicar de una todos los comentarios de una revisión con el modo agente."
       ],
       "prompts": [
         {
@@ -169,12 +301,12 @@ export const copilot: PlatformSeed = {
           "text": "Reescribe este comunicado para el equipo operativo: frases cortas, sin palabras de manual."
         },
         {
-          "tag": "Estructura",
-          "text": "Convierte estas notas de la reunión en un acta con acuerdos, responsable y fecha."
+          "tag": "Modo agente",
+          "text": "Aplica los comentarios de la revisión, unifica el tono en todo el documento y déjame la lista de lo que cambiaste."
         },
         {
-          "tag": "Variantes",
-          "text": "Escribe 3 versiones del correo de presentación: una formal, una cercana y una breve."
+          "tag": "Estructura",
+          "text": "Convierte estas notas de la reunión en un acta con acuerdos, responsable y fecha."
         },
         {
           "tag": "Revisión",
@@ -194,6 +326,10 @@ export const copilot: PlatformSeed = {
         {
           "title": "Di para quién es antes de pedir",
           "description": "\"Para un cliente corporativo, máximo 400 palabras\" cambia por completo lo que sale."
+        },
+        {
+          "title": "Usa el modo agente para los cambios de varios pasos",
+          "description": "Cuando el encargo es \"aplica los comentarios y unifica el tono\", el modo agente lo hace dentro del archivo y te muestra qué tocó. El chat solo te devolvería texto para pegar."
         },
         {
           "title": "Corrige sobre lo que ya salió",
@@ -227,6 +363,10 @@ export const copilot: PlatformSeed = {
           "good": "Decir cliente, alcance, fechas y extensión; después corregir sobre el resultado."
         },
         {
+          "bad": "Dejar el modo agente suelto sobre el documento final sin revisar qué cambió.",
+          "good": "Revisar la lista de cambios que reporta y aceptar solo lo que corresponde."
+        },
+        {
           "bad": "Enviar el documento sin leerlo completo.",
           "good": "Revisar precios, nombres y fechas: el documento lo firma la empresa, no Copilot."
         },
@@ -246,13 +386,14 @@ export const copilot: PlatformSeed = {
       "abbr": "E",
       "color": "#137A4C",
       "level": "Intermedio",
-      "summary": "Leer el informe de ventas, armar fórmulas, encontrar los datos raros y elegir el gráfico que sirve.",
-      "intro": "Excel es donde más ayuda y donde más hay que revisar. Aquí aprendes a preguntarle a tu hoja y a leer con criterio lo que responde.",
+      "summary": "Leer el informe de ventas, armar fórmulas, encontrar los datos raros y dejar las reglas del archivo escritas para que todos trabajen igual.",
+      "intro": "Excel es donde más ayuda y donde más hay que revisar. Aquí aprendes a preguntarle a tu hoja, a leer con criterio lo que responde y a usar el modo agente sin perder el control del archivo.",
       "meta": "6 prompts · 45 min",
       "outcomes": [
         "Entender en dos frases un informe que te mandó otra área.",
         "Crear la columna de margen o de promedio y entender la fórmula que quedó.",
-        "Encontrar los datos raros del mes y elegir el gráfico correcto para mostrarlos."
+        "Encontrar los datos raros del mes y elegir el gráfico correcto para mostrarlos.",
+        "Dejar escritas las reglas del archivo para que el cierre salga igual todos los meses."
       ],
       "prompts": [
         {
@@ -264,16 +405,16 @@ export const copilot: PlatformSeed = {
           "text": "Crea una columna con el margen por producto y explícame la fórmula que usaste."
         },
         {
+          "tag": "Modo agente",
+          "text": "Limpia esta base, calcula el margen por producto y déjame el resumen por línea en una hoja nueva."
+        },
+        {
           "tag": "Calidad",
           "text": "Encuentra los datos raros en la columna de ventas y dime en qué filas están."
         },
         {
-          "tag": "Visualización",
-          "text": "Dime qué gráfico sirve para comparar ventas por mes y por línea, y por qué."
-        },
-        {
-          "tag": "Limpieza",
-          "text": "Separa esta columna en nombre, ciudad y número de documento, y quita los espacios de más."
+          "tag": "Reglas",
+          "text": "Escribe en la hoja de reglas cómo se nombran las columnas y qué fórmula se usa para el margen en este archivo."
         },
         {
           "tag": "Proyección",
@@ -288,7 +429,7 @@ export const copilot: PlatformSeed = {
       "steps": [
         {
           "title": "Convierte el rango en tabla",
-          "description": "Selecciona los datos y usa Insertar › Tabla. Copilot necesita encabezados claros y una sola tabla por hoja."
+          "description": "Selecciona los datos y usa Insertar › Tabla. Copilot necesita encabezados claros y una sola tabla por hoja. El archivo debe estar en OneDrive o SharePoint, pero ya no hace falta tener el autoguardado activado."
         },
         {
           "title": "Primero pregunta, después calcula",
@@ -297,6 +438,10 @@ export const copilot: PlatformSeed = {
         {
           "title": "Pide la fórmula, no solo el resultado",
           "description": "Cuando agregue una columna, pídele la fórmula: así se puede revisar y volver a usar el mes siguiente."
+        },
+        {
+          "title": "Deja las reglas del archivo escritas",
+          "description": "En la hoja de reglas del libro se anota cómo se nombran las columnas y qué convenciones se usan. Copilot las respeta y el cierre queda igual para todo el que abra el archivo."
         },
         {
           "title": "Revisa dos filas a mano",
@@ -326,6 +471,10 @@ export const copilot: PlatformSeed = {
           "good": "Usar una tabla con encabezados únicos y sin filas vacías en el medio."
         },
         {
+          "bad": "Soltar el modo agente sobre el archivo bueno del cierre.",
+          "good": "Sacar una copia, dejar que trabaje ahí y revisar los pasos que reporta antes de llevarlo al original."
+        },
+        {
           "bad": "Aceptar una proyección sin saber de dónde salió.",
           "good": "Pedir siempre el método y el periodo que usó para proyectar."
         },
@@ -345,13 +494,14 @@ export const copilot: PlatformSeed = {
       "abbr": "P",
       "color": "#C2410C",
       "level": "Intermedio",
-      "summary": "Pasar un informe a presentación, ordenar el mensaje y recortar un mazo largo para gerencia.",
-      "intro": "PowerPoint sirve para transformar, no para inventar: dale contenido que ya existe y pídele estructura.",
-      "meta": "5 prompts · 30 min",
+      "summary": "Pasar un informe a presentación, armar el mazo desde una reunión de Teams y dejarlo con la plantilla de la empresa.",
+      "intro": "PowerPoint sirve para transformar, no para inventar: dale contenido que ya existe y pídele estructura. Ahora ese contenido puede ser un documento, una carpeta, un mazo anterior o una reunión.",
+      "meta": "6 prompts · 35 min",
       "outcomes": [
         "Pasar el informe del mes a un mazo con notas para quien expone.",
+        "Armar la presentación de cierre desde la reunión de Teams donde se discutió.",
         "Recortar una presentación larga a la versión de 3 diapositivas para gerencia.",
-        "Reordenar las diapositivas para que lo importante quede de primero."
+        "Dejar el mazo con la plantilla y los colores aprobados de la empresa."
       ],
       "prompts": [
         {
@@ -359,16 +509,20 @@ export const copilot: PlatformSeed = {
           "text": "Con este documento, arma una presentación de 8 diapositivas con notas del expositor."
         },
         {
+          "tag": "Modo agente",
+          "text": "Con los archivos de esta carpeta y la reunión del comité, arma el mazo de cierre del trimestre."
+        },
+        {
+          "tag": "Marca",
+          "text": "Aplica el kit de marca de la empresa a toda la presentación y revisa el contraste de los títulos."
+        },
+        {
           "tag": "Síntesis",
           "text": "Resume esta presentación en 3 diapositivas para el comité de gerencia."
         },
         {
-          "tag": "Narrativa",
-          "text": "Reorganiza esta diapositiva para que el mensaje quede arriba y las cifras queden como soporte."
-        },
-        {
-          "tag": "Contenido",
-          "text": "Convierte este párrafo en 4 viñetas de máximo 10 palabras cada una."
+          "tag": "Reutilización",
+          "text": "Toma el estilo y la estructura de esta presentación anterior y aplícalos al contenido nuevo."
         },
         {
           "tag": "Cierre",
@@ -378,7 +532,7 @@ export const copilot: PlatformSeed = {
       "baIntro": "El caso de la sesión: llevar el informe del mes al comité de gerencia.",
       "before": "Copiar y pegar párrafos del informe, buscar una plantilla, acomodar cada diapositiva y escribir las notas de afán, cinco minutos antes.",
       "beforeTime": "Notas improvisadas",
-      "after": "Generar el mazo desde el informe, arreglar el orden del mensaje y pulir a mano las dos diapositivas que se presentan.",
+      "after": "Generar el mazo desde el informe y la reunión, aplicar el kit de marca y pulir a mano las dos diapositivas que se presentan.",
       "afterTime": "Notas del expositor incluidas",
       "steps": [
         {
@@ -386,8 +540,16 @@ export const copilot: PlatformSeed = {
           "description": "El mazo sale como esté el informe. Si el informe está claro, la presentación también."
         },
         {
+          "title": "Apunta a la fuente correcta",
+          "description": "Además de un archivo, puedes partir de una carpeta de OneDrive, de una biblioteca de SharePoint, de un mazo anterior o de una reunión de Teams."
+        },
+        {
           "title": "Di cuántas diapositivas quieres",
           "description": "Pedir \"8 diapositivas\" evita mazos de 25 láminas que después hay que recortar."
+        },
+        {
+          "title": "Aplica el kit de marca",
+          "description": "El selector de marca deja el mazo con la plantilla y los colores aprobados. Es la diferencia entre un borrador interno y algo que se le muestra a un cliente."
         },
         {
           "title": "Arregla el orden a mano",
@@ -418,11 +580,15 @@ export const copilot: PlatformSeed = {
       "mistakes": [
         {
           "bad": "Pedir una presentación sobre un tema, sin documento de dónde sacarla.",
-          "good": "Partir siempre de un archivo con el contenido ya revisado."
+          "good": "Partir siempre de un archivo, una carpeta o una reunión con el contenido ya revisado."
         },
         {
           "bad": "Dejar el diseño automático tal cual en presentaciones para clientes.",
-          "good": "Aplicar la plantilla de la empresa y revisar jerarquía y contraste."
+          "good": "Aplicar el kit de marca de la empresa y revisar jerarquía y contraste."
+        },
+        {
+          "bad": "Usar imágenes generadas para gráficos o cifras.",
+          "good": "Generar imágenes solo para lo decorativo; las cifras van en gráficos hechos con los datos reales."
         },
         {
           "bad": "Meter todo el texto generado en cada diapositiva.",
@@ -446,6 +612,7 @@ export const copilot: PlatformSeed = {
       "outcomes": [
         "Salir del comité con los acuerdos escritos y con responsable asignado.",
         "Ponerte al día de una reunión a la que no alcanzaste a entrar.",
+        "Sacar el resumen sin dejar guardada la grabación, cuando el tema es sensible.",
         "Mandar el mensaje de seguimiento al equipo en un solo paso."
       ],
       "prompts": [
@@ -473,12 +640,16 @@ export const copilot: PlatformSeed = {
       "baIntro": "El caso de la sesión: el comité de los lunes.",
       "before": "Alguien toma notas mientras intenta participar, el acta sale al otro día y los acuerdos quedan a medias.",
       "beforeTime": "Acta al día siguiente",
-      "after": "Se activa la transcripción, al cerrar se piden los compromisos y el seguimiento sale en la misma reunión.",
+      "after": "Se activa el resumen al empezar, al cerrar se piden los compromisos y el seguimiento sale en la misma reunión.",
       "afterTime": "Acuerdos escritos el mismo día",
       "steps": [
         {
-          "title": "Activa la transcripción al empezar",
+          "title": "Activa el resumen al empezar",
           "description": "Sin transcripción no hay resumen. Avísales a los que están en la reunión: es parte del acuerdo interno."
+        },
+        {
+          "title": "Si el tema es sensible, usa el resumen sin guardar",
+          "description": "Teams permite generar el recap sin dejar guardada la grabación ni la transcripción. Sirve para temas de personal o negociaciones, donde no se quiere conservar el contenido."
         },
         {
           "title": "Pregunta durante la reunión",
@@ -490,7 +661,7 @@ export const copilot: PlatformSeed = {
         },
         {
           "title": "Manda el seguimiento antes de colgar",
-          "description": "El mensaje que sale en caliente es el que la gente sí cumple."
+          "description": "El mensaje que sale en caliente es el que la gente sí cumple. Si de la reunión sale una presentación, se puede generar el mazo directo desde ahí."
         }
       ],
       "roles": [
@@ -516,6 +687,10 @@ export const copilot: PlatformSeed = {
           "good": "Avisar siempre y seguir la política interna de grabación y datos."
         },
         {
+          "bad": "Guardar la grabación de reuniones sensibles solo para poder resumirlas.",
+          "good": "Usar el resumen sin retención cuando el contenido no se debe conservar."
+        },
+        {
           "bad": "Confiar en el resumen para temas de personal o legales.",
           "good": "Confirmar los acuerdos delicados con el responsable antes de mandar el acta."
         },
@@ -535,11 +710,12 @@ export const copilot: PlatformSeed = {
       "abbr": "O",
       "color": "#0E7490",
       "level": "Básico",
-      "summary": "Resumir hilos largos, saber qué se responde primero y contestar con el tono de la empresa.",
-      "intro": "El correo es donde se va la mañana. Este módulo es para recuperar el contexto rápido y responder bien, no solo rápido.",
-      "meta": "5 prompts · 25 min",
+      "summary": "Resumir hilos largos, preguntarle a toda la bandeja, saber qué se responde primero y contestar con el tono de la empresa.",
+      "intro": "El correo es donde se va la mañana. Este módulo es para recuperar el contexto rápido y responder bien, no solo rápido. Ahora Copilot ya no se limita al hilo abierto: razona sobre la bandeja y el calendario completos.",
+      "meta": "6 prompts · 30 min",
       "outcomes": [
         "Entender un hilo de 20 correos de una negociación sin leerlo completo.",
+        "Preguntarle a toda la bandeja y al calendario, no solo al correo que tienes abierto.",
         "Contestarle a un cliente con el tono correcto sin escribir desde cero.",
         "Saber cuál correo va primero: el que tiene a alguien esperando."
       ],
@@ -549,16 +725,20 @@ export const copilot: PlatformSeed = {
           "text": "Resume este hilo y dime exactamente qué se espera de mí."
         },
         {
+          "tag": "Bandeja",
+          "text": "Revisa mi bandeja y mi calendario de esta semana y dime qué compromisos adquirí que todavía no he cumplido."
+        },
+        {
           "tag": "Redacción",
           "text": "Escribe una respuesta amable diciendo que no podemos cumplir esa fecha y propón dos alternativas."
         },
         {
-          "tag": "Prioridad",
-          "text": "Ordena los correos sin responder de esta semana según qué tan urgente es para el cliente."
+          "tag": "Tono",
+          "text": "Reescribe solo este párrafo más firme pero respetuoso, sin tocar el resto del correo."
         },
         {
-          "tag": "Tono",
-          "text": "Reescribe este borrador más firme pero respetuoso, en máximo 5 líneas."
+          "tag": "Preparación",
+          "text": "Prepárame para la reunión de mañana: contexto, pendientes y documentos que debería llevar."
         },
         {
           "tag": "Seguimiento",
@@ -568,7 +748,7 @@ export const copilot: PlatformSeed = {
       "baIntro": "El caso de la sesión: volver de vacaciones con la bandeja llena de cotizaciones y reclamos.",
       "before": "Abrir hilo por hilo desde el más reciente, perder el hilo de lo que ya se había acordado y responder por orden de llegada.",
       "beforeTime": "Se responde por orden de llegada",
-      "after": "Pedir el orden de la semana, resumir los hilos largos y responder primero lo que tiene a alguien esperando.",
+      "after": "Preguntarle a la bandeja completa qué quedó frenado, resumir los hilos largos y responder primero lo que tiene a alguien esperando.",
       "afterTime": "Se responde por lo que está frenado",
       "steps": [
         {
@@ -576,12 +756,16 @@ export const copilot: PlatformSeed = {
           "description": "En un hilo largo, el resumen te dice si toca leerlo completo o solo responder una línea."
         },
         {
+          "title": "Pregúntale a la bandeja, no al correo",
+          "description": "El chat de Copilot en Outlook cruza toda la bandeja, el calendario y las reuniones. \"¿Qué prometí esta semana?\" es una pregunta que antes no se podía hacer."
+        },
+        {
           "title": "Pregunta qué se espera de ti",
           "description": "Es la pregunta más útil del módulo: separa lo informativo de lo que hay que hacer."
         },
         {
-          "title": "Escribe diciendo el tono",
-          "description": "\"Amable pero firme, máximo 5 líneas\" da mejores correos que \"responde esto\"."
+          "title": "Reescribe solo el pedazo que no sirve",
+          "description": "Selecciona el párrafo y pide el cambio ahí. No hay que volver a generar el correo entero para arreglar dos líneas."
         },
         {
           "title": "Revisa antes de enviar",
@@ -611,6 +795,10 @@ export const copilot: PlatformSeed = {
           "good": "Revisar nombres, fechas y lo que se está prometiendo antes de enviar."
         },
         {
+          "bad": "Volver a generar todo el correo porque un párrafo quedó mal.",
+          "good": "Seleccionar ese párrafo y pedir la reescritura solo ahí."
+        },
+        {
           "bad": "Usar el mismo tono para un cliente y para el grupo interno.",
           "good": "Decir en el prompt para quién es el correo y con qué tono."
         },
@@ -624,18 +812,123 @@ export const copilot: PlatformSeed = {
       "mockReply": "18 mensajes. Te piden confirmar el alcance antes del jueves."
     },
     {
+      "slug": "cowork",
+      "name": "Copilot Cowork",
+      "shortName": "Cowork",
+      "abbr": "CW",
+      "color": "#B45309",
+      "level": "Avanzado",
+      "summary": "Encargarle una tarea de varias horas que cruza correos, archivos y reuniones, y recibir el entregable terminado.",
+      "intro": "Cowork no responde preguntas: hace el trabajo. Se le encarga una tarea larga, planea los pasos, usa varias aplicaciones y devuelve el resultado. Se cobra por uso, así que el módulo es tanto de técnica como de criterio.",
+      "meta": "5 prompts · 45 min",
+      "outcomes": [
+        "Distinguir qué tarea vale la pena mandarle a Cowork y cuál se resuelve en el chat.",
+        "Escribir un encargo con entregable, fuentes y criterios de calidad.",
+        "Revisar el plan que propone antes de dejarlo correr.",
+        "Entender el consumo de créditos y cómo pedirlos en tu área."
+      ],
+      "prompts": [
+        {
+          "tag": "Encargo",
+          "text": "Revisa los contratos de esta carpeta y arma una matriz con vencimiento, valor, responsable y cláusula de renovación."
+        },
+        {
+          "tag": "Investigación",
+          "text": "Con los correos y actas del proyecto [X], arma el informe de estado con avances, riesgos y decisiones pendientes."
+        },
+        {
+          "tag": "Consolidación",
+          "text": "Junta los reportes de las 5 sucursales de este mes en un solo archivo con el mismo formato y señálame las diferencias."
+        },
+        {
+          "tag": "Plan",
+          "text": "Antes de ejecutar, muéstrame el plan de pasos y las fuentes que vas a usar."
+        },
+        {
+          "tag": "Entrega",
+          "text": "Entrégamelo como documento de Word con resumen ejecutivo de una página y el detalle en anexo."
+        }
+      ],
+      "baIntro": "El caso de la sesión: la revisión anual de los contratos de proveedores.",
+      "before": "Una persona abre los 40 contratos uno por uno, copia vencimientos y valores a una hoja y se le va la semana.",
+      "beforeTime": "Una semana de trabajo manual",
+      "after": "Se encarga la matriz con los criterios escritos, se revisa el plan, corre solo y la persona verifica una muestra de contratos.",
+      "afterTime": "Una revisión por muestra",
+      "steps": [
+        {
+          "title": "Escoge una tarea que de verdad sea larga",
+          "description": "Si la tarea se resuelve con dos preguntas en el chat, hazla en el chat. Cowork es para lo que hoy toma horas y cruza varias aplicaciones."
+        },
+        {
+          "title": "Escribe el encargo como se lo darías a alguien nuevo",
+          "description": "Qué entregable quieres, en qué formato, con qué fuentes y qué se considera bien hecho. Un encargo vago consume créditos y devuelve algo inservible."
+        },
+        {
+          "title": "Revisa el plan antes de que corra",
+          "description": "Cowork propone los pasos. Ahí se corrigen las suposiciones equivocadas, que es mucho más barato que corregir el resultado."
+        },
+        {
+          "title": "Verifica por muestra",
+          "description": "No hay que revisar los 40 contratos, pero sí cinco. Si la muestra cuadra, el entregable es confiable."
+        },
+        {
+          "title": "Mira lo que consumió",
+          "description": "Cada tarea gasta créditos según el modelo, el contexto y la duración. Anota el consumo de las primeras tareas para poder presupuestar el del área."
+        }
+      ],
+      "roles": [
+        {
+          "role": "Administración",
+          "task": "Revisión de contratos",
+          "detail": "Arma la matriz de vencimientos y valores de una carpeta completa de proveedores."
+        },
+        {
+          "role": "Proyectos",
+          "task": "Informe de cierre",
+          "detail": "Reconstruye el estado del proyecto desde correos, actas y archivos dispersos."
+        },
+        {
+          "role": "Gerencia",
+          "task": "Consolidación mensual",
+          "detail": "Unifica los reportes de varias sucursales en un solo formato comparable."
+        }
+      ],
+      "mistakes": [
+        {
+          "bad": "Mandarle a Cowork cualquier pregunta porque \"es lo más nuevo\".",
+          "good": "Usar el chat para lo corto y reservar Cowork para las tareas de horas."
+        },
+        {
+          "bad": "Lanzar la tarea sin mirar el plan que propone.",
+          "good": "Leer el plan, corregir supuestos y ahí sí dejarlo correr."
+        },
+        {
+          "bad": "Aceptar el entregable completo sin verificar nada porque \"se ve terminado\".",
+          "good": "Verificar una muestra contra las fuentes originales antes de usarlo."
+        },
+        {
+          "bad": "Correr tareas grandes sin saber cuántos créditos tiene el área.",
+          "good": "Acordar el presupuesto de créditos antes y medir el consumo de las primeras tareas."
+        }
+      ],
+      "mockTitle": "Cowork · Revisión de contratos",
+      "mockPrompt": "Revisa los contratos de esta carpeta y arma la matriz de vencimientos.",
+      "mockReply": "Plan: leer 40 contratos, extraer 6 campos, armar el archivo. ¿Lo ejecuto?"
+    },
+    {
       "slug": "studio",
-      "name": "Copilot Studio",
-      "shortName": "Copilot Studio",
-      "abbr": "CS",
+      "name": "Agentes: Agent Builder y Copilot Studio",
+      "shortName": "Agentes",
+      "abbr": "AG",
       "color": "#A32079",
       "level": "Avanzado",
-      "summary": "Armar un agente que responda con las políticas y los documentos de tu área.",
-      "intro": "Módulo opcional para quien ya maneja lo anterior. Aquí se arma un agente con fuentes de la empresa, límites claros y alguien encargado de mantenerlo.",
-      "meta": "4 prompts · 50 min",
+      "summary": "Armar un agente que responda con las políticas y los documentos de tu área, y publicarlo para el resto de la empresa.",
+      "intro": "Módulo opcional para quien ya maneja lo anterior. Un agente sencillo se arma desde el mismo Copilot con Agent Builder; Copilot Studio se usa cuando hay que conectar sistemas o lógica más compleja. En los dos casos lo difícil no es armarlo: es definir el alcance y mantenerlo.",
+      "meta": "5 prompts · 50 min",
       "outcomes": [
         "Definir para qué sirve el agente y qué no responde, antes de armarlo.",
-        "Conectar las políticas vigentes de la empresa y mantenerlas al día.",
+        "Conectar las políticas vigentes de la empresa, incluidas listas de SharePoint, y mantenerlas al día.",
+        "Publicarlo en la tienda interna de agentes para que el resto de la empresa lo use.",
         "Saber si de verdad bajaron las preguntas repetidas que llegan al área."
       ],
       "prompts": [
@@ -646,6 +939,10 @@ export const copilot: PlatformSeed = {
         {
           "tag": "Alcance",
           "text": "Define el tono y los límites del agente: qué responde y qué pasa a una persona."
+        },
+        {
+          "tag": "Fuentes",
+          "text": "Usa esta lista de SharePoint como fuente y dime qué columnas vas a tener en cuenta para responder."
         },
         {
           "tag": "Pruebas",
@@ -659,7 +956,7 @@ export const copilot: PlatformSeed = {
       "baIntro": "El caso de la sesión: las mismas preguntas de vacaciones y certificados que le llegan a talento humano cada mes.",
       "before": "Una persona del área responde una por una las preguntas de vacaciones, certificados y permisos.",
       "beforeTime": "Las mismas preguntas todos los meses",
-      "after": "El agente responde con las políticas vigentes y pasa a una persona solo lo que se sale del alcance.",
+      "after": "El agente responde con las políticas vigentes, queda publicado en la tienda interna y pasa a una persona solo lo que se sale del alcance.",
       "afterTime": "Una revisión mensual de las fuentes",
       "steps": [
         {
@@ -667,16 +964,20 @@ export const copilot: PlatformSeed = {
           "description": "Define qué pregunta repetida vas a bajar. Un agente sin eso no se sostiene."
         },
         {
+          "title": "Escoge la herramienta según el alcance",
+          "description": "Si solo hay que responder con documentos y listas, Agent Builder dentro de Copilot alcanza. Si hay que conectar el ERP o disparar procesos, es Copilot Studio."
+        },
+        {
           "title": "Pocas fuentes y vigentes",
-          "description": "Tres documentos al día sirven más que veinte desactualizados."
+          "description": "Tres documentos al día sirven más que veinte desactualizados. Una lista de SharePoint también sirve como fuente y suele estar más al día que un PDF."
         },
         {
           "title": "Escribe qué NO debe responder",
           "description": "Salarios, sanciones y casos legales pasan a una persona. Déjalo escrito."
         },
         {
-          "title": "Ponle un responsable",
-          "description": "Alguien tiene que revisar cada mes las preguntas sin respuesta y actualizar los documentos."
+          "title": "Pruébalo, publícalo y ponle responsable",
+          "description": "Primero un grupo pequeño; después se envía a revisión del administrador para que quede en la tienda interna de agentes. Alguien tiene que revisar cada mes las preguntas sin respuesta."
         }
       ],
       "roles": [
@@ -702,12 +1003,16 @@ export const copilot: PlatformSeed = {
           "good": "Escribir primero qué responde, qué pasa a una persona y quién lo mantiene."
         },
         {
+          "bad": "Irse a Copilot Studio para un agente que solo consulta tres documentos.",
+          "good": "Empezar con Agent Builder y subir a Studio solo si toca conectar sistemas."
+        },
+        {
           "bad": "Conectar carpetas completas con documentos viejos.",
           "good": "Escoger pocas fuentes vigentes y revisarlas cada mes."
         },
         {
           "bad": "Soltarlo a toda la empresa sin probarlo.",
-          "good": "Probarlo con un grupo pequeño y corregir con preguntas reales."
+          "good": "Probarlo con un grupo pequeño y corregir con preguntas reales antes de publicarlo."
         }
       ],
       "mockTitle": "Agente · Talento humano",
