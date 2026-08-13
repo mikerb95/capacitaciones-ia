@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F7FB; --surface:#FFFFFF; --surface2:#EEF3F9; --border:#DDE5EF;
+  --text:#0E1726; --muted:#5A6A7E; --faint:#8695A8;
+  --primary:#0B63CE; --primary-strong:#08498F; --primary-soft:#E6F0FD;
+  --accent:#0FA97A; --accent-soft:#DCF6EC;
+  --shadow:0 1px 2px rgba(16,32,56,.06),0 8px 24px rgba(16,32,56,.06);
+  --shadow-lift:0 2px 4px rgba(16,32,56,.08),0 18px 40px rgba(11,99,206,.14);
+}
+body[data-theme="dark"]{
+  --bg:#0A1120; --surface:#111B2D; --surface2:#16223A; --border:#243350;
+  --text:#E8EEF8; --muted:#9DACC2; --faint:#7C8CA6;
+  --primary:#4D9BFF; --primary-strong:#7FB8FF; --primary-soft:#12294A;
+  --accent:#2FD3A0; --accent-soft:#0F3A2E;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+  --shadow-lift:0 2px 6px rgba(0,0,0,.45),0 20px 44px rgba(0,0,0,.5);
+}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',Segoe UI,system-ui,sans-serif;-webkit-font-smoothing:antialiased;transition:background .28s ease,color .28s ease}
+a{color:var(--primary);text-decoration:none}
+a:hover{color:var(--primary-strong);text-decoration:underline}
+::selection{background:var(--primary-soft);color:var(--text)}
+@keyframes pulseDot{0%,100%{opacity:.35;transform:scale(1)}50%{opacity:1;transform:scale(1.35)}}
+@keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+
+<div style="display:flex;flex-direction:column;min-height:100vh;background:var(--bg)">
+
+  <header style="display:{{ topbarDisplay }};align-items:center;gap:24px;padding:0 28px;height:64px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:40">
+    <div style="display:flex;align-items:center;gap:11px;cursor:pointer" onClick="{{ goHome }}">
+      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="1" width="24" height="24" rx="7" fill="var(--primary)"></rect><circle cx="9" cy="9" r="2.4" fill="#fff"></circle><circle cx="17.5" cy="16.5" r="2.4" fill="var(--accent)"></circle><path d="M9 9 L17.5 16.5" stroke="#fff" stroke-opacity=".65" stroke-width="1.4"></path></svg>
+      <span style="font-family:Geist,system-ui,sans-serif;font-weight:600;font-size:15px;letter-spacing:-.01em">Portal Copilot</span>
+    </div>
+    <nav style="display:flex;gap:6px;margin-left:8px">
+      <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="3">
+        <button onClick="{{ n.onGo }}" style="border:0;background:transparent;font:500 14px 'IBM Plex Sans',sans-serif;color:var(--muted);padding:8px 12px;border-radius:8px;cursor:pointer" style-hover="background:var(--surface2);color:var(--text)">{{ n.label }}</button>
+      </sc-for>
+    </nav>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="display:flex;align-items:center;gap:9px;padding:6px 12px;background:var(--surface2);border-radius:99px">
+        <span style="font:500 12.5px 'IBM Plex Sans',sans-serif;color:var(--muted)">Progreso</span>
+        <div style="width:78px;height:6px;border-radius:99px;background:var(--border);overflow:hidden"><div style="height:100%;width:{{ progressPct }}%;background:var(--accent);border-radius:99px;transition:width .5s cubic-bezier(.2,.8,.2,1)"></div></div>
+        <span style="font:600 12.5px Geist,sans-serif;color:var(--text);min-width:30px">{{ progressLabel }}</span>
+      </div>
+      <button onClick="{{ toggleTheme }}" aria-label="Cambiar tema" style="width:38px;height:38px;display:grid;place-items:center;border:1px solid var(--border);background:var(--surface);border-radius:10px;cursor:pointer;color:var(--muted)" style-hover="color:var(--text);border-color:var(--primary)">{{ themeIcon }}</button>
+    </div>
+  </header>
+
+  <div style="display:flex;flex:1;align-items:stretch">
+
+    <aside style="display:{{ sidebarDisplay }};flex-direction:column;width:274px;flex:none;background:var(--surface);border-right:1px solid var(--border);position:sticky;top:0;height:100vh;overflow-y:auto">
+      <div style="display:flex;align-items:center;gap:11px;padding:22px 22px 18px;cursor:pointer" onClick="{{ goHome }}">
+        <svg width="30" height="30" viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="1" width="24" height="24" rx="7" fill="var(--primary)"></rect><circle cx="9" cy="9" r="2.4" fill="#fff"></circle><circle cx="17.5" cy="16.5" r="2.4" fill="var(--accent)"></circle><path d="M9 9 L17.5 16.5" stroke="#fff" stroke-opacity=".65" stroke-width="1.4"></path></svg>
+        <div style="display:flex;flex-direction:column;gap:1px">
+          <span style="font-family:Geist,system-ui,sans-serif;font-weight:600;font-size:15px;letter-spacing:-.01em">Portal Copilot</span>
+          <span style="font-size:11.5px;color:var(--faint);letter-spacing:.02em">Capacitación interna</span>
+        </div>
+      </div>
+
+      <div style="margin:0 16px 18px;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--surface2)">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px">
+          <span style="font:500 12px 'IBM Plex Sans',sans-serif;color:var(--muted);letter-spacing:.03em;text-transform:uppercase">Tu progreso</span>
+          <span style="font:600 15px Geist,sans-serif;color:var(--accent)">{{ progressLabel }}</span>
+        </div>
+        <div style="height:7px;border-radius:99px;background:var(--border);overflow:hidden"><div style="height:100%;width:{{ progressPct }}%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:99px;transition:width .5s cubic-bezier(.2,.8,.2,1)"></div></div>
+        <div style="margin-top:8px;font-size:12.5px;color:var(--muted)">{{ progressDetail }}</div>
+      </div>
+
+      <div style="padding:0 12px 6px">
+        <div style="padding:0 10px 8px;font:500 11.5px 'IBM Plex Sans',sans-serif;color:var(--faint);letter-spacing:.06em;text-transform:uppercase">Contenido</div>
+        <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="3">
+          <button onClick="{{ n.onGo }}" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:transparent;padding:9px 10px;border-radius:9px;cursor:pointer;font:500 14px 'IBM Plex Sans',sans-serif;color:var(--muted)" style-hover="background:var(--surface2);color:var(--text)">
+            <span style="width:5px;height:5px;border-radius:99px;background:var(--border)"></span>{{ n.label }}
+          </button>
+        </sc-for>
+      </div>
+
+      <div style="padding:14px 12px 6px">
+        <div style="padding:0 10px 8px;font:500 11.5px 'IBM Plex Sans',sans-serif;color:var(--faint);letter-spacing:.06em;text-transform:uppercase">Módulos</div>
+        <sc-for list="{{ modules }}" as="m" hint-placeholder-count="6">
+          <button onClick="{{ m.onOpen }}" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:{{ m.navBg }};padding:8px 10px;border-radius:9px;cursor:pointer;font:500 14px 'IBM Plex Sans',sans-serif;color:var(--text);margin-bottom:2px" style-hover="background:var(--surface2)">
+            <span style="width:22px;height:22px;flex:none;border-radius:6px;display:grid;place-items:center;background:{{ m.tint }}">{{ m.glyphSm }}</span>
+            <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ m.shortName }}</span>
+            <span style="font-size:13px;color:var(--accent);font-weight:600">{{ m.check }}</span>
+          </button>
+        </sc-for>
+      </div>
+
+      <div style="flex:1"></div>
+      <div style="padding:12px 16px;border-top:1px solid var(--border)">
+        <div style="display:{{ meDisplay }};align-items:center;gap:9px;padding:8px 10px;background:var(--surface2);border-radius:10px;margin-bottom:10px">
+          <span style="width:26px;height:26px;flex:none;border-radius:99px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font:600 12px 'IBM Plex Sans',sans-serif">✓</span>
+          <span style="display:flex;flex-direction:column;min-width:0">
+            <span style="font:600 12.5px 'IBM Plex Sans',sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ meName }}</span>
+            <span style="font-size:11px;color:var(--faint)">{{ clientTag }}</span>
+          </span>
+        </div>
+        <button onClick="{{ goAdmin }}" style="display:flex;align-items:center;gap:9px;width:100%;text-align:left;border:1px solid var(--border);background:var(--surface);padding:9px 11px;border-radius:10px;cursor:pointer;font:600 13px 'IBM Plex Sans',sans-serif;color:var(--muted)" style-hover="border-color:var(--primary);color:var(--primary)">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6.5 2.5h3l.4 1.8 1.7.7 1.6-.9 1.5 2.6-1.3 1.2v1.8l1.3 1.2-1.5 2.6-1.6-.9-1.7.7-.4 1.8h-3l-.4-1.8-1.7-.7-1.6.9L1.3 11l1.3-1.2V8L1.3 6.8l1.5-2.6 1.6.9 1.7-.7z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"></path><circle cx="8" cy="8" r="1.9" stroke="currentColor" stroke-width="1.2"></circle></svg>
+          Panel del expositor
+        </button>
+      </div>
+      <div style="padding:12px 16px 16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <span style="font-size:12.5px;color:var(--faint)">Tema {{ themeName }}</span>
+        <button onClick="{{ toggleTheme }}" aria-label="Cambiar tema" style="width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--border);background:var(--surface);border-radius:10px;cursor:pointer;color:var(--muted)" style-hover="color:var(--text);border-color:var(--primary)">{{ themeIcon }}</button>
+      </div>
+    </aside>
+
+    <main ref="{{ mainRef }}" style="flex:1;min-width:0;height:100vh;overflow-y:auto;scroll-behavior:smooth">
+
+      <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <section style="position:relative;overflow:hidden;padding:78px 56px 66px;background:var(--surface);border-bottom:1px solid var(--border)">
+            <canvas ref="{{ canvasRef }}" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;opacity:.9;pointer-events:none"></canvas>
+            <div style="position:relative;max-width:940px">
+              <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 13px;border:1px solid var(--border);background:var(--surface2);border-radius:99px;font:500 12.5px 'IBM Plex Sans',sans-serif;color:var(--muted);margin-bottom:26px">
+                <span style="width:6px;height:6px;border-radius:99px;background:var(--accent);animation:pulseDot 2.4s ease-in-out infinite"></span>
+                Programa interno · 6 módulos · en el orden que quieras
+              </div>
+              <h1 style="font-family:Geist,system-ui,sans-serif;font-weight:600;font-size:60px;line-height:1.02;letter-spacing:-.035em;margin:0 0 20px;max-width:15ch;text-wrap:balance">Aprende a usar Copilot en tu trabajo del día a día</h1>
+              <p style="font-size:19px;line-height:1.55;color:var(--muted);margin:0 0 34px;max-width:56ch;text-wrap:pretty">Word, Excel, PowerPoint, Teams y Outlook, con los casos de todos los días: propuestas para clientes, informes de ventas, actas de comité y respuestas de correo.</p>
+              <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+                <button onClick="{{ goModulos }}" style="display:inline-flex;align-items:center;gap:10px;border:0;background:var(--primary);color:#fff;font:600 15px 'IBM Plex Sans',sans-serif;padding:14px 22px;border-radius:11px;cursor:pointer;box-shadow:var(--shadow);transition:transform .18s ease,box-shadow .18s ease" style-hover="transform:translateY(-2px);box-shadow:var(--shadow-lift)">
+                  Ver los módulos
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M3.5 8.5 8 13l4.5-4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                </button>
+                <button onClick="{{ goRecursos }}" style="border:1px solid var(--border);background:var(--surface);color:var(--text);font:600 15px 'IBM Plex Sans',sans-serif;padding:14px 20px;border-radius:11px;cursor:pointer;transition:border-color .18s ease" style-hover="border-color:var(--primary);color:var(--primary)">Ver guías y formatos</button>
+              </div>
+
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1px;margin-top:56px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden">
+                <div style="background:var(--surface);padding:20px 22px">
+                  <div style="font:600 30px Geist,sans-serif;letter-spacing:-.02em;color:var(--text)">6</div>
+                  <div style="font-size:13.5px;color:var(--muted);margin-top:4px;line-height:1.4">módulos, uno por herramienta</div>
+                </div>
+                <div style="background:var(--surface);padding:20px 22px">
+                  <div style="font:600 30px Geist,sans-serif;letter-spacing:-.02em;color:var(--text)">31</div>
+                  <div style="font-size:13.5px;color:var(--muted);margin-top:4px;line-height:1.4">prompts listos para copiar y pegar</div>
+                </div>
+                <div style="background:var(--surface);padding:20px 22px">
+                  <div style="font:600 30px Geist,sans-serif;letter-spacing:-.02em;color:var(--text)">5</div>
+                  <div style="font-size:13.5px;color:var(--muted);margin-top:4px;line-height:1.4">aplicaciones de Office donde ya está</div>
+                </div>
+                <div style="background:var(--surface);padding:20px 22px">
+                  <div style="font:600 30px Geist,sans-serif;letter-spacing:-.02em;color:var(--text)">18</div>
+                  <div style="font-size:13.5px;color:var(--muted);margin-top:4px;line-height:1.4">casos de uso por área de trabajo</div>
+                </div>
+              </div>
+              <p style="font-size:12px;color:var(--faint);margin:12px 0 0">Esto es lo que trae el programa. No prometemos porcentajes de ahorro: eso depende del caso y de quién lo use.</p>
+            </div>
+          </section>
+
+          <section ref="{{ modulosRef }}" style="padding:64px 56px 20px;max-width:1280px">
+            <div data-reveal style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:30px">
+              <div>
+                <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">
+                  <span style="width:22px;height:2px;background:var(--accent);border-radius:2px"></span>
+                  <span style="font:500 12px 'IBM Plex Sans',sans-serif;color:var(--accent);letter-spacing:.08em;text-transform:uppercase">Módulos temáticos</span>
+                </div>
+                <h2 style="font-family:Geist,sans-serif;font-weight:600;font-size:34px;letter-spacing:-.025em;margin:0 0 8px">Elige por herramienta</h2>
+                <p style="font-size:16px;color:var(--muted);margin:0;max-width:62ch;line-height:1.55">Cada módulo trae prompts para copiar, un antes y después de un caso real, el paso a paso y los errores que más se ven. Puedes hacerlos en el orden que quieras.</p>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted);white-space:nowrap">
+                <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:3px;background:var(--accent)"></span>Completado</span>
+                <span style="display:inline-flex;align-items:center;gap:6px;margin-left:10px"><span style="width:9px;height:9px;border-radius:3px;border:1.5px solid var(--border)"></span>Pendiente</span>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px">
+              <sc-for list="{{ modules }}" as="m" hint-placeholder-count="6">
+                <article onClick="{{ m.onOpen }}" tabIndex="0" onKeyDown="{{ m.onKey }}" data-reveal style="position:relative;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px;cursor:pointer;box-shadow:var(--shadow);transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s ease,border-color .2s ease" style-hover="transform:translateY(-4px);box-shadow:var(--shadow-lift);border-color:var(--primary)">
+                  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px">
+                    <span style="width:46px;height:46px;border-radius:13px;display:grid;place-items:center;background:{{ m.tint }}">{{ m.glyph }}</span>
+                    <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:99px;font:600 11.5px 'IBM Plex Sans',sans-serif;letter-spacing:.02em;background:{{ m.levelBg }};color:{{ m.levelFg }}">{{ m.level }}</span>
+                  </div>
+                  <h3 style="font-family:Geist,sans-serif;font-weight:600;font-size:19px;letter-spacing:-.015em;margin:0 0 8px">{{ m.name }}</h3>
+                  <p style="font-size:14.5px;line-height:1.55;color:var(--muted);margin:0 0 18px;text-wrap:pretty">{{ m.summary }}</p>
+                  <div style="margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:14px;border-top:1px solid var(--border)">
+                    <span style="font-size:12.5px;color:var(--faint)">{{ m.meta }}</span>
+                    <span style="display:inline-flex;align-items:center;gap:6px;font:600 13.5px 'IBM Plex Sans',sans-serif;color:var(--primary)">{{ m.cta }}
+                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M8.5 3.5 13 8l-4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    </span>
+                  </div>
+                  <span style="position:absolute;top:-9px;right:16px;display:{{ m.badgeDisplay }};align-items:center;gap:5px;padding:4px 10px;border-radius:99px;background:var(--accent);color:#04231A;font:600 11.5px 'IBM Plex Sans',sans-serif;box-shadow:var(--shadow)">✓ Completado</span>
+                </article>
+              </sc-for>
+            </div>
+          </section>
+
+          <section ref="{{ recursosRef }}" style="padding:56px 56px 80px;max-width:1280px">
+            <div data-reveal style="margin-bottom:28px">
+              <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">
+                <span style="width:22px;height:2px;background:var(--accent);border-radius:2px"></span>
+                <span style="font:500 12px 'IBM Plex Sans',sans-serif;color:var(--accent);letter-spacing:.08em;text-transform:uppercase">Recursos</span>
+              </div>
+              <h2 style="font-family:Geist,sans-serif;font-weight:600;font-size:34px;letter-spacing:-.025em;margin:0 0 8px">Guías y formatos</h2>
+              <p style="font-size:16px;color:var(--muted);margin:0;max-width:62ch;line-height:1.55">Para tener a mano en la sesión y para volver a usarlo en el día a día.</p>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px;align-items:start">
+              <div style="display:flex;flex-direction:column;gap:18px">
+                <div data-reveal style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px">
+                  <sc-for list="{{ downloads }}" as="d" hint-placeholder-count="3">
+                    <a href="#" style="display:flex;gap:13px;align-items:flex-start;padding:17px;background:var(--surface);border:1px solid var(--border);border-radius:14px;text-decoration:none;color:inherit;transition:border-color .18s ease,transform .18s ease" style-hover="border-color:var(--primary);transform:translateY(-2px);text-decoration:none">
+                      <span style="width:36px;height:36px;flex:none;border-radius:10px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary)">
+                        <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2v8m0 0 3-3M8 10 5 7M3 12.5h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                      </span>
+                      <span style="display:flex;flex-direction:column;gap:3px">
+                        <span style="font:600 14.5px 'IBM Plex Sans',sans-serif">{{ d.title }}</span>
+                        <span style="font-size:13px;color:var(--muted);line-height:1.45">{{ d.desc }}</span>
+                        <span style="font:500 11.5px 'Geist Mono',ui-monospace,monospace;color:var(--faint);margin-top:3px">{{ d.meta }}</span>
+                      </span>
+                    </a>
+                  </sc-for>
+                </div>
+
+                <div data-reveal style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px">
+                  <h3 style="font-family:Geist,sans-serif;font-weight:600;font-size:17px;margin:0 0 4px">Atajos y comandos de Copilot</h3>
+                  <p style="font-size:13.5px;color:var(--muted);margin:0 0 16px">Funcionan igual en el computador y en la versión web.</p>
+                  <div style="display:flex;flex-direction:column">
+                    <sc-for list="{{ shortcuts }}" as="s" hint-placeholder-count="5">
+                      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:11px 0;border-top:1px solid var(--border)">
+                        <span style="font-size:14px;color:var(--text);line-height:1.4;min-width:0">{{ s.what }}</span>
+                        <span style="font:500 12.5px 'Geist Mono',ui-monospace,monospace;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:5px 9px;white-space:nowrap">{{ s.keys }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+
+                <div data-reveal style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px">
+                  <h3 style="font-family:Geist,sans-serif;font-weight:600;font-size:17px;margin:0 0 14px">Preguntas frecuentes</h3>
+                  <sc-for list="{{ faqs }}" as="f" hint-placeholder-count="4">
+                    <div style="border-top:1px solid var(--border)">
+                      <button onClick="{{ f.onToggle }}" aria-expanded="{{ f.expanded }}" style="display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;text-align:left;background:transparent;border:0;padding:14px 0;cursor:pointer;font:600 14.5px 'IBM Plex Sans',sans-serif;color:var(--text)">
+                        <span style="min-width:0">{{ f.q }}</span>
+                        <span style="width:22px;height:22px;flex:none;border-radius:7px;display:grid;place-items:center;background:var(--surface2);color:var(--muted);font-size:14px;transform:rotate({{ f.rot }}deg);transition:transform .2s ease">+</span>
+                      </button>
+                      <div style="display:{{ f.display }};font-size:14.5px;line-height:1.6;color:var(--muted);padding:0 40px 16px 0;animation:slideIn .22s ease">{{ f.a }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:18px;position:sticky;top:24px">
+                <div data-reveal style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px">
+                  <h3 style="font-family:Geist,sans-serif;font-weight:600;font-size:17px;margin:0 0 4px">Mejores prácticas</h3>
+                  <p style="font-size:13.5px;color:var(--muted);margin:0 0 14px">Cuatro cosas que separan un buen resultado de uno regular.</p>
+                  <sc-for list="{{ practices }}" as="p" hint-placeholder-count="4">
+                    <div style="display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--border)">
+                      <span style="width:24px;height:24px;flex:none;border-radius:7px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font:600 12px 'Geist Mono',monospace">{{ p.n }}</span>
+                      <span style="display:flex;flex-direction:column;gap:3px">
+                        <span style="font:600 14px 'IBM Plex Sans',sans-serif">{{ p.title }}</span>
+                        <span style="font-size:13.5px;line-height:1.5;color:var(--muted)">{{ p.desc }}</span>
+                      </span>
+                    </div>
+                  </sc-for>
+                </div>
+
+                <div data-reveal style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px">
+                  <h3 style="font-family:Geist,sans-serif;font-weight:600;font-size:17px;margin:0 0 12px">Documentación oficial</h3>
+                  <div style="display:flex;flex-direction:column;gap:2px">
+                    <sc-for list="{{ links }}" as="l" hint-placeholder-count="4">
+                      <a href="{{ l.href }}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--border);font-size:14px;color:var(--text);text-decoration:none" style-hover="color:var(--primary);text-decoration:none">
+                        {{ l.label }}
+                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M5.5 10.5 10.5 5.5M6.5 5.5h4v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                      </a>
+                    </sc-for>
+                  </div>
+                </div>
+
+                <div data-reveal style="background:linear-gradient(150deg,var(--primary),var(--primary-strong));border-radius:16px;padding:22px;color:#fff">
+                  <h3 style="font-family:Geist,sans-serif;font-weight:600;font-size:17px;margin:0 0 6px;color:#fff">¿Dudas durante la práctica?</h3>
+                  <p style="font-size:14px;line-height:1.55;margin:0 0 16px;color:rgba(255,255,255,.85)">Escribe al canal <strong style="color:#fff">#copilot-soporte</strong> en Teams. Contestamos en horario de oficina.</p>
+                  <a href="#" style="display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--primary-strong);font:600 13.5px 'IBM Plex Sans',sans-serif;padding:10px 16px;border-radius:10px;text-decoration:none" style-hover="text-decoration:none">Abrir el canal</a>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isModule }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="padding:26px 56px 0;max-width:1180px">
+            <button onClick="{{ goHome }}" style="display:inline-flex;align-items:center;gap:7px;border:0;background:transparent;padding:6px 0;cursor:pointer;font:500 13.5px 'IBM Plex Sans',sans-serif;color:var(--muted)" style-hover="color:var(--primary)">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 8H3M7.5 3.5 3 8l4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              Todos los módulos
+            </button>
+          </div>
+
+          <header style="padding:20px 56px 30px;max-width:1180px">
+            <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap">
+              <span style="width:60px;height:60px;flex:none;border-radius:16px;display:grid;place-items:center;background:{{ mod.tint }}">{{ mod.glyphLg }}</span>
+              <div style="flex:1;min-width:280px">
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:9px">
+                  <span style="display:inline-flex;padding:5px 10px;border-radius:99px;font:600 11.5px 'IBM Plex Sans',sans-serif;background:{{ mod.levelBg }};color:{{ mod.levelFg }}">{{ mod.level }}</span>
+                  <span style="font-size:13px;color:var(--faint)">{{ mod.meta }}</span>
+                </div>
+                <h1 style="font-family:Geist,sans-serif;font-weight:600;font-size:40px;letter-spacing:-.03em;margin:0 0 10px;line-height:1.08">{{ mod.name }}</h1>
+                <p style="font-size:17px;line-height:1.55;color:var(--muted);margin:0;max-width:62ch;text-wrap:pretty">{{ mod.intro }}</p>
+              </div>
+              <button onClick="{{ toggleDone }}" style="border:1px solid {{ mod.doneBorder }};background:{{ mod.doneBg }};color:{{ mod.doneFg }};font:600 14px 'IBM Plex Sans',sans-serif;padding:12px 18px;border-radius:11px;cursor:pointer;white-space:nowrap;transition:all .18s ease" style-hover="border-color:var(--accent)">{{ mod.doneLabel }}</button>
+            </div>
+          </header>
+
+          <section style="padding:0 56px 34px;max-width:1180px">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px">
+              <sc-for list="{{ mod.outcomes }}" as="o" hint-placeholder-count="3">
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px">
+                  <span style="display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--accent-soft);color:var(--accent);margin-bottom:11px">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8.5 6.5 11.5 12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                  </span>
+                  <div style="font-size:14.5px;line-height:1.55;color:var(--text)">{{ o }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </section>
+
+          <section style="padding:26px 56px 34px;max-width:1180px">
+            <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px">
+              <h2 style="font-family:Geist,sans-serif;font-weight:600;font-size:26px;letter-spacing:-.02em;margin:0">Biblioteca de prompts</h2>
+              <span style="font-size:13.5px;color:var(--faint)">clic para copiar</span>
+            </div>
+            <p style="font-size:15px;color:var(--muted);margin:0 0 18px;max-width:64ch;line-height:1.55">Reemplaza lo que está entre corchetes por tus datos: cliente, fechas, cifras. Entre más concreto, mejor sale.</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px">
+              <sc-for list="{{ mod.prompts }}" as="p" hint-placeholder-count="6">
+                <button onClick="{{ p.onCopy }}" style="display:flex;flex-direction:column;gap:11px;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:17px;cursor:pointer;transition:border-color .18s ease,transform .18s ease" style-hover="border-color:var(--primary);transform:translateY(-2px)">
+                  <span style="display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%">
+                    <span style="font:500 11.5px 'IBM Plex Sans',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)">{{ p.tag }}</span>
+                    <span style="display:inline-flex;align-items:center;gap:6px;font:600 12px 'IBM Plex Sans',sans-serif;color:{{ p.copyFg }}">{{ p.copyLabel }}</span>
+                  </span>
+                  <span style="font:400 14.5px/1.6 'Geist Mono',ui-monospace,monospace;color:var(--text)">{{ p.text }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </section>
+
+          <section style="padding:26px 56px 34px;max-width:1180px">
+            <h2 style="font-family:Geist,sans-serif;font-weight:600;font-size:26px;letter-spacing:-.02em;margin:0 0 6px">Antes y después</h2>
+            <p style="font-size:15px;color:var(--muted);margin:0 0 18px;max-width:64ch;line-height:1.55">{{ mod.baIntro }}</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:stretch">
+              <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+                <div style="display:flex;align-items:center;gap:9px;padding:14px 18px;border-bottom:1px solid var(--border);background:var(--surface2)">
+                  <span style="width:8px;height:8px;border-radius:99px;background:#C2410C"></span>
+                  <span style="font:600 13px 'IBM Plex Sans',sans-serif;color:var(--muted);letter-spacing:.03em;text-transform:uppercase">Antes · sin Copilot</span>
+                </div>
+                <div style="padding:18px">
+                  <div style="font:400 14.5px/1.65 'IBM Plex Sans',sans-serif;color:var(--muted);white-space:pre-line">{{ mod.before }}</div>
+                  <div style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--border);font:500 13px 'Geist Mono',monospace;color:var(--faint)">{{ mod.beforeTime }}</div>
+                </div>
+              </div>
+              <div style="background:var(--surface);border:1px solid var(--accent);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)">
+                <div style="display:flex;align-items:center;gap:9px;padding:14px 18px;border-bottom:1px solid var(--border);background:var(--accent-soft)">
+                  <span style="width:8px;height:8px;border-radius:99px;background:var(--accent)"></span>
+                  <span style="font:600 13px 'IBM Plex Sans',sans-serif;color:var(--accent);letter-spacing:.03em;text-transform:uppercase">Después · con Copilot</span>
+                </div>
+                <div style="padding:18px">
+                  <div style="font:400 14.5px/1.65 'IBM Plex Sans',sans-serif;color:var(--text);white-space:pre-line">{{ mod.after }}</div>
+                  <div style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--border);font:500 13px 'Geist Mono',monospace;color:var(--accent)">{{ mod.afterTime }}</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section style="padding:26px 56px 34px;max-width:1180px">
+            <h2 style="font-family:Geist,sans-serif;font-weight:600;font-size:26px;letter-spacing:-.02em;margin:0 0 18px">Paso a paso</h2>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:28px;align-items:start">
+              <div style="display:flex;flex-direction:column">
+                <sc-for list="{{ mod.steps }}" as="s" hint-placeholder-count="4">
+                  <div onClick="{{ s.onSelect }}" style="display:flex;gap:14px;padding:16px;border-radius:13px;cursor:pointer;background:{{ s.bg }};border:1px solid {{ s.bd }};margin-bottom:8px;transition:background .18s ease,border-color .18s ease">
+                    <span style="width:28px;height:28px;flex:none;border-radius:9px;display:grid;place-items:center;background:{{ s.numBg }};color:{{ s.numFg }};font:600 13px 'Geist Mono',monospace">{{ s.n }}</span>
+                    <span style="display:flex;flex-direction:column;gap:5px">
+                      <span style="font:600 15.5px 'IBM Plex Sans',sans-serif;color:var(--text)">{{ s.title }}</span>
+                      <span style="font-size:14.5px;line-height:1.6;color:var(--muted);text-wrap:pretty">{{ s.desc }}</span>
+                    </span>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="position:sticky;top:24px;background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:16px">
+                <div style="border-radius:11px;overflow:hidden;border:1px solid var(--border);background:var(--surface);box-shadow:var(--shadow)">
+                  <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:{{ mod.mockBar }};border-bottom:1px solid var(--border)">
+                    <span style="display:flex;gap:5px"><span style="width:9px;height:9px;border-radius:99px;background:rgba(255,255,255,.55)"></span><span style="width:9px;height:9px;border-radius:99px;background:rgba(255,255,255,.4)"></span><span style="width:9px;height:9px;border-radius:99px;background:rgba(255,255,255,.28)"></span></span>
+                    <span style="font:500 12px 'IBM Plex Sans',sans-serif;color:#fff;margin-left:6px">{{ mod.mockTitle }}</span>
+                  </div>
+                  <div style="display:flex;flex-wrap:wrap;min-height:290px">
+                    <div style="flex:2 1 190px;padding:16px;border-right:1px solid var(--border);min-width:0">{{ mockBody }}</div>
+                    <div style="flex:1 1 150px;min-width:150px;max-width:180px;padding:13px;background:var(--surface2);display:flex;flex-direction:column;gap:10px">
+                      <div style="display:flex;align-items:center;gap:7px">
+                        <svg width="15" height="15" viewBox="0 0 26 26" aria-hidden="true"><circle cx="9" cy="9" r="3" fill="var(--primary)"></circle><circle cx="18" cy="17" r="3" fill="var(--accent)"></circle><path d="M9 9 L18 17" stroke="var(--primary)" stroke-width="1.6"></path></svg>
+                        <span style="font:600 11.5px 'IBM Plex Sans',sans-serif;color:var(--text)">Copilot</span>
+                      </div>
+                      <div style="background:var(--primary);color:#fff;border-radius:10px 10px 3px 10px;padding:9px 10px;font:400 11.5px/1.5 'IBM Plex Sans',sans-serif">{{ mod.mockPrompt }}</div>
+                      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px 10px 10px 3px;padding:9px 10px;font:400 11.5px/1.5 'IBM Plex Sans',sans-serif;color:var(--muted)">{{ mod.mockReply }}</div>
+                      <div style="margin-top:auto;height:28px;border-radius:8px;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;padding:0 9px;font:400 11px 'IBM Plex Sans',sans-serif;color:var(--faint)">Pregúntale a Copilot…</div>
+                    </div>
+                  </div>
+                </div>
+                <p style="margin:12px 4px 2px;font-size:12px;color:var(--faint);line-height:1.5">Dibujo de referencia de la pantalla, solo para la capacitación.</p>
+              </div>
+            </div>
+          </section>
+
+          <section style="padding:26px 56px 34px;max-width:1180px">
+            <h2 style="font-family:Geist,sans-serif;font-weight:600;font-size:26px;letter-spacing:-.02em;margin:0 0 18px">Casos de uso por área</h2>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px">
+              <sc-for list="{{ mod.roles }}" as="r" hint-placeholder-count="3">
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px">
+                  <div style="font:600 12px 'IBM Plex Sans',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--primary);margin-bottom:9px">{{ r.rol }}</div>
+                  <div style="font:600 15px 'IBM Plex Sans',sans-serif;margin-bottom:7px">{{ r.task }}</div>
+                  <div style="font-size:14px;line-height:1.6;color:var(--muted);text-wrap:pretty">{{ r.detail }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </section>
+
+          <section style="padding:26px 56px 40px;max-width:1180px">
+            <h2 style="font-family:Geist,sans-serif;font-weight:600;font-size:26px;letter-spacing:-.02em;margin:0 0 18px">Errores que más se ven</h2>
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden">
+              <sc-for list="{{ mod.mistakes }}" as="m" hint-placeholder-count="3">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;padding:18px;border-top:1px solid var(--border)">
+                  <div style="display:flex;gap:11px">
+                    <span style="width:22px;height:22px;flex:none;border-radius:7px;display:grid;place-items:center;background:#FDEBE2;color:#C2410C;font:700 13px 'IBM Plex Sans',sans-serif">✕</span>
+                    <span style="font-size:14.5px;line-height:1.6;color:var(--muted)">{{ m.bad }}</span>
+                  </div>
+                  <div style="display:flex;gap:11px">
+                    <span style="width:22px;height:22px;flex:none;border-radius:7px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font:700 13px 'IBM Plex Sans',sans-serif">✓</span>
+                    <span style="font-size:14.5px;line-height:1.6;color:var(--text)">{{ m.good }}</span>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </section>
+
+          <section style="padding:0 56px 80px;max-width:1180px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;padding:22px;background:var(--surface);border:1px solid var(--border);border-radius:16px">
+              <div>
+                <div style="font:500 12px 'IBM Plex Sans',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:6px">Siguiente módulo</div>
+                <div style="font-family:Geist,sans-serif;font-weight:600;font-size:20px;letter-spacing:-.015em">{{ nextName }}</div>
+              </div>
+              <button onClick="{{ goNext }}" style="display:inline-flex;align-items:center;gap:9px;border:0;background:var(--primary);color:#fff;font:600 14.5px 'IBM Plex Sans',sans-serif;padding:13px 20px;border-radius:11px;cursor:pointer;transition:transform .18s ease" style-hover="transform:translateX(3px)">
+                Continuar
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M8.5 3.5 13 8l-4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </button>
+            </div>
+          </section>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:flex-start;gap:0;min-height:100vh">
+
+          <div style="flex:1;min-width:0;padding:30px 30px 90px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:22px">
+              <div>
+                <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px">
+                  <span style="width:22px;height:2px;background:var(--primary);border-radius:2px"></span>
+                  <span style="font:500 12px 'IBM Plex Sans',sans-serif;color:var(--primary);letter-spacing:.08em;text-transform:uppercase">Panel del expositor</span>
+                </div>
+                <h1 style="font-family:Geist,sans-serif;font-weight:600;font-size:30px;letter-spacing:-.025em;margin:0 0 6px">Arma el programa de este cliente</h1>
+                <p style="font-size:15px;color:var(--muted);margin:0">{{ clientLabel }} · perfil {{ industryLabel }} · {{ activeCount }} módulos · {{ totalHours }} h</p>
+              </div>
+              <button onClick="{{ exitAdmin }}" style="border:1px solid var(--border);background:var(--surface);color:var(--text);font:600 14px 'IBM Plex Sans',sans-serif;padding:11px 17px;border-radius:10px;cursor:pointer" style-hover="border-color:var(--primary);color:var(--primary)">Salir al portal</button>
+            </div>
+
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px">
+              <sc-for list="{{ adminTabs }}" as="t" hint-placeholder-count="5">
+                <button onClick="{{ t.onGo }}" style="border:1px solid {{ t.bd }};background:{{ t.bg }};color:{{ t.fg }};font:600 13.5px 'IBM Plex Sans',sans-serif;padding:9px 15px;border-radius:99px;cursor:pointer;transition:all .16s ease">{{ t.label }}</button>
+              </sc-for>
+            </div>
+
+            <sc-if value="{{ secAlcance }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;gap:20px">
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px">
+                  <h2 style="font-family:Geist,sans-serif;font-weight:600;font-size:18px;letter-spacing:-.015em;margin:0 0 4px">Cliente</h2>
+                  <p style="font-size:13.5px;color:var(--muted);margin:0 0 14px">Aparece en el mensaje de WhatsApp y en el saludo del registro.</p>
+                  <input value="{{ clientName }}" onChange="{{ onClient }}" placeholder="Nombre del cliente" style="width:100%;box-sizing:border-box;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:10px;padding:12px 14px;font:500 15px 'IBM Plex Sans',sans-serif" />
+                </div>
+
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px">
+                  <h2 style="font-family:Geist,sans-serif;font-weight:600;font-size:18px;letter-spacing:-.015em;margin:0 0 4px">Modelo de negocio</h2>
+                  <p style="font-size:13.5px;color:var(--muted);margin:0 0 14px">Cambia el vocabulario y las áreas de los casos de uso en todo el portal. Después puedes editar cualquier texto a mano.</p>
+                  <div style="display:flex;flex-wrap:wrap;gap:9px">
+                    <sc-for list="{{ industries }}" as="p" hint-placeholder-count="5">
+                      <button onClick="{{ p.onPick }}" style="border:1px solid {{ p.bd }};background:{{ p.bg }};color:{{ p.fg }};font:600 14px 'IBM Plex Sans',sans-serif;padding:11px 17px;border-radius:11px;cursor:pointer">{{ p.label }}</button>
+                    </sc-for>
+                  </div>
+                </div>
+
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px">
+                  <h2 style="font-family:Geist,sans-serif;font-weight:600;font-size:18px;letter-spacing:-.015em;margin:0 0 4px">Alcance contratado</h2>
+                  <p style="font-size:13.5px;color:var(--muted);margin:0 0 14px">Enciende y apaga módulos de una. Si tocas la lista después, el paquete pasa a "A la medida".</p>
+                  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:11px">
+                    <sc-for list="{{ presets }}" as="p" hint-placeholder-count="5">
+                      <button onClick="{{ p.onPick }}" style="text-align:left;border:1px solid {{ p.bd }};background:{{ p.bg }};color:var(--text);padding:15px;border-radius:13px;cursor:pointer;display:flex;flex-direction:column;gap:5px">
+                        <span style="font:600 15px Geist,sans-serif;letter-spacing:-.01em">{{ p.label }}</span>
+                        <span style="font-size:13px;color:var(--muted);line-height:1.45">{{ p.detail }}</span>
+                        <span style="font-size:12px;color:var(--faint)">{{ p.count }}</span>
+                      </button>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ secModulos }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <sc-for list="{{ cfgModules }}" as="m" hint-placeholder-count="6">
+                  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;opacity:{{ m.rowOpacity }}">
+                    <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap">
+                      <span style="width:36px;height:36px;flex:none;border-radius:10px;display:grid;place-items:center;background:{{ m.tint }}">{{ m.glyph }}</span>
+                      <div style="flex:1;min-width:150px">
+                        <div style="font:600 16px Geist,sans-serif;letter-spacing:-.015em">{{ m.name }}</div>
+                        <div style="font-size:12.5px;color:var(--faint)">Posición {{ m.n }}</div>
+                      </div>
+                      <div style="display:flex;align-items:center;gap:6px">
+                        <button onClick="{{ m.onUp }}" aria-label="Subir" style="width:32px;height:32px;border:1px solid var(--border);background:var(--surface);border-radius:9px;cursor:pointer;color:var(--muted)" style-hover="border-color:var(--primary);color:var(--primary)">↑</button>
+                        <button onClick="{{ m.onDown }}" aria-label="Bajar" style="width:32px;height:32px;border:1px solid var(--border);background:var(--surface);border-radius:9px;cursor:pointer;color:var(--muted)" style-hover="border-color:var(--primary);color:var(--primary)">↓</button>
+                      </div>
+                      <div style="display:flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:10px;padding:6px 10px">
+                        <input type="number" value="{{ m.mins }}" onChange="{{ m.onMins }}" style="width:52px;border:0;background:transparent;color:var(--text);font:600 14px 'IBM Plex Sans',sans-serif" />
+                        <span style="font-size:12.5px;color:var(--faint)">min</span>
+                      </div>
+                      <div style="display:flex;gap:5px">
+                        <sc-for list="{{ m.levels }}" as="lv" hint-placeholder-count="3">
+                          <button onClick="{{ lv.onPick }}" style="border:1px solid {{ lv.bd }};background:{{ lv.bg }};color:{{ lv.fg }};font:600 12px 'IBM Plex Sans',sans-serif;padding:7px 11px;border-radius:99px;cursor:pointer">{{ lv.label }}</button>
+                        </sc-for>
+                      </div>
+                      <button onClick="{{ m.onToggle }}" style="border:0;background:{{ m.onBg }};color:{{ m.onFg }};font:600 12.5px 'IBM Plex Sans',sans-serif;padding:8px 13px;border-radius:99px;cursor:pointer">{{ m.onLabel }}</button>
+                      <button onClick="{{ m.onEdit }}" style="border:1px solid var(--border);background:transparent;color:var(--muted);font:600 12.5px 'IBM Plex Sans',sans-serif;padding:8px 13px;border-radius:99px;cursor:pointer" style-hover="border-color:var(--primary);color:var(--primary)">{{ m.editLabel }}</button>
+                    </div>
+
+                    <div style="display:{{ m.editDisplay }};margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+                      <div style="font:600 12px 'IBM Plex Sans',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:10px">Prompts</div>
+                      <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:8px">
+                        <sc-for list="{{ m.prompts }}" as="p" hint-placeholder-count="4">
+                          <div style="display:flex;gap:8px;align-items:flex-start">
+                            <input value="{{ p.tag }}" onChange="{{ p.onTag }}" style="width:120px;flex:none;box-sizing:border-box;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:9px;padding:9px 11px;font:600 12.5px 'IBM Plex Sans',sans-serif" />
+                            <textarea value="{{ p.text }}" onChange="{{ p.onText }}" rows="2" style="flex:1;box-sizing:border-box;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:9px;padding:9px 11px;font:400 13.5px 'Geist Mono',monospace;line-height:1.5;resize:vertical"></textarea>
+                            <button onClick="{{ p.onDel }}" aria-label="Quitar prompt" style="width:34px;height:34px;flex:none;border:1px solid var(--border);background:var(--surface);border-radius:9px;cursor:pointer;color:var(--faint)" style-hover="border-color:#D14343;color:#D14343">×</button>
+                          </div>
+                        </sc-for>
+                      </div>
+                      <button onClick="{{ m.onAddPrompt }}" style="border:1px dashed var(--border);background:transparent;color:var(--primary);font:600 13px 'IBM Plex Sans',sans-serif;padding:9px 14px;border-radius:9px;cursor:pointer;margin-bottom:18px">+ Agregar prompt</button>
+
+                      <div style="font:600 12px 'IBM Plex Sans',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:10px">Caso antes / después</div>
+                      <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:18px">
+                        <input value="{{ m.baIntro }}" onChange="{{ m.onBaIntro }}" placeholder="El caso de la sesión" style="width:100%;box-sizing:border-box;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:9px;padding:10px 12px;font:500 13.5px 'IBM Plex Sans',sans-serif" />
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+                          <textarea value="{{ m.before }}" onChange="{{ m.onBefore }}" rows="3" style="box-sizing:border-box;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:9px;padding:10px 12px;font:400 13.5px 'IBM Plex Sans',sans-serif;line-height:1.5;resize:vertical"></textarea>
+                          <textarea value="{{ m.after }}" onChange="{{ m.onAfter }}" rows="3" style="box-sizing:border-box;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:9px;padding:10px 12px;font:400 13.5px 'IBM Plex Sans',sans-serif;line-height:1.5;resize:vertical"></textarea>
+                        </div>
+                      </div>
+
+                      <div style="font:600 12px 'IBM Plex Sans',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:10px">Áreas y casos de uso</div>
+                      <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:8px">
+                        <sc-for list="{{ m.roles }}" as="r" hint-placeholder-count="3">
+                          <div style="display:flex;gap:8px;align-items:flex-start">
+                            <input value="{{ r.rol }}" onChange="{{ r.onRol }}" style="width:150px;flex:none;box-sizing:border-box;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:9px;padding:9px 11px;font:600 13px 'IBM Plex Sans',sans-serif" />
+                            <input value="{{ r.task }}" onChange="{{ r.onTask }}" style="width:150px;flex:none;box-sizing:border-box;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:9px;padding:9px 11px;font:500 13px 'IBM Plex Sans',sans-serif" />
+                            <input value="{{ r.detail }}" onChange="{{ r.onDetail }}" style="flex:1;box-sizing:border-box;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:9px;padding:9px 11px;font:400 13px 'IBM Plex Sans',sans-serif" />
+                            <button onClick="{{ r.onDel }}" aria-label="Quitar área" style="width:34px;height:34px;flex:none;border:1px solid var(--border);background:var(--surface);border-radius:9px;cursor:pointer;color:var(--faint)" style-hover="border-color:#D14343;color:#D14343">×</button>
+                          </div>
+                        </sc-for>
+                      </div>
+                      <button onClick="{{ m.onAddRole }}" style="border:1px dashed var(--border);background:transparent;color:var(--primary);font:600 13px 'IBM Plex Sans',sans-serif;padding:9px 14px;border-radius:9px;cursor:pointer">+ Agregar área</button>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ secRecursos }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:20px">
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px">
+                  <h2 style="font-family:Geist,sans-serif;font-weight:600;font-size:18px;letter-spacing:-.015em;margin:0 0 14px">Recursos descargables</h2>
+                  <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:10px">
+                    <sc-for list="{{ cfgDownloadList }}" as="d" hint-placeholder-count="4">
+                      <div style="display:flex;gap:8px;align-items:flex-start">
+                        <input value="{{ d.title }}" onChange="{{ d.onTitle }}" style="width:190px;flex:none;box-sizing:border-box;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:9px;padding:10px 12px;font:600 13.5px 'IBM Plex Sans',sans-serif" />
+                        <input value="{{ d.desc }}" onChange="{{ d.onDesc }}" style="flex:1;box-sizing:border-box;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:9px;padding:10px 12px;font:400 13.5px 'IBM Plex Sans',sans-serif" />
+                        <input value="{{ d.meta }}" onChange="{{ d.onMeta }}" style="width:110px;flex:none;box-sizing:border-box;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:9px;padding:10px 12px;font:400 13px 'IBM Plex Sans',sans-serif" />
+                        <button onClick="{{ d.onDel }}" aria-label="Quitar recurso" style="width:36px;height:36px;flex:none;border:1px solid var(--border);background:var(--surface);border-radius:9px;cursor:pointer;color:var(--faint)" style-hover="border-color:#D14343;color:#D14343">×</button>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <button onClick="{{ onAddDownload }}" style="border:1px dashed var(--border);background:transparent;color:var(--primary);font:600 13px 'IBM Plex Sans',sans-serif;padding:9px 14px;border-radius:9px;cursor:pointer">+ Agregar recurso</button>
+                </div>
+
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px">
+                  <h2 style="font-family:Geist,sans-serif;font-weight:600;font-size:18px;letter-spacing:-.015em;margin:0 0 14px">Preguntas frecuentes</h2>
+                  <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:10px">
+                    <sc-for list="{{ cfgFaqList }}" as="f" hint-placeholder-count="5">
+                      <div style="display:flex;gap:8px;align-items:flex-start">
+                        <div style="flex:1;display:flex;flex-direction:column;gap:7px">
+                          <input value="{{ f.q }}" onChange="{{ f.onQ }}" style="box-sizing:border-box;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:9px;padding:10px 12px;font:600 13.5px 'IBM Plex Sans',sans-serif" />
+                          <textarea value="{{ f.a }}" onChange="{{ f.onA }}" rows="2" style="box-sizing:border-box;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:9px;padding:10px 12px;font:400 13.5px 'IBM Plex Sans',sans-serif;line-height:1.5;resize:vertical"></textarea>
+                        </div>
+                        <button onClick="{{ f.onDel }}" aria-label="Quitar pregunta" style="width:36px;height:36px;flex:none;border:1px solid var(--border);background:var(--surface);border-radius:9px;cursor:pointer;color:var(--faint)" style-hover="border-color:#D14343;color:#D14343">×</button>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <button onClick="{{ onAddFaq }}" style="border:1px dashed var(--border);background:transparent;color:var(--primary);font:600 13px 'IBM Plex Sans',sans-serif;padding:9px 14px;border-radius:9px;cursor:pointer">+ Agregar pregunta</button>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ secSesion }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:20px">
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px">
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap">
+                    <div>
+                      <h2 style="font-family:Geist,sans-serif;font-weight:600;font-size:18px;letter-spacing:-.015em;margin:0 0 4px">PIN de la sesión</h2>
+                      <p style="font-size:13.5px;color:var(--muted);margin:0;max-width:52ch">Dilo al inicio. Cada persona entra con el PIN, su nombre y su WhatsApp; con eso le mandas los recursos al final.</p>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px">
+                      <div style="font:600 40px 'Geist Mono',monospace;letter-spacing:.18em;color:var(--primary)">{{ pin }}</div>
+                      <div style="display:flex;flex-direction:column;gap:7px">
+                        <button onClick="{{ newPin }}" style="border:1px solid var(--border);background:var(--surface);color:var(--text);font:600 13px 'IBM Plex Sans',sans-serif;padding:9px 14px;border-radius:9px;cursor:pointer" style-hover="border-color:var(--primary);color:var(--primary)">Generar otro</button>
+                        <button onClick="{{ togglePin }}" style="border:0;background:{{ pinOnBg }};color:{{ pinOnFg }};font:600 12.5px 'IBM Plex Sans',sans-serif;padding:9px 14px;border-radius:9px;cursor:pointer">{{ pinOnLabel }}</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px">
+                  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:14px">
+                    <h2 style="font-family:Geist,sans-serif;font-weight:600;font-size:18px;letter-spacing:-.015em;margin:0">Asistentes y avance</h2>
+                    <span style="font-size:13px;color:var(--faint)">{{ attendeeCount }} registrados</span>
+                  </div>
+                  <sc-if value="{{ noAttendees }}" hint-placeholder-val="{{ false }}">
+                    <p style="font-size:14px;color:var(--muted);margin:0;padding:18px;border:1px dashed var(--border);border-radius:12px;text-align:center">Todavía nadie se registra. Dales el PIN <strong style="color:var(--primary)">{{ pin }}</strong> y aparecen acá.</p>
+                  </sc-if>
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <sc-for list="{{ attendees }}" as="a" hint-placeholder-count="0">
+                      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:13px 15px;border:1px solid var(--border);border-radius:12px">
+                        <div style="flex:1;min-width:150px">
+                          <div style="font:600 14.5px 'IBM Plex Sans',sans-serif">{{ a.name }}</div>
+                          <div style="font-size:12.5px;color:var(--faint)">{{ a.phone }}</div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:9px;min-width:170px">
+                          <div style="flex:1;height:6px;border-radius:99px;background:var(--border);overflow:hidden"><div style="height:100%;width:{{ a.pct }}%;background:var(--accent);border-radius:99px"></div></div>
+                          <span style="font-size:12.5px;color:var(--muted);white-space:nowrap">{{ a.progress }}</span>
+                        </div>
+                        <a href="{{ a.wa }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;border:0;background:#128C7E;color:#fff;font:600 13px 'IBM Plex Sans',sans-serif;padding:9px 14px;border-radius:9px;text-decoration:none" style-hover="background:#0E6F63;text-decoration:none;color:#fff">Enviar recursos</a>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px">
+                  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:14px">
+                    <h2 style="font-family:Geist,sans-serif;font-weight:600;font-size:18px;letter-spacing:-.015em;margin:0">Consultas en vivo</h2>
+                    <span style="font-size:13px;color:var(--faint)">{{ openQuestions }} sin resolver</span>
+                  </div>
+                  <sc-if value="{{ noQuestions }}" hint-placeholder-val="{{ false }}">
+                    <p style="font-size:14px;color:var(--muted);margin:0;padding:18px;border:1px dashed var(--border);border-radius:12px;text-align:center">Sin consultas por ahora. Las que escriban durante la sesión caen acá.</p>
+                  </sc-if>
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <sc-for list="{{ questions }}" as="q" hint-placeholder-count="0">
+                      <div style="display:flex;align-items:flex-start;gap:13px;padding:14px 15px;border:1px solid var(--border);border-radius:12px">
+                        <div style="flex:1">
+                          <div style="font-size:14.5px;line-height:1.55;color:var(--text);margin-bottom:5px">{{ q.text }}</div>
+                          <div style="font-size:12.5px;color:var(--faint)">{{ q.who }} · módulo {{ q.mod }}</div>
+                        </div>
+                        <button onClick="{{ q.onToggle }}" style="border:0;background:{{ q.stateBg }};color:{{ q.stateFg }};font:600 12.5px 'IBM Plex Sans',sans-serif;padding:8px 13px;border-radius:99px;cursor:pointer;white-space:nowrap">{{ q.stateLabel }}</button>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ secGuardar }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:20px">
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px">
+                  <h2 style="font-family:Geist,sans-serif;font-weight:600;font-size:18px;letter-spacing:-.015em;margin:0 0 4px">Plantillas por cliente</h2>
+                  <p style="font-size:13.5px;color:var(--muted);margin:0 0 14px">Guarda este programa con nombre y vuelve a cargarlo la próxima vez que dictes para el mismo cliente.</p>
+                  <div style="display:flex;gap:9px;margin-bottom:14px;flex-wrap:wrap">
+                    <input value="{{ tplName }}" onChange="{{ onTplName }}" placeholder="Nombre de la plantilla" style="flex:1;min-width:200px;box-sizing:border-box;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:10px;padding:11px 14px;font:500 14px 'IBM Plex Sans',sans-serif" />
+                    <button onClick="{{ onSaveTpl }}" style="border:0;background:var(--primary);color:#fff;font:600 14px 'IBM Plex Sans',sans-serif;padding:11px 18px;border-radius:10px;cursor:pointer">Guardar plantilla</button>
+                  </div>
+                  <sc-if value="{{ noTemplates }}" hint-placeholder-val="{{ false }}">
+                    <p style="font-size:13.5px;color:var(--faint);margin:0">Todavía no hay plantillas guardadas.</p>
+                  </sc-if>
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <sc-for list="{{ templates }}" as="t" hint-placeholder-count="0">
+                      <div style="display:flex;align-items:center;gap:12px;padding:12px 15px;border:1px solid var(--border);border-radius:11px">
+                        <div style="flex:1">
+                          <div style="font:600 14.5px 'IBM Plex Sans',sans-serif">{{ t.name }}</div>
+                          <div style="font-size:12.5px;color:var(--faint)">{{ t.detail }}</div>
+                        </div>
+                        <button onClick="{{ t.onLoad }}" style="border:1px solid var(--border);background:var(--surface);color:var(--text);font:600 13px 'IBM Plex Sans',sans-serif;padding:8px 14px;border-radius:9px;cursor:pointer" style-hover="border-color:var(--primary);color:var(--primary)">Cargar</button>
+                        <button onClick="{{ t.onDel }}" aria-label="Eliminar plantilla" style="width:34px;height:34px;border:1px solid var(--border);background:var(--surface);border-radius:9px;cursor:pointer;color:var(--faint)" style-hover="border-color:#D14343;color:#D14343">×</button>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px">
+                  <h2 style="font-family:Geist,sans-serif;font-weight:600;font-size:18px;letter-spacing:-.015em;margin:0 0 4px">Llevar esta configuración a otro lado</h2>
+                  <p style="font-size:13.5px;color:var(--muted);margin:0 0 14px">El link lleva el programa adentro: lo abres en el computador de la sala y queda igual, sin configurar nada.</p>
+                  <div style="display:flex;flex-wrap:wrap;gap:9px;align-items:center">
+                    <button onClick="{{ onShare }}" style="border:0;background:var(--primary);color:#fff;font:600 14px 'IBM Plex Sans',sans-serif;padding:12px 18px;border-radius:10px;cursor:pointer">Copiar link configurado</button>
+                    <button onClick="{{ onExport }}" style="border:1px solid var(--border);background:var(--surface);color:var(--text);font:600 14px 'IBM Plex Sans',sans-serif;padding:12px 18px;border-radius:10px;cursor:pointer" style-hover="border-color:var(--primary);color:var(--primary)">Exportar archivo</button>
+                    <label style="border:1px solid var(--border);background:var(--surface);color:var(--text);font:600 14px 'IBM Plex Sans',sans-serif;padding:12px 18px;border-radius:10px;cursor:pointer" style-hover="border-color:var(--primary);color:var(--primary)">
+                      Importar archivo
+                      <input type="file" accept="application/json,.json" onChange="{{ onImport }}" style="display:none" />
+                    </label>
+                    <button onClick="{{ onReset }}" style="border:1px solid var(--border);background:transparent;color:var(--faint);font:600 14px 'IBM Plex Sans',sans-serif;padding:12px 18px;border-radius:10px;cursor:pointer" style-hover="border-color:#D14343;color:#D14343">Restablecer todo</button>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+
+          <aside style="width:352px;flex:none;border-left:1px solid var(--border);background:var(--surface);padding:26px 22px;position:sticky;top:0;height:100vh;overflow-y:auto">
+            <div style="font:500 11.5px 'IBM Plex Sans',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:12px">Vista previa del cliente</div>
+            <div style="border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--bg)">
+              <div style="padding:18px 16px;background:var(--surface);border-bottom:1px solid var(--border)">
+                <div style="font:600 17px Geist,sans-serif;letter-spacing:-.02em;line-height:1.2;margin-bottom:6px">Aprende a usar Copilot en tu trabajo del día a día</div>
+                <div style="font-size:12.5px;color:var(--muted);line-height:1.45">{{ clientLabel }} · perfil {{ industryLabel }}</div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border)">
+                <div style="background:var(--surface);padding:11px 12px">
+                  <div style="font:600 18px Geist,sans-serif">{{ activeCount }}</div>
+                  <div style="font-size:11px;color:var(--muted)">módulos</div>
+                </div>
+                <div style="background:var(--surface);padding:11px 12px">
+                  <div style="font:600 18px Geist,sans-serif">{{ totalPrompts }}</div>
+                  <div style="font-size:11px;color:var(--muted)">prompts</div>
+                </div>
+                <div style="background:var(--surface);padding:11px 12px">
+                  <div style="font:600 18px Geist,sans-serif">{{ totalHours }}</div>
+                  <div style="font-size:11px;color:var(--muted)">horas</div>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;padding:14px 12px">
+                <sc-for list="{{ previewModules }}" as="p" hint-placeholder-count="6">
+                  <div style="background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:12px">
+                    <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px">
+                      <span style="width:28px;height:28px;flex:none;border-radius:8px;display:grid;place-items:center;background:{{ p.tint }}">{{ p.glyph }}</span>
+                      <span style="flex:1;font:600 13.5px Geist,sans-serif;letter-spacing:-.01em">{{ p.name }}</span>
+                      <span style="font:600 10.5px 'IBM Plex Sans',sans-serif;padding:3px 8px;border-radius:99px;background:{{ p.levelBg }};color:{{ p.levelFg }}">{{ p.level }}</span>
+                    </div>
+                    <div style="font-size:12px;line-height:1.5;color:var(--muted);margin-bottom:7px">{{ p.summary }}</div>
+                    <div style="font-size:11px;color:var(--faint)">{{ p.meta }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </sc-if>
+
+    </main>
+  </div>
+
+  <div style="display:{{ askWidgetDisplay }};position:fixed;right:22px;bottom:22px;z-index:60;flex-direction:column;align-items:flex-end;gap:10px">
+    <div style="display:{{ askDisplay }};width:320px;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-lift);padding:16px">
+      <div style="font:600 14.5px Geist,sans-serif;letter-spacing:-.01em;margin-bottom:4px">Consulta al expositor</div>
+      <div style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Le llega a su panel y la resuelve en la sesión.</div>
+      <textarea value="{{ askText }}" onChange="{{ onAskText }}" rows="3" placeholder="Escribe tu pregunta" style="width:100%;box-sizing:border-box;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:10px;padding:10px 12px;font:400 13.5px 'IBM Plex Sans',sans-serif;line-height:1.5;resize:vertical;margin-bottom:10px"></textarea>
+      <button onClick="{{ onSendAsk }}" style="width:100%;border:0;background:var(--primary);color:#fff;font:600 14px 'IBM Plex Sans',sans-serif;padding:11px;border-radius:10px;cursor:pointer">Enviar consulta</button>
+    </div>
+    <button onClick="{{ toggleAsk }}" style="display:inline-flex;align-items:center;gap:9px;border:0;background:var(--text);color:var(--bg);font:600 13.5px 'IBM Plex Sans',sans-serif;padding:12px 18px;border-radius:99px;cursor:pointer;box-shadow:var(--shadow-lift)">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.5 3.5h11v8h-6l-3 2.5v-2.5h-2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg>
+      Consulta
+    </button>
+  </div>
+
+  <div style="display:{{ flashDisplay }};position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:80;align-items:center;gap:10px;padding:12px 20px;background:var(--text);color:var(--bg);border-radius:99px;font:600 13.5px 'IBM Plex Sans',sans-serif;box-shadow:var(--shadow-lift);animation:slideIn .22s ease">{{ flashMsg }}</div>
+
+  <div style="display:{{ gateDisplay }};position:fixed;inset:0;z-index:90;place-items:center;background:color-mix(in srgb, var(--bg) 82%, transparent);backdrop-filter:blur(6px);padding:24px">
+    <div style="width:100%;max-width:420px;background:var(--surface);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow-lift);padding:28px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <svg width="28" height="28" viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="1" width="24" height="24" rx="7" fill="var(--primary)"></rect><circle cx="9" cy="9" r="2.4" fill="#fff"></circle><circle cx="17.5" cy="16.5" r="2.4" fill="var(--accent)"></circle><path d="M9 9 L17.5 16.5" stroke="#fff" stroke-opacity=".65" stroke-width="1.4"></path></svg>
+        <div>
+          <div style="font:600 16px Geist,sans-serif;letter-spacing:-.015em">Entra a la sesión</div>
+          <div style="font-size:12.5px;color:var(--faint)">{{ clientTag }}</div>
+        </div>
+      </div>
+      <p style="font-size:14px;line-height:1.55;color:var(--muted);margin:0 0 18px">El expositor dice el PIN al inicio. Tu WhatsApp es solo para mandarte los recursos al final de la sesión.</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <input value="{{ gatePin }}" onChange="{{ onGatePin }}" inputMode="numeric" placeholder="PIN de 4 dígitos" style="box-sizing:border-box;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:11px;padding:13px 15px;font:600 20px 'Geist Mono',monospace;letter-spacing:.3em;text-align:center" />
+        <input value="{{ gateName }}" onChange="{{ onGateName }}" placeholder="Tu nombre completo" style="box-sizing:border-box;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:11px;padding:13px 15px;font:500 15px 'IBM Plex Sans',sans-serif" />
+        <input value="{{ gatePhone }}" onChange="{{ onGatePhone }}" inputMode="tel" placeholder="WhatsApp con indicativo, ej: 573001234567" style="box-sizing:border-box;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:11px;padding:13px 15px;font:500 15px 'IBM Plex Sans',sans-serif" />
+        <div style="display:{{ gateErrorDisplay }};font-size:13px;color:#D14343">{{ gateError }}</div>
+        <button onClick="{{ onRegister }}" style="border:0;background:var(--primary);color:#fff;font:600 15px 'IBM Plex Sans',sans-serif;padding:14px;border-radius:11px;cursor:pointer">Entrar al portal</button>
+        <button onClick="{{ goAdmin }}" style="border:0;background:transparent;color:var(--faint);font:500 13px 'IBM Plex Sans',sans-serif;padding:6px;cursor:pointer" style-hover="color:var(--primary)">Soy el expositor, abrir el panel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;navVariant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;sidebar&quot;,&quot;topbar&quot;],&quot;default&quot;:&quot;sidebar&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Navegación&quot;},&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;options&quot;:[&quot;#0FA97A&quot;,&quot;#F97316&quot;,&quot;#7C5CFC&quot;],&quot;default&quot;:&quot;#0FA97A&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Marca&quot;},&quot;showNodeField&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Marca&quot;},&quot;startDark&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Marca&quot;}}">
+const C = {word:'#2B6FE3', excel:'#137A4C', ppt:'#C2410C', teams:'#6D5BD0', outlook:'#0E7490', studio:'#A32079'};
+
+// Marcas geométricas propias (no son los logos oficiales de Microsoft).
+function glyph(kind, color, size) {
+  const s = size || 24, e = React.createElement;
+  const p = {width:s, height:s, viewBox:'0 0 24 24', fill:'none', 'aria-hidden':'true'};
+  if (kind === 'word') return e('svg', p,
+    e('rect',{x:4,y:3,width:16,height:18,rx:3,fill:color,opacity:.16}),
+    e('path',{d:'M8 8h8M8 12h8M8 16h5',stroke:color,strokeWidth:2,strokeLinecap:'round'}));
+  if (kind === 'excel') return e('svg', p,
+    e('rect',{x:3,y:4,width:18,height:16,rx:3,fill:color,opacity:.16}),
+    e('path',{d:'M3 10h18M9.5 4v16M15 10v10',stroke:color,strokeWidth:2}));
+  if (kind === 'ppt') return e('svg', p,
+    e('rect',{x:3,y:4,width:18,height:12,rx:3,fill:color,opacity:.16}),
+    e('path',{d:'M12 16v4M8 20h8',stroke:color,strokeWidth:2,strokeLinecap:'round'}),
+    e('circle',{cx:12,cy:10,r:3,fill:color}));
+  if (kind === 'teams') return e('svg', p,
+    e('circle',{cx:8.5,cy:8,r:3.5,fill:color,opacity:.3}),
+    e('circle',{cx:15.5,cy:12,r:3.5,fill:color,opacity:.55}),
+    e('circle',{cx:9.5,cy:16,r:3.5,fill:color}));
+  if (kind === 'outlook') return e('svg', p,
+    e('rect',{x:3,y:5,width:18,height:14,rx:3,fill:color,opacity:.16}),
+    e('path',{d:'M4 7.5 12 13l8-5.5',stroke:color,strokeWidth:2,strokeLinecap:'round',strokeLinejoin:'round'}));
+  return e('svg', p,
+    e('circle',{cx:12,cy:6,r:2.4,fill:color}),
+    e('circle',{cx:6,cy:16,r:2.4,fill:color,opacity:.5}),
+    e('circle',{cx:18,cy:16,r:2.4,fill:color,opacity:.5}),
+    e('path',{d:'M12 6 6 16M12 6l6 10M6 16h12',stroke:color,strokeWidth:1.6,opacity:.6}));
+}
+
+const LEVEL = {
+  'Básico':      {bg:'var(--accent-soft)', fg:'var(--accent)'},
+  'Intermedio':  {bg:'var(--primary-soft)', fg:'var(--primary)'},
+  'Avanzado':    {bg:'#F3E8F6', fg:'#A32079'}
+};
+
+const MODULES = [
+  {
+    id:'word', kind:'word', color:C.word, shortName:'Word', name:'Copilot en Word',
+    level:'Básico', meta:'6 prompts · 35 min',
+    summary:'Armar una propuesta para un cliente, reescribir un comunicado interno y resumir contratos largos sin salir del archivo.',
+    intro:'Word es el mejor lugar para empezar: uno ve el resultado de una y todo se puede editar. Aquí pasas de las notas de la reunión a un documento que ya se puede mostrar.',
+    mockTitle:'Propuesta_Cliente_Q3.docx', mockType:'doc',
+    mockPrompt:'Con estas notas, arma una propuesta para el cliente con alcance, tiempos y precio.',
+    mockReply:'Listo. Armé la propuesta con alcance, tiempos y precio. ¿Le ajusto el tono para el cliente?',
+    outcomes:[
+      'Pasar de las notas de la reunión a una propuesta armada, con alcance, tiempos y precio.',
+      'Reescribir un comunicado para el equipo en lenguaje claro, sin frases de manual.',
+      'Resumir un contrato largo y sacar lo que la empresa se compromete a cumplir.'
+    ],
+    prompts:[
+      {tag:'Propuestas', text:'Arma una propuesta para [cliente] con [alcance, tiempos, precio], en tono cercano y máximo 400 palabras.'},
+      {tag:'Resumen', text:'Resume este contrato y lista lo que nos comprometemos a cumplir, con fechas.'},
+      {tag:'Edición', text:'Reescribe este comunicado para el equipo operativo: frases cortas, sin palabras de manual.'},
+      {tag:'Estructura', text:'Convierte estas notas de la reunión en un acta con acuerdos, responsable y fecha.'},
+      {tag:'Variantes', text:'Escribe 3 versiones del correo de presentación: una formal, una cercana y una breve.'},
+      {tag:'Revisión', text:'Revisa esta propuesta y márcame los precios y fechas que quedaron sin confirmar.'}
+    ],
+    baIntro:'El caso de la sesión: armar la propuesta de un cliente con las notas de la reunión.',
+    before:'Buscar la propuesta del último cliente, copiar la estructura, cambiar precios y fechas a mano y pasarla dos veces por revisión.',
+    beforeTime:'Plantilla vieja · 3 rondas de revisión',
+    after:'Pegar las notas, pedir la propuesta con alcance y precio, ajustar el tono en un segundo prompt y confirmar cifras contra la lista de precios.',
+    afterTime:'Un borrador · 1 ronda de revisión',
+    steps:[
+      {title:'Abre Copilot en el documento', desc:'En la pestaña Inicio está el botón de Copilot. Se abre un panel al lado que lee el documento que tienes abierto.'},
+      {title:'Di para quién es antes de pedir', desc:'"Para un cliente corporativo, máximo 400 palabras" cambia por completo lo que sale.'},
+      {title:'Corrige sobre lo que ya salió', desc:'Si no te gusta, no empieces de cero: pide "más corto", "menos técnico" o "agrega la política de cancelación".'},
+      {title:'Confirma precios y fechas', desc:'Copilot puede inventarse un número. Todo precio, fecha y cantidad se confirma contra la fuente antes de enviar.'}
+    ],
+    roles:[
+      {rol:'Comercial', task:'Propuestas y cotizaciones', detail:'Arma la propuesta desde las notas de la reunión y adapta la misma base al lenguaje de cada cliente.'},
+      {rol:'Servicio al cliente', task:'Respuestas escritas', detail:'Contesta un reclamo con el tono de la empresa, sin que suene a copiar y pegar.'},
+      {rol:'Talento humano', task:'Circulares internas', detail:'Convierte el reglamento en una circular de una página que sí lea todo el equipo.'}
+    ],
+    mistakes:[
+      {bad:'Pedir "escribe una propuesta" y mandar lo primero que salga.', good:'Decir cliente, alcance, fechas y extensión; después corregir sobre el resultado.'},
+      {bad:'Enviar el documento sin leerlo completo.', good:'Revisar precios, nombres y fechas: el documento lo firma la empresa, no Copilot.'},
+      {bad:'Pegar datos personales de un cliente en el prompt.', good:'Trabajar con los documentos que ya están en el entorno de la empresa y seguir la política de datos.'}
+    ]
+  },
+  {
+    id:'excel', kind:'excel', color:C.excel, shortName:'Excel', name:'Copilot en Excel',
+    level:'Intermedio', meta:'6 prompts · 45 min',
+    summary:'Leer el informe de ventas, armar fórmulas, encontrar los datos raros y elegir el gráfico que sirve.',
+    intro:'Excel es donde más ayuda y donde más hay que revisar. Aquí aprendes a preguntarle a tu hoja y a leer con criterio lo que responde.',
+    mockTitle:'Ventas_2026_Q2.xlsx', mockType:'grid',
+    mockPrompt:'Dime las 3 cosas más importantes de este informe de ventas.',
+    mockReply:'Junio cierra 12% arriba de mayo; tres clientes concentran el 41% de la venta.',
+    outcomes:[
+      'Entender en dos frases un informe que te mandó otra área.',
+      'Crear la columna de margen o de promedio y entender la fórmula que quedó.',
+      'Encontrar los datos raros del mes y elegir el gráfico correcto para mostrarlos.'
+    ],
+    prompts:[
+      {tag:'Exploración', text:'Explícame qué muestra este informe y dime las 3 cosas más importantes.'},
+      {tag:'Fórmulas', text:'Crea una columna con el margen por producto y explícame la fórmula que usaste.'},
+      {tag:'Calidad', text:'Encuentra los datos raros en la columna de ventas y dime en qué filas están.'},
+      {tag:'Visualización', text:'Dime qué gráfico sirve para comparar ventas por mes y por línea, y por qué.'},
+      {tag:'Limpieza', text:'Separa esta columna en nombre, ciudad y número de documento, y quita los espacios de más.'},
+      {tag:'Proyección', text:'Con los últimos 12 meses, proyecta las ventas del próximo trimestre y dime de qué supuestos partiste.'}
+    ],
+    baIntro:'El caso de la sesión: entender el informe de ventas y gastos que llega cada lunes.',
+    before:'Recorrer la hoja fila por fila, armar tablas dinámicas de prueba, escribir fórmulas a mano y comparar con el mes pasado en otra ventana.',
+    beforeTime:'Cuentas difíciles de repetir el mes siguiente',
+    after:'Convertir el rango en tabla, pedir el resumen, generar la columna de margen y revisar dos filas a mano.',
+    afterTime:'Fórmulas que quedan a la vista',
+    steps:[
+      {title:'Convierte el rango en tabla', desc:'Selecciona los datos y usa Insertar › Tabla. Copilot necesita encabezados claros y una sola tabla por hoja.'},
+      {title:'Primero pregunta, después calcula', desc:'"¿Qué muestra esta hoja?" te da el mapa antes de ponerte a pedir números.'},
+      {title:'Pide la fórmula, no solo el resultado', desc:'Cuando agregue una columna, pídele la fórmula: así se puede revisar y volver a usar el mes siguiente.'},
+      {title:'Revisa dos filas a mano', desc:'Toma dos filas al azar y verifica la cuenta. Si cuadran, la columna es confiable.'}
+    ],
+    roles:[
+      {rol:'Administración', task:'Cierre del mes', detail:'Cuadra el reporte de caja y encuentra la diferencia sin revisar comprobante por comprobante.'},
+      {rol:'Operaciones', task:'Carga del equipo', detail:'Reparte el trabajo del día según la demanda y ve quién quedó sobrecargado.'},
+      {rol:'Comercial', task:'Seguimiento de metas', detail:'Compara la venta contra la meta por vendedor y ubica los casos que se salieron.'}
+    ],
+    mistakes:[
+      {bad:'Trabajar sobre un rango sin encabezados o con celdas combinadas.', good:'Usar una tabla con encabezados únicos y sin filas vacías en el medio.'},
+      {bad:'Aceptar una proyección sin saber de dónde salió.', good:'Pedir siempre el método y el periodo que usó para proyectar.'},
+      {bad:'Escribir el resultado encima de los datos originales.', good:'Trabajar en una copia o en columnas nuevas para poder comparar.'}
+    ]
+  },
+  {
+    id:'ppt', kind:'ppt', color:C.ppt, shortName:'PowerPoint', name:'Copilot en PowerPoint',
+    level:'Intermedio', meta:'5 prompts · 30 min',
+    summary:'Pasar un informe a presentación, ordenar el mensaje y recortar un mazo largo para gerencia.',
+    intro:'PowerPoint sirve para transformar, no para inventar: dale contenido que ya existe y pídele estructura.',
+    mockTitle:'Comite_Resultados_Q2.pptx', mockType:'slide',
+    mockPrompt:'Con este informe, arma una presentación de 8 diapositivas para el comité.',
+    mockReply:'Armé 8 diapositivas con notas del expositor. Revisa el orden de la 4 y la 5.',
+    outcomes:[
+      'Pasar el informe del mes a un mazo con notas para quien expone.',
+      'Recortar una presentación larga a la versión de 3 diapositivas para gerencia.',
+      'Reordenar las diapositivas para que lo importante quede de primero.'
+    ],
+    prompts:[
+      {tag:'Creación', text:'Con este documento, arma una presentación de 8 diapositivas con notas del expositor.'},
+      {tag:'Síntesis', text:'Resume esta presentación en 3 diapositivas para el comité de gerencia.'},
+      {tag:'Narrativa', text:'Reorganiza esta diapositiva para que el mensaje quede arriba y las cifras queden como soporte.'},
+      {tag:'Contenido', text:'Convierte este párrafo en 4 viñetas de máximo 10 palabras cada una.'},
+      {tag:'Cierre', text:'Escribe la diapositiva de compromisos con responsable y fecha para cada acuerdo.'}
+    ],
+    baIntro:'El caso de la sesión: llevar el informe del mes al comité de gerencia.',
+    before:'Copiar y pegar párrafos del informe, buscar una plantilla, acomodar cada diapositiva y escribir las notas de afán, cinco minutos antes.',
+    beforeTime:'Notas improvisadas',
+    after:'Generar el mazo desde el informe, arreglar el orden del mensaje y pulir a mano las dos diapositivas que se presentan.',
+    afterTime:'Notas del expositor incluidas',
+    steps:[
+      {title:'Parte de un documento bueno', desc:'El mazo sale como esté el informe. Si el informe está claro, la presentación también.'},
+      {title:'Di cuántas diapositivas quieres', desc:'Pedir "8 diapositivas" evita mazos de 25 láminas que después hay que recortar.'},
+      {title:'Arregla el orden a mano', desc:'Copilot ordena por secciones, no por argumento. Revisa que la conclusión no quede escondida al final.'},
+      {title:'Pide las notas del expositor', desc:'Es lo que más sirve y lo que casi nadie pide.'}
+    ],
+    roles:[
+      {rol:'Comercial', task:'Presentaciones para clientes', detail:'Adapta el mismo mazo al sector y al tamaño de cada cliente.'},
+      {rol:'Talento humano', task:'Inducción de gente nueva', detail:'Convierte los manuales internos en una sesión con notas para quien la dicta.'},
+      {rol:'Gerencia', task:'Comité mensual', detail:'Resume el informe de cierre en la versión corta, sin dejar por fuera las cifras que siempre preguntan.'}
+    ],
+    mistakes:[
+      {bad:'Pedir una presentación sobre un tema, sin documento de dónde sacarla.', good:'Partir siempre de un archivo con el contenido ya revisado.'},
+      {bad:'Dejar el diseño automático tal cual en presentaciones para clientes.', good:'Aplicar la plantilla de la empresa y revisar jerarquía y contraste.'},
+      {bad:'Meter todo el texto generado en cada diapositiva.', good:'Una idea por diapositiva; el detalle va en las notas.'}
+    ]
+  },
+  {
+    id:'teams', kind:'teams', color:C.teams, shortName:'Teams', name:'Copilot en Teams',
+    level:'Básico', meta:'5 prompts · 25 min',
+    summary:'Resumen de la reunión, compromisos con responsable y seguimiento sin estar tomando notas.',
+    intro:'Con la transcripción activada dejas de escribir y empiezas a participar en la reunión. Es el módulo que se siente de una.',
+    mockTitle:'Comité de operaciones · Teams', mockType:'chat',
+    mockPrompt:'Resume la reunión y lista los compromisos con responsable y fecha.',
+    mockReply:'3 acuerdos y 2 pendientes. El de compras vence el viernes.',
+    outcomes:[
+      'Salir del comité con los acuerdos escritos y con responsable asignado.',
+      'Ponerte al día de una reunión a la que no alcanzaste a entrar.',
+      'Mandar el mensaje de seguimiento al equipo en un solo paso.'
+    ],
+    prompts:[
+      {tag:'Resumen', text:'Resume la reunión y lista los compromisos con responsable y fecha.'},
+      {tag:'Puesta al día', text:'¿Qué se decidió mientras no estuve y qué queda pendiente para mi área?'},
+      {tag:'Seguimiento', text:'Escribe un mensaje para el equipo con los 3 acuerdos principales de la reunión.'},
+      {tag:'Contexto', text:'Resume los mensajes sin leer de este canal de los últimos 3 días.'},
+      {tag:'Decisiones', text:'Dime en qué temas no se decidió nada y qué falta para cerrarlos.'}
+    ],
+    baIntro:'El caso de la sesión: el comité de los lunes.',
+    before:'Alguien toma notas mientras intenta participar, el acta sale al otro día y los acuerdos quedan a medias.',
+    beforeTime:'Acta al día siguiente',
+    after:'Se activa la transcripción, al cerrar se piden los compromisos y el seguimiento sale en la misma reunión.',
+    afterTime:'Acuerdos escritos el mismo día',
+    steps:[
+      {title:'Activa la transcripción al empezar', desc:'Sin transcripción no hay resumen. Avísales a los que están en la reunión: es parte del acuerdo interno.'},
+      {title:'Pregunta durante la reunión', desc:'Puedes pedir "¿qué me perdí?" en cualquier momento, sin interrumpir a nadie.'},
+      {title:'Pide compromisos, no resúmenes', desc:'Un resumen es texto; una lista con responsable y fecha es la que se puede cobrar el lunes siguiente.'},
+      {title:'Manda el seguimiento antes de colgar', desc:'El mensaje que sale en caliente es el que la gente sí cumple.'}
+    ],
+    roles:[
+      {rol:'Comercial', task:'Llamadas con el cliente', detail:'Deja por escrito lo que se acordó con el cliente sin depender de la memoria de nadie.'},
+      {rol:'Operaciones', task:'Reunión de arranque del día', detail:'Reparte los pendientes y queda claro quién responde por cada frente.'},
+      {rol:'Proyectos', task:'Comité de avance', detail:'Recupera qué se aprobó, quién lo pidió y para cuándo quedó.'}
+    ],
+    mistakes:[
+      {bad:'Grabar sin avisarles a los participantes.', good:'Avisar siempre y seguir la política interna de grabación y datos.'},
+      {bad:'Confiar en el resumen para temas de personal o legales.', good:'Confirmar los acuerdos delicados con el responsable antes de mandar el acta.'},
+      {bad:'Pedir el resumen días después, cuando ya nadie se acuerda del contexto.', good:'Generarlo al cerrar la reunión y compartirlo el mismo día.'}
+    ]
+  },
+  {
+    id:'outlook', kind:'outlook', color:C.outlook, shortName:'Outlook', name:'Copilot en Outlook',
+    level:'Básico', meta:'5 prompts · 25 min',
+    summary:'Resumir hilos largos, saber qué se responde primero y contestar con el tono de la empresa.',
+    intro:'El correo es donde se va la mañana. Este módulo es para recuperar el contexto rápido y responder bien, no solo rápido.',
+    mockTitle:'Bandeja de entrada · Outlook', mockType:'mail',
+    mockPrompt:'Resume este hilo y dime qué se espera de mí.',
+    mockReply:'18 mensajes. Te piden confirmar el alcance antes del jueves.',
+    outcomes:[
+      'Entender un hilo de 20 correos de una negociación sin leerlo completo.',
+      'Contestarle a un cliente con el tono correcto sin escribir desde cero.',
+      'Saber cuál correo va primero: el que tiene a alguien esperando.'
+    ],
+    prompts:[
+      {tag:'Resumen', text:'Resume este hilo y dime exactamente qué se espera de mí.'},
+      {tag:'Redacción', text:'Escribe una respuesta amable diciendo que no podemos cumplir esa fecha y propón dos alternativas.'},
+      {tag:'Prioridad', text:'Ordena los correos sin responder de esta semana según qué tan urgente es para el cliente.'},
+      {tag:'Tono', text:'Reescribe este borrador más firme pero respetuoso, en máximo 5 líneas.'},
+      {tag:'Seguimiento', text:'Escribe un recordatorio amable de la cotización que mandé hace 8 días.'}
+    ],
+    baIntro:'El caso de la sesión: volver de vacaciones con la bandeja llena de cotizaciones y reclamos.',
+    before:'Abrir hilo por hilo desde el más reciente, perder el hilo de lo que ya se había acordado y responder por orden de llegada.',
+    beforeTime:'Se responde por orden de llegada',
+    after:'Pedir el orden de la semana, resumir los hilos largos y responder primero lo que tiene a alguien esperando.',
+    afterTime:'Se responde por lo que está frenado',
+    steps:[
+      {title:'Resume antes de leer', desc:'En un hilo largo, el resumen te dice si toca leerlo completo o solo responder una línea.'},
+      {title:'Pregunta qué se espera de ti', desc:'Es la pregunta más útil del módulo: separa lo informativo de lo que hay que hacer.'},
+      {title:'Escribe diciendo el tono', desc:'"Amable pero firme, máximo 5 líneas" da mejores correos que "responde esto".'},
+      {title:'Revisa antes de enviar', desc:'El correo sale con tu nombre. Revisa el saludo, el nombre del cliente y las fechas que estás prometiendo.'}
+    ],
+    roles:[
+      {rol:'Comercial', task:'Cotizaciones', detail:'Recupera en qué quedó la negociación de un hilo largo antes de llamar al cliente.'},
+      {rol:'Servicio al cliente', task:'Reclamos', detail:'Responde una queja con el tono de la empresa y sin que suene a plantilla.'},
+      {rol:'Compras', task:'Proveedores', detail:'Identifica qué pedidos están sin confirmar y quién los tiene frenados.'}
+    ],
+    mistakes:[
+      {bad:'Mandar la respuesta generada sin leerla.', good:'Revisar nombres, fechas y lo que se está prometiendo antes de enviar.'},
+      {bad:'Usar el mismo tono para un cliente y para el grupo interno.', good:'Decir en el prompt para quién es el correo y con qué tono.'},
+      {bad:'Resumir hilos con datos de clientes por fuera de la política interna.', good:'Revisar la política de datos antes de procesar información de un cliente.'}
+    ]
+  },
+  {
+    id:'studio', kind:'studio', color:C.studio, shortName:'Copilot Studio', name:'Copilot Studio',
+    level:'Avanzado', meta:'4 prompts · 50 min',
+    summary:'Armar un agente que responda con las políticas y los documentos de tu área.',
+    intro:'Módulo opcional para quien ya maneja lo anterior. Aquí se arma un agente con fuentes de la empresa, límites claros y alguien encargado de mantenerlo.',
+    mockTitle:'Agente · Talento humano', mockType:'chat',
+    mockPrompt:'Arma un agente que responda las preguntas frecuentes del equipo.',
+    mockReply:'Agente creado con 3 fuentes. Falta definir qué no debe responder.',
+    outcomes:[
+      'Definir para qué sirve el agente y qué no responde, antes de armarlo.',
+      'Conectar las políticas vigentes de la empresa y mantenerlas al día.',
+      'Saber si de verdad bajaron las preguntas repetidas que llegan al área.'
+    ],
+    prompts:[
+      {tag:'Diseño', text:'Arma un agente que responda las preguntas frecuentes del equipo con estas políticas.'},
+      {tag:'Alcance', text:'Define el tono y los límites del agente: qué responde y qué pasa a una persona.'},
+      {tag:'Pruebas', text:'Escribe 10 preguntas que le haría al agente alguien que entró esta semana.'},
+      {tag:'Mejora', text:'Revisa las preguntas que quedaron sin respuesta esta semana y dime qué documento falta.'}
+    ],
+    baIntro:'El caso de la sesión: las mismas preguntas de vacaciones y certificados que le llegan a talento humano cada mes.',
+    before:'Una persona del área responde una por una las preguntas de vacaciones, certificados y permisos.',
+    beforeTime:'Las mismas preguntas todos los meses',
+    after:'El agente responde con las políticas vigentes y pasa a una persona solo lo que se sale del alcance.',
+    afterTime:'Una revisión mensual de las fuentes',
+    steps:[
+      {title:'Empieza por un problema que se pueda medir', desc:'Define qué pregunta repetida vas a bajar. Un agente sin eso no se sostiene.'},
+      {title:'Pocas fuentes y vigentes', desc:'Tres documentos al día sirven más que veinte desactualizados.'},
+      {title:'Escribe qué NO debe responder', desc:'Salarios, sanciones y casos legales pasan a una persona. Déjalo escrito.'},
+      {title:'Ponle un responsable', desc:'Alguien tiene que revisar cada mes las preguntas sin respuesta y actualizar los documentos.'}
+    ],
+    roles:[
+      {rol:'Talento humano', task:'Agente de políticas', detail:'Responde vacaciones, certificados y permisos con el reglamento vigente.'},
+      {rol:'Operaciones', task:'Agente de procesos', detail:'Le explica a la gente nueva cómo se hace cada trámite interno.'},
+      {rol:'Compras', task:'Agente de proveedores', detail:'Dice qué proveedor tiene cada insumo y qué documento pide cada compra.'}
+    ],
+    mistakes:[
+      {bad:'Armar el agente antes de definir qué responde.', good:'Escribir primero qué responde, qué pasa a una persona y quién lo mantiene.'},
+      {bad:'Conectar carpetas completas con documentos viejos.', good:'Escoger pocas fuentes vigentes y revisarlas cada mes.'},
+      {bad:'Soltarlo a toda la empresa sin probarlo.', good:'Probarlo con un grupo pequeño y corregir con preguntas reales.'}
+    ]
+  }
+];
+
+const DOWNLOADS = [
+  {title:'Guía rápida de prompts', desc:'Una página con cómo se arma un buen prompt y ejemplos por aplicación.', meta:'PDF · 1,2 MB'},
+  {title:'Tarjeta de atajos', desc:'Para imprimir y dejarla pegada al lado del computador.', meta:'PDF · 480 KB'},
+  {title:'Política de uso de IA', desc:'Qué información se puede procesar y qué datos no salen del entorno de la empresa.', meta:'PDF · 760 KB'},
+  {title:'Formato para tu caso', desc:'Para escribir el caso de tu área y pasarlo a las demás.', meta:'DOCX · 90 KB'}
+];
+
+const SHORTCUTS = [
+  {what:'Abrir el panel de Copilot', keys:'Alt + I'},
+  {what:'Volver a generar la última respuesta', keys:'Ctrl + Shift + R'},
+  {what:'Insertar la respuesta en el documento', keys:'Ctrl + Shift + I'},
+  {what:'Nombrar un archivo dentro del prompt', keys:'/  + nombre'},
+  {what:'Nueva conversación con Copilot', keys:'Ctrl + N'},
+  {what:'Copiar la respuesta', keys:'Ctrl + Shift + C'}
+];
+
+const FAQS = [
+  {q:'¿Copilot puede ver todos los archivos de la empresa?', a:'Solo los archivos y correos a los que tu cuenta ya tiene acceso. No abre nada de más: si tú no puedes abrir un documento, Copilot tampoco.'},
+  {q:'¿Lo que escribo se usa para entrenar modelos públicos?', a:'No. Con la licencia de la empresa, los prompts y los archivos se quedan en el entorno de la organización. El detalle está en la política de uso de IA.'},
+  {q:'¿Puedo confiar en las cifras que genera?', a:'No sin revisarlas. Precios, cantidades y fechas se confirman contra el sistema. La regla de la capacitación es simple: lo que sale con tu nombre lo revisas tú.'},
+  {q:'¿Qué hago si la respuesta no sirve?', a:'No empieces de cero. Agrega para quién es, qué extensión y qué formato, o pide una corrección concreta: "más corto", "menos técnico", "agrega la política de cancelación".'},
+  {q:'¿Necesito licencia especial?', a:'Sí, la licencia va asignada a tu cuenta corporativa. Si no ves el panel en tus aplicaciones, pídela en el canal de soporte.'}
+];
+
+const PRACTICES = [
+  {n:'01', title:'Di para quién es antes de pedir', desc:'Para quién, para qué y de qué extensión. Ahí está casi toda la diferencia.'},
+  {n:'02', title:'Corrige, no arranques otra vez', desc:'Ajustar lo que ya salió es más rápido y más preciso que escribir otro prompt desde cero.'},
+  {n:'03', title:'Confirma todo dato', desc:'Precios, nombres y fechas se revisan contra el sistema. El documento sale con tu nombre.'},
+  {n:'04', title:'Guarda lo que te funcionó', desc:'Anota tus mejores prompts y pásalos al equipo: eso es lo que queda de la capacitación.'}
+];
+
+const LINKS = [
+  {label:'Microsoft Copilot — documentación oficial', href:'https://learn.microsoft.com/copilot/'},
+  {label:'Copilot en Microsoft 365 — guía de adopción', href:'https://adoption.microsoft.com/copilot/'},
+  {label:'Copilot Studio — documentación', href:'https://learn.microsoft.com/microsoft-copilot-studio/'},
+  {label:'Novedades de Microsoft 365', href:'https://www.microsoft.com/microsoft-365/blog/'}
+];
+
+const KEY = 'copilot-portal-v1';
+const CFGKEY = 'copilot-cfg-v1';
+const SESKEY = 'copilot-sesion-v1';
+const TPLKEY = 'copilot-plantillas-v1';
+
+const PRESETS = [
+  {id:'basico',   label:'Básico',    detail:'Word, Outlook y Teams',            mods:['word','outlook','teams']},
+  {id:'estandar', label:'Estándar',  detail:'Los 5 módulos de Office',          mods:['word','excel','ppt','teams','outlook']},
+  {id:'completo', label:'Completo',  detail:'Los 5 de Office + Copilot Studio', mods:['word','excel','ppt','teams','outlook','studio']},
+  {id:'express',  label:'Express',   detail:'Media jornada: Word y Outlook',    mods:['word','outlook']},
+  {id:'medida',   label:'A la medida', detail:'Tú eliges módulo por módulo',    mods:null}
+];
+
+const PROFILES = {
+  generico: {label:'Genérico', terms:[], roles:{}},
+  hotel: {
+    label:'Hotel',
+    terms:[['informe de ventas','informe de ocupación'],['Ventas_2026_Q2.xlsx','Ocupacion_2026_Q2.xlsx'],['de la empresa','del hotel'],['la empresa','el hotel'],['toda la empresa','todo el hotel']],
+    roles:{
+      word:[{rol:'Ventas y grupos', task:'Propuestas de eventos', detail:'Arma la propuesta del congreso desde las notas de la visita del cliente.'},
+            {rol:'Recepción', task:'Respuestas al huésped', detail:'Contesta una queja escrita con el tono del hotel, sin que suene a plantilla.'},
+            {rol:'Talento humano', task:'Circulares internas', detail:'Convierte el reglamento en una circular que sí lea el personal de turno.'}],
+      excel:[{rol:'Recepción', task:'Cierre de turno', detail:'Cuadra el reporte de caja del turno y encuentra la diferencia.'},
+            {rol:'Ama de llaves', task:'Reparto del día', detail:'Reparte habitaciones según la ocupación y ve quién quedó sobrecargada.'},
+            {rol:'Alimentos y bebidas', task:'Costos', detail:'Compara el costo de insumos contra la venta del restaurante.'}],
+      outlook:[{rol:'Reservas', task:'Cotizaciones', detail:'Recupera en qué quedó la negociación de un grupo antes de llamar.'},
+            {rol:'Recepción', task:'Reclamos', detail:'Responde una queja del huésped con el tono del hotel.'},
+            {rol:'Compras', task:'Proveedores', detail:'Ubica qué pedidos están sin confirmar y quién los tiene frenados.'}]
+    }
+  },
+  clinica: {
+    label:'Clínica',
+    terms:[['cliente corporativo','convenio empresarial'],['de la empresa','de la clínica'],['la empresa','la clínica'],['los clientes','los pacientes'],['del cliente','del paciente'],['al cliente','al paciente'],['un cliente','un paciente'],['el cliente','el paciente'],['informe de ventas','informe de atenciones']],
+    roles:{
+      word:[{rol:'Coordinación médica', task:'Protocolos', detail:'Resume el protocolo largo en una hoja de consulta rápida.'},
+            {rol:'Atención al usuario', task:'Respuestas a PQRS', detail:'Contesta una queja con el tono de la clínica y los tiempos que exige la ley.'},
+            {rol:'Talento humano', task:'Circulares', detail:'Convierte el reglamento en una circular de una página para los turnos.'}],
+      excel:[{rol:'Facturación', task:'Cierre del mes', detail:'Cuadra facturación contra glosas y ubica las diferencias.'},
+            {rol:'Agendamiento', task:'Ocupación de agenda', detail:'Ve qué franjas quedan vacías y dónde se concentran las cancelaciones.'},
+            {rol:'Compras', task:'Insumos', detail:'Compara consumo de insumos contra atenciones del mes.'}],
+      outlook:[{rol:'Convenios', task:'Aseguradoras', detail:'Recupera en qué quedó la negociación de un convenio en un hilo largo.'},
+            {rol:'Atención al usuario', task:'PQRS', detail:'Prioriza los casos que tienen un tiempo de respuesta encima.'},
+            {rol:'Administración', task:'Proveedores', detail:'Identifica qué pedidos están sin confirmar.'}]
+    }
+  },
+  retail: {
+    label:'Retail',
+    terms:[['cliente corporativo','cliente mayorista'],['de la empresa','de la tienda'],['la empresa','la tienda'],['toda la empresa','toda la cadena']],
+    roles:{
+      excel:[{rol:'Tienda', task:'Cierre de caja', detail:'Cuadra la caja del día y encuentra la diferencia sin revisar recibo por recibo.'},
+            {rol:'Inventarios', task:'Rotación', detail:'Ubica las referencias quietas y las que se agotan antes de tiempo.'},
+            {rol:'Compras', task:'Reposición', detail:'Compara venta contra existencias para armar el pedido de la semana.'}]
+    }
+  },
+  constructora: {
+    label:'Constructora',
+    terms:[['cliente corporativo','contratante'],['de la empresa','de la constructora'],['la empresa','la constructora'],['informe de ventas','informe de avance de obra']],
+    roles:{
+      excel:[{rol:'Residencia de obra', task:'Avance', detail:'Compara avance programado contra ejecutado y ubica los frentes atrasados.'},
+            {rol:'Presupuesto', task:'Control de costos', detail:'Revisa el costo por capítulo contra lo presupuestado.'},
+            {rol:'Compras', task:'Materiales', detail:'Cruza pedidos con entradas de almacén y ubica lo que falta.'}]
+    }
+  }
+};
+
+function applyTerms(text, terms) {
+  if (!text || !terms || !terms.length) return text;
+  let out = text;
+  terms.forEach(([a, b]) => { out = out.split(a).join(b); });
+  return out;
+}
+
+function baseCfg() {
+  return {
+    client:'', industry:'generico', preset:'completo', pinOn:true, pin:'',
+    modules: MODULES.map(m => ({id:m.id, on:true, level:m.level, mins:parseInt((m.meta.match(/(\d+) min/) || [])[1] || 30, 10), prompts:null, roles:null, ba:null})),
+    faqs:null, downloads:null
+  };
+}
+function randomPin() { return String(Math.floor(1000 + Math.random() * 9000)); }
+function encodeCfg(cfg) { try { return btoa(unescape(encodeURIComponent(JSON.stringify(cfg)))); } catch (e) { return ''; } }
+function decodeCfg(s) { try { return JSON.parse(decodeURIComponent(escape(atob(s)))); } catch (e) { return null; } }
+
+class Component extends DCLogic {
+  state = {
+    view:'home', moduleId:'word', dark:false, done:{}, faq:0, step:0, copied:null,
+    cfg:null, adminSection:'alcance', editing:null, tplName:'', templates:[], flash:null,
+    session:{pin:'', attendees:[], questions:[]}, me:null,
+    gate:{name:'', phone:'', pin:'', error:''}, askText:'', askOpen:false
+  };
+  canvasRef = React.createRef();
+  mainRef = React.createRef();
+  modulosRef = React.createRef();
+  recursosRef = React.createRef();
+
+  componentDidMount() {
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) {}
+    this.loadConfig();
+    this.setState({done: saved.done || {}, dark: saved.dark != null ? saved.dark : !!this.props.startDark});
+    this.applyTheme(saved.dark != null ? saved.dark : !!this.props.startDark);
+    this.initField();
+    this.initReveal();
+  }
+  componentDidUpdate(pp, ps) {
+    const prev = ps || {};
+    if (prev.dark !== this.state.dark) this.applyTheme(this.state.dark);
+  }
+  componentWillUnmount() { cancelAnimationFrame(this._raf); }
+
+  applyTheme(dark) {
+    document.body.dataset.theme = dark ? 'dark' : 'light';
+    const acc = this.props.accentColor;
+    if (acc) document.body.style.setProperty('--accent', acc);
+  }
+  persist(next) {
+    try { localStorage.setItem(KEY, JSON.stringify(Object.assign({done:this.state.done, dark:this.state.dark}, next))); } catch (e) {}
+  }
+
+  // Retícula de nodos conectados: deriva del scroll del contenedor principal.
+  initField() {
+    cancelAnimationFrame(this._raf);
+    const cv = this.canvasRef.current;
+    if (!cv || this.props.showNodeField === false) return;
+    const ctx = cv.getContext('2d');
+    let w = 0, h = 0, nodes = [];
+    const seed = () => {
+      const r = cv.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2);
+      w = r.width; h = r.height;
+      cv.width = w * dpr; cv.height = h * dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+      nodes = Array.from({length: Math.max(26, Math.round(w / 34))}, () => ({
+        x: Math.random()*w, y: Math.random()*h,
+        vx: (Math.random()-.5)*.16, vy: (Math.random()-.5)*.16,
+        r: 1.1 + Math.random()*1.8
+      }));
+    };
+    seed();
+    this._onResize = seed;
+    addEventListener('resize', this._onResize);
+    const main = this.mainRef.current;
+    const draw = () => {
+      const sc = main ? Math.min(main.scrollTop / 520, 1) : 0;
+      const dark = document.body.dataset.theme === 'dark';
+      const line = dark ? '77,155,255' : '11,99,206';
+      const dot  = dark ? '47,211,160' : '15,169,122';
+      ctx.clearRect(0,0,w,h);
+      const shift = sc * 46;
+      for (const n of nodes) {
+        n.x += n.vx; n.y += n.vy;
+        if (n.x < 0 || n.x > w) n.vx *= -1;
+        if (n.y < 0 || n.y > h) n.vy *= -1;
+      }
+      for (let i=0;i<nodes.length;i++) for (let j=i+1;j<nodes.length;j++) {
+        const a = nodes[i], b = nodes[j];
+        const dx = a.x-b.x, dy = (a.y-b.y), d = Math.hypot(dx,dy);
+        if (d < 132) {
+          ctx.strokeStyle = 'rgba('+line+','+((1-d/132)*(dark?.24:.18)*(1-sc*.55))+')';
+          ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(a.x, a.y-shift); ctx.lineTo(b.x, b.y-shift); ctx.stroke();
+        }
+      }
+      for (const n of nodes) {
+        ctx.fillStyle = 'rgba('+dot+','+(.5*(1-sc*.6))+')';
+        ctx.beginPath(); ctx.arc(n.x, n.y-shift, n.r, 0, 7); ctx.fill();
+      }
+      this._raf = requestAnimationFrame(draw);
+    };
+    draw();
+  }
+
+  initReveal() {
+    requestAnimationFrame(() => {
+      const els = document.querySelectorAll('[data-reveal]');
+      if (this._io) this._io.disconnect();
+      this._io = new IntersectionObserver((ents) => {
+        ents.forEach(en => { if (en.isIntersecting) { en.target.style.opacity = '1'; en.target.style.transform = 'none'; this._io.unobserve(en.target); } });
+      }, {threshold: .12, root: this.mainRef.current});
+      els.forEach((el, i) => {
+        if (el.dataset.revealed) return;
+        el.dataset.revealed = '1';
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(14px)';
+        el.style.transition = 'opacity .5s cubic-bezier(.2,.8,.2,1) ' + Math.min(i*40,220) + 'ms, transform .5s cubic-bezier(.2,.8,.2,1) ' + Math.min(i*40,220) + 'ms';
+        this._io.observe(el);
+      });
+    });
+  }
+
+  scrollTo(ref) {
+    const main = this.mainRef.current, el = ref.current;
+    if (main && el) main.scrollTo({top: el.offsetTop - 12, behavior: 'smooth'});
+  }
+  resetView() {
+    if (this.mainRef.current) this.mainRef.current.scrollTop = 0;
+    this.initField(); this.initReveal();
+  }
+  openModule(id) {
+    this.setState({view:'module', moduleId:id, step:0, copied:null});
+    setTimeout(() => this.resetView(), 0);
+  }
+  goHome(anchor) {
+    this.setState({view:'home'});
+    setTimeout(() => {
+      this.resetView();
+      if (anchor) setTimeout(() => this.scrollTo(anchor === 'modulos' ? this.modulosRef : this.recursosRef), 80);
+    }, 0);
+  }
+  toggleDone() {
+    const id = this.state.moduleId, done = Object.assign({}, this.state.done);
+    done[id] = !done[id];
+    this.setState({done}); this.persist({done}); this.syncProgress(done);
+  }
+  copy(text, key) {
+    try { navigator.clipboard.writeText(text); } catch (e) {}
+    this.setState({copied:key});
+    clearTimeout(this._ct);
+    this._ct = setTimeout(() => this.setState({copied:null}), 1600);
+  }
+
+  // ---------- Configuración del expositor ----------
+  loadConfig() {
+    let cfg = null;
+    const h = (location.hash || '');
+    const i = h.indexOf('cfg=');
+    if (i >= 0) cfg = decodeCfg(h.slice(i + 4));
+    if (!cfg) { try { cfg = JSON.parse(localStorage.getItem(CFGKEY) || 'null'); } catch (e) {} }
+    if (!cfg) cfg = baseCfg();
+    if (!cfg.pin) cfg.pin = randomPin();
+    let ses = {pin:cfg.pin, attendees:[], questions:[]}, me = null, tpl = [];
+    try { ses = Object.assign(ses, JSON.parse(localStorage.getItem(SESKEY) || 'null') || {}); } catch (e) {}
+    try { tpl = JSON.parse(localStorage.getItem(TPLKEY) || '[]'); } catch (e) {}
+    try { me = JSON.parse(localStorage.getItem(KEY + '-me') || 'null'); } catch (e) {}
+    const view = /admin/.test(h) ? 'admin' : this.state.view;
+    this.setState({cfg, session:ses, templates:tpl, me, view});
+  }
+  saveCfg(cfg, extra) {
+    try { localStorage.setItem(CFGKEY, JSON.stringify(cfg)); } catch (e) {}
+    this.setState(Object.assign({cfg}, extra || {}));
+  }
+  saveSession(session) {
+    try { localStorage.setItem(SESKEY, JSON.stringify(session)); } catch (e) {}
+    this.setState({session});
+  }
+  setCfg(patch) { this.saveCfg(Object.assign({}, this.state.cfg, patch)); }
+  setMod(id, patch) {
+    const modules = this.state.cfg.modules.map(m => m.id === id ? Object.assign({}, m, patch) : m);
+    this.saveCfg(Object.assign({}, this.state.cfg, {modules, preset:'medida'}));
+  }
+  moveMod(id, dir) {
+    const modules = this.state.cfg.modules.slice();
+    const i = modules.findIndex(m => m.id === id), j = i + dir;
+    if (i < 0 || j < 0 || j >= modules.length) return;
+    const t = modules[i]; modules[i] = modules[j]; modules[j] = t;
+    this.saveCfg(Object.assign({}, this.state.cfg, {modules}));
+  }
+  applyPreset(p) {
+    const modules = this.state.cfg.modules.map(m => p.mods ? Object.assign({}, m, {on: p.mods.indexOf(m.id) >= 0}) : m);
+    this.saveCfg(Object.assign({}, this.state.cfg, {preset:p.id, modules}));
+    this.flash(p.mods ? 'Paquete ' + p.label + ' aplicado' : 'Arma el programa módulo por módulo');
+  }
+  flash(msg) {
+    this.setState({flash:msg});
+    clearTimeout(this._fl);
+    this._fl = setTimeout(() => this.setState({flash:null}), 2200);
+  }
+  // Módulos efectivos: base + perfil de industria + ediciones del expositor
+  mods() {
+    const cfg = this.state.cfg || baseCfg();
+    const prof = PROFILES[cfg.industry] || PROFILES.generico;
+    const T = prof.terms;
+    const order = cfg.modules;
+    const out = [];
+    order.forEach(cm => {
+      if (!cm.on) return;
+      const b = MODULES.find(x => x.id === cm.id);
+      if (!b) return;
+      const ba = cm.ba || {};
+      out.push(Object.assign({}, b, {
+        level: cm.level || b.level,
+        meta: (cm.prompts || b.prompts).length + ' prompts · ' + (cm.mins || 30) + ' min',
+        summary: applyTerms(b.summary, T),
+        intro: applyTerms(b.intro, T),
+        outcomes: b.outcomes.map(o => applyTerms(o, T)),
+        prompts: (cm.prompts || b.prompts).map(p => ({tag:p.tag, text: cm.prompts ? p.text : applyTerms(p.text, T)})),
+        baIntro: ba.baIntro || applyTerms(b.baIntro, T),
+        before: ba.before || applyTerms(b.before, T),
+        after: ba.after || applyTerms(b.after, T),
+        beforeTime: ba.beforeTime || b.beforeTime,
+        afterTime: ba.afterTime || b.afterTime,
+        steps: b.steps.map(s => ({title: applyTerms(s.title, T), desc: applyTerms(s.desc, T)})),
+        roles: cm.roles || (prof.roles[b.id] || b.roles.map(r => ({rol:r.rol, task:r.task, detail: applyTerms(r.detail, T)}))),
+        mistakes: (b.mistakes || []).map(x => ({bad: applyTerms(x.bad, T), good: applyTerms(x.good, T)})),
+        mockTitle: applyTerms(b.mockTitle, T),
+        mockPrompt: applyTerms(b.mockPrompt, T),
+        mockReply: applyTerms(b.mockReply, T)
+      }));
+    });
+    return out.length ? out : [MODULES[0]];
+  }
+  // Módulo base + perfil de industria (sin filtrar por visibilidad): sirve al panel
+  resolved(id) {
+    const cfg = this.state.cfg || baseCfg();
+    const prof = PROFILES[cfg.industry] || PROFILES.generico;
+    const T = prof.terms;
+    const b = MODULES.find(x => x.id === id) || MODULES[0];
+    return Object.assign({}, b, {
+      baIntro: applyTerms(b.baIntro, T), before: applyTerms(b.before, T), after: applyTerms(b.after, T),
+      prompts: b.prompts.map(p => ({tag:p.tag, text: applyTerms(p.text, T)})),
+      roles: prof.roles[b.id] || b.roles.map(r => ({rol:r.rol, task:r.task, detail: applyTerms(r.detail, T)}))
+    });
+  }
+  cfgFaqs() {
+    const cfg = this.state.cfg || baseCfg();
+    const T = (PROFILES[cfg.industry] || PROFILES.generico).terms;
+    return cfg.faqs || FAQS.map(f => ({q: applyTerms(f.q, T), a: applyTerms(f.a, T)}));
+  }
+  cfgDownloads() {
+    const cfg = this.state.cfg || baseCfg();
+    const T = (PROFILES[cfg.industry] || PROFILES.generico).terms;
+    return cfg.downloads || DOWNLOADS.map(d => ({title:d.title, desc: applyTerms(d.desc, T), meta:d.meta}));
+  }
+
+  // ---------- Sesión en vivo ----------
+  register() {
+    const g = this.state.gate, cfg = this.state.cfg;
+    const name = (g.name || '').trim(), phone = (g.phone || '').replace(/[^\d+]/g, '');
+    if (g.pin !== cfg.pin) return this.setState({gate: Object.assign({}, g, {error:'El PIN no coincide con el de la sesión.'})});
+    if (name.length < 3) return this.setState({gate: Object.assign({}, g, {error:'Escribe tu nombre completo.'})});
+    if (phone.length < 10) return this.setState({gate: Object.assign({}, g, {error:'Escribe tu WhatsApp con indicativo, mínimo 10 dígitos.'})});
+    const me = {name, phone, at: Date.now()};
+    const session = Object.assign({}, this.state.session);
+    session.pin = cfg.pin;
+    session.attendees = (session.attendees || []).filter(a => a.phone !== phone).concat([Object.assign({}, me, {done:0})]);
+    try { localStorage.setItem(KEY + '-me', JSON.stringify(me)); } catch (e) {}
+    this.setState({me, gate:{name:'', phone:'', pin:'', error:''}});
+    this.saveSession(session);
+  }
+  syncProgress(done) {
+    const me = this.state.me;
+    if (!me) return;
+    const n = Object.keys(done).filter(k => done[k]).length;
+    const session = Object.assign({}, this.state.session);
+    session.attendees = (session.attendees || []).map(a => a.phone === me.phone ? Object.assign({}, a, {done:n}) : a);
+    this.saveSession(session);
+  }
+  sendQuestion() {
+    const txt = (this.state.askText || '').trim();
+    if (txt.length < 4) return;
+    const session = Object.assign({}, this.state.session);
+    session.questions = (session.questions || []).concat([{
+      id: Date.now(), text: txt, who: this.state.me ? this.state.me.name : 'Anónimo',
+      mod: this.state.moduleId, open: true
+    }]);
+    this.setState({askText:'', askOpen:false});
+    this.saveSession(session);
+    this.flash('Tu consulta le llegó al expositor');
+  }
+  toggleQuestion(id) {
+    const session = Object.assign({}, this.state.session);
+    session.questions = (session.questions || []).map(q => q.id === id ? Object.assign({}, q, {open: !q.open}) : q);
+    this.saveSession(session);
+  }
+  waLink(a) {
+    const cfg = this.state.cfg;
+    const lines = ['Hola ' + a.name + ', gracias por participar en la sesión de Copilot' + (cfg.client ? ' de ' + cfg.client : '') + '.',
+      'Estos son los recursos que vimos:', ''].concat(this.cfgDownloads().map(d => '• ' + d.title));
+    lines.push('', 'El portal queda disponible con tu PIN: ' + cfg.pin);
+    return 'https://wa.me/' + a.phone.replace(/[^\d]/g, '') + '?text=' + encodeURIComponent(lines.join('\n'));
+  }
+
+  // ---------- Guardar, exportar, compartir ----------
+  saveTemplate() {
+    const name = (this.state.tplName || this.state.cfg.client || '').trim();
+    if (!name) return this.flash('Ponle nombre a la plantilla');
+    const templates = (this.state.templates || []).filter(t => t.name !== name)
+      .concat([{name, at: Date.now(), cfg: this.state.cfg}]);
+    try { localStorage.setItem(TPLKEY, JSON.stringify(templates)); } catch (e) {}
+    this.setState({templates, tplName:''});
+    this.flash('Plantilla "' + name + '" guardada');
+  }
+  loadTemplate(t) { this.saveCfg(t.cfg); this.flash('Plantilla "' + t.name + '" cargada'); }
+  deleteTemplate(t) {
+    const templates = (this.state.templates || []).filter(x => x.name !== t.name);
+    try { localStorage.setItem(TPLKEY, JSON.stringify(templates)); } catch (e) {}
+    this.setState({templates});
+  }
+  exportCfg() {
+    const blob = new Blob([JSON.stringify(this.state.cfg, null, 2)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'copilot-' + ((this.state.cfg.client || 'programa').toLowerCase().replace(/[^a-z0-9]+/g, '-')) + '.json';
+    a.click();
+    this.flash('Configuración exportada');
+  }
+  importCfg(ev) {
+    const file = ev.target.files && ev.target.files[0];
+    if (!file) return;
+    const r = new FileReader();
+    r.onload = () => {
+      const cfg = (function (s) { try { return JSON.parse(s); } catch (e) { return null; } })(r.result);
+      if (cfg && cfg.modules) { this.saveCfg(cfg); this.flash('Configuración importada'); }
+      else this.flash('Ese archivo no es una configuración válida');
+    };
+    r.readAsText(file);
+  }
+  shareLink() {
+    const base = location.href.split('#')[0];
+    const url = base + '#cfg=' + encodeCfg(this.state.cfg);
+    try { navigator.clipboard.writeText(url); } catch (e) {}
+    this.flash('Link copiado — ábrelo en la sala y queda configurado');
+  }
+  resetCfg() { this.saveCfg(Object.assign(baseCfg(), {pin: this.state.cfg.pin})); this.flash('Configuración restablecida'); }
+
+  mockBody() {
+    const list = this.mods();
+    const e = React.createElement, m = list.find(x => x.id === this.state.moduleId) || list[0];
+    const bar = (w, o) => e('div', {key:'l'+w+o, style:{height:9, width:w, borderRadius:4, background:'var(--border)', opacity:o, marginBottom:9}});
+    if (m.mockType === 'grid') {
+      const cells = [];
+      for (let r=0;r<7;r++) for (let c=0;c<4;c++) cells.push(e('div',{key:r+'-'+c, style:{
+        height:22, borderRight:'1px solid var(--border)', borderBottom:'1px solid var(--border)',
+        background: r===0 ? 'var(--surface2)' : (r===3 && c===2 ? 'var(--accent-soft)' : 'transparent'),
+        display:'flex', alignItems:'center', paddingLeft:6,
+        font: r===0 ? "600 9.5px 'IBM Plex Sans',sans-serif" : "400 9.5px 'Geist Mono',monospace",
+        color: r===0 ? 'var(--muted)' : 'var(--faint)'
+      }}, r===0 ? ['Región','Q1','Q2','Δ%'][c] : (c===0 ? ['Andina','Caribe','Pacífico','Oriente','Centro','Sur'][r-1] : (c===3 ? (r===3?'+18%':'+'+(2+r)+'%') : (120+r*37+c*11)))));
+      return e('div', {style:{border:'1px solid var(--border)', borderRadius:6, overflow:'hidden', display:'grid', gridTemplateColumns:'1.3fr 1fr 1fr .8fr'}}, cells);
+    }
+    if (m.mockType === 'slide') {
+      return e('div', {style:{display:'flex', flexDirection:'column', gap:8}},
+        e('div', {style:{aspectRatio:'16/9', borderRadius:6, border:'1px solid var(--border)', background:'var(--surface2)', padding:12, display:'flex', flexDirection:'column', justifyContent:'center', gap:7}},
+          e('div',{style:{height:11, width:'62%', borderRadius:4, background:'var(--primary)', opacity:.8}}),
+          e('div',{style:{height:7, width:'80%', borderRadius:4, background:'var(--border)'}}),
+          e('div',{style:{height:7, width:'54%', borderRadius:4, background:'var(--border)'}})),
+        e('div', {style:{display:'flex', gap:6}}, [0,1,2,3].map(i =>
+          e('div',{key:i, style:{flex:1, aspectRatio:'16/9', borderRadius:4, border:'1px solid var(--border)', background: i===0 ? 'var(--primary-soft)' : 'var(--surface2)'}}))));
+    }
+    if (m.mockType === 'mail' || m.mockType === 'chat') {
+      const rows = m.mockType === 'mail'
+        ? [['Comité de presupuesto','Necesitamos tu confirmación antes del jueves', true],['Proveedor logístico','Re: ajuste de tarifas 2026', false],['Talento humano','Recordatorio: evaluación de desempeño', false],['Equipo comercial','Cierre de mes — pipeline actualizado', false]]
+        : [['Ana Restrepo','¿Quedamos en el viernes para la entrega?', true],['Camilo Ruiz','Subí el archivo al canal', false],['Reunión de seguimiento','Transcripción activada · 42 min', false],['Daniela Mesa','Confirmo los tres acuerdos', false]];
+      return e('div',{style:{display:'flex', flexDirection:'column', gap:7}}, rows.map((r,i) =>
+        e('div',{key:i, style:{display:'flex', gap:8, padding:'8px 9px', borderRadius:7, border:'1px solid var(--border)', background: r[2] ? 'var(--primary-soft)' : 'transparent'}},
+          e('div',{style:{width:20, height:20, borderRadius:99, flex:'none', background:'var(--border)'}}),
+          e('div',{style:{display:'flex', flexDirection:'column', gap:3, minWidth:0}},
+            e('div',{style:{font:"600 10.5px 'IBM Plex Sans',sans-serif", color:'var(--text)'}}, r[0]),
+            e('div',{style:{font:"400 10px 'IBM Plex Sans',sans-serif", color:'var(--muted)', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}, r[1])))));
+    }
+    return e('div', null,
+      e('div',{style:{height:12, width:'58%', borderRadius:4, background:'var(--primary)', opacity:.75, marginBottom:14}}),
+      bar('96%',1), bar('88%',.8), bar('92%',.8), bar('64%',.8),
+      e('div',{style:{height:9, width:'90%', borderRadius:4, background:'var(--accent)', opacity:.35, marginBottom:9}}),
+      bar('84%',.8), bar('48%',.8));
+  }
+
+  renderVals() {
+    const st = this.state;
+    const dark = st.dark;
+    const cfg = st.cfg || baseCfg();
+    const LIST = this.mods();
+    const doneCount = LIST.filter(m => st.done[m.id]).length;
+    const pct = Math.round(doneCount / LIST.length * 100);
+    const nav = (this.props.navVariant || 'sidebar');
+    const m = LIST.find(x => x.id === st.moduleId) || LIST[0];
+    const idx = LIST.indexOf(m);
+    const next = LIST[(idx + 1) % LIST.length];
+    const isDone = !!st.done[m.id];
+    const MODULES = LIST;
+
+    const tint = (c) => 'color-mix(in srgb, ' + c + ' 14%, transparent)';
+    const prof = PROFILES[cfg.industry] || PROFILES.generico;
+    const gateNeeded = cfg.pinOn && !st.me && st.view !== 'admin';
+
+    return {
+      isHome: st.view === 'home' && st.view !== 'admin',
+      isModule: st.view === 'module',
+      isAdmin: st.view === 'admin',
+      sidebarDisplay: nav === 'sidebar' ? 'flex' : 'none',
+      topbarDisplay: nav === 'sidebar' ? 'none' : 'flex',
+      progressPct: pct,
+      progressLabel: pct + '%',
+      progressDetail: doneCount + ' de ' + MODULES.length + ' módulos completados',
+      themeIcon: dark ? '☾' : '☀',
+      themeName: dark ? 'oscuro' : 'claro',
+      toggleTheme: () => { const d = !this.state.dark; this.setState({dark:d}); this.applyTheme(d); this.persist({dark:d}); },
+      goHome: () => this.goHome(),
+      goModulos: () => this.goHome('modulos'),
+      goRecursos: () => this.goHome('recursos'),
+      mainRef: this.mainRef, canvasRef: this.canvasRef,
+      modulosRef: this.modulosRef, recursosRef: this.recursosRef,
+
+      navItems: [
+        {label:'Inicio', onGo: () => this.goHome()},
+        {label:'Módulos', onGo: () => this.goHome('modulos')},
+        {label:'Recursos', onGo: () => this.goHome('recursos')}
+      ],
+
+      modules: MODULES.map(x => ({
+        name: x.name, shortName: x.shortName, summary: x.summary, level: x.level, meta: x.meta,
+        tint: tint(x.color), glyph: glyph(x.kind, x.color, 24), glyphSm: glyph(x.kind, x.color, 14),
+        levelBg: LEVEL[x.level].bg, levelFg: LEVEL[x.level].fg,
+        check: st.done[x.id] ? '✓' : '',
+        navBg: st.moduleId === x.id && st.view === 'module' ? 'var(--surface2)' : 'transparent',
+        badgeDisplay: st.done[x.id] ? 'inline-flex' : 'none',
+        cta: st.done[x.id] ? 'Repasar guía' : 'Ver guía',
+        onOpen: () => this.openModule(x.id),
+        onKey: (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); this.openModule(x.id); } }
+      })),
+
+      mod: {
+        name: m.name, level: m.level, meta: m.meta, intro: m.intro,
+        tint: tint(m.color), glyphLg: glyph(m.kind, m.color, 32),
+        levelBg: LEVEL[m.level].bg, levelFg: LEVEL[m.level].fg,
+        outcomes: m.outcomes,
+        doneLabel: isDone ? '✓ Módulo completado' : 'Marcar como completado',
+        doneBg: isDone ? 'var(--accent-soft)' : 'var(--surface)',
+        doneFg: isDone ? 'var(--accent)' : 'var(--text)',
+        doneBorder: isDone ? 'var(--accent)' : 'var(--border)',
+        prompts: m.prompts.map((p, i) => ({
+          tag: p.tag, text: p.text,
+          copyLabel: st.copied === i ? '✓ Copiado' : 'Copiar',
+          copyFg: st.copied === i ? 'var(--accent)' : 'var(--faint)',
+          onCopy: () => this.copy(p.text, i)
+        })),
+        baIntro: m.baIntro, before: m.before, after: m.after, beforeTime: m.beforeTime, afterTime: m.afterTime,
+        steps: m.steps.map((s, i) => ({
+          n: i + 1, title: s.title, desc: s.desc,
+          bg: st.step === i ? 'var(--surface)' : 'transparent',
+          bd: st.step === i ? 'var(--primary)' : 'var(--border)',
+          numBg: st.step === i ? 'var(--primary)' : 'var(--surface2)',
+          numFg: st.step === i ? '#fff' : 'var(--muted)',
+          onSelect: () => this.setState({step:i})
+        })),
+        roles: m.roles, mistakes: m.mistakes,
+        mockTitle: m.mockTitle, mockPrompt: m.mockPrompt, mockReply: m.mockReply,
+        mockBar: m.color
+      },
+      mockBody: this.mockBody(),
+      toggleDone: () => this.toggleDone(),
+      nextName: next.name,
+      goNext: () => this.openModule(next.id),
+
+      // ---- Panel del expositor ----
+      goAdmin: () => { this.setState({view:'admin', editing:null}); setTimeout(() => { if (this.mainRef.current) this.mainRef.current.scrollTop = 0; }, 0); },
+      exitAdmin: () => this.goHome(),
+      clientName: cfg.client,
+      clientLabel: cfg.client || 'Sin cliente asignado',
+      onClient: (ev) => this.setCfg({client: ev.target.value}),
+      industryLabel: prof.label,
+      flashMsg: st.flash || '',
+      flashDisplay: st.flash ? 'flex' : 'none',
+      adminTabs: [
+        {id:'alcance', label:'Cliente y alcance'},
+        {id:'modulos', label:'Módulos y contenido'},
+        {id:'recursos', label:'Recursos y preguntas'},
+        {id:'sesion', label:'Sesión en vivo'},
+        {id:'guardar', label:'Guardar y compartir'}
+      ].map(t => ({
+        label: t.label,
+        bg: st.adminSection === t.id ? 'var(--primary)' : 'transparent',
+        fg: st.adminSection === t.id ? '#fff' : 'var(--muted)',
+        bd: st.adminSection === t.id ? 'var(--primary)' : 'var(--border)',
+        onGo: () => this.setState({adminSection: t.id, editing: null})
+      })),
+      secAlcance: st.adminSection === 'alcance',
+      secModulos: st.adminSection === 'modulos',
+      secRecursos: st.adminSection === 'recursos',
+      secSesion: st.adminSection === 'sesion',
+      secGuardar: st.adminSection === 'guardar',
+
+      industries: Object.keys(PROFILES).map(k => ({
+        label: PROFILES[k].label,
+        bg: cfg.industry === k ? 'var(--primary-soft)' : 'var(--surface)',
+        bd: cfg.industry === k ? 'var(--primary)' : 'var(--border)',
+        fg: cfg.industry === k ? 'var(--primary)' : 'var(--text)',
+        onPick: () => { this.setCfg({industry: k}); this.flash('Perfil ' + PROFILES[k].label + ' aplicado a todo el contenido'); }
+      })),
+      presets: PRESETS.map(p => ({
+        label: p.label, detail: p.detail,
+        count: p.mods ? p.mods.length + ' módulos' : 'libre',
+        bg: cfg.preset === p.id ? 'var(--primary-soft)' : 'var(--surface)',
+        bd: cfg.preset === p.id ? 'var(--primary)' : 'var(--border)',
+        onPick: () => this.applyPreset(p)
+      })),
+      activeCount: LIST.length,
+      totalPrompts: LIST.reduce((s, x) => s + x.prompts.length, 0),
+      totalMins: cfg.modules.filter(x => x.on).reduce((s, x) => s + (x.mins || 0), 0),
+      totalHours: (cfg.modules.filter(x => x.on).reduce((s, x) => s + (x.mins || 0), 0) / 60).toFixed(1).replace('.', ','),
+
+      cfgModules: cfg.modules.map((cm, i) => {
+        const bb = this.resolved(cm.id);
+        const editing = st.editing === cm.id;
+        return {
+          id: cm.id, name: bb.name, n: i + 1,
+          glyph: glyph(bb.kind, bb.color, 18),
+          tint: tint(bb.color),
+          onLabel: cm.on ? 'Visible' : 'Oculto',
+          onBg: cm.on ? 'var(--accent-soft)' : 'var(--surface2)',
+          onFg: cm.on ? 'var(--accent)' : 'var(--faint)',
+          rowOpacity: cm.on ? 1 : .55,
+          onToggle: () => this.setMod(cm.id, {on: !cm.on}),
+          onUp: () => this.moveMod(cm.id, -1),
+          onDown: () => this.moveMod(cm.id, 1),
+          mins: cm.mins,
+          onMins: (ev) => this.setMod(cm.id, {mins: Math.max(5, parseInt(ev.target.value || 0, 10))}),
+          level: cm.level,
+          levels: ['Básico', 'Intermedio', 'Avanzado'].map(lv => ({
+            label: lv,
+            bg: cm.level === lv ? LEVEL[lv].bg : 'transparent',
+            fg: cm.level === lv ? LEVEL[lv].fg : 'var(--faint)',
+            bd: cm.level === lv ? LEVEL[lv].fg : 'var(--border)',
+            onPick: () => this.setMod(cm.id, {level: lv})
+          })),
+          editLabel: editing ? 'Cerrar contenido' : 'Editar contenido',
+          editDisplay: editing ? 'block' : 'none',
+          onEdit: () => this.setState({editing: editing ? null : cm.id}),
+          prompts: (cm.prompts || (bb.prompts || [])).map((p, pi) => ({
+            tag: p.tag, text: p.text,
+            onTag: (ev) => { const arr = (cm.prompts || bb.prompts).map((x, k) => k === pi ? {tag: ev.target.value, text: x.text} : x); this.setMod(cm.id, {prompts: arr}); },
+            onText: (ev) => { const arr = (cm.prompts || bb.prompts).map((x, k) => k === pi ? {tag: x.tag, text: ev.target.value} : x); this.setMod(cm.id, {prompts: arr}); },
+            onDel: () => { const arr = (cm.prompts || bb.prompts).filter((x, k) => k !== pi); this.setMod(cm.id, {prompts: arr}); }
+          })),
+          onAddPrompt: () => this.setMod(cm.id, {prompts: (cm.prompts || bb.prompts).concat([{tag:'Nuevo', text:'Escribe aquí el prompt del cliente.'}])}),
+          baIntro: (cm.ba && cm.ba.baIntro) || bb.baIntro,
+          before: (cm.ba && cm.ba.before) || bb.before,
+          after: (cm.ba && cm.ba.after) || bb.after,
+          beforeTime: (cm.ba && cm.ba.beforeTime) || bb.beforeTime,
+          afterTime: (cm.ba && cm.ba.afterTime) || bb.afterTime,
+          onBa: (field) => (ev) => {
+            const ba = Object.assign({baIntro: bb.baIntro, before: bb.before, after: bb.after, beforeTime: bb.beforeTime, afterTime: bb.afterTime}, cm.ba || {});
+            ba[field] = ev.target.value;
+            this.setMod(cm.id, {ba});
+          },
+          onBaIntro: (ev) => { const ba = Object.assign({}, {baIntro: bb.baIntro, before: bb.before, after: bb.after, beforeTime: bb.beforeTime, afterTime: bb.afterTime}, cm.ba || {}); ba.baIntro = ev.target.value; this.setMod(cm.id, {ba}); },
+          onBefore: (ev) => { const ba = Object.assign({}, {baIntro: bb.baIntro, before: bb.before, after: bb.after, beforeTime: bb.beforeTime, afterTime: bb.afterTime}, cm.ba || {}); ba.before = ev.target.value; this.setMod(cm.id, {ba}); },
+          onAfter: (ev) => { const ba = Object.assign({}, {baIntro: bb.baIntro, before: bb.before, after: bb.after, beforeTime: bb.beforeTime, afterTime: bb.afterTime}, cm.ba || {}); ba.after = ev.target.value; this.setMod(cm.id, {ba}); },
+          roles: (cm.roles || bb.roles || []).map((r, ri) => ({
+            rol: r.rol, task: r.task, detail: r.detail,
+            onRol: (ev) => { const arr = (cm.roles || bb.roles).map((x, k) => k === ri ? Object.assign({}, x, {rol: ev.target.value}) : x); this.setMod(cm.id, {roles: arr}); },
+            onTask: (ev) => { const arr = (cm.roles || bb.roles).map((x, k) => k === ri ? Object.assign({}, x, {task: ev.target.value}) : x); this.setMod(cm.id, {roles: arr}); },
+            onDetail: (ev) => { const arr = (cm.roles || bb.roles).map((x, k) => k === ri ? Object.assign({}, x, {detail: ev.target.value}) : x); this.setMod(cm.id, {roles: arr}); },
+            onDel: () => this.setMod(cm.id, {roles: (cm.roles || bb.roles).filter((x, k) => k !== ri)})
+          })),
+          onAddRole: () => this.setMod(cm.id, {roles: (cm.roles || bb.roles || []).concat([{rol:'Área nueva', task:'Tarea', detail:'Qué resuelve en esa área.'}])})
+        };
+      }),
+
+      cfgFaqList: this.cfgFaqs().map((f, i) => {
+        const list = this.cfgFaqs();
+        return {
+          q: f.q, a: f.a,
+          onQ: (ev) => this.setCfg({faqs: list.map((x, k) => k === i ? {q: ev.target.value, a: x.a} : x)}),
+          onA: (ev) => this.setCfg({faqs: list.map((x, k) => k === i ? {q: x.q, a: ev.target.value} : x)}),
+          onDel: () => this.setCfg({faqs: list.filter((x, k) => k !== i)})
+        };
+      }),
+      onAddFaq: () => this.setCfg({faqs: this.cfgFaqs().concat([{q:'¿Pregunta nueva?', a:'Respuesta para este cliente.'}])}),
+      cfgDownloadList: this.cfgDownloads().map((d, i) => {
+        const list = this.cfgDownloads();
+        return {
+          title: d.title, desc: d.desc, meta: d.meta,
+          onTitle: (ev) => this.setCfg({downloads: list.map((x, k) => k === i ? Object.assign({}, x, {title: ev.target.value}) : x)}),
+          onDesc: (ev) => this.setCfg({downloads: list.map((x, k) => k === i ? Object.assign({}, x, {desc: ev.target.value}) : x)}),
+          onMeta: (ev) => this.setCfg({downloads: list.map((x, k) => k === i ? Object.assign({}, x, {meta: ev.target.value}) : x)}),
+          onDel: () => this.setCfg({downloads: list.filter((x, k) => k !== i)})
+        };
+      }),
+      onAddDownload: () => this.setCfg({downloads: this.cfgDownloads().concat([{title:'Recurso nuevo', desc:'Para qué sirve.', meta:'PDF'}])}),
+
+      // ---- Sesión en vivo ----
+      pin: cfg.pin,
+      pinOnLabel: cfg.pinOn ? 'Registro con PIN activado' : 'Entrada libre, sin registro',
+      pinOnBg: cfg.pinOn ? 'var(--accent-soft)' : 'var(--surface2)',
+      pinOnFg: cfg.pinOn ? 'var(--accent)' : 'var(--faint)',
+      togglePin: () => this.setCfg({pinOn: !cfg.pinOn}),
+      newPin: () => { const p = randomPin(); this.setCfg({pin: p}); this.flash('PIN nuevo: ' + p); },
+      attendees: (st.session.attendees || []).map(a => ({
+        name: a.name, phone: a.phone,
+        progress: a.done + ' de ' + LIST.length,
+        pct: Math.round((a.done || 0) / LIST.length * 100),
+        wa: this.waLink(a)
+      })),
+      attendeeCount: (st.session.attendees || []).length,
+      noAttendees: (st.session.attendees || []).length === 0,
+      questions: (st.session.questions || []).slice().reverse().map(q => ({
+        text: q.text, who: q.who, mod: q.mod,
+        stateLabel: q.open ? 'Abierta' : 'Resuelta',
+        stateBg: q.open ? 'var(--primary-soft)' : 'var(--accent-soft)',
+        stateFg: q.open ? 'var(--primary)' : 'var(--accent)',
+        onToggle: () => this.toggleQuestion(q.id)
+      })),
+      openQuestions: (st.session.questions || []).filter(q => q.open).length,
+      noQuestions: (st.session.questions || []).length === 0,
+
+      // ---- Guardar y compartir ----
+      tplName: st.tplName,
+      onTplName: (ev) => this.setState({tplName: ev.target.value}),
+      onSaveTpl: () => this.saveTemplate(),
+      templates: (st.templates || []).map(t => ({
+        name: t.name,
+        detail: (t.cfg.modules || []).filter(x => x.on).length + ' módulos · ' + (PROFILES[t.cfg.industry] || PROFILES.generico).label,
+        onLoad: () => this.loadTemplate(t),
+        onDel: () => this.deleteTemplate(t)
+      })),
+      noTemplates: (st.templates || []).length === 0,
+      onExport: () => this.exportCfg(),
+      onImport: (ev) => this.importCfg(ev),
+      onShare: () => this.shareLink(),
+      onReset: () => this.resetCfg(),
+
+      // ---- Vista previa ----
+      previewModules: LIST.map(x => ({
+        name: x.name, level: x.level, meta: x.meta, summary: x.summary,
+        glyph: glyph(x.kind, x.color, 16), tint: tint(x.color),
+        levelBg: LEVEL[x.level].bg, levelFg: LEVEL[x.level].fg
+      })),
+
+      // ---- Registro del asistente ----
+      gateDisplay: gateNeeded ? 'grid' : 'none',
+      gateName: st.gate.name, gatePhone: st.gate.phone, gatePin: st.gate.pin,
+      gateError: st.gate.error, gateErrorDisplay: st.gate.error ? 'block' : 'none',
+      onGateName: (ev) => this.setState({gate: Object.assign({}, st.gate, {name: ev.target.value, error:''})}),
+      onGatePhone: (ev) => this.setState({gate: Object.assign({}, st.gate, {phone: ev.target.value, error:''})}),
+      onGatePin: (ev) => this.setState({gate: Object.assign({}, st.gate, {pin: ev.target.value.replace(/\D/g, '').slice(0, 4), error:''})}),
+      onRegister: () => this.register(),
+      meName: st.me ? st.me.name : '',
+      meDisplay: st.me ? 'flex' : 'none',
+      clientTag: cfg.client ? cfg.client : 'Sesión interna',
+
+      // ---- Consulta en vivo ----
+      askWidgetDisplay: (st.view !== 'admin' && !gateNeeded) ? 'flex' : 'none',
+      askOpen: st.askOpen,
+      askDisplay: st.askOpen ? 'block' : 'none',
+      askText: st.askText,
+      onAskText: (ev) => this.setState({askText: ev.target.value}),
+      toggleAsk: () => this.setState({askOpen: !st.askOpen}),
+      onSendAsk: () => this.sendQuestion(),
+
+      downloads: this.cfgDownloads(),
+      shortcuts: SHORTCUTS,
+      practices: PRACTICES,
+      links: LINKS,
+      faqs: this.cfgFaqs().map((f, i) => ({
+        q: f.q, a: f.a,
+        expanded: st.faq === i,
+        display: st.faq === i ? 'block' : 'none',
+        rot: st.faq === i ? 45 : 0,
+        onToggle: () => this.setState({faq: st.faq === i ? -1 : i})
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>
