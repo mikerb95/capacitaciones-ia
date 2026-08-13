@@ -22,9 +22,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es" suppressHydrationWarning>
       <body
         className={`${plex.variable} ${geist.variable} ${geistMono.variable} font-sans antialiased`}
-        style={{
-          fontFamily: `var(--font-plex), ui-sans-serif, system-ui, sans-serif`,
-        }}
       >
         {children}
       </body>
