@@ -6,8 +6,16 @@ import type { DeckFull } from '@/db/queries';
 import { pushSlide, startLive, stopLive } from '@/app/admin/presentaciones/actions';
 import { SlideStage } from './slide-stage';
 
-export function Presenter({ deck, initialPin }: { deck: DeckFull; initialPin: string | null }) {
-  const [index, setIndex] = useState(0);
+export function Presenter({
+  deck,
+  initialPin,
+  initialSlide,
+}: {
+  deck: DeckFull;
+  initialPin: string | null;
+  initialSlide: number;
+}) {
+  const [index, setIndex] = useState(initialSlide);
   const [pin, setPin] = useState<string | null>(initialPin);
   const [notesOpen, setNotesOpen] = useState(false);
   const [pending, startTransition] = useTransition();

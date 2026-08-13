@@ -290,7 +290,7 @@ export const liveSessions = sqliteTable(
       .notNull()
       .default(sql`(unixepoch())`),
   },
-  (t) => [index('live_sessions_pin_idx').on(t.pin)],
+  (t) => [uniqueIndex('live_sessions_pin_idx').on(t.pin)],
 );
 
 export const attendees = sqliteTable(

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { and, eq, ne } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { attendees, deckSlides, decks, liveSessions } from '@/db/schema';
 import { parseDeck, slugify } from '@/lib/import-deck';
@@ -59,39 +59,6 @@ export async function importDeck(formData: FormData) {
 
   revalidatePath('/admin/presentaciones');
   redirect(`/admin/presentaciones?importado=${slug}`);
-}
-
-/** Reemplaza las láminas de un mazo que ya existe, conservando su enlace. */
-export async function replaceDeckSlides(formData: FormData) {
-  const id = Number(str(formData, 'id'));
-  const file = formData.get('file') as File | null;
-  const pasted = str(formData, 'html');
-  const source = file && file.size > 0 ? await file.text() : pasted;
-
-  if (!id || !source.trim()) return;
-
-  const parsed = parseDeck(source);
-  if (parsed.slides.length === 0) {
-    throw new Error('El HTML no trae láminas dentro de <section>.');
-  }
-
-  await db.delete(deckSlides).where(eq(deckSlides.deckId, id));
-  await db.insert(deckSlides).values(
-    parsed.slides.map((slide, i) => ({
-      deckId: id,
-      title: slide.title,
-      html: slide.html,
-      notes: slide.notes,
-      sortOrder: i,
-    })),
-  );
-  await db
-    .update(decks)
-    .set({ styles: parsed.styles || null, updatedAt: new Date() })
-    .where(eq(decks.id, id));
-
-  revalidatePath('/admin/presentaciones');
-  redirect('/admin/presentaciones');
 }
 
 export async function deleteDeck(formData: FormData) {
@@ -152,9 +119,4 @@ export async function joinLive(pin: string, name: string, phone: string) {
   }
 
   return { sessionId: session.id, deckId: session.deckId, slide: session.slide };
-}
-
-/** Limpia sesiones viejas de otros mazos, por si quedó alguna abierta. */
-export async function closeOtherSessions(deckId: number) {
-  await db.delete(liveSessions).where(ne(liveSessions.deckId, deckId));
 }

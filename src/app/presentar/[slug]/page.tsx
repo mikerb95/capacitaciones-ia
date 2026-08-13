@@ -19,5 +19,11 @@ export default async function PresentPage({ params }: Params) {
 
   const session = await getActiveSession(deck.id);
 
-  return <Presenter deck={deck} initialPin={session?.pin ?? null} />;
+  return (
+    <Presenter
+      deck={deck}
+      initialPin={session?.pin ?? null}
+      initialSlide={session?.slide ?? 0}
+    />
+  );
 }
