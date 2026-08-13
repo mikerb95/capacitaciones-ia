@@ -1,21 +1,41 @@
+import { findCountry, flagOf, COUNTRIES } from './countries';
+
 /**
- * Normaliza un teléfono a `+dígitos`, que es el formato que espera WhatsApp.
- * El formulario muestra un `+` fijo, así que lo que llega debe traer el código
- * de país por delante. Devuelve null si no parece un número usable.
+ * Junta el país elegido con el número nacional y devuelve un E.164, que es lo
+ * que espera WhatsApp. Null si el largo no corresponde a ese país.
  */
-export function normalizePhone(raw: string): string | null {
+export function composePhone(countryCode: string, raw: string): string | null {
+  const country = findCountry(countryCode);
+  if (!country) return null;
+
   const digits = raw.replace(/\D/g, '');
-  if (digits.length < 10 || digits.length > 15) return null;
-  return `+${digits}`;
+  if (!country.lengths.includes(digits.length)) return null;
+
+  return `+${country.dial}${digits}`;
+}
+
+/** Cuántos dígitos pedir, para el mensaje de error y el maxLength del campo. */
+export function expectedDigits(countryCode: string): string {
+  const country = findCountry(countryCode);
+  if (!country) return '';
+  const [min, max] = [Math.min(...country.lengths), Math.max(...country.lengths)];
+  return min === max ? `${min}` : `${min} o ${max}`;
 }
 
 /**
- * Se muestra en E.164, sin agrupar: cada país parte el número distinto y sin
- * una librería de planes de numeración cualquier agrupación sale mal.
+ * Para mostrar: bandera del país e indicativo separado del número nacional.
+ * Se resuelve por el indicativo más largo que calce, así +1 no se come a +593.
  */
 export function formatPhone(phone: string): string {
   const digits = phone.replace(/\D/g, '');
-  return `+${digits}`;
+
+  const match = [...COUNTRIES]
+    .sort((a, b) => b.dial.length - a.dial.length)
+    .find((c) => digits.startsWith(c.dial) && c.lengths.includes(digits.length - c.dial.length));
+
+  if (!match) return `+${digits}`;
+
+  return `${flagOf(match.code)} +${match.dial} ${digits.slice(match.dial.length)}`;
 }
 
 /** Enlace de chat directo, para el seguimiento posterior a la capacitación. */
