@@ -16,4 +16,4 @@ export const MASTER_ACCESS = {
  * Códigos que nunca se le entregan a una capacitación real. El admin rechaza
  * crearlos a mano y tampoco los sortea.
  */
-export const RESERVED_CODES: string[] = [MASTER_ACCESS.code];
+export const RESERVED_CODES: string[] = [MASTER_ACCESS.code, DEMO_ACCESS.code];
