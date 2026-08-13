@@ -7,7 +7,7 @@ export function LevelBadge({ level }: { level: Level }) {
   const tone: Record<Level, string> = {
     Básico: 'bg-accent-soft text-accent',
     Intermedio: 'bg-primary-soft text-primary',
-    Avanzado: 'bg-[color-mix(in_srgb,var(--tone)_14%,transparent)] text-[var(--tone)]',
+    Avanzado: 'bg-[#f3e8f6] text-[#a32079] dark:bg-[#2c1730] dark:text-[#e39ad0]',
   };
   return (
     <span
