@@ -110,8 +110,8 @@ export default async function AccesosPage({ searchParams }: Props) {
         : error === 'reservado'
           ? 'Ese código está reservado para pruebas y no se puede asignar a una capacitación.'
           : creado
-          ? `Código ${creado} creado y activo.`
-          : null;
+            ? `Código ${creado} creado y activo.`
+            : null;
 
   return (
     <div className="min-h-screen bg-bg">
