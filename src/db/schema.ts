@@ -374,6 +374,25 @@ export const moduleMistakesRelations = relations(moduleMistakes, ({ one }) => ({
   module: one(modules, { fields: [moduleMistakes.moduleId], references: [modules.id] }),
 }));
 
+export const decksRelations = relations(decks, ({ one, many }) => ({
+  platform: one(platforms, { fields: [decks.platformId], references: [platforms.id] }),
+  slides: many(deckSlides),
+  sessions: many(liveSessions),
+}));
+
+export const deckSlidesRelations = relations(deckSlides, ({ one }) => ({
+  deck: one(decks, { fields: [deckSlides.deckId], references: [decks.id] }),
+}));
+
+export const liveSessionsRelations = relations(liveSessions, ({ one, many }) => ({
+  deck: one(decks, { fields: [liveSessions.deckId], references: [decks.id] }),
+  attendees: many(attendees),
+}));
+
+export const attendeesRelations = relations(attendees, ({ one }) => ({
+  session: one(liveSessions, { fields: [attendees.sessionId], references: [liveSessions.id] }),
+}));
+
 /* ---------------------------------------------------------------------- tipos */
 
 export type Platform = typeof platforms.$inferSelect;
@@ -384,3 +403,6 @@ export type ModuleRole = typeof moduleRoles.$inferSelect;
 export type ModuleMistake = typeof moduleMistakes.$inferSelect;
 export type ModuleOutcome = typeof moduleOutcomes.$inferSelect;
 export type Level = Module['level'];
+export type Deck = typeof decks.$inferSelect;
+export type DeckSlide = typeof deckSlides.$inferSelect;
+export type LiveSession = typeof liveSessions.$inferSelect;
