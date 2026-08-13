@@ -10,71 +10,71 @@ type Params = { params: Promise<{ platform: string; slug: string }> };
 
 export async function generateMetadata({ params }: Params) {
   const { platform, slug } = await params;
-  const module = await getModule(platform, slug);
-  if (!module) return {};
-  return { title: `${module.name} · ${module.platform.portalName}` };
+  const mod = await getModule(platform, slug);
+  if (!mod) return {};
+  return { title: `${mod.name} · ${mod.platform.portalName}` };
 }
 
 export default async function ModulePage({ params }: Params) {
   const { platform: platformId, slug } = await params;
-  const [module, platform] = await Promise.all([
+  const [mod, platform] = await Promise.all([
     getModule(platformId, slug),
     getPlatform(platformId),
   ]);
 
-  if (!module || !platform) notFound();
+  if (!mod || !platform) notFound();
 
   const siblings = platform.modules;
-  const index = siblings.findIndex((m) => m.id === module.id);
+  const index = siblings.findIndex((m) => m.id === mod.id);
   const previous = siblings[index - 1];
   const next = siblings[index + 1];
 
   return (
-    <div className="tone min-h-screen bg-bg" style={{ ['--tone' as string]: module.color }}>
+    <div className="tone min-h-screen bg-bg" style={{ ['--tone' as string]: mod.color }}>
       <SiteHeader
-        title={module.name}
-        subtitle={module.platform.portalName}
-        back={{ href: `/${platformId}`, label: `Volver a ${module.platform.name}` }}
+        title={mod.name}
+        subtitle={mod.platform.portalName}
+        back={{ href: `/${platformId}`, label: `Volver a ${mod.platform.name}` }}
       />
 
       <main className="mx-auto max-w-[1000px] px-4 py-8 sm:px-6">
         {/* Encabezado del módulo */}
         <div className="mb-8">
           <div className="mb-3 flex flex-wrap items-center gap-2.5">
-            <Abbr abbr={module.abbr} color={module.color} size={32} />
-            <LevelBadge level={module.level} />
-            {module.category && (
+            <Abbr abbr={mod.abbr} color={mod.color} size={32} />
+            <LevelBadge level={mod.level} />
+            {mod.category && (
               <span className="rounded-full bg-surface-2 px-2 py-0.5 text-[11.5px] font-medium text-muted">
-                {module.category}
+                {mod.category}
               </span>
             )}
-            {module.meta && <span className="text-[12.5px] text-faint">{module.meta}</span>}
+            {mod.meta && <span className="text-[12.5px] text-faint">{mod.meta}</span>}
           </div>
           <h1 className="font-display text-[30px] font-semibold leading-tight tracking-tight sm:text-[36px]">
-            {module.name}
+            {mod.name}
           </h1>
           <p className="mt-2 max-w-[70ch] text-[16px] leading-relaxed text-muted">
-            {module.summary}
+            {mod.summary}
           </p>
-          {module.intro && (
+          {mod.intro && (
             <p className="mt-3 max-w-[70ch] text-[14.5px] leading-relaxed text-muted">
-              {module.intro}
+              {mod.intro}
             </p>
           )}
         </div>
 
-        {module.outcomes.length > 0 && (
+        {mod.outcomes.length > 0 && (
           <section className="mb-9">
             <SectionTitle kicker="Al terminar" title="Qué se lleva cada quien" />
             <ul className="grid gap-2.5 sm:grid-cols-3">
-              {module.outcomes.map((o) => (
+              {mod.outcomes.map((o) => (
                 <li
                   key={o.id}
                   className="rounded-card border border-line bg-surface p-4 text-[13.5px] leading-relaxed text-muted shadow-card"
                 >
                   <span
                     className="mb-2 block size-2 rounded-full"
-                    style={{ background: module.color }}
+                    style={{ background: mod.color }}
                     aria-hidden="true"
                   />
                   {o.text}
@@ -84,54 +84,54 @@ export default async function ModulePage({ params }: Params) {
           </section>
         )}
 
-        {module.prompts.length > 0 && (
+        {mod.prompts.length > 0 && (
           <section className="mb-9">
             <SectionTitle
               kicker="Para copiar"
               title="Prompts del módulo"
               intro="Reemplaza lo que está entre corchetes por los datos reales del área antes de usarlos."
             />
-            <PromptList prompts={module.prompts} />
+            <PromptList prompts={mod.prompts} />
           </section>
         )}
 
-        {(module.before || module.after) && (
+        {(mod.before || mod.after) && (
           <section className="mb-9">
-            <SectionTitle kicker="El caso" title="Antes y después" intro={module.baIntro ?? undefined} />
+            <SectionTitle kicker="El caso" title="Antes y después" intro={mod.baIntro ?? undefined} />
             <div className="grid gap-3 sm:grid-cols-2">
               <Card>
                 <div className="mb-2 font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-faint">
                   Como se hace hoy
                 </div>
-                <p className="text-[14px] leading-relaxed text-muted">{module.before}</p>
-                {module.beforeTime && (
+                <p className="text-[14px] leading-relaxed text-muted">{mod.before}</p>
+                {mod.beforeTime && (
                   <p className="mt-3 border-t border-line pt-3 text-[13px] font-medium text-text">
-                    {module.beforeTime}
+                    {mod.beforeTime}
                   </p>
                 )}
               </Card>
               <Card
                 style={{
-                  background: `color-mix(in srgb, ${module.color} 9%, var(--surface))`,
-                  borderColor: `color-mix(in srgb, ${module.color} 28%, var(--border))`,
+                  background: `color-mix(in srgb, ${mod.color} 9%, var(--surface))`,
+                  borderColor: `color-mix(in srgb, ${mod.color} 28%, var(--border))`,
                 }}
               >
                 <div
                   className="mb-2 font-mono text-[11px] font-medium uppercase tracking-[0.08em]"
-                  style={{ color: module.color }}
+                  style={{ color: mod.color }}
                 >
                   Con la herramienta
                 </div>
-                <p className="text-[14px] leading-relaxed text-muted">{module.after}</p>
-                {module.afterTime && (
+                <p className="text-[14px] leading-relaxed text-muted">{mod.after}</p>
+                {mod.afterTime && (
                   <p
                     className="mt-3 border-t pt-3 text-[13px] font-semibold"
                     style={{
-                      borderColor: `color-mix(in srgb, ${module.color} 25%, transparent)`,
-                      color: module.color,
+                      borderColor: `color-mix(in srgb, ${mod.color} 25%, transparent)`,
+                      color: mod.color,
                     }}
                   >
-                    {module.afterTime}
+                    {mod.afterTime}
                   </p>
                 )}
               </Card>
@@ -139,17 +139,17 @@ export default async function ModulePage({ params }: Params) {
           </section>
         )}
 
-        {module.steps.length > 0 && (
+        {mod.steps.length > 0 && (
           <section className="mb-9">
             <SectionTitle kicker="Cómo se hace" title="Paso a paso" />
             <ol className="flex flex-col gap-2.5">
-              {module.steps.map((s, i) => (
+              {mod.steps.map((s, i) => (
                 <li key={s.id} className="flex gap-3.5 rounded-card border border-line bg-surface p-4 shadow-card">
                   <span
                     className="grid size-7 flex-none place-items-center rounded-full font-mono text-[12px] font-semibold"
                     style={{
-                      background: `color-mix(in srgb, ${module.color} 14%, transparent)`,
-                      color: module.color,
+                      background: `color-mix(in srgb, ${mod.color} 14%, transparent)`,
+                      color: mod.color,
                     }}
                   >
                     {i + 1}
@@ -168,7 +168,7 @@ export default async function ModulePage({ params }: Params) {
           </section>
         )}
 
-        {module.roles.length > 0 && (
+        {mod.roles.length > 0 && (
           <section className="mb-9">
             <SectionTitle kicker="Por área" title="Quién lo usa y para qué" />
             <div className="overflow-x-auto rounded-card border border-line bg-surface shadow-card">
@@ -181,7 +181,7 @@ export default async function ModulePage({ params }: Params) {
                   </tr>
                 </thead>
                 <tbody>
-                  {module.roles.map((r) => (
+                  {mod.roles.map((r) => (
                     <tr key={r.id} className="border-b border-line last:border-0">
                       <td className="px-4 py-3 text-[13.5px] font-semibold">{r.role}</td>
                       <td className="px-4 py-3 text-[13.5px] text-muted">{r.task}</td>
@@ -196,11 +196,11 @@ export default async function ModulePage({ params }: Params) {
           </section>
         )}
 
-        {module.mistakes.length > 0 && (
+        {mod.mistakes.length > 0 && (
           <section className="mb-9">
             <SectionTitle kicker="Ojo con esto" title="Errores frecuentes" />
             <div className="flex flex-col gap-2.5">
-              {module.mistakes.map((m) => (
+              {mod.mistakes.map((m) => (
                 <div
                   key={m.id}
                   className="grid gap-3 rounded-card border border-line bg-surface p-4 shadow-card sm:grid-cols-2"
@@ -225,25 +225,25 @@ export default async function ModulePage({ params }: Params) {
           </section>
         )}
 
-        {module.mockPrompt && (
+        {mod.mockPrompt && (
           <section className="mb-9">
-            <SectionTitle kicker="Ejemplo" title={module.mockTitle ?? 'Cómo se ve en pantalla'} />
+            <SectionTitle kicker="Ejemplo" title={mod.mockTitle ?? 'Cómo se ve en pantalla'} />
             <div className="grid gap-3 md:grid-cols-[1.2fr_1fr]">
               <Card className="flex flex-col gap-3">
                 <div className="self-end max-w-[85%] rounded-2xl rounded-br-md bg-primary-soft px-3.5 py-2.5 text-[13.5px] leading-relaxed text-text">
-                  {module.mockPrompt}
+                  {mod.mockPrompt}
                 </div>
                 <div className="self-start max-w-[90%] rounded-2xl rounded-bl-md bg-surface-2 px-3.5 py-2.5 text-[13.5px] leading-relaxed text-muted">
-                  {module.mockReply}
+                  {mod.mockReply}
                 </div>
               </Card>
-              {module.mockPanel && (
+              {mod.mockPanel && (
                 <Card className="bg-surface-2">
                   <div className="mb-2 font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-faint">
-                    {module.mockPanelTitle ?? 'Panel'}
+                    {mod.mockPanelTitle ?? 'Panel'}
                   </div>
                   <pre className="overflow-x-auto whitespace-pre-wrap font-mono text-[12.5px] leading-relaxed text-muted">
-                    {module.mockPanel}
+                    {mod.mockPanel}
                   </pre>
                 </Card>
               )}

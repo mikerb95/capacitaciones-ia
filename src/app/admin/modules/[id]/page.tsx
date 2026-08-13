@@ -38,28 +38,28 @@ function Field({
 export default async function ModuleFormPage({ params }: Params) {
   const { id } = await params;
   const isNew = id === 'new';
-  const module = isNew ? null : await getModuleById(Number(id));
+  const mod = isNew ? null : await getModuleById(Number(id));
   const platforms = await getPlatformIds();
 
-  if (!isNew && !module) notFound();
+  if (!isNew && !mod) notFound();
 
-  const outcomes = (module?.outcomes ?? []).map((o) => o.text).join('\n');
-  const prompts = (module?.prompts ?? []).map((p) => `${p.tag} | ${p.text}`).join('\n');
-  const steps = (module?.steps ?? []).map((s) => `${s.title} | ${s.description}`).join('\n');
-  const roles = (module?.roles ?? []).map((r) => `${r.role} | ${r.task} | ${r.detail}`).join('\n');
-  const mistakes = (module?.mistakes ?? []).map((m) => `${m.bad} | ${m.good}`).join('\n');
+  const outcomes = (mod?.outcomes ?? []).map((o) => o.text).join('\n');
+  const prompts = (mod?.prompts ?? []).map((p) => `${p.tag} | ${p.text}`).join('\n');
+  const steps = (mod?.steps ?? []).map((s) => `${s.title} | ${s.description}`).join('\n');
+  const roles = (mod?.roles ?? []).map((r) => `${r.role} | ${r.task} | ${r.detail}`).join('\n');
+  const mistakes = (mod?.mistakes ?? []).map((m) => `${m.bad} | ${m.good}`).join('\n');
 
   return (
     <div className="min-h-screen bg-bg">
       <SiteHeader
-        title={isNew ? 'Nuevo módulo' : `Editar: ${module!.name}`}
-        subtitle={isNew ? undefined : module!.platform.name}
+        title={isNew ? 'Nuevo módulo' : `Editar: ${mod!.name}`}
+        subtitle={isNew ? undefined : mod!.platform.name}
         back={{ href: '/admin', label: 'Volver al listado' }}
       />
 
       <main className="mx-auto max-w-[900px] px-4 py-8 sm:px-6">
         <form action={saveModule} className="flex flex-col gap-8">
-          {module && <input type="hidden" name="id" value={module.id} />}
+          {mod && <input type="hidden" name="id" value={mod.id} />}
 
           <section>
             <SectionTitle kicker="Identidad" title="Lo que se ve en la comparativa" />
@@ -67,7 +67,7 @@ export default async function ModuleFormPage({ params }: Params) {
               <Field label="Plataforma">
                 <select
                   name="platformId"
-                  defaultValue={module?.platformId ?? platforms[0]?.id}
+                  defaultValue={mod?.platformId ?? platforms[0]?.id}
                   className={inputClass}
                   required
                 >
@@ -81,7 +81,7 @@ export default async function ModuleFormPage({ params }: Params) {
               <Field label="Slug" hint="único dentro de la plataforma">
                 <input
                   name="slug"
-                  defaultValue={module?.slug ?? ''}
+                  defaultValue={mod?.slug ?? ''}
                   className={inputClass}
                   placeholder="artifacts"
                   pattern="[a-z0-9\-]+"
@@ -89,15 +89,15 @@ export default async function ModuleFormPage({ params }: Params) {
                 />
               </Field>
               <Field label="Nombre">
-                <input name="name" defaultValue={module?.name ?? ''} className={inputClass} required />
+                <input name="name" defaultValue={mod?.name ?? ''} className={inputClass} required />
               </Field>
               <Field label="Nombre corto" hint="para el menú lateral">
-                <input name="shortName" defaultValue={module?.shortName ?? ''} className={inputClass} />
+                <input name="shortName" defaultValue={mod?.shortName ?? ''} className={inputClass} />
               </Field>
               <Field label="Sigla" hint="dos letras">
                 <input
                   name="abbr"
-                  defaultValue={module?.abbr ?? ''}
+                  defaultValue={mod?.abbr ?? ''}
                   maxLength={3}
                   className={inputClass}
                 />
@@ -106,12 +106,12 @@ export default async function ModuleFormPage({ params }: Params) {
                 <input
                   name="color"
                   type="color"
-                  defaultValue={module?.color ?? '#3B5BDB'}
+                  defaultValue={mod?.color ?? '#3B5BDB'}
                   className="h-[38px] w-full cursor-pointer rounded-[10px] border border-line bg-surface px-1.5"
                 />
               </Field>
               <Field label="Nivel">
-                <select name="level" defaultValue={module?.level ?? 'Básico'} className={inputClass}>
+                <select name="level" defaultValue={mod?.level ?? 'Básico'} className={inputClass}>
                   {LEVELS.map((l) => (
                     <option key={l} value={l}>
                       {l}
@@ -122,16 +122,16 @@ export default async function ModuleFormPage({ params }: Params) {
               <Field label="Categoría" hint="opcional">
                 <input
                   name="category"
-                  defaultValue={module?.category ?? ''}
+                  defaultValue={mod?.category ?? ''}
                   className={inputClass}
                   placeholder="Documentos"
                 />
               </Field>
               <Field label="Meta" hint="ej: 5 prompts · 30 min">
-                <input name="meta" defaultValue={module?.meta ?? ''} className={inputClass} />
+                <input name="meta" defaultValue={mod?.meta ?? ''} className={inputClass} />
               </Field>
               <Field label="Estado">
-                <select name="status" defaultValue={module?.status ?? 'publicado'} className={inputClass}>
+                <select name="status" defaultValue={mod?.status ?? 'publicado'} className={inputClass}>
                   <option value="publicado">Publicado</option>
                   <option value="borrador">Borrador</option>
                 </select>
@@ -139,7 +139,7 @@ export default async function ModuleFormPage({ params }: Params) {
               <Field label="Descripción corta" hint="la que sale en la card" wide>
                 <textarea
                   name="summary"
-                  defaultValue={module?.summary ?? ''}
+                  defaultValue={mod?.summary ?? ''}
                   rows={2}
                   className={inputClass}
                   required
@@ -148,7 +148,7 @@ export default async function ModuleFormPage({ params }: Params) {
               <Field label="Introducción" wide>
                 <textarea
                   name="intro"
-                  defaultValue={module?.intro ?? ''}
+                  defaultValue={mod?.intro ?? ''}
                   rows={3}
                   className={inputClass}
                 />
@@ -187,7 +187,7 @@ export default async function ModuleFormPage({ params }: Params) {
               <Field label="Contexto del caso" wide>
                 <textarea
                   name="baIntro"
-                  defaultValue={module?.baIntro ?? ''}
+                  defaultValue={mod?.baIntro ?? ''}
                   rows={2}
                   className={inputClass}
                 />
@@ -195,7 +195,7 @@ export default async function ModuleFormPage({ params }: Params) {
               <Field label="Cómo se hace hoy">
                 <textarea
                   name="before"
-                  defaultValue={module?.before ?? ''}
+                  defaultValue={mod?.before ?? ''}
                   rows={3}
                   className={inputClass}
                 />
@@ -203,7 +203,7 @@ export default async function ModuleFormPage({ params }: Params) {
               <Field label="Con la herramienta">
                 <textarea
                   name="after"
-                  defaultValue={module?.after ?? ''}
+                  defaultValue={mod?.after ?? ''}
                   rows={3}
                   className={inputClass}
                 />
@@ -211,14 +211,14 @@ export default async function ModuleFormPage({ params }: Params) {
               <Field label="Costo actual" hint="ej: dos días de espera">
                 <input
                   name="beforeTime"
-                  defaultValue={module?.beforeTime ?? ''}
+                  defaultValue={mod?.beforeTime ?? ''}
                   className={inputClass}
                 />
               </Field>
               <Field label="Costo nuevo" hint="ej: una sesión de trabajo">
                 <input
                   name="afterTime"
-                  defaultValue={module?.afterTime ?? ''}
+                  defaultValue={mod?.afterTime ?? ''}
                   className={inputClass}
                 />
               </Field>
@@ -231,21 +231,21 @@ export default async function ModuleFormPage({ params }: Params) {
               <Field label="Título del ejemplo">
                 <input
                   name="mockTitle"
-                  defaultValue={module?.mockTitle ?? ''}
+                  defaultValue={mod?.mockTitle ?? ''}
                   className={inputClass}
                 />
               </Field>
               <Field label="Título del panel">
                 <input
                   name="mockPanelTitle"
-                  defaultValue={module?.mockPanelTitle ?? ''}
+                  defaultValue={mod?.mockPanelTitle ?? ''}
                   className={inputClass}
                 />
               </Field>
               <Field label="Mensaje del usuario">
                 <textarea
                   name="mockPrompt"
-                  defaultValue={module?.mockPrompt ?? ''}
+                  defaultValue={mod?.mockPrompt ?? ''}
                   rows={3}
                   className={inputClass}
                 />
@@ -253,7 +253,7 @@ export default async function ModuleFormPage({ params }: Params) {
               <Field label="Respuesta de la IA">
                 <textarea
                   name="mockReply"
-                  defaultValue={module?.mockReply ?? ''}
+                  defaultValue={mod?.mockReply ?? ''}
                   rows={3}
                   className={inputClass}
                 />
@@ -261,7 +261,7 @@ export default async function ModuleFormPage({ params }: Params) {
               <Field label="Contenido del panel" hint="se respetan los saltos de línea" wide>
                 <textarea
                   name="mockPanel"
-                  defaultValue={module?.mockPanel ?? ''}
+                  defaultValue={mod?.mockPanel ?? ''}
                   rows={4}
                   className={`${inputClass} font-mono`}
                 />
@@ -285,10 +285,10 @@ export default async function ModuleFormPage({ params }: Params) {
           </div>
         </form>
 
-        {module && (
+        {mod && (
           <form action={deleteModule} className="mt-8 border-t border-line pt-6">
-            <input type="hidden" name="id" value={module.id} />
-            <input type="hidden" name="platformId" value={module.platformId} />
+            <input type="hidden" name="id" value={mod.id} />
+            <input type="hidden" name="platformId" value={mod.platformId} />
             <button
               type="submit"
               className="rounded-[10px] border border-line px-3.5 py-2 text-[13px] font-medium text-muted transition-colors hover:border-[#c2410c] hover:text-[#c2410c]"
