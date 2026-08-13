@@ -6,7 +6,8 @@ import { redirect } from 'next/navigation';
 import { and, eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { accessCodes, participants } from '@/db/schema';
-import { normalizePhone } from '@/lib/phone';
+import { DEFAULT_COUNTRY } from '@/lib/countries';
+import { composePhone, expectedDigits } from '@/lib/phone';
 import { SESSION_COOKIE, SESSION_MAX_AGE } from '@/lib/session';
 
 export type EnterState = {
@@ -25,15 +26,21 @@ export async function enter(_prev: EnterState, formData: FormData): Promise<Ente
   const code = str(formData, 'codigo').replace(/\D/g, '');
   const name = str(formData, 'nombre').replace(/\s+/g, ' ');
   const rawPhone = str(formData, 'telefono');
-  const values = { code, name, phone: rawPhone };
+  const country = str(formData, 'pais') || DEFAULT_COUNTRY;
+  const values = { code, name, phone: rawPhone, country };
 
   const errors: EnterState['errors'] = {};
 
   if (code.length !== 4) errors.code = 'El código son 4 dígitos.';
   if (name.length < 2) errors.name = 'Escribe tu nombre completo.';
 
-  const phone = normalizePhone(rawPhone);
-  if (!phone) errors.phone = 'Incluye el código de país y el número, sin espacios ni guiones.';
+  const phone = composePhone(country, rawPhone);
+  if (!phone) {
+    const digits = expectedDigits(country);
+    errors.phone = digits
+      ? `Ese país usa números de ${digits} dígitos, sin el indicativo.`
+      : 'Elige un país de la lista.';
+  }
 
   if (Object.keys(errors).length > 0) return { errors, values };
 
