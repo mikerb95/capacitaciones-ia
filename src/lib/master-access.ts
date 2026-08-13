@@ -1,3 +1,5 @@
+import { DEMO_ACCESS } from './demo-access';
+
 /**
  * Usuario maestro de pruebas: entra al sitio como un asistente cualquiera, para
  * revisar los módulos tal como los ve la gente, sin depender de que haya una
