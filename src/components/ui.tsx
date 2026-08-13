@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { Level } from '@/db/schema';
+import { Logo } from '@/lib/logos';
 import { ThemeToggle } from './theme-toggle';
 
 /** Insignia de nivel. El color viene del nivel, no de la plataforma. */
@@ -40,19 +41,32 @@ export function StatusBadge({ status }: { status: string }) {
   );
 }
 
-/** Cuadrito con las iniciales del módulo, teñido con su color. */
-export function Abbr({ abbr, color, size = 26 }: { abbr: string; color: string; size?: number }) {
+/**
+ * Cuadrito del módulo: el logo de la marca cuando el módulo es un producto con
+ * logo propio (Word, Teams, Codex...), y si no las iniciales teñidas.
+ */
+export function Abbr({
+  abbr,
+  color,
+  size = 26,
+  logo,
+}: {
+  abbr: string;
+  color: string;
+  size?: number;
+  logo?: string;
+}) {
   return (
     <span
       className="grid flex-none place-items-center rounded-[7px] font-mono text-[10px] font-semibold"
       style={{
         width: size,
         height: size,
-        background: `color-mix(in srgb, ${color} 14%, transparent)`,
+        background: `color-mix(in srgb, ${color} ${logo ? 8 : 14}%, transparent)`,
         color,
       }}
     >
-      {abbr}
+      {logo ? <Logo name={logo} size={Math.round(size * 0.62)} /> : abbr}
     </span>
   );
 }
@@ -61,11 +75,28 @@ export function PlatformMark({
   initial,
   color,
   size = 34,
+  logo,
 }: {
   initial: string;
   color: string;
   size?: number;
+  logo?: string;
 }) {
+  if (logo) {
+    return (
+      <span
+        className="grid flex-none place-items-center rounded-[10px]"
+        style={{
+          width: size,
+          height: size,
+          background: `color-mix(in srgb, ${color} 10%, transparent)`,
+        }}
+      >
+        <Logo name={logo} size={Math.round(size * 0.62)} />
+      </span>
+    );
+  }
+
   return (
     <span
       className="grid flex-none place-items-center rounded-[10px] font-display font-semibold text-white"
