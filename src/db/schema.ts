@@ -510,6 +510,35 @@ export const platformsRelations = relations(platforms, ({ many }) => ({
   practices: many(platformPractices),
   faqs: many(platformFaqs),
   links: many(platformLinks),
+  plans: many(platformPlans),
+  models: many(platformModels),
+}));
+
+export const platformPlansRelations = relations(platformPlans, ({ one, many }) => ({
+  platform: one(platforms, { fields: [platformPlans.platformId], references: [platforms.id] }),
+  models: many(platformModelPlans),
+  modules: many(modulePlans),
+}));
+
+export const platformModelsRelations = relations(platformModels, ({ one, many }) => ({
+  platform: one(platforms, { fields: [platformModels.platformId], references: [platforms.id] }),
+  plans: many(platformModelPlans),
+}));
+
+export const platformModelPlansRelations = relations(platformModelPlans, ({ one }) => ({
+  model: one(platformModels, {
+    fields: [platformModelPlans.modelId],
+    references: [platformModels.id],
+  }),
+  plan: one(platformPlans, {
+    fields: [platformModelPlans.planId],
+    references: [platformPlans.id],
+  }),
+}));
+
+export const modulePlansRelations = relations(modulePlans, ({ one }) => ({
+  module: one(modules, { fields: [modulePlans.moduleId], references: [modules.id] }),
+  plan: one(platformPlans, { fields: [modulePlans.planId], references: [platformPlans.id] }),
 }));
 
 export const platformStatsRelations = relations(platformStats, ({ one }) => ({
