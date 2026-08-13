@@ -1,0 +1,56 @@
+import type { Level } from '../schema';
+
+export type ModuleSeed = {
+  slug: string;
+  name: string;
+  shortName: string;
+  abbr: string;
+  color: string;
+  level: Level;
+  category?: string;
+  summary: string;
+  intro?: string;
+  meta?: string;
+  outcomes?: string[];
+  prompts?: { tag: string; text: string }[];
+  baIntro?: string;
+  before?: string;
+  beforeTime?: string;
+  after?: string;
+  afterTime?: string;
+  steps?: { title: string; description: string }[];
+  roles?: { role: string; task: string; detail: string }[];
+  mistakes?: { bad: string; good: string }[];
+  mockTitle?: string;
+  mockPrompt?: string;
+  mockReply?: string;
+  mockPanelTitle?: string;
+  mockPanel?: string;
+  status?: 'publicado' | 'borrador';
+};
+
+export type PlatformSeed = {
+  id: string;
+  name: string;
+  portalName: string;
+  initial: string;
+  color: string;
+  description?: string;
+  tagline?: string;
+  inputHint?: string;
+  badge?: string;
+  heroTitle?: string;
+  heroText?: string;
+  specialTitle?: string;
+  specialIntro?: string;
+  helpTitle?: string;
+  helpText?: string;
+  status: 'completo' | 'en-redaccion' | 'borrador';
+  stats?: { value: string; label: string }[];
+  specials?: { kicker: string; title: string; description: string; example?: string }[];
+  downloads?: { title: string; description?: string; meta?: string; href?: string }[];
+  practices?: { number: string; title: string; description: string }[];
+  faqs?: { question: string; answer: string }[];
+  links?: { label: string; href: string }[];
+  modules: ModuleSeed[];
+};
