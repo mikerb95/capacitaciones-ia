@@ -178,6 +178,8 @@ async function main() {
   }
   const master = await seedMasterAccess();
   console.log(`  código maestro ${master.code} listo`);
+  const demo = await seedDemoAccess();
+  console.log(`  código demo ${demo.code} listo`);
   console.log('Listo.');
 }
 
