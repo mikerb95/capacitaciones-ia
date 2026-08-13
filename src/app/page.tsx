@@ -4,7 +4,7 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import { PlatformMark, StatusBadge } from '@/components/ui';
 import { platformLogo } from '@/lib/brand-logos';
 import { getComparison } from '@/db/queries';
-import { requireParticipant } from '@/lib/session';
+import { requireScopedParticipant, scopeComparison } from '@/lib/scope';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,8 +14,8 @@ export const metadata = { title: 'Academia IA' };
 const firstName = (name: string) => name.split(' ')[0];
 
 export default async function Home() {
-  const participant = await requireParticipant();
-  const platforms = await getComparison();
+  const { participant, scope } = await requireScopedParticipant();
+  const platforms = scopeComparison(await getComparison(), scope);
   const totalModules = platforms.reduce((n, p) => n + p.modules.length, 0);
 
   return (
