@@ -55,7 +55,10 @@ export async function getPlatform(id: string) {
 }
 
 export async function getPlatformIds() {
-  return db.select({ id: platforms.id }).from(platforms).orderBy(asc(platforms.sortOrder));
+  return db
+    .select({ id: platforms.id, name: platforms.name, color: platforms.color })
+    .from(platforms)
+    .orderBy(asc(platforms.sortOrder));
 }
 
 /** Un módulo con todo su detalle, para la ficha y para el admin. */
