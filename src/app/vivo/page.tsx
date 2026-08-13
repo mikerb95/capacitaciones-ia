@@ -1,0 +1,119 @@
+import { redirect } from 'next/navigation';
+import { Audience } from '@/components/audience';
+import { getLiveByPin } from '@/db/queries';
+import { joinLive } from '@/app/admin/presentaciones/actions';
+
+export const dynamic = 'force-dynamic';
+
+export const metadata = { title: 'Sesión en vivo · Academia IA' };
+
+type Search = { searchParams: Promise<{ pin?: string; nombre?: string; error?: string }> };
+
+async function enter(formData: FormData) {
+  'use server';
+
+  const pin = ((formData.get('pin') as string) ?? '').trim();
+  const name = ((formData.get('nombre') as string) ?? '').trim();
+  const phone = ((formData.get('telefono') as string) ?? '').trim();
+
+  if (!pin || !name) redirect('/vivo?error=faltan');
+
+  const session = await joinLive(pin, name, phone);
+  if (!session) redirect('/vivo?error=pin');
+
+  redirect(`/vivo?pin=${pin}&nombre=${encodeURIComponent(name)}`);
+}
+
+export default async function LivePage({ searchParams }: Search) {
+  const { pin, error } = await searchParams;
+
+  if (pin) {
+    const session = await getLiveByPin(pin);
+    if (session) {
+      return (
+        <Audience
+          pin={pin}
+          title={session.deck.title}
+          styles={session.deck.styles}
+          slides={session.deck.slides}
+          initialSlide={session.slide}
+        />
+      );
+    }
+  }
+
+  const message =
+    error === 'pin'
+      ? 'Ese PIN no corresponde a ninguna sesión abierta. Confirma el número con el expositor.'
+      : error === 'faltan'
+        ? 'Hace falta el PIN y tu nombre.'
+        : null;
+
+  return (
+    <div className="grid min-h-screen place-items-center bg-bg px-4 py-10">
+      <div className="w-full max-w-[380px]">
+        <div className="mb-6 text-center">
+          <h1 className="font-display text-[24px] font-semibold tracking-tight">
+            Entrar a la sesión
+          </h1>
+          <p className="mt-1.5 text-[14px] leading-relaxed text-muted">
+            Escribe el PIN que aparece en la pantalla del expositor y sigue las láminas desde tu
+            propio dispositivo.
+          </p>
+        </div>
+
+        <form
+          action={enter}
+          className="flex flex-col gap-3 rounded-card border border-line bg-surface p-5 shadow-card"
+        >
+          {message && (
+            <p className="rounded-lg bg-[#fdebe2] px-3 py-2 text-[13px] text-[#c2410c] dark:bg-[#3a1e10] dark:text-[#f4a06a]">
+              {message}
+            </p>
+          )}
+
+          <label className="flex flex-col gap-1.5">
+            <span className="text-[12.5px] font-medium text-muted">PIN de la sesión</span>
+            <input
+              name="pin"
+              inputMode="numeric"
+              autoComplete="off"
+              maxLength={6}
+              required
+              defaultValue={pin ?? ''}
+              className="w-full rounded-[10px] border border-line bg-surface px-3 py-2.5 text-center font-mono text-[22px] tracking-[0.3em] outline-none focus:border-primary"
+              placeholder="0000"
+            />
+          </label>
+
+          <label className="flex flex-col gap-1.5">
+            <span className="text-[12.5px] font-medium text-muted">Tu nombre</span>
+            <input
+              name="nombre"
+              required
+              className="w-full rounded-[10px] border border-line bg-surface px-3 py-2 text-[14px] outline-none focus:border-primary"
+            />
+          </label>
+
+          <label className="flex flex-col gap-1.5">
+            <span className="text-[12.5px] font-medium text-muted">
+              Teléfono <span className="font-normal text-faint">opcional</span>
+            </span>
+            <input
+              name="telefono"
+              inputMode="tel"
+              className="w-full rounded-[10px] border border-line bg-surface px-3 py-2 text-[14px] outline-none focus:border-primary"
+            />
+          </label>
+
+          <button
+            type="submit"
+            className="mt-1 rounded-[10px] bg-primary px-4 py-2.5 text-[14px] font-semibold text-white transition-opacity hover:opacity-90"
+          >
+            Entrar
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
