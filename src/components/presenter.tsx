@@ -18,6 +18,7 @@ export function Presenter({
   const [index, setIndex] = useState(initialSlide);
   const [pin, setPin] = useState<string | null>(initialPin);
   const [notesOpen, setNotesOpen] = useState(false);
+  const [lost, setLost] = useState(false);
   const [pending, startTransition] = useTransition();
 
   const total = deck.slides.length;
@@ -27,7 +28,13 @@ export function Presenter({
     (next: number) => {
       const clamped = Math.max(0, Math.min(total - 1, next));
       setIndex(clamped);
-      if (pin) void pushSlide(deck.id, clamped);
+      // Si el envío falla, la sala se queda congelada: hay que avisarlo.
+      if (pin) {
+        pushSlide(deck.id, clamped).then(
+          () => setLost(false),
+          () => setLost(true),
+        );
+      }
     },
     [total, pin, deck.id],
   );
@@ -56,6 +63,7 @@ export function Presenter({
       if (pin) {
         await stopLive(deck.id);
         setPin(null);
+        setLost(false);
       } else {
         const session = await startLive(deck.id, index);
         setPin(session.pin);
@@ -85,10 +93,17 @@ export function Presenter({
         <span className="min-w-0 flex-1 truncate text-[13.5px] font-medium">{deck.title}</span>
 
         {pin ? (
-          <span className="flex items-center gap-2 rounded-full bg-[#0fa97a]/15 px-3 py-1 text-[12.5px] font-semibold text-[#2fd3a0]">
-            <span className="size-1.5 animate-pulse rounded-full bg-current" aria-hidden="true" />
-            En vivo · PIN {pin}
-          </span>
+          lost ? (
+            <span className="flex items-center gap-2 rounded-full bg-[#c2410c]/20 px-3 py-1 text-[12.5px] font-semibold text-[#f4a06a]">
+              <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />
+              Sin conexión con la sala
+            </span>
+          ) : (
+            <span className="flex items-center gap-2 rounded-full bg-[#0fa97a]/15 px-3 py-1 text-[12.5px] font-semibold text-[#2fd3a0]">
+              <span className="size-1.5 animate-pulse rounded-full bg-current" aria-hidden="true" />
+              En vivo · PIN {pin}
+            </span>
+          )
         ) : (
           <span className="text-[12.5px] text-white/40">Sin transmitir</span>
         )}
