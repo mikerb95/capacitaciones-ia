@@ -141,5 +141,17 @@ export async function getActiveSession(deckId: number) {
   });
 }
 
+/* ------------------------------------------------------------------- acceso */
+
+/** Códigos de capacitación con la gente que entró con cada uno. */
+export async function getAccessCodes() {
+  return db.query.accessCodes.findMany({
+    orderBy: (c, { desc }) => [desc(c.active), desc(c.createdAt)],
+    with: { participants: { orderBy: (p, { desc }) => [desc(p.createdAt)] } },
+  });
+}
+
+export type AccessCodeRow = Awaited<ReturnType<typeof getAccessCodes>>[number];
+
 export type DeckRow = Awaited<ReturnType<typeof getDecks>>[number];
 export type DeckFull = NonNullable<Awaited<ReturnType<typeof getDeck>>>;
