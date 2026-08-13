@@ -237,6 +237,78 @@ export const moduleMistakes = sqliteTable(
   (t) => [index('module_mistakes_module_idx').on(t.moduleId)],
 );
 
+/* ------------------------------------------------------------ presentaciones */
+
+export const decks = sqliteTable(
+  'decks',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    slug: text('slug').notNull(),
+    title: text('title').notNull(),
+    meta: text('meta'),
+    // Plataforma a la que pertenece la sesión, opcional.
+    platformId: text('platform_id').references(() => platforms.id, { onDelete: 'set null' }),
+    // Los <style> del artifact, compartidos por todas las láminas del mazo.
+    styles: text('styles'),
+    sortOrder: integer('sort_order').notNull().default(0),
+    ...timestamps,
+  },
+  (t) => [uniqueIndex('decks_slug_idx').on(t.slug)],
+);
+
+export const deckSlides = sqliteTable(
+  'deck_slides',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    deckId: integer('deck_id')
+      .notNull()
+      .references(() => decks.id, { onDelete: 'cascade' }),
+    // Título derivado del primer encabezado, para el índice y las notas.
+    title: text('title'),
+    html: text('html').notNull(),
+    notes: text('notes'),
+    sortOrder: integer('sort_order').notNull().default(0),
+  },
+  (t) => [index('deck_slides_deck_idx').on(t.deckId)],
+);
+
+/** Sesión en vivo: el expositor manda, la audiencia sigue por PIN. */
+export const liveSessions = sqliteTable(
+  'live_sessions',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    deckId: integer('deck_id')
+      .notNull()
+      .references(() => decks.id, { onDelete: 'cascade' }),
+    pin: text('pin').notNull(),
+    slide: integer('slide').notNull().default(0),
+    playing: integer('playing', { mode: 'boolean' }).notNull().default(true),
+    startedAt: integer('started_at', { mode: 'timestamp' })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer('updated_at', { mode: 'timestamp' })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (t) => [index('live_sessions_pin_idx').on(t.pin)],
+);
+
+export const attendees = sqliteTable(
+  'attendees',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    sessionId: integer('session_id')
+      .notNull()
+      .references(() => liveSessions.id, { onDelete: 'cascade' }),
+    name: text('name').notNull(),
+    phone: text('phone'),
+    joinedAt: integer('joined_at', { mode: 'timestamp' })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (t) => [index('attendees_session_idx').on(t.sessionId)],
+);
+
 /* ------------------------------------------------------------------ relations */
 
 export const platformsRelations = relations(platforms, ({ many }) => ({
