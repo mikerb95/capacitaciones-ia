@@ -9,13 +9,13 @@ export function normalizePhone(raw: string): string | null {
   return `+${digits}`;
 }
 
-/** `+51987654321` se muestra como `+51 987 654 321`. */
+/**
+ * Se muestra en E.164, sin agrupar: cada país parte el número distinto y sin
+ * una librería de planes de numeración cualquier agrupación sale mal.
+ */
 export function formatPhone(phone: string): string {
   const digits = phone.replace(/\D/g, '');
-  if (digits.length < 10) return phone;
-  const country = digits.slice(0, digits.length - 9);
-  const rest = digits.slice(-9);
-  return `+${country} ${rest.slice(0, 3)} ${rest.slice(3, 6)} ${rest.slice(6)}`;
+  return `+${digits}`;
 }
 
 /** Enlace de chat directo, para el seguimiento posterior a la capacitación. */
