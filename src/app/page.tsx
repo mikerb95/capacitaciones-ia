@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { LeaveButton } from '@/components/leave-button';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { PlatformMark, StatusBadge } from '@/components/ui';
+import { platformLogo } from '@/lib/brand-logos';
 import { getComparison } from '@/db/queries';
 import { requireParticipant } from '@/lib/session';
 
@@ -49,7 +50,12 @@ export default async function Home() {
               className="tone group flex items-start gap-4 rounded-card border border-line bg-surface p-5 shadow-card transition-[transform,box-shadow,background-color] duration-200 hover:-translate-y-0.5 hover:bg-[var(--tone-soft)] hover:shadow-lift focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tone)]"
               style={{ ['--tone' as string]: platform.color }}
             >
-              <PlatformMark initial={platform.initial} color={platform.color} size={40} />
+              <PlatformMark
+                initial={platform.initial}
+                color={platform.color}
+                size={40}
+                logo={platformLogo(platform.id)}
+              />
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <h2 className="font-display text-[17px] font-semibold tracking-tight">
