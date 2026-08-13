@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { AdminLogoutButton } from '@/components/admin-logout-button';
 import { Card, PlatformMark, SectionTitle, SiteHeader } from '@/components/ui';
 import { platformLogo } from '@/lib/brand-logos';
 import { getDecks, getPlatformIds } from '@/db/queries';
@@ -33,6 +34,7 @@ export default async function DecksPage({ searchParams }: Search) {
         >
           Vista de audiencia
         </Link>
+        <AdminLogoutButton />
       </SiteHeader>
 
       <main className="mx-auto max-w-[1000px] px-4 py-8 sm:px-6">

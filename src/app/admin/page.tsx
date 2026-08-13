@@ -40,6 +40,7 @@ export default async function AdminPage() {
         >
           Códigos de acceso
         </Link>
+        <AdminLogoutButton />
         <Link
           href="/admin/presentaciones"
           className="rounded-[10px] border border-line bg-surface px-3 py-2 text-[12.5px] font-medium text-muted transition-colors hover:border-primary hover:text-text"
