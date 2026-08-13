@@ -42,9 +42,9 @@ export default async function PlatformPage({ params }: Params) {
         back={{ href: '/', label: 'Inicio' }}
       />
 
-      <main className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6">
+      <main className="mx-auto max-w-[1200px] px-4 py-10 sm:px-6 sm:py-12">
         {/* Hero */}
-        <section className="mb-10">
+        <section className="mb-16">
           <div className="mb-4 flex items-center gap-3">
             <PlatformMark
               initial={platform.initial}
@@ -70,7 +70,7 @@ export default async function PlatformPage({ params }: Params) {
           )}
 
           {platform.stats.length > 0 && (
-            <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <dl className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
               {platform.stats.map((s) => (
                 <div key={s.id} className="rounded-card border border-line bg-surface p-4 shadow-card">
                   <dt className="sr-only">{s.label}</dt>
@@ -92,28 +92,28 @@ export default async function PlatformPage({ params }: Params) {
         </section>
 
         {/* Módulos */}
-        <section className="mb-10">
+        <section className="mb-16">
           <SectionTitle
             kicker="Contenido"
             title="Módulos del programa"
             intro="Se pueden dictar en el orden que quieras. Cada módulo trae prompts, casos por área y errores frecuentes."
           />
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {platform.modules.map((m) => (
               <Link
                 key={m.id}
                 href={`/${platform.id}/${m.slug}`}
-                className="tone group rounded-card border border-line bg-surface p-4 shadow-card transition-[transform,box-shadow,background-color] duration-200 hover:-translate-y-0.5 hover:bg-[var(--tone-soft)] hover:shadow-lift"
+                className="tone group rounded-card border border-line bg-surface p-5 shadow-card transition-[transform,box-shadow,background-color] duration-200 hover:-translate-y-0.5 hover:bg-[var(--tone-soft)] hover:shadow-lift"
                 style={{ ['--tone' as string]: m.color }}
               >
-                <div className="mb-2.5 flex items-center gap-2.5">
+                <div className="mb-3 flex items-center gap-2.5">
                   <Abbr abbr={m.abbr} color={m.color} logo={moduleLogo(platform.id, m.slug)} />
                   <h3 className="min-w-0 flex-1 truncate font-display text-[15px] font-semibold tracking-tight">
                     {m.name}
                   </h3>
                 </div>
                 <p className="text-[13px] leading-relaxed text-muted">{m.summary}</p>
-                <div className="mt-3 flex items-center justify-between gap-2">
+                <div className="mt-4 flex items-center justify-between gap-2">
                   <LevelBadge level={m.level} />
                   {m.meta && <span className="text-[11.5px] text-faint">{m.meta}</span>}
                 </div>
@@ -124,17 +124,17 @@ export default async function PlatformPage({ params }: Params) {
 
         {/* Diferenciales */}
         {platform.specials.length > 0 && (
-          <section className="mb-10">
+          <section className="mb-16">
             <SectionTitle
               kicker="Diferenciales"
               title={platform.specialTitle ?? 'Lo que solo se hace acá'}
               intro={platform.specialIntro ?? undefined}
             />
-            <div className="grid gap-3 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-3">
               {platform.specials.map((s) => (
                 <Card key={s.id}>
                   <div
-                    className="mb-1.5 inline-flex items-center gap-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.08em]"
+                    className="mb-2 inline-flex items-center gap-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.08em]"
                     style={{ color: platform.color }}
                   >
                     <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />
@@ -143,9 +143,9 @@ export default async function PlatformPage({ params }: Params) {
                   <h3 className="font-display text-[15.5px] font-semibold tracking-tight">
                     {s.title}
                   </h3>
-                  <p className="mt-1.5 text-[13.5px] leading-relaxed text-muted">{s.description}</p>
+                  <p className="mt-2 text-[13.5px] leading-relaxed text-muted">{s.description}</p>
                   {s.example && (
-                    <p className="mt-3 rounded-lg bg-surface-2 px-3 py-2 font-mono text-[12.5px] leading-relaxed text-muted">
+                    <p className="mt-4 rounded-lg bg-surface-2 px-3.5 py-2.5 font-mono text-[12.5px] leading-relaxed text-muted">
                       {s.example}
                     </p>
                   )}
@@ -157,16 +157,16 @@ export default async function PlatformPage({ params }: Params) {
 
         {/* Buenas prácticas */}
         {platform.practices.length > 0 && (
-          <section className="mb-10">
+          <section className="mb-16">
             <SectionTitle kicker="Método" title="Cuatro prácticas que valen para todo" />
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {platform.practices.map((p) => (
                 <Card key={p.id}>
                   <div className="mb-2 font-mono text-[13px] font-semibold text-faint">{p.number}</div>
                   <h3 className="font-display text-[14.5px] font-semibold tracking-tight">
                     {p.title}
                   </h3>
-                  <p className="mt-1 text-[13px] leading-relaxed text-muted">{p.description}</p>
+                  <p className="mt-1.5 text-[13px] leading-relaxed text-muted">{p.description}</p>
                 </Card>
               ))}
             </div>
@@ -175,13 +175,13 @@ export default async function PlatformPage({ params }: Params) {
 
         {/* Preguntas frecuentes */}
         {platform.faqs.length > 0 && (
-          <section className="mb-10">
+          <section className="mb-16">
             <SectionTitle kicker="Dudas" title="Preguntas frecuentes" />
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2.5">
               {platform.faqs.map((f) => (
                 <details
                   key={f.id}
-                  className="group rounded-card border border-line bg-surface px-4 py-3 shadow-card"
+                  className="group rounded-card border border-line bg-surface px-5 py-4 shadow-card"
                 >
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-display text-[14.5px] font-semibold tracking-tight">
                     {f.question}
@@ -202,15 +202,15 @@ export default async function PlatformPage({ params }: Params) {
         )}
 
         {/* Material y enlaces */}
-        <section className="grid gap-6 md:grid-cols-2">
+        <section className="grid gap-10 md:grid-cols-2">
           {platform.downloads.length > 0 && (
             <div>
               <SectionTitle kicker="Material" title="Para llevarse" />
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2.5">
                 {platform.downloads.map((d) => (
                   <div
                     key={d.id}
-                    className="flex items-center gap-3 rounded-card border border-line bg-surface p-3.5 shadow-card"
+                    className="flex items-center gap-3 rounded-card border border-line bg-surface p-4 shadow-card"
                   >
                     <div className="min-w-0 flex-1">
                       <h3 className="text-[14px] font-semibold">{d.title}</h3>
@@ -230,14 +230,14 @@ export default async function PlatformPage({ params }: Params) {
           {platform.links.length > 0 && (
             <div>
               <SectionTitle kicker="Referencia" title="Enlaces oficiales" />
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2.5">
                 {platform.links.map((l) => (
                   <a
                     key={l.id}
                     href={l.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center justify-between gap-3 rounded-card border border-line bg-surface p-3.5 text-[14px] font-medium shadow-card transition-colors hover:text-primary"
+                    className="flex items-center justify-between gap-3 rounded-card border border-line bg-surface p-4 text-[14px] font-medium shadow-card transition-colors hover:text-primary"
                   >
                     {l.label}
                     <span aria-hidden="true" className="text-faint">

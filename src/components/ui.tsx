@@ -163,14 +163,16 @@ export function SectionTitle({
   intro?: string;
 }) {
   return (
-    <div className="mb-4">
+    <div className="mb-6">
       {kicker && (
-        <div className="mb-1 font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-faint">
+        <div className="mb-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-faint">
           {kicker}
         </div>
       )}
       <h2 className="font-display text-[20px] font-semibold tracking-tight">{title}</h2>
-      {intro && <p className="mt-1 max-w-[70ch] text-[14px] leading-relaxed text-muted">{intro}</p>}
+      {intro && (
+        <p className="mt-2 max-w-[70ch] text-[14px] leading-relaxed text-muted">{intro}</p>
+      )}
     </div>
   );
 }
