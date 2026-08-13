@@ -9,9 +9,9 @@ export const copilot: PlatformSeed = {
   "description": "Word, Excel, PowerPoint, Teams y Outlook, más Copilot Chat, Cowork y agentes, con los casos del día a día de la empresa.",
   "tagline": "Capacitación interna",
   "inputHint": "Escríbele a Copilot...",
-  "badge": "Programa interno · 8 módulos · en el orden que quieras",
+  "badge": "Programa interno · 9 módulos · en el orden que quieras",
   "heroTitle": "Aprende a usar Copilot en el trabajo del día a día",
-  "heroText": "Word, Excel, PowerPoint, Teams y Outlook, más el modo agente y Cowork, con los casos que ya existen en la empresa y prompts listos para copiar.",
+  "heroText": "Word, Excel, PowerPoint, Teams y Outlook, más el modo agente, Cowork, Researcher y Analyst, con los casos que ya existen en la empresa y prompts listos para copiar.",
   "specialTitle": "Lo que solo se hace acá",
   "specialIntro": "Los diferenciales de Copilot frente a los otros portales de la academia.",
   "helpTitle": "¿Dudas durante la práctica?",
@@ -19,15 +19,15 @@ export const copilot: PlatformSeed = {
   "status": "completo",
   "stats": [
     {
-      "value": "8",
+      "value": "9",
       "label": "módulos, de la aplicación al agente"
     },
     {
-      "value": "45",
+      "value": "51",
       "label": "prompts listos para copiar"
     },
     {
-      "value": "24",
+      "value": "27",
       "label": "casos de uso por área"
     },
     {
