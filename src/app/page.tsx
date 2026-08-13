@@ -7,6 +7,8 @@ import { requireParticipant } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 
+export const metadata = { title: 'Academia IA' };
+
 /** Solo el primer nombre: la portada saluda, no llena un formulario. */
 const firstName = (name: string) => name.split(' ')[0];
 
@@ -56,7 +58,7 @@ export default async function Home() {
                   <StatusBadge status={platform.status} />
                 </div>
                 <p className="mt-1.5 line-clamp-2 text-[13.5px] leading-relaxed text-muted">
-                  {platform.tagline ?? platform.description}
+                  {platform.description ?? platform.tagline}
                 </p>
                 <p className="mt-3 text-[12.5px] text-faint transition-colors group-hover:text-[var(--tone)]">
                   {platform.modules.length} módulos
