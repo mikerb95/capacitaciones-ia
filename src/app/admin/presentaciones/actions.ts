@@ -15,15 +15,13 @@ export async function importDeck(formData: FormData) {
   const pasted = str(formData, 'html');
   const source = file && file.size > 0 ? await file.text() : pasted;
 
-  if (!source.trim()) {
-    throw new Error('No llegó ningún HTML: pega el contenido o sube el archivo.');
-  }
+  // Los errores se devuelven por la URL: en producción Next oculta el mensaje
+  // de una excepción y el usuario vería una página de error genérica.
+  if (!source.trim()) redirect('/admin/presentaciones?error=vacio');
 
   const parsed = parseDeck(source);
 
-  if (parsed.slides.length === 0) {
-    throw new Error('El HTML no trae láminas. Cada lámina debe ir dentro de una <section>.');
-  }
+  if (parsed.slides.length === 0) redirect('/admin/presentaciones?error=sin-secciones');
 
   const title = str(formData, 'title') || parsed.title || 'Presentación sin título';
   const platformId = str(formData, 'platformId');

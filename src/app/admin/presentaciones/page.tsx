@@ -10,10 +10,10 @@ export const metadata = { title: 'Presentaciones · Academia IA' };
 const inputClass =
   'w-full rounded-[10px] border border-line bg-surface px-3 py-2 text-[13.5px] text-text outline-none transition-colors placeholder:text-faint focus:border-primary';
 
-type Search = { searchParams: Promise<{ importado?: string }> };
+type Search = { searchParams: Promise<{ importado?: string; error?: string }> };
 
 export default async function DecksPage({ searchParams }: Search) {
-  const [decks, platforms, { importado }] = await Promise.all([
+  const [decks, platforms, { importado, error }] = await Promise.all([
     getDecks(),
     getPlatformIds(),
     searchParams,
@@ -35,6 +35,14 @@ export default async function DecksPage({ searchParams }: Search) {
       </SiteHeader>
 
       <main className="mx-auto max-w-[1000px] px-4 py-8 sm:px-6">
+        {error && (
+          <p className="mb-5 rounded-card bg-[#fdebe2] px-4 py-3 text-[13.5px] text-[#c2410c] dark:bg-[#3a1e10] dark:text-[#f4a06a]">
+            {error === 'sin-secciones'
+              ? 'El HTML no trae láminas: cada una debe ir dentro de una etiqueta <section> de primer nivel.'
+              : 'No llegó ningún HTML. Pega el contenido o sube el archivo.'}
+          </p>
+        )}
+
         {importado && (
           <p className="mb-5 rounded-card bg-accent-soft px-4 py-3 text-[13.5px] text-accent">
             Presentación importada. Ya puedes proyectarla.
