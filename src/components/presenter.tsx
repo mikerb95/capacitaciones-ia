@@ -69,7 +69,7 @@ export function Presenter({ deck, initialPin }: { deck: DeckFull; initialPin: st
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#0b0e1a] text-white">
+    <div className="flex h-[100dvh] flex-col overflow-hidden bg-[#0b0e1a] text-white">
       <header className="no-print flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2.5">
         <Link href="/admin/presentaciones" className="text-[12.5px] text-white/50 hover:text-white">
           &larr; Presentaciones

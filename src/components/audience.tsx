@@ -66,7 +66,7 @@ export function Audience({
   if (!slide) return null;
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#0b0e1a] text-white">
+    <div className="flex h-[100dvh] flex-col overflow-hidden bg-[#0b0e1a] text-white">
       <header className="flex flex-wrap items-center gap-x-3 gap-y-1.5 px-4 py-2.5">
         <span className="min-w-0 flex-1 truncate text-[13.5px] font-medium">{title}</span>
         {live ? (
