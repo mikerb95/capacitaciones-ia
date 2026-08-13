@@ -300,13 +300,25 @@ export const attendees = sqliteTable(
     sessionId: integer('session_id')
       .notNull()
       .references(() => liveSessions.id, { onDelete: 'cascade' }),
+    // Quien ya entró al portal se enlaza a su registro; queda nulo para el que
+    // llega directo al PIN sin código de capacitación.
+    participantId: integer('participant_id').references(() => participants.id, {
+      onDelete: 'set null',
+    }),
+    // Copia del nombre al momento de entrar: la lista de la sesión no cambia si
+    // después se corrige el nombre en el registro.
     name: text('name').notNull(),
     phone: text('phone'),
     joinedAt: integer('joined_at', { mode: 'timestamp' })
       .notNull()
       .default(sql`(unixepoch())`),
   },
-  (t) => [index('attendees_session_idx').on(t.sessionId)],
+  (t) => [
+    index('attendees_session_idx').on(t.sessionId),
+    // SQLite trata cada NULL como distinto, así que esto solo restringe a los
+    // identificados: uno por sesión, sin importar cómo escriban su nombre.
+    uniqueIndex('attendees_session_participant_idx').on(t.sessionId, t.participantId),
+  ],
 );
 
 /* ------------------------------------------------------------------- acceso */
@@ -466,6 +478,10 @@ export const liveSessionsRelations = relations(liveSessions, ({ one, many }) => 
 
 export const attendeesRelations = relations(attendees, ({ one }) => ({
   session: one(liveSessions, { fields: [attendees.sessionId], references: [liveSessions.id] }),
+  participant: one(participants, {
+    fields: [attendees.participantId],
+    references: [participants.id],
+  }),
 }));
 
 export const accessCodesRelations = relations(accessCodes, ({ many }) => ({

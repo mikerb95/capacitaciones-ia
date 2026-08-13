@@ -103,17 +103,47 @@ export async function pushSlide(deckId: number, slide: number) {
     .where(eq(liveSessions.deckId, deckId));
 }
 
-/** Registra a quien entra con el PIN. Devuelve null si el PIN no existe. */
-export async function joinLive(pin: string, name: string, phone: string) {
-  const session = await db.query.liveSessions.findFirst({ where: eq(liveSessions.pin, pin) });
+/**
+ * Registra a quien entra con el PIN. Devuelve null si el PIN no existe.
+ * `participantId` llega cuando la persona ya está identificada en el portal,
+ * que es lo que permite reconocerla sin volver a preguntarle nada.
+ */
+export async function joinLive(person: {
+  pin: string;
+  participantId?: number;
+  name: string;
+  phone?: string | null;
+}) {
+  const session = await db.query.liveSessions.findFirst({
+    where: eq(liveSessions.pin, person.pin),
+  });
   if (!session) return null;
 
-  const alreadyIn = await db.query.attendees.findFirst({
-    where: and(eq(attendees.sessionId, session.id), eq(attendees.name, name)),
-  });
+  const phone = person.phone || null;
 
-  if (!alreadyIn) {
-    await db.insert(attendees).values({ sessionId: session.id, name, phone: phone || null });
+  if (person.participantId) {
+    // Una fila por participante y sesión: reentrar desde otro dispositivo, o
+    // tras recargar, no lo duplica en la lista del expositor.
+    await db
+      .insert(attendees)
+      .values({ sessionId: session.id, participantId: person.participantId, name: person.name, phone })
+      .onConflictDoUpdate({
+        target: [attendees.sessionId, attendees.participantId],
+        set: { name: person.name, phone },
+      });
+  } else {
+    // Sin registro en el portal solo queda lo que escribió: el teléfono
+    // distingue mejor que el nombre cuando hay dos personas que se llaman igual.
+    const alreadyIn = await db.query.attendees.findFirst({
+      where: and(
+        eq(attendees.sessionId, session.id),
+        phone ? eq(attendees.phone, phone) : eq(attendees.name, person.name),
+      ),
+    });
+
+    if (!alreadyIn) {
+      await db.insert(attendees).values({ sessionId: session.id, name: person.name, phone });
+    }
   }
 
   return { sessionId: session.id, deckId: session.deckId, slide: session.slide };
