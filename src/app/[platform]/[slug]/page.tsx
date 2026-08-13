@@ -111,8 +111,10 @@ export default async function ModulePage({ params }: Params) {
                 )}
               </Card>
               <Card
-                className="tone bg-[var(--tone-soft)]"
-                style={{ ['--tone' as string]: module.color }}
+                style={{
+                  background: `color-mix(in srgb, ${module.color} 9%, var(--surface))`,
+                  borderColor: `color-mix(in srgb, ${module.color} 28%, var(--border))`,
+                }}
               >
                 <div
                   className="mb-2 font-mono text-[11px] font-medium uppercase tracking-[0.08em]"
