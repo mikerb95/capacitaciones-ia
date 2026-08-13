@@ -1,5 +1,5 @@
 export type Country = {
-  /** ISO 3166-1 alfa-2, que además genera la bandera. */
+  /** ISO 3166-1 alfa-2. */
   code: string;
   name: string;
   /** Indicativo, sin el `+`. */
