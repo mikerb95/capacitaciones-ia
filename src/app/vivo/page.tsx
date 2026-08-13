@@ -110,7 +110,7 @@ export default async function LivePage({ searchParams }: Search) {
 
           {participant ? (
             <p className="rounded-[10px] bg-bg px-3 py-2.5 text-[13px] text-muted">
-              Entras como <span className="font-medium text-fg">{participant.name}</span>
+              Entras como <span className="font-medium text-text">{participant.name}</span>
               <span className="mx-1.5 text-faint">·</span>
               {formatPhone(participant.phone)}
             </p>

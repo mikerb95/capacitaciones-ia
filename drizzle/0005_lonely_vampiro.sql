@@ -1,0 +1,2 @@
+ALTER TABLE `attendees` ADD `participant_id` integer REFERENCES participants(id);--> statement-breakpoint
+CREATE UNIQUE INDEX `attendees_session_participant_idx` ON `attendees` (`session_id`,`participant_id`);
