@@ -321,6 +321,12 @@ export const accessCodes = sqliteTable(
     id: integer('id').primaryKey({ autoIncrement: true }),
     code: text('code').notNull(),
     label: text('label').notNull(),
+    // Perfil de la empresa que contrata la capacitación.
+    company: text('company'),
+    industry: text('industry'),
+    contactName: text('contact_name'),
+    contactEmail: text('contact_email'),
+    notes: text('notes'),
     active: integer('active', { mode: 'boolean' }).notNull().default(true),
     // Código maestro de pruebas: no se cierra, no se borra y su número queda
     // reservado, así nunca se le entrega a una capacitación real.
@@ -328,6 +334,27 @@ export const accessCodes = sqliteTable(
     ...timestamps,
   },
   (t) => [uniqueIndex('access_codes_code_idx').on(t.code)],
+);
+
+/**
+ * Alcance de la capacitación: qué módulos de IA ve quien entra con el código.
+ * Sin filas, el código abre todo el catálogo.
+ */
+export const accessCodeModules = sqliteTable(
+  'access_code_modules',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    accessCodeId: integer('access_code_id')
+      .notNull()
+      .references(() => accessCodes.id, { onDelete: 'cascade' }),
+    moduleId: integer('module_id')
+      .notNull()
+      .references(() => modules.id, { onDelete: 'cascade' }),
+  },
+  (t) => [
+    uniqueIndex('access_code_modules_pair_idx').on(t.accessCodeId, t.moduleId),
+    index('access_code_modules_code_idx').on(t.accessCodeId),
+  ],
 );
 
 /**
@@ -443,6 +470,15 @@ export const attendeesRelations = relations(attendees, ({ one }) => ({
 
 export const accessCodesRelations = relations(accessCodes, ({ many }) => ({
   participants: many(participants),
+  scope: many(accessCodeModules),
+}));
+
+export const accessCodeModulesRelations = relations(accessCodeModules, ({ one }) => ({
+  accessCode: one(accessCodes, {
+    fields: [accessCodeModules.accessCodeId],
+    references: [accessCodes.id],
+  }),
+  module: one(modules, { fields: [accessCodeModules.moduleId], references: [modules.id] }),
 }));
 
 export const participantsRelations = relations(participants, ({ one }) => ({
@@ -466,4 +502,5 @@ export type Deck = typeof decks.$inferSelect;
 export type DeckSlide = typeof deckSlides.$inferSelect;
 export type LiveSession = typeof liveSessions.$inferSelect;
 export type AccessCode = typeof accessCodes.$inferSelect;
+export type AccessCodeModule = typeof accessCodeModules.$inferSelect;
 export type Participant = typeof participants.$inferSelect;
