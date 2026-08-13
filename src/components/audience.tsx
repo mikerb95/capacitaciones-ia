@@ -23,7 +23,10 @@ export function Audience({
   const [following, setFollowing] = useState(true);
   const [live, setLive] = useState(true);
   const followingRef = useRef(following);
-  followingRef.current = following;
+
+  useEffect(() => {
+    followingRef.current = following;
+  }, [following]);
 
   // Polling: es lo más robusto para una sala con red irregular.
   useEffect(() => {
