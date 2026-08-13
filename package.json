@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@libsql/client": "^0.17.4",
+    "country-flag-icons": "^1.6.20",
     "drizzle-orm": "^0.45.2",
     "next": "16.3.0",
     "node-html-parser": "^9.0.1",
@@ -24,6 +25,8 @@
     "simple-icons": "^16.28.0"
   },
   "devDependencies": {
+    "@iconify-json/logos": "^1.2.12",
+    "@iconify-json/vscode-icons": "^1.2.72",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

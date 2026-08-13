@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { COUNTRIES, findCountry, flagOf, type Country } from '@/lib/countries';
+import { COUNTRIES, findCountry, type Country } from '@/lib/countries';
+import { Flag } from '@/components/flag';
 
 /**
  * Selector de país para el teléfono. Cerrado muestra bandera e indicativo, que
@@ -67,7 +68,7 @@ export function CountrySelect({
         aria-label={`País: ${selected.name}`}
         className="flex h-full items-center gap-1.5 rounded-l-[10px] py-2.5 pl-3 pr-2.5 text-[14.5px] transition-colors hover:bg-surface-2"
       >
-        <span aria-hidden="true">{flagOf(selected.code)}</span>
+        <Flag code={selected.code} className="h-3.5 w-5 shrink-0 rounded-[2px] object-cover" />
         <span className="font-mono text-[13.5px] text-muted">+{selected.dial}</span>
         <svg width="10" height="10" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <path
@@ -99,7 +100,7 @@ export function CountrySelect({
                   country.code === selected.code ? 'bg-primary-soft text-primary' : ''
                 }`}
               >
-                <span aria-hidden="true">{flagOf(country.code)}</span>
+                <Flag code={country.code} className="h-3.5 w-5 shrink-0 rounded-[2px] object-cover" />
                 <span className="min-w-0 flex-1 truncate">{country.name}</span>
                 <span className="font-mono text-[12.5px] text-faint">+{country.dial}</span>
               </button>
