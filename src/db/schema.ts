@@ -462,3 +462,5 @@ export type Level = Module['level'];
 export type Deck = typeof decks.$inferSelect;
 export type DeckSlide = typeof deckSlides.$inferSelect;
 export type LiveSession = typeof liveSessions.$inferSelect;
+export type AccessCode = typeof accessCodes.$inferSelect;
+export type Participant = typeof participants.$inferSelect;
