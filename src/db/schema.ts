@@ -309,6 +309,51 @@ export const attendees = sqliteTable(
   (t) => [index('attendees_session_idx').on(t.sessionId)],
 );
 
+/* ------------------------------------------------------------------- acceso */
+
+/**
+ * Código de 4 dígitos que se entrega al inicio de una capacitación. Sirve de
+ * llave para todo el sitio público: sin uno activo no se entra.
+ */
+export const accessCodes = sqliteTable(
+  'access_codes',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    code: text('code').notNull(),
+    label: text('label').notNull(),
+    active: integer('active', { mode: 'boolean' }).notNull().default(true),
+    ...timestamps,
+  },
+  (t) => [uniqueIndex('access_codes_code_idx').on(t.code)],
+);
+
+/**
+ * Quien entró con un código. El token es lo que viaja en la cookie: así la
+ * sesión se puede revocar desde la base y la cookie no lleva datos personales.
+ */
+export const participants = sqliteTable(
+  'participants',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    accessCodeId: integer('access_code_id')
+      .notNull()
+      .references(() => accessCodes.id, { onDelete: 'cascade' }),
+    name: text('name').notNull(),
+    phone: text('phone').notNull(), // normalizado a +dígitos, listo para WhatsApp
+    token: text('token').notNull(),
+    lastSeenAt: integer('last_seen_at', { mode: 'timestamp' })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    ...timestamps,
+  },
+  (t) => [
+    uniqueIndex('participants_token_idx').on(t.token),
+    // El mismo teléfono en la misma capacitación es la misma persona.
+    uniqueIndex('participants_code_phone_idx').on(t.accessCodeId, t.phone),
+    index('participants_code_idx').on(t.accessCodeId),
+  ],
+);
+
 /* ------------------------------------------------------------------ relations */
 
 export const platformsRelations = relations(platforms, ({ many }) => ({
@@ -391,6 +436,17 @@ export const liveSessionsRelations = relations(liveSessions, ({ one, many }) => 
 
 export const attendeesRelations = relations(attendees, ({ one }) => ({
   session: one(liveSessions, { fields: [attendees.sessionId], references: [liveSessions.id] }),
+}));
+
+export const accessCodesRelations = relations(accessCodes, ({ many }) => ({
+  participants: many(participants),
+}));
+
+export const participantsRelations = relations(participants, ({ one }) => ({
+  accessCode: one(accessCodes, {
+    fields: [participants.accessCodeId],
+    references: [accessCodes.id],
+  }),
 }));
 
 /* ---------------------------------------------------------------------- tipos */
