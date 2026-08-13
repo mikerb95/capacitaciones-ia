@@ -36,6 +36,18 @@ export default async function IngresarPage({ searchParams }: Props) {
           <div className="rounded-card border border-line bg-surface p-6 shadow-card">
             <EnterForm destination={destination} />
           </div>
+
+          <div className="mt-5 text-center">
+            <form action={enterDemo}>
+              <input type="hidden" name="destino" value={destination} />
+              <button
+                type="submit"
+                className="text-[13px] font-medium text-muted underline decoration-line underline-offset-4 transition-colors hover:text-primary"
+              >
+                Solo quiero mirar el portal, sin código
+              </button>
+            </form>
+          </div>
         </div>
       </main>
     </div>
