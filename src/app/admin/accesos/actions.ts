@@ -63,6 +63,9 @@ export async function deleteAccessCode(formData: FormData) {
   const id = Number(str(formData, 'id'));
   if (!id) return;
 
+  const current = await db.query.accessCodes.findFirst({ where: eq(accessCodes.id, id) });
+  if (!current || current.system) return;
+
   await db.delete(accessCodes).where(eq(accessCodes.id, id));
 
   revalidatePath('/admin/accesos');
