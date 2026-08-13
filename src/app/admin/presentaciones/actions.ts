@@ -126,7 +126,12 @@ export async function joinLive(person: {
     // tras recargar, no lo duplica en la lista del expositor.
     await db
       .insert(attendees)
-      .values({ sessionId: session.id, participantId: person.participantId, name: person.name, phone })
+      .values({
+        sessionId: session.id,
+        participantId: person.participantId,
+        name: person.name,
+        phone,
+      })
       .onConflictDoUpdate({
         target: [attendees.sessionId, attendees.participantId],
         set: { name: person.name, phone },
