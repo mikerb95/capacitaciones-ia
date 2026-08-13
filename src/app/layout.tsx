@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { IBM_Plex_Sans, Geist, Geist_Mono } from 'next/font/google';
+import { themeScript } from '@/lib/theme';
 import './globals.css';
 
 const plex = IBM_Plex_Sans({
