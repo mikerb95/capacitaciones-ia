@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { PromptList } from '@/components/prompt-list';
 import { Abbr, Card, LevelBadge, SectionTitle, SiteHeader } from '@/components/ui';
+import { requireParticipant } from '@/lib/session';
 import { getModule, getPlatform } from '@/db/queries';
 
 export const dynamic = 'force-dynamic';
@@ -17,6 +18,8 @@ export async function generateMetadata({ params }: Params) {
 
 export default async function ModulePage({ params }: Params) {
   const { platform: platformId, slug } = await params;
+  await requireParticipant();
+
   const [mod, platform] = await Promise.all([
     getModule(platformId, slug),
     getPlatform(platformId),
