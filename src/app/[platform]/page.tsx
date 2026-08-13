@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Abbr, Card, LevelBadge, PlatformMark, SectionTitle, SiteHeader, StatusBadge } from '@/components/ui';
 import { getPlatform, getPlatformIds } from '@/db/queries';
+import { requireParticipant } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,6 +20,8 @@ export async function generateMetadata({ params }: Params) {
 }
 
 export default async function PlatformPage({ params }: Params) {
+  await requireParticipant();
+
   const { platform: id } = await params;
   const platform = await getPlatform(id);
   if (!platform) notFound();
@@ -28,7 +31,7 @@ export default async function PlatformPage({ params }: Params) {
       <SiteHeader
         title={platform.portalName}
         subtitle={platform.tagline ?? undefined}
-        back={{ href: '/', label: 'Comparativa de plataformas' }}
+        back={{ href: '/', label: 'Inicio' }}
       />
 
       <main className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6">
