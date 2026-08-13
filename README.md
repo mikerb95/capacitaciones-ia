@@ -41,6 +41,9 @@ del proyecto, y correr el seed una vez contra la base de producción.
 | `/[plataforma]/[modulo]` | Ficha del módulo: prompts, antes y después, paso a paso, casos por área |
 | `/admin` | Listado editable de todos los módulos, con reordenamiento |
 | `/admin/modules/[id]` | Formulario del módulo (`new` para crear uno) |
+| `/admin/presentaciones` | Importar presentaciones y lanzarlas |
+| `/presentar/[slug]` | Vista de expositor, con control de la sesión en vivo |
+| `/vivo` | Vista de audiencia: se entra con el PIN |
 
 El admin no tiene autenticación. Si el sitio se publica, conviene protegerlo con Vercel
 Authentication o con un middleware antes de compartir la URL.
@@ -64,6 +67,46 @@ En el formulario, las listas se escriben con un ítem por línea y los campos se
 Consulta | ¿Qué dicen estas fuentes sobre [tema]? Cítame el documento.
 Contraste | Compara el manual viejo con el nuevo y dime qué cambió.
 ```
+
+## Presentaciones
+
+Las láminas se diseñan aparte (en Claude Design, por ejemplo) y se importan como HTML desde
+`/admin/presentaciones`, pegando el contenido o subiendo el archivo. El diseño se conserva
+íntegro: los `<style>` del documento se guardan como estilos del mazo.
+
+La única convención es que **cada lámina va dentro de una `<section>` de primer nivel**:
+
+```html
+<style> /* tu diseño */ </style>
+
+<section>
+  <span class="kicker">Bienvenida</span>
+  <h2>Copilot en el trabajo del día a día</h2>
+  <div class="notes">Presentarse. Cinco minutos.</div>
+</section>
+
+<section>
+  <h2>Dónde se nos va el tiempo hoy</h2>
+</section>
+```
+
+El importador toma el título de cada lámina del primer encabezado, y lo que esté marcado con
+`.notes` o `data-notes` queda como nota del expositor (visible solo para ti, con la tecla N).
+
+Cada lámina se pinta dentro de un iframe sin permisos de ejecución, dibujada siempre a 1280x720
+y escalada al contenedor. Así se ve idéntica en el proyector, en el portátil y en el celular, y
+un script que venga en el HTML importado nunca corre.
+
+### Sesión en vivo
+
+1. Abres `/presentar/[slug]` y le das a **Transmitir en vivo**. Sale un PIN de cuatro dígitos.
+2. Los asistentes entran a `/vivo`, escriben el PIN y su nombre, y quedan registrados.
+3. Cada vez que avanzas, sus pantallas siguen la tuya (revisan el estado cada dos segundos).
+4. Quien quiera adelantarse puede navegar por su cuenta y volver a seguirte con un botón.
+
+Solo hay una sesión viva por presentación: al abrir una nueva se cierra la anterior.
+
+Atajos del expositor: flechas o barra espaciadora para avanzar, `F` pantalla completa, `N` notas.
 
 ## Estructura
 
@@ -92,6 +135,8 @@ hijas con `sort_order` y borrado en cascada.
   `platform_practices`, `platform_faqs`, `platform_links`.
 - **Módulo:** `modules` (incluye el bloque antes/después y el ejemplo de conversación, que son
   1:1) con `module_outcomes`, `module_prompts`, `module_steps`, `module_roles`, `module_mistakes`.
+- **Presentaciones:** `decks` con `deck_slides`, más `live_sessions` y `attendees` para el modo
+  en vivo.
 
 ## Estado del contenido
 
