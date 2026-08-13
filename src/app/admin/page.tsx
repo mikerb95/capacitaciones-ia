@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Abbr, LevelBadge, PlatformMark, SiteHeader, StatusBadge } from '@/components/ui';
+import { moduleLogo, platformLogo } from '@/lib/brand-logos';
 import { getComparison } from '@/db/queries';
 import { moveModule } from './actions';
 
@@ -65,7 +66,12 @@ export default async function AdminPage() {
           {platforms.map((platform) => (
             <section key={platform.id}>
               <div className="mb-3 flex items-center gap-3">
-                <PlatformMark initial={platform.initial} color={platform.color} size={30} />
+                <PlatformMark
+                  initial={platform.initial}
+                  color={platform.color}
+                  size={30}
+                  logo={platformLogo(platform.id)}
+                />
                 <h2 className="font-display text-[17px] font-semibold tracking-tight">
                   {platform.name}
                 </h2>
@@ -81,7 +87,7 @@ export default async function AdminPage() {
                     key={m.id}
                     className="flex flex-wrap items-center gap-3 border-b border-line px-4 py-3 last:border-0"
                   >
-                    <Abbr abbr={m.abbr} color={m.color} />
+                    <Abbr abbr={m.abbr} color={m.color} logo={moduleLogo(platform.id, m.slug)} />
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="font-display text-[14.5px] font-semibold tracking-tight">
