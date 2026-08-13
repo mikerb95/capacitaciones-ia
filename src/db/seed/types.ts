@@ -1,4 +1,38 @@
-import type { Level } from '../schema';
+import type { Availability, Level } from '../schema';
+
+/** Un plan de facturación de la plataforma. `tier` ordena de menor a mayor. */
+export type PlanSeed = {
+  key: string;
+  name: string;
+  price: string;
+  audience: 'Personal' | 'Empresa';
+  summary?: string;
+  note?: string;
+  tier: number;
+};
+
+/** Disponibilidad de algo (modelo o módulo) dentro de un plan. */
+export type PlanRefSeed = { plan: string; availability?: Availability; note?: string };
+
+export type ModelSeed = {
+  key: string;
+  name: string;
+  description?: string;
+  plans: PlanRefSeed[];
+};
+
+/**
+ * Todo lo que sabe una plataforma sobre facturación: sus planes, sus modelos y
+ * en qué plan entra cada módulo. Vive aparte del contenido editorial porque se
+ * revisa con otra frecuencia: los precios cambian, los módulos no.
+ */
+export type PlansSeed = {
+  note: string;
+  plans: PlanSeed[];
+  models: ModelSeed[];
+  /** slug del módulo -> planes que lo incluyen */
+  modules: Record<string, PlanRefSeed[]>;
+};
 
 export type ModuleSeed = {
   slug: string;
