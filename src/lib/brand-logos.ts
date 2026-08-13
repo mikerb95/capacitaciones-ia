@@ -26,7 +26,6 @@ const MODULE_LOGOS: Record<string, string> = {
   'chatgpt/codex': 'codex',
   'chatgpt/sora': 'sora',
   'gemini/notebook': 'notebooklm',
-  'gemini/workspace': 'google-workspace',
 };
 
 export function platformLogo(platformId: string): string | undefined {
