@@ -572,6 +572,7 @@ export const modulesRelations = relations(modules, ({ one, many }) => ({
   steps: many(moduleSteps),
   roles: many(moduleRoles),
   mistakes: many(moduleMistakes),
+  plans: many(modulePlans),
 }));
 
 export const moduleOutcomesRelations = relations(moduleOutcomes, ({ one }) => ({
@@ -647,6 +648,9 @@ export type ModuleRole = typeof moduleRoles.$inferSelect;
 export type ModuleMistake = typeof moduleMistakes.$inferSelect;
 export type ModuleOutcome = typeof moduleOutcomes.$inferSelect;
 export type Level = Module['level'];
+export type PlatformPlan = typeof platformPlans.$inferSelect;
+export type PlatformModel = typeof platformModels.$inferSelect;
+export type Availability = (typeof AVAILABILITY)[number];
 export type Deck = typeof decks.$inferSelect;
 export type DeckSlide = typeof deckSlides.$inferSelect;
 export type LiveSession = typeof liveSessions.$inferSelect;
