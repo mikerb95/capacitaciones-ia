@@ -1,3 +1,4 @@
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { Audience } from '@/components/audience';
 import { getLiveByPin } from '@/db/queries';
@@ -7,7 +8,11 @@ export const dynamic = 'force-dynamic';
 
 export const metadata = { title: 'Sesión en vivo · Academia IA' };
 
-type Search = { searchParams: Promise<{ pin?: string; nombre?: string; error?: string }> };
+// El PIN va en una cookie, no en la URL: así el nombre del asistente no queda
+// en el historial ni en una captura, y solo ve la sesión quien se registró.
+const JOINED = 'academia-sesion';
+
+type Search = { searchParams: Promise<{ error?: string }> };
 
 async function enter(formData: FormData) {
   'use server';
@@ -21,11 +26,20 @@ async function enter(formData: FormData) {
   const session = await joinLive(pin, name, phone);
   if (!session) redirect('/vivo?error=pin');
 
-  redirect(`/vivo?pin=${pin}&nombre=${encodeURIComponent(name)}`);
+  const jar = await cookies();
+  jar.set(JOINED, pin, {
+    httpOnly: true,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 60 * 60 * 8, // una jornada de capacitación
+  });
+
+  redirect('/vivo');
 }
 
 export default async function LivePage({ searchParams }: Search) {
-  const { pin, error } = await searchParams;
+  const { error } = await searchParams;
+  const pin = (await cookies()).get(JOINED)?.value;
 
   if (pin) {
     const session = await getLiveByPin(pin);
@@ -80,7 +94,6 @@ export default async function LivePage({ searchParams }: Search) {
               autoComplete="off"
               maxLength={6}
               required
-              defaultValue={pin ?? ''}
               className="w-full rounded-[10px] border border-line bg-surface px-3 py-2.5 text-center font-mono text-[22px] tracking-[0.3em] outline-none focus:border-primary"
               placeholder="0000"
             />
