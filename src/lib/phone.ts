@@ -29,13 +29,17 @@ export function expectedDigits(countryCode: string): string {
 export function formatPhone(phone: string): string {
   const digits = phone.replace(/\D/g, '');
 
-  const match = [...COUNTRIES]
+  const matches = [...COUNTRIES]
     .sort((a, b) => b.dial.length - a.dial.length)
-    .find((c) => digits.startsWith(c.dial) && c.lengths.includes(digits.length - c.dial.length));
+    .filter((c) => digits.startsWith(c.dial) && c.lengths.includes(digits.length - c.dial.length));
 
+  const [match] = matches;
   if (!match) return `+${digits}`;
 
-  return `${flagOf(match.code)} +${match.dial} ${digits.slice(match.dial.length)}`;
+  // Varios países comparten indicativo (+1): sin bandera antes que una errada.
+  const flag = matches.length > 1 ? '' : `${flagOf(match.code)} `;
+
+  return `${flag}+${match.dial} ${digits.slice(match.dial.length)}`;
 }
 
 /** Enlace de chat directo, para el seguimiento posterior a la capacitación. */
