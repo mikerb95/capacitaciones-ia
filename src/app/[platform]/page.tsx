@@ -249,15 +249,6 @@ export default async function PlatformPage({ params }: Params) {
             </div>
           )}
         </section>
-
-        {platform.helpTitle && (
-          <Card className="mt-8 bg-surface-2">
-            <h3 className="font-display text-[15px] font-semibold tracking-tight">
-              {platform.helpTitle}
-            </h3>
-            <p className="mt-1 text-[13.5px] text-muted">{platform.helpText}</p>
-          </Card>
-        )}
       </main>
     </div>
   );
