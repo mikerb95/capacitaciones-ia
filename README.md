@@ -149,11 +149,15 @@ hijas con `sort_order` y borrado en cascada.
 | Microsoft Copilot | 6 | 31 | Completo |
 | Claude | 9 | 41 | Completo |
 | Gemini | 8 | 40 | Completo |
-| ChatGPT | 8 | 8 | En redacción |
+| ChatGPT | 8 | 40 | Completo |
 
-Copilot y Claude vienen del contenido que ya existía en los mockups. Gemini se redactó completo
-en el mismo formato. ChatGPT conserva la estructura y los títulos definitivos, con el detalle
-pendiente.
+Copilot y Claude vienen del contenido que ya existía en los mockups. Gemini y ChatGPT se
+redactaron completos en el mismo formato.
+
+El contenido de ChatGPT se verificó contra la documentación de OpenAI en agosto de 2026, y por
+eso dos módulos se apartan del esquema original: Canvas salió de GPT-5.5 y el módulo pasó a ser
+sobre los bloques de escritura y de código dentro del chat, y el módulo de Sora se reemplazó por
+uno de conocimiento de la empresa, porque Sora se descontinuó en abril de 2026.
 
 ## Comandos
 
