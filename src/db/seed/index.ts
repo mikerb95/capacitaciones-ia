@@ -32,7 +32,20 @@ import { seedDemoAccess } from './demo';
 // El orden acá es el orden en que se muestran en la comparativa.
 const SEEDS: PlatformSeed[] = [copilot, claude, gemini, chatgpt];
 
+/** Convierte las referencias por clave de plan en filas con el id ya resuelto. */
+function planRows(refs: PlanRefSeed[], planIds: Map<string, number>, where: string) {
+  return refs.flatMap((ref) => {
+    const planId = planIds.get(ref.plan);
+    if (!planId) {
+      console.warn(`  ojo: ${where} apunta al plan "${ref.plan}", que no existe`);
+      return [];
+    }
+    return [{ planId, availability: ref.availability ?? ('incluido' as const), note: ref.note }];
+  });
+}
+
 async function seedPlatform(seed: PlatformSeed, sortOrder: number) {
+  const planData = PLANS[seed.id];
   const row = {
     id: seed.id,
     name: seed.name,
