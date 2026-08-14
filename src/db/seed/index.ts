@@ -235,6 +235,18 @@ async function seedPlatform(seed: PlatformSeed, sortOrder: number) {
         m.mistakes.map((x, j) => ({ moduleId, ...x, sortOrder: j })),
       );
     }
+
+    // En qué planes se puede dictar este módulo. Sin filas queda "en todos",
+    // que es lo correcto para el contenido que todavía no se revisó.
+    await db.delete(modulePlans).where(eq(modulePlans.moduleId, moduleId));
+    const refs = planData?.modules[m.slug];
+    if (refs?.length) {
+      const rows = planRows(refs, planIds, `${seed.id}/${m.slug}`).map((r) => ({
+        moduleId,
+        ...r,
+      }));
+      if (rows.length) await db.insert(modulePlans).values(rows);
+    }
   }
 
   const prompts = seed.modules.reduce((n, m) => n + (m.prompts?.length ?? 0), 0);
