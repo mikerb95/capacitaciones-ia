@@ -249,9 +249,19 @@ async function seedPlatform(seed: PlatformSeed, sortOrder: number) {
     }
   }
 
+  // Un slug de plans.ts que ya no existe en el contenido es un dato que quedó
+  // colgando: mejor gritarlo acá que descubrirlo con el portal en pantalla.
+  for (const slug of Object.keys(planData?.modules ?? {})) {
+    if (!seed.modules.some((m) => m.slug === slug)) {
+      console.warn(`  ojo: plans.ts define "${seed.id}/${slug}", que ya no es un módulo`);
+    }
+  }
+
   const prompts = seed.modules.reduce((n, m) => n + (m.prompts?.length ?? 0), 0);
+  const plans = planData?.plans.length ?? 0;
+  const models = planData?.models.length ?? 0;
   console.log(
-    `  ${seed.name.padEnd(20)} ${String(seed.modules.length).padStart(2)} módulos · ${String(prompts).padStart(2)} prompts · ${seed.status}`,
+    `  ${seed.name.padEnd(20)} ${String(seed.modules.length).padStart(2)} módulos · ${String(prompts).padStart(2)} prompts · ${String(plans).padStart(2)} planes · ${String(models).padStart(2)} modelos · ${seed.status}`,
   );
 }
 
