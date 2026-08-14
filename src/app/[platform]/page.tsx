@@ -95,36 +95,41 @@ export default async function PlatformPage({ params, searchParams }: Params) {
           )}
         </section>
 
-        {/* Módulos */}
-        <section className="mb-16">
-          <SectionTitle
-            kicker="Contenido"
-            title="Módulos del programa"
-            intro="Se pueden dictar en el orden que quieras. Cada módulo trae prompts, casos por área y errores frecuentes."
-          />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {platform.modules.map((m) => (
-              <Link
-                key={m.id}
-                href={`/${platform.id}/${m.slug}`}
-                className="tone group rounded-card border border-line bg-surface p-5 shadow-card transition-[transform,box-shadow,background-color] duration-200 hover:-translate-y-0.5 hover:bg-[var(--tone-soft)] hover:shadow-lift"
-                style={{ ['--tone' as string]: m.color }}
-              >
-                <div className="mb-3 flex items-center gap-2.5">
-                  <Abbr abbr={m.abbr} color={m.color} logo={moduleLogo(platform.id, m.slug)} />
-                  <h3 className="min-w-0 flex-1 truncate font-display text-[15px] font-semibold tracking-tight">
-                    {m.name}
-                  </h3>
-                </div>
-                <p className="text-[13px] leading-relaxed text-muted">{m.summary}</p>
-                <div className="mt-4 flex items-center justify-between gap-2">
-                  <LevelBadge level={m.level} />
-                  {m.meta && <span className="text-[11.5px] text-faint">{m.meta}</span>}
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
+        {/* Planes, modelos y módulos: el filtro por facturación manda sobre todo
+            el listado, así que las tres cosas viven juntas. */}
+        <PlanExplorer
+          platformId={platform.id}
+          color={platform.color}
+          note={platform.plansNote}
+          initialPlan={plan ?? null}
+          plans={platform.plans.map((p) => ({
+            key: p.key,
+            name: p.name,
+            price: p.price,
+            audience: p.audience,
+            summary: p.summary,
+            note: p.note,
+            tier: p.tier,
+          }))}
+          models={platform.models.map((m) => ({
+            id: m.id,
+            name: m.name,
+            description: m.description,
+            plans: m.plans,
+          }))}
+          modules={platform.modules.map((m) => ({
+            id: m.id,
+            slug: m.slug,
+            name: m.name,
+            summary: m.summary,
+            level: m.level,
+            meta: m.meta,
+            color: m.color,
+            abbr: m.abbr,
+            logo: moduleLogo(platform.id, m.slug),
+            plans: m.plans,
+          }))}
+        />
 
         {/* Diferenciales */}
         {platform.specials.length > 0 && (
