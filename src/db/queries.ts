@@ -40,6 +40,11 @@ export async function getPlatform(id: string) {
       practices: { orderBy: bySort },
       faqs: { orderBy: bySort },
       links: { orderBy: bySort },
+      plans: { orderBy: (p) => [asc(p.sortOrder)] },
+      models: {
+        orderBy: (m) => [asc(m.sortOrder)],
+        with: { plans: { with: { plan: { columns: { key: true } } } } },
+      },
       modules: {
         orderBy: (m) => [asc(m.sortOrder)],
         with: {
@@ -48,6 +53,7 @@ export async function getPlatform(id: string) {
           steps: { orderBy: bySort },
           roles: { orderBy: bySort },
           mistakes: { orderBy: bySort },
+          plans: { with: { plan: { columns: { key: true } } } },
         },
       },
     },
