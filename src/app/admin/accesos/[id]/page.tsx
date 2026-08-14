@@ -48,6 +48,7 @@ export default async function EditarAccesoPage({ params }: Props) {
             contactEmail: code.contactEmail ?? '',
             notes: code.notes ?? '',
             moduleIds: code.scope.map((s) => s.moduleId),
+            planKeys: Object.fromEntries(code.plans.map((p) => [p.platformId, p.plan.key])),
           }}
         />
       </main>

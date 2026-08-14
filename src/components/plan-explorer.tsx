@@ -65,6 +65,7 @@ export function PlanExplorer({
   modules,
   note,
   initialPlan,
+  contractedPlan = null,
 }: {
   platformId: string;
   color: string;
@@ -73,6 +74,8 @@ export function PlanExplorer({
   modules: ModuleCard[];
   note: string | null;
   initialPlan: string | null;
+  /** El que quedó guardado en el PIN de la empresa, si lo hay. */
+  contractedPlan?: string | null;
 }) {
   const known = plans.some((p) => p.key === initialPlan);
   const [plan, setPlan] = useState<string | null>(known ? initialPlan : null);
@@ -154,6 +157,11 @@ export function PlanExplorer({
                   <span className="mt-0.5 block text-[12px] text-faint">
                     {p.price} · {p.audience}
                   </span>
+                  {p.key === contractedPlan && (
+                    <span className="mt-1 block text-[11px] font-semibold" style={{ color }}>
+                      Plan contratado
+                    </span>
+                  )}
                 </button>
               );
             })}

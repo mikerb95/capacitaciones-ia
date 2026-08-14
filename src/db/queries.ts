@@ -1,6 +1,15 @@
 import { asc, eq, and } from 'drizzle-orm';
 import { db } from './index';
-import { accessCodeModules, accessCodes, decks, liveSessions, modules, platforms } from './schema';
+import {
+  accessCodeModules,
+  accessCodePlans,
+  accessCodes,
+  decks,
+  liveSessions,
+  modules,
+  platformPlans,
+  platforms,
+} from './schema';
 
 const bySort = <T extends { sortOrder: unknown }>(t: T) => asc(t.sortOrder as never);
 
@@ -24,6 +33,25 @@ export async function getComparison() {
           status: true,
         },
         orderBy: (m) => [asc(m.sortOrder)],
+      },
+    },
+  });
+}
+
+/**
+ * Catálogo para el paso de alcance del admin: lo justo para pintar el árbol de
+ * módulos y, en cada uno, en qué planes entra. No se usa en la comparativa
+ * pública para no mandarle la tabla de facturación al navegador de todos.
+ */
+export async function getScopeCatalog() {
+  return db.query.platforms.findMany({
+    orderBy: (p) => [asc(p.sortOrder)],
+    with: {
+      plans: { orderBy: (p) => [asc(p.sortOrder)] },
+      modules: {
+        columns: { id: true, slug: true, name: true, abbr: true, color: true, level: true },
+        orderBy: (m) => [asc(m.sortOrder)],
+        with: { plans: { with: { plan: { columns: { key: true } } } } },
       },
     },
   });
@@ -107,6 +135,7 @@ export async function getAllModules() {
 }
 
 export type Comparison = Awaited<ReturnType<typeof getComparison>>;
+export type ScopeCatalog = Awaited<ReturnType<typeof getScopeCatalog>>;
 export type PlatformFull = NonNullable<Awaited<ReturnType<typeof getPlatform>>>;
 export type ModuleFull = NonNullable<Awaited<ReturnType<typeof getModule>>>;
 export type ModuleRow = Awaited<ReturnType<typeof getAllModules>>[number];
@@ -158,6 +187,7 @@ export async function getAccessCodes() {
     with: {
       participants: { orderBy: (p, { desc }) => [desc(p.createdAt)] },
       scope: { columns: { moduleId: true } },
+      plans: { with: { plan: { columns: { name: true } } } },
     },
   });
 }
@@ -166,8 +196,25 @@ export async function getAccessCodes() {
 export async function getAccessCode(id: number) {
   return db.query.accessCodes.findFirst({
     where: eq(accessCodes.id, id),
-    with: { scope: { columns: { moduleId: true } } },
+    with: {
+      scope: { columns: { moduleId: true } },
+      plans: { with: { plan: { columns: { key: true } } } },
+    },
   });
+}
+
+/**
+ * Plan contratado por plataforma, para el portal. Devuelve la clave del plan,
+ * que es lo que entiende el filtro (`?plan=pro`).
+ */
+export async function getCodePlanKeys(accessCodeId: number) {
+  const rows = await db
+    .select({ platformId: accessCodePlans.platformId, key: platformPlans.key })
+    .from(accessCodePlans)
+    .innerJoin(platformPlans, eq(accessCodePlans.planId, platformPlans.id))
+    .where(eq(accessCodePlans.accessCodeId, accessCodeId));
+
+  return rows;
 }
 
 /** Los módulos de IA en scope de un código, con su plataforma. */

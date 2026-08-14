@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Params) {
 }
 
 export default async function PlatformPage({ params, searchParams }: Params) {
-  const { scope } = await requireScopedParticipant();
+  const { scope, plans } = await requireScopedParticipant();
 
   const { platform: id } = await params;
   const { plan } = await searchParams;
@@ -101,7 +101,10 @@ export default async function PlatformPage({ params, searchParams }: Params) {
           platformId={platform.id}
           color={platform.color}
           note={platform.plansNote}
-          initialPlan={plan ?? null}
+          // El plan de la URL manda sobre el contratado: así el enlace que se
+          // comparte en la sesión se ve igual para todos.
+          initialPlan={plan ?? plans.get(platform.id) ?? null}
+          contractedPlan={plans.get(platform.id) ?? null}
           plans={platform.plans.map((p) => ({
             key: p.key,
             name: p.name,

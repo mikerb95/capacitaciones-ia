@@ -474,6 +474,32 @@ export const accessCodeModules = sqliteTable(
 );
 
 /**
+ * Plan que tiene contratado la empresa en cada plataforma. Es un dato del
+ * cliente, no un recorte: el portal abre filtrado por él, pero el selector de
+ * plan sigue ahí, que sirve para mostrar en la sesión qué se ganaría subiendo.
+ * Sin fila, el portal abre sin filtro.
+ */
+export const accessCodePlans = sqliteTable(
+  'access_code_plans',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    accessCodeId: integer('access_code_id')
+      .notNull()
+      .references(() => accessCodes.id, { onDelete: 'cascade' }),
+    platformId: text('platform_id')
+      .notNull()
+      .references(() => platforms.id, { onDelete: 'cascade' }),
+    planId: integer('plan_id')
+      .notNull()
+      .references(() => platformPlans.id, { onDelete: 'cascade' }),
+  },
+  (t) => [
+    uniqueIndex('access_code_plans_pair_idx').on(t.accessCodeId, t.platformId),
+    index('access_code_plans_code_idx').on(t.accessCodeId),
+  ],
+);
+
+/**
  * Quien entró con un código. El token es lo que viaja en la cookie: así la
  * sesión se puede revocar desde la base y la cookie no lleva datos personales.
  */
@@ -621,6 +647,22 @@ export const attendeesRelations = relations(attendees, ({ one }) => ({
 export const accessCodesRelations = relations(accessCodes, ({ many }) => ({
   participants: many(participants),
   scope: many(accessCodeModules),
+  plans: many(accessCodePlans),
+}));
+
+export const accessCodePlansRelations = relations(accessCodePlans, ({ one }) => ({
+  accessCode: one(accessCodes, {
+    fields: [accessCodePlans.accessCodeId],
+    references: [accessCodes.id],
+  }),
+  platform: one(platforms, {
+    fields: [accessCodePlans.platformId],
+    references: [platforms.id],
+  }),
+  plan: one(platformPlans, {
+    fields: [accessCodePlans.planId],
+    references: [platformPlans.id],
+  }),
 }));
 
 export const accessCodeModulesRelations = relations(accessCodeModules, ({ one }) => ({
@@ -656,4 +698,5 @@ export type DeckSlide = typeof deckSlides.$inferSelect;
 export type LiveSession = typeof liveSessions.$inferSelect;
 export type AccessCode = typeof accessCodes.$inferSelect;
 export type AccessCodeModule = typeof accessCodeModules.$inferSelect;
+export type AccessCodePlan = typeof accessCodePlans.$inferSelect;
 export type Participant = typeof participants.$inferSelect;

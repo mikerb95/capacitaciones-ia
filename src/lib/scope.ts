@@ -1,5 +1,5 @@
 import { cache } from 'react';
-import { getScopeModuleIds } from '@/db/queries';
+import { getCodePlanKeys, getScopeModuleIds } from '@/db/queries';
 import { requireParticipant } from './session';
 
 /**
@@ -22,11 +22,24 @@ export const getScope = cache(async (accessCodeId: number): Promise<Scope> => {
   };
 });
 
+/**
+ * Plan contratado por la empresa en cada plataforma. Es una preselección del
+ * filtro del portal, no un recorte: lo que no cubre el plan se sigue pudiendo
+ * mirar, que es lo que sirve para argumentar una mejora en la sesión.
+ */
+export const getCodePlans = cache(async (accessCodeId: number) => {
+  const rows = await getCodePlanKeys(accessCodeId);
+  return new Map(rows.map((r) => [r.platformId, r.key]));
+});
+
 /** Sesión del asistente más el alcance de su código, de una sola vez. */
 export async function requireScopedParticipant() {
   const participant = await requireParticipant();
-  const scope = await getScope(participant.accessCodeId);
-  return { participant, scope };
+  const [scope, plans] = await Promise.all([
+    getScope(participant.accessCodeId),
+    getCodePlans(participant.accessCodeId),
+  ]);
+  return { participant, scope, plans };
 }
 
 export const hasModule = (scope: Scope, moduleId: number) => !scope || scope.modules.has(moduleId);

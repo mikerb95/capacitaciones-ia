@@ -2,12 +2,14 @@
 
 import { useActionState, useState, type ReactNode } from 'react';
 import type { AccessCodeState, AccessCodeAction } from '@/app/admin/accesos/actions';
+import { availabilityIn, entryPlan, type PlanInfo, type PlanRef } from '@/lib/plans';
 
 export type ScopeModuleOption = {
   id: number;
   name: string;
   level: string;
   mark: ReactNode;
+  plans: PlanRef[];
 };
 
 export type ScopePlatformOption = {
@@ -15,6 +17,7 @@ export type ScopePlatformOption = {
   name: string;
   color: string;
   mark: ReactNode;
+  plans: PlanInfo[];
   modules: ScopeModuleOption[];
 };
 
@@ -27,6 +30,8 @@ export type AccessCodeDefaults = {
   contactEmail: string;
   notes: string;
   moduleIds: number[];
+  /** Clave del plan contratado por plataforma. Sin entrada, sin plan definido. */
+  planKeys: Record<string, string>;
 };
 
 const EMPTY: AccessCodeDefaults = {
@@ -38,6 +43,7 @@ const EMPTY: AccessCodeDefaults = {
   contactEmail: '',
   notes: '',
   moduleIds: [],
+  planKeys: {},
 };
 
 const field =
@@ -105,6 +111,7 @@ export function AccessCodeForm({
 }) {
   const [state, formAction, pending] = useActionState<AccessCodeState, FormData>(action, {});
   const [selected, setSelected] = useState<Set<number>>(new Set(defaults.moduleIds));
+  const [planKeys, setPlanKeys] = useState<Record<string, string>>(defaults.planKeys);
   // Sin recorte, el código abre todo el catálogo: es lo normal cuando la
   // capacitación cubre las cuatro plataformas.
   const [everything, setEverything] = useState(defaults.moduleIds.length === 0);
@@ -130,6 +137,20 @@ export function AccessCodeForm({
   const total = platforms.reduce((n, p) => n + p.modules.length, 0);
   const chosen = everything ? total : selected.size;
 
+  /** Módulos de la plataforma que el plan contratado no cubre. */
+  const outOfPlan = (platform: ScopePlatformOption) => {
+    const key = planKeys[platform.id];
+    if (!key) return [];
+    return platform.modules.filter((m) => availabilityIn(m.plans, key) === 'no');
+  };
+
+  const dropOutOfPlan = (platform: ScopePlatformOption) =>
+    setSelected((current) => {
+      const next = new Set(current);
+      for (const m of outOfPlan(platform)) next.delete(m.id);
+      return next;
+    });
+
   return (
     <form action={formAction} className="flex flex-col gap-5">
       {id && <input type="hidden" name="id" value={id} />}
@@ -138,6 +159,11 @@ export function AccessCodeForm({
           <input key={id} type="hidden" name="modulos" value={id} />
         ))}
       <input type="hidden" name="alcance" value={everything ? 'todo' : 'seleccion'} />
+      {Object.entries(planKeys).map(([platformId, key]) =>
+        key ? (
+          <input key={platformId} type="hidden" name={`plan_${platformId}`} value={key} />
+        ) : null,
+      )}
 
       <Step
         number={1}
@@ -236,6 +262,66 @@ export function AccessCodeForm({
 
       <Step
         number={3}
+        title="Plan contratado"
+        intro="Qué paga la empresa en cada plataforma. El portal abre filtrado por ese plan, y el selector sigue disponible por si conviene mostrar qué se gana subiendo."
+      >
+        <div className="grid gap-3 sm:grid-cols-2">
+          {platforms.map((platform) => {
+            const key = platform.plans.some((p) => p.key === planKeys[platform.id])
+              ? planKeys[platform.id]
+              : '';
+            const plan = platform.plans.find((p) => p.key === key) ?? null;
+
+            return (
+              <div
+                key={platform.id}
+                className="tone rounded-[12px] border border-line bg-surface-2 p-3.5"
+                style={{ ['--tone' as string]: platform.color }}
+              >
+                <div className="mb-2.5 flex items-center gap-2.5">
+                  {platform.mark}
+                  <span className="min-w-0 flex-1 truncate font-display text-[14px] font-semibold tracking-tight">
+                    {platform.name}
+                  </span>
+                </div>
+
+                {platform.plans.length === 0 ? (
+                  <p className="text-[12.5px] leading-relaxed text-faint">
+                    Esta plataforma todavía no tiene planes cargados.
+                  </p>
+                ) : (
+                  <>
+                    <select
+                      value={key}
+                      onChange={(e) =>
+                        setPlanKeys((current) => ({
+                          ...current,
+                          [platform.id]: e.target.value,
+                        }))
+                      }
+                      aria-label={`Plan contratado en ${platform.name}`}
+                      className={field}
+                    >
+                      <option value="">Sin definir</option>
+                      {platform.plans.map((p) => (
+                        <option key={p.key} value={p.key}>
+                          {p.name} · {p.price}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="mt-1.5 text-[12px] leading-snug text-faint">
+                      {plan?.summary ?? 'El portal abre sin filtro de plan.'}
+                    </p>
+                  </>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </Step>
+
+      <Step
+        number={4}
         title="Alcance"
         intro="Qué módulos de IA y qué componentes ve quien entra con este PIN. Lo que quede fuera no aparece en el sitio."
       >
@@ -275,6 +361,9 @@ export function AccessCodeForm({
             {platforms.map((platform) => {
               const picked = platform.modules.filter((m) => selected.has(m.id)).length;
               const all = picked === platform.modules.length && picked > 0;
+              const plan = platform.plans.find((p) => p.key === planKeys[platform.id]) ?? null;
+              const fuera = outOfPlan(platform);
+              const marcadosFuera = fuera.filter((m) => selected.has(m.id));
 
               return (
                 <div
@@ -299,12 +388,35 @@ export function AccessCodeForm({
                     </button>
                   </div>
 
+                  {marcadosFuera.length > 0 && plan && (
+                    <div className="mb-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-[10px] bg-[#fdebe2] px-3 py-2 text-[12.5px] text-[#c2410c] dark:bg-[#3a1e10] dark:text-[#f4a06a]">
+                      <span>
+                        {marcadosFuera.length}{' '}
+                        {marcadosFuera.length === 1 ? 'módulo marcado no entra' : 'módulos marcados no entran'}{' '}
+                        en {plan.name}.
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => dropOutOfPlan(platform)}
+                        className="font-semibold underline underline-offset-2"
+                      >
+                        Quitarlos
+                      </button>
+                    </div>
+                  )}
+
                   <div className="grid gap-2 sm:grid-cols-2">
                     {platform.modules.map((m) => {
                       const on = selected.has(m.id);
+                      const sinPlan = plan ? availabilityIn(m.plans, plan.key) === 'no' : false;
+                      const minimo = sinPlan ? entryPlan(m.plans, platform.plans) : null;
+
                       return (
                         <label
                           key={m.id}
+                          title={
+                            minimo ? `No entra en ${plan!.name}: necesita ${minimo.name}.` : undefined
+                          }
                           className={`flex cursor-pointer items-center gap-2.5 rounded-[10px] border px-3 py-2 transition-colors ${
                             on
                               ? 'border-[var(--tone)] bg-surface'
@@ -318,10 +430,16 @@ export function AccessCodeForm({
                             className="size-[15px] flex-none accent-[var(--tone)]"
                           />
                           {m.mark}
-                          <span className="min-w-0 flex-1 truncate text-[13px] font-medium">
+                          <span
+                            className={`min-w-0 flex-1 truncate text-[13px] font-medium ${
+                              sinPlan ? 'text-faint line-through decoration-1' : ''
+                            }`}
+                          >
                             {m.name}
                           </span>
-                          <span className="text-[11px] text-faint">{m.level}</span>
+                          <span className="text-[11px] text-faint">
+                            {minimo ? `desde ${minimo.name}` : m.level}
+                          </span>
                         </label>
                       );
                     })}

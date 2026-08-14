@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Params) {
 export default async function ModulePage({ params, searchParams }: Params) {
   const { platform: platformId, slug } = await params;
   const { plan: planParam } = await searchParams;
-  const { scope } = await requireScopedParticipant();
+  const { scope, plans: codePlans } = await requireScopedParticipant();
 
   const [mod, platform] = await Promise.all([
     getModule(platformId, slug),

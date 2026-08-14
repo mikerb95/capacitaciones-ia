@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { eq, inArray } from 'drizzle-orm';
 import { db } from '@/db';
-import { accessCodeModules, accessCodes, modules } from '@/db/schema';
+import { accessCodeModules, accessCodePlans, accessCodes, modules, platformPlans } from '@/db/schema';
 import { RESERVED_CODES } from '@/lib/master-access';
 
 const str = (data: FormData, key: string) => ((data.get(key) as string | null) ?? '').trim();
@@ -69,6 +69,45 @@ async function replaceScope(accessCodeId: number, moduleIds: number[] | null) {
     .values(moduleIds.map((moduleId) => ({ accessCodeId, moduleId })));
 }
 
+/**
+ * Plan contratado por plataforma. Llega como `plan_<plataforma>` con la clave
+ * del plan; se resuelve contra la base para no guardar lo que diga el
+ * formulario, y una plataforma sin elección simplemente no deja fila.
+ */
+async function plansOf(formData: FormData) {
+  const wanted = new Map<string, string>();
+
+  for (const [name, value] of formData.entries()) {
+    if (!name.startsWith('plan_') || typeof value !== 'string' || !value) continue;
+    wanted.set(name.slice('plan_'.length), value);
+  }
+
+  if (wanted.size === 0) return [];
+
+  const rows = await db
+    .select({
+      id: platformPlans.id,
+      platformId: platformPlans.platformId,
+      key: platformPlans.key,
+    })
+    .from(platformPlans)
+    .where(inArray(platformPlans.platformId, [...wanted.keys()]));
+
+  return rows
+    .filter((row) => wanted.get(row.platformId) === row.key)
+    .map((row) => ({ platformId: row.platformId, planId: row.id }));
+}
+
+async function replacePlans(
+  accessCodeId: number,
+  plans: { platformId: string; planId: number }[],
+) {
+  await db.delete(accessCodePlans).where(eq(accessCodePlans.accessCodeId, accessCodeId));
+  if (!plans.length) return;
+
+  await db.insert(accessCodePlans).values(plans.map((p) => ({ accessCodeId, ...p })));
+}
+
 const emailLooksWrong = (value: string | null) => Boolean(value) && !/^\S+@\S+\.\S+$/.test(value!);
 
 /** Crea el PIN de una capacitación, con su perfil de empresa y su alcance. */
@@ -123,6 +162,7 @@ export async function createAccessCode(
     .returning({ id: accessCodes.id });
 
   await replaceScope(created.id, scope);
+  await replacePlans(created.id, await plansOf(formData));
 
   revalidatePath('/admin/accesos');
   redirect(`/admin/accesos?creado=${code}`);
@@ -158,6 +198,7 @@ export async function updateAccessCode(
     .where(eq(accessCodes.id, id));
 
   await replaceScope(id, scope);
+  await replacePlans(id, await plansOf(formData));
 
   revalidatePath('/admin/accesos');
   revalidatePath(`/admin/accesos/${id}`);
