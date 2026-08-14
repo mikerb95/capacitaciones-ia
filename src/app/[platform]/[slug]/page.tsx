@@ -4,11 +4,15 @@ import { PromptList } from '@/components/prompt-list';
 import { Abbr, Card, LevelBadge, SectionTitle, SiteHeader } from '@/components/ui';
 import { moduleLogo } from '@/lib/brand-logos';
 import { hasModule, requireScopedParticipant } from '@/lib/scope';
+import { AVAILABILITY_LABEL, AVAILABILITY_TONE, availabilityIn, noteIn } from '@/lib/plans';
 import { getModule, getPlatform } from '@/db/queries';
 
 export const dynamic = 'force-dynamic';
 
-type Params = { params: Promise<{ platform: string; slug: string }> };
+type Params = {
+  params: Promise<{ platform: string; slug: string }>;
+  searchParams: Promise<{ plan?: string }>;
+};
 
 export async function generateMetadata({ params }: Params) {
   const { platform, slug } = await params;
@@ -17,8 +21,9 @@ export async function generateMetadata({ params }: Params) {
   return { title: `${mod.name} · ${mod.platform.portalName}` };
 }
 
-export default async function ModulePage({ params }: Params) {
+export default async function ModulePage({ params, searchParams }: Params) {
   const { platform: platformId, slug } = await params;
+  const { plan: planParam } = await searchParams;
   const { scope } = await requireScopedParticipant();
 
   const [mod, platform] = await Promise.all([
