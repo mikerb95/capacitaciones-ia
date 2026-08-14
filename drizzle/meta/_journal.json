@@ -50,6 +50,13 @@
       "when": 1786668101160,
       "tag": "0006_right_alex_wilder",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1786674294385,
+      "tag": "0007_legal_loa",
+      "breakpoints": true
     }
   ]
 }
