@@ -39,12 +39,21 @@ export default async function ModulePage({ params, searchParams }: Params) {
   const previous = siblings[index - 1];
   const next = siblings[index + 1];
 
+  // El plan elegido en el portal viaja en la URL para que la ficha se lea con
+  // el mismo recorte: qué se puede hacer con lo que el cliente paga.
+  const planKey = mod.plans.some((p) => p.plan.key === planParam) ? planParam! : null;
+  const selected = mod.plans.find((p) => p.plan.key === planKey)?.plan ?? null;
+  const availability = availabilityIn(mod.plans, planKey);
+  const planNote = noteIn(mod.plans, planKey);
+  const byTier = [...mod.plans].sort((a, b) => a.plan.tier - b.plan.tier);
+  const keep = planKey ? `?plan=${planKey}` : '';
+
   return (
     <div className="tone min-h-screen bg-bg" style={{ ['--tone' as string]: mod.color }}>
       <SiteHeader
         title={mod.name}
         subtitle={mod.platform.portalName}
-        back={{ href: `/${platformId}`, label: `Volver a ${mod.platform.name}` }}
+        back={{ href: `/${platformId}${keep}`, label: `Volver a ${mod.platform.name}` }}
       />
 
       <main className="mx-auto max-w-[1000px] px-4 py-8 sm:px-6">
