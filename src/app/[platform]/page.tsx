@@ -1,13 +1,16 @@
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Abbr, Card, LevelBadge, PlatformMark, SectionTitle, SiteHeader, StatusBadge } from '@/components/ui';
+import { PlanExplorer } from '@/components/plan-explorer';
+import { Card, PlatformMark, SectionTitle, SiteHeader, StatusBadge } from '@/components/ui';
 import { getPlatform, getPlatformIds } from '@/db/queries';
 import { moduleLogo, platformLogo } from '@/lib/brand-logos';
 import { hasModule, hasPlatform, requireScopedParticipant } from '@/lib/scope';
 
 export const dynamic = 'force-dynamic';
 
-type Params = { params: Promise<{ platform: string }> };
+type Params = {
+  params: Promise<{ platform: string }>;
+  searchParams: Promise<{ plan?: string }>;
+};
 
 export async function generateStaticParams() {
   const ids = await getPlatformIds();
