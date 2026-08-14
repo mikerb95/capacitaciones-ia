@@ -41,7 +41,8 @@ export default async function ModulePage({ params, searchParams }: Params) {
 
   // El plan elegido en el portal viaja en la URL para que la ficha se lea con
   // el mismo recorte: qué se puede hacer con lo que el cliente paga.
-  const planKey = mod.plans.some((p) => p.plan.key === planParam) ? planParam! : null;
+  const wantedPlan = planParam ?? codePlans.get(platformId) ?? null;
+  const planKey = mod.plans.some((p) => p.plan.key === wantedPlan) ? wantedPlan : null;
   const selected = mod.plans.find((p) => p.plan.key === planKey)?.plan ?? null;
   const availability = availabilityIn(mod.plans, planKey);
   const planNote = noteIn(mod.plans, planKey);
