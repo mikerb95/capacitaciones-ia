@@ -68,6 +68,40 @@ Consulta | ¿Qué dicen estas fuentes sobre [tema]? Cítame el documento.
 Contraste | Compara el manual viejo con el nuevo y dime qué cambió.
 ```
 
+## Planes de facturación
+
+Cada portal arranca con un selector de plan: Free, Go, Plus, Pro, Business y Enterprise en
+ChatGPT; Free, Pro, Max, Team y Enterprise en Claude; gratis, AI Plus, AI Pro, AI Ultra y
+Workspace en Gemini; Copilot Chat, Copilot Business, Microsoft 365 Copilot y créditos de agente
+en Copilot. Al elegir uno, el listado de módulos se recorta a lo que ese plan habilita, la tabla
+de modelos muestra a cuál se llega y lo que queda fuera se despliega aparte, con el plan mínimo
+que haría falta.
+
+El plan viaja en la URL (`/claude?plan=pro`), así que la ficha de cada módulo se abre con el
+mismo recorte y el enlace se puede mandar al cliente ya filtrado.
+
+Todo eso vive en **`src/db/seed/plans.ts`**, separado del contenido editorial porque se revisa
+con otra frecuencia: los precios y los límites cambian cada pocos meses, los módulos no. Cada
+plataforma declara ahí sus `plans` (con `tier`, que es lo que ordena el "desde tal plan"), sus
+`models` y, por slug de módulo, en qué planes entra:
+
+```ts
+modules: {
+  deep: [
+    { plan: 'free', availability: 'no' },
+    { plan: 'plus', availability: 'incluido', note: 'Cupo mensual de informes.' },
+  ],
+}
+```
+
+`availability` es `incluido`, `limitado` (se puede, pero hay que avisar el recorte en la sesión)
+o `no`. Un módulo sin filas se considera disponible en todos los planes, así que el contenido
+que todavía no se revisó no desaparece del portal.
+
+El `note` de cada plataforma lleva la fecha de revisión y la fuente, y se muestra al pie del
+bloque de planes. Al correr `npm run db:seed`, el seeder avisa si `plans.ts` apunta a un módulo
+que ya no existe o a un plan mal escrito.
+
 ## Presentaciones
 
 Las láminas se diseñan aparte (en Claude Design, por ejemplo) y se importan como HTML desde
@@ -123,7 +157,7 @@ src/
 │   └── vivo/                       vista de audiencia
 ├── components/                     UI compartida
 └── db/
-    ├── schema.ts                   17 tablas normalizadas
+    ├── schema.ts                   21 tablas normalizadas
     ├── queries.ts                  consultas de lectura
     ├── index.ts                    cliente libSQL
     └── seed/                       contenido por plataforma
@@ -139,6 +173,9 @@ hijas con `sort_order` y borrado en cascada.
   `platform_practices`, `platform_faqs`, `platform_links`.
 - **Módulo:** `modules` (incluye el bloque antes/después y el ejemplo de conversación, que son
   1:1) con `module_outcomes`, `module_prompts`, `module_steps`, `module_roles`, `module_mistakes`.
+- **Facturación:** `platform_plans` (los planes, con `tier`) y `platform_models`, unidas por
+  `platform_model_plans`; `module_plans` dice en qué plan entra cada módulo. Las tres puente
+  guardan `availability` y una nota con el límite concreto.
 - **Presentaciones:** `decks` con `deck_slides`, más `live_sessions` y `attendees` para el modo
   en vivo.
 

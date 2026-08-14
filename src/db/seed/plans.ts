@@ -493,8 +493,8 @@ export const geminiPlans: PlansSeed = {
     },
     {
       key: 'nano-banana',
-      name: 'Nano Banana (imagen)',
-      description: 'El generador y editor de imágenes.',
+      name: 'Nano Banana (Imagen)',
+      description: 'El generador y editor de imágenes, el que usa el módulo de imágenes.',
       plans: [
         { plan: 'free', availability: 'limitado', note: 'Pocas imágenes por día.' },
         { plan: 'plus' },

@@ -112,56 +112,77 @@ async function seedPlatform(seed: PlatformSeed, sortOrder: number) {
     );
   }
 
-  // Planes y modelos: se rehacen enteros, igual que el resto del contenido.
-  // Primero caen las tablas puente, porque no se puede confiar en que las
-  // claves foráneas estén activas en la conexión de SQLite.
+  // Planes y modelos: upsert por clave, no borrado y alta. Así los ids no
+  // cambian en cada carga y, si el seed se corta a la mitad, el portal nunca
+  // queda con módulos apuntando a planes que ya no existen.
   const planIds = new Map<string, number>();
 
   if (planData) {
-    const oldModels = await db
-      .select({ id: platformModels.id })
-      .from(platformModels)
-      .where(eq(platformModels.platformId, seed.id));
-    for (const m of oldModels) {
-      await db.delete(platformModelPlans).where(eq(platformModelPlans.modelId, m.id));
-    }
-
-    const oldPlans = await db
-      .select({ id: platformPlans.id })
-      .from(platformPlans)
-      .where(eq(platformPlans.platformId, seed.id));
-    for (const p of oldPlans) {
-      await db.delete(modulePlans).where(eq(modulePlans.planId, p.id));
-    }
-
-    await db.delete(platformModels).where(eq(platformModels.platformId, seed.id));
-    await db.delete(platformPlans).where(eq(platformPlans.platformId, seed.id));
-
     for (const [i, plan] of planData.plans.entries()) {
+      const planRow = { platformId: seed.id, ...plan, sortOrder: i };
       const [saved] = await db
         .insert(platformPlans)
-        .values({ platformId: seed.id, ...plan, sortOrder: i })
+        .values(planRow)
+        .onConflictDoUpdate({
+          target: [platformPlans.platformId, platformPlans.key],
+          set: planRow,
+        })
         .returning({ id: platformPlans.id });
       planIds.set(plan.key, saved.id);
     }
 
+    // Un plan que se dejó de vender se lleva consigo sus filas puente.
+    const stalePlans = (
+      await db
+        .select({ id: platformPlans.id, key: platformPlans.key })
+        .from(platformPlans)
+        .where(eq(platformPlans.platformId, seed.id))
+    ).filter((p) => !planIds.has(p.key));
+
+    for (const p of stalePlans) {
+      await db.delete(modulePlans).where(eq(modulePlans.planId, p.id));
+      await db.delete(platformModelPlans).where(eq(platformModelPlans.planId, p.id));
+      await db.delete(platformPlans).where(eq(platformPlans.id, p.id));
+    }
+
+    const modelIds = new Map<string, number>();
+
     for (const [i, model] of planData.models.entries()) {
+      const modelRow = {
+        platformId: seed.id,
+        key: model.key,
+        name: model.name,
+        description: model.description,
+        sortOrder: i,
+      };
       const [saved] = await db
         .insert(platformModels)
-        .values({
-          platformId: seed.id,
-          key: model.key,
-          name: model.name,
-          description: model.description,
-          sortOrder: i,
+        .values(modelRow)
+        .onConflictDoUpdate({
+          target: [platformModels.platformId, platformModels.key],
+          set: modelRow,
         })
         .returning({ id: platformModels.id });
+      modelIds.set(model.key, saved.id);
 
+      await db.delete(platformModelPlans).where(eq(platformModelPlans.modelId, saved.id));
       const rows = planRows(model.plans, planIds, `${seed.id}/modelo ${model.key}`).map((r) => ({
         modelId: saved.id,
         ...r,
       }));
       if (rows.length) await db.insert(platformModelPlans).values(rows);
+    }
+
+    const staleModels = (
+      await db
+        .select({ id: platformModels.id, key: platformModels.key })
+        .from(platformModels)
+        .where(eq(platformModels.platformId, seed.id))
+    ).filter((m) => !modelIds.has(m.key));
+
+    for (const m of staleModels) {
+      await db.delete(platformModelPlans).where(eq(platformModelPlans.modelId, m.id));
+      await db.delete(platformModels).where(eq(platformModels.id, m.id));
     }
   }
 
