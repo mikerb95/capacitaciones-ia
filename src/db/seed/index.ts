@@ -62,6 +62,7 @@ async function seedPlatform(seed: PlatformSeed, sortOrder: number) {
     specialIntro: seed.specialIntro,
     helpTitle: seed.helpTitle,
     helpText: seed.helpText,
+    plansNote: planData?.note,
     status: seed.status,
     sortOrder,
     updatedAt: new Date(),
