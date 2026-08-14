@@ -52,7 +52,10 @@ export default async function IngresarPage({ searchParams }: Props) {
 
           <p className="mt-6 text-center text-[12px] leading-relaxed text-faint">
             ¿Contrataste la capacitación para tu equipo?{' '}
-            <Link href="/empresa" className="font-medium transition-colors hover:text-primary">
+            <Link
+              href="/empresa"
+              className="font-medium text-muted underline decoration-line underline-offset-4 transition-colors hover:text-primary"
+            >
               Entra al panel de tu empresa
             </Link>
           </p>
