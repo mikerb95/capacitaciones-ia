@@ -151,6 +151,25 @@ function CodeCard({
         )}
       </div>
 
+      {code.plans.length > 0 && (
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-line px-5 py-2.5">
+          <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-faint">
+            Planes
+          </span>
+          <div className="flex flex-wrap items-center gap-2">
+            {code.plans.map((p) => (
+              <span
+                key={p.id}
+                className="inline-flex items-center gap-1.5 rounded-full bg-surface-2 px-2.5 py-0.5 text-[12px] text-muted"
+              >
+                {index.get(p.platformId)?.name ?? p.platformId}
+                <span className="font-semibold text-text">{p.plan.name}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
       {code.participants.length === 0 ? (
         <p className="px-5 py-4 text-[13px] text-faint">
           Todavía no entra nadie con este código.
