@@ -23,10 +23,11 @@ export async function generateMetadata({ params }: Params) {
   return data ? { title: data.portalName } : {};
 }
 
-export default async function PlatformPage({ params }: Params) {
+export default async function PlatformPage({ params, searchParams }: Params) {
   const { scope } = await requireScopedParticipant();
 
   const { platform: id } = await params;
+  const { plan } = await searchParams;
   const found = await getPlatform(id);
 
   // Fuera del alcance del código, el portal no existe para esta persona.
