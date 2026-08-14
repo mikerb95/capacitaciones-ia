@@ -15,7 +15,7 @@ export default async function NuevoAccesoPage() {
     <div className="min-h-screen bg-bg">
       <SiteHeader
         title="Nuevo PIN"
-        subtitle="El código, el perfil de la empresa y el alcance de la capacitación."
+        subtitle="El código, el perfil de la empresa, el plan que tiene contratado y el alcance de la capacitación."
         back={{ href: '/admin/accesos', label: 'Códigos de acceso' }}
       >
         <AdminLogoutButton />

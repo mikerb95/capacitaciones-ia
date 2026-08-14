@@ -80,6 +80,15 @@ que haría falta.
 El plan viaja en la URL (`/claude?plan=pro`), así que la ficha de cada módulo se abre con el
 mismo recorte y el enlace se puede mandar al cliente ya filtrado.
 
+Al crear el PIN se elige el **plan contratado** por la empresa en cada plataforma (paso 3 del
+formulario, tabla `access_code_plans`). Con eso el portal abre ya filtrado por lo que esa empresa
+paga, sin que nadie tenga que acordarse. Es una preselección, no un recorte: el selector sigue
+ahí, que es lo que sirve para mostrar en la sesión qué se gana subiendo de plan. Si además hay un
+`?plan=` en la URL, ese manda, así el enlace que se comparte se ve igual para todos.
+
+En el paso de alcance, los módulos que el plan contratado no cubre salen tachados con el plan
+mínimo que necesitarían, y si quedó alguno marcado sale un aviso con un botón para quitarlos.
+
 Todo eso vive en **`src/db/seed/plans.ts`**, separado del contenido editorial porque se revisa
 con otra frecuencia: los precios y los límites cambian cada pocos meses, los módulos no. Cada
 plataforma declara ahí sus `plans` (con `tier`, que es lo que ordena el "desde tal plan"), sus
@@ -157,7 +166,7 @@ src/
 │   └── vivo/                       vista de audiencia
 ├── components/                     UI compartida
 └── db/
-    ├── schema.ts                   21 tablas normalizadas
+    ├── schema.ts                   22 tablas normalizadas
     ├── queries.ts                  consultas de lectura
     ├── index.ts                    cliente libSQL
     └── seed/                       contenido por plataforma

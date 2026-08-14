@@ -45,10 +45,12 @@ function scopeSummary(code: AccessCodeRow, index: ScopeIndex, totalModules: numb
 function CodeCard({
   code,
   index,
+  platformNames,
   totalModules,
 }: {
   code: AccessCodeRow;
   index: ScopeIndex;
+  platformNames: Map<string, string>;
   totalModules: number;
 }) {
   const scope = scopeSummary(code, index, totalModules);
@@ -162,7 +164,7 @@ function CodeCard({
                 key={p.id}
                 className="inline-flex items-center gap-1.5 rounded-full bg-surface-2 px-2.5 py-0.5 text-[12px] text-muted"
               >
-                {index.get(p.platformId)?.name ?? p.platformId}
+                {platformNames.get(p.platformId) ?? p.platformId}
                 <span className="font-semibold text-text">{p.plan.name}</span>
               </span>
             ))}
@@ -207,6 +209,7 @@ export default async function AccesosPage({ searchParams }: Props) {
   const [codes, platforms] = await Promise.all([getAccessCodes(), getComparison()]);
 
   const index: ScopeIndex = new Map();
+  const platformNames = new Map(platforms.map((p) => [p.id, p.name]));
   for (const platform of platforms) {
     for (const m of platform.modules) {
       index.set(m.id, { platform: platform.name, color: platform.color });
@@ -260,7 +263,13 @@ export default async function AccesosPage({ searchParams }: Props) {
         ) : (
           <div className="flex flex-col gap-5">
             {codes.map((code) => (
-              <CodeCard key={code.id} code={code} index={index} totalModules={totalModules} />
+              <CodeCard
+                key={code.id}
+                code={code}
+                index={index}
+                platformNames={platformNames}
+                totalModules={totalModules}
+              />
             ))}
           </div>
         )}
