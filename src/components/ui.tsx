@@ -177,6 +177,28 @@ export function SectionTitle({
   );
 }
 
+/** Barra de avance. El número va al lado: la barra sola no se lee bien. */
+export function ProgressBar({ percent, width = 110 }: { percent: number; width?: number }) {
+  return (
+    <span className="flex items-center gap-2">
+      <span
+        className="h-1.5 overflow-hidden rounded-full bg-surface-2"
+        style={{ width }}
+        role="progressbar"
+        aria-valuenow={percent}
+        aria-valuemin={0}
+        aria-valuemax={100}
+      >
+        <span
+          className="block h-full rounded-full bg-primary"
+          style={{ width: `${Math.max(percent, 2)}%` }}
+        />
+      </span>
+      <span className="font-mono text-[12px] text-muted">{percent}%</span>
+    </span>
+  );
+}
+
 export function Card({
   className = '',
   children,

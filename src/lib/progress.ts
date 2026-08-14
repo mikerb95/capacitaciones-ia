@@ -18,6 +18,14 @@ export function progressOf(viewedIds: Iterable<number>, scopeIds: Set<number>): 
   return { done, total, percent: total === 0 ? 0 : Math.round((done / total) * 100) };
 }
 
+/**
+ * Módulos que abarcaba una capacitación. Sin recorte guardado, el código abría
+ * el catálogo entero, así que ese es el denominador honesto.
+ */
+export function scopeSetOf(scope: { moduleId: number }[], catalog: Set<number>) {
+  return scope.length ? new Set(scope.map((s) => s.moduleId)) : catalog;
+}
+
 /** Cómo llamarle a ese número en una línea, sin prometer más de lo que sabe. */
 export function progressLabel({ done, total }: Progress) {
   if (total === 0) return 'Sin módulos en alcance';
