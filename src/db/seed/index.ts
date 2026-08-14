@@ -112,6 +112,59 @@ async function seedPlatform(seed: PlatformSeed, sortOrder: number) {
     );
   }
 
+  // Planes y modelos: se rehacen enteros, igual que el resto del contenido.
+  // Primero caen las tablas puente, porque no se puede confiar en que las
+  // claves foráneas estén activas en la conexión de SQLite.
+  const planIds = new Map<string, number>();
+
+  if (planData) {
+    const oldModels = await db
+      .select({ id: platformModels.id })
+      .from(platformModels)
+      .where(eq(platformModels.platformId, seed.id));
+    for (const m of oldModels) {
+      await db.delete(platformModelPlans).where(eq(platformModelPlans.modelId, m.id));
+    }
+
+    const oldPlans = await db
+      .select({ id: platformPlans.id })
+      .from(platformPlans)
+      .where(eq(platformPlans.platformId, seed.id));
+    for (const p of oldPlans) {
+      await db.delete(modulePlans).where(eq(modulePlans.planId, p.id));
+    }
+
+    await db.delete(platformModels).where(eq(platformModels.platformId, seed.id));
+    await db.delete(platformPlans).where(eq(platformPlans.platformId, seed.id));
+
+    for (const [i, plan] of planData.plans.entries()) {
+      const [saved] = await db
+        .insert(platformPlans)
+        .values({ platformId: seed.id, ...plan, sortOrder: i })
+        .returning({ id: platformPlans.id });
+      planIds.set(plan.key, saved.id);
+    }
+
+    for (const [i, model] of planData.models.entries()) {
+      const [saved] = await db
+        .insert(platformModels)
+        .values({
+          platformId: seed.id,
+          key: model.key,
+          name: model.name,
+          description: model.description,
+          sortOrder: i,
+        })
+        .returning({ id: platformModels.id });
+
+      const rows = planRows(model.plans, planIds, `${seed.id}/modelo ${model.key}`).map((r) => ({
+        modelId: saved.id,
+        ...r,
+      }));
+      if (rows.length) await db.insert(platformModelPlans).values(rows);
+    }
+  }
+
   for (const [i, m] of seed.modules.entries()) {
     const moduleRow = {
       platformId: seed.id,
