@@ -190,13 +190,25 @@ export const chatgptPlans: PlansSeed = {
       { plan: 'business' },
       { plan: 'enterprise' },
     ],
-    sora: [
+    knowledge: [
       { plan: 'free', availability: 'no' },
       { plan: 'go', availability: 'no' },
-      { plan: 'plus', availability: 'limitado', note: 'Cupo mensual de videos y duración corta.' },
-      { plan: 'pro' },
-      { plan: 'business', availability: 'limitado', note: 'Según lo que habilite el administrador.' },
-      { plan: 'enterprise', availability: 'limitado', note: 'Según lo que habilite el administrador.' },
+      {
+        plan: 'plus',
+        availability: 'limitado',
+        note: 'Conectores de cuentas personales (Drive, GitHub), no el índice de la empresa.',
+      },
+      {
+        plan: 'pro',
+        availability: 'limitado',
+        note: 'Conectores de cuentas personales, no el índice de la empresa.',
+      },
+      {
+        plan: 'business',
+        availability: 'incluido',
+        note: 'Es el escenario del módulo: respeta los permisos que ya tiene cada cuenta.',
+      },
+      { plan: 'enterprise' },
     ],
   },
 };
