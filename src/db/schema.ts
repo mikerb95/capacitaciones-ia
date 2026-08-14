@@ -494,10 +494,6 @@ export const accessCodes = sqliteTable(
      */
     contracted: integer('contracted', { mode: 'boolean' }).notNull().default(false),
     companyId: integer('company_id').references(() => companies.id, { onDelete: 'set null' }),
-    company: text('company'),
-    industry: text('industry'),
-    contactName: text('contact_name'),
-    contactEmail: text('contact_email'),
     notes: text('notes'),
     active: integer('active', { mode: 'boolean' }).notNull().default(true),
     // Código maestro de pruebas: no se cierra, no se borra y su número queda
