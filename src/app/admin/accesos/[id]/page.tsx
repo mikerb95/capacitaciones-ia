@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import { AccessCodeForm } from '@/components/access-code-form';
 import { AdminLogoutButton } from '@/components/admin-logout-button';
 import { SiteHeader } from '@/components/ui';
-import { getAccessCode } from '@/db/queries';
+import { getAccessCode, getCompanyOptions } from '@/db/queries';
 import { updateAccessCode } from '../actions';
 import { getScopeOptions } from '../scope-options';
 
@@ -21,13 +21,13 @@ export default async function EditarAccesoPage({ params }: Props) {
   const code = await getAccessCode(Number(id));
   if (!code) notFound();
 
-  const platforms = await getScopeOptions();
+  const [platforms, companies] = await Promise.all([getScopeOptions(), getCompanyOptions()]);
 
   return (
     <div className="min-h-screen bg-bg">
       <SiteHeader
         title={`PIN ${code.code}`}
-        subtitle={code.company ?? code.label}
+        subtitle={code.company?.name ?? code.label}
         back={{ href: '/admin/accesos', label: 'Códigos de acceso' }}
       >
         <AdminLogoutButton />
@@ -37,15 +37,14 @@ export default async function EditarAccesoPage({ params }: Props) {
         <AccessCodeForm
           action={updateAccessCode}
           platforms={platforms}
+          companies={companies}
           mode="edit"
           id={code.id}
           defaults={{
             code: code.code,
             label: code.label,
-            company: code.company ?? '',
-            industry: code.industry ?? '',
-            contactName: code.contactName ?? '',
-            contactEmail: code.contactEmail ?? '',
+            contracted: code.contracted,
+            companyId: code.companyId,
             notes: code.notes ?? '',
             moduleIds: code.scope.map((s) => s.moduleId),
             planKeys: Object.fromEntries(code.plans.map((p) => [p.platformId, p.plan.key])),

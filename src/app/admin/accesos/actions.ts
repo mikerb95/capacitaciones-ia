@@ -4,7 +4,14 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { eq, inArray } from 'drizzle-orm';
 import { db } from '@/db';
-import { accessCodeModules, accessCodePlans, accessCodes, modules, platformPlans } from '@/db/schema';
+import {
+  accessCodeModules,
+  accessCodePlans,
+  accessCodes,
+  companies,
+  modules,
+  platformPlans,
+} from '@/db/schema';
 import { RESERVED_CODES } from '@/lib/master-access';
 
 const str = (data: FormData, key: string) => ((data.get(key) as string | null) ?? '').trim();
@@ -12,7 +19,7 @@ const orNull = (value: string) => (value.length ? value : null);
 
 export type AccessCodeState = {
   error?: string;
-  field?: 'code' | 'label' | 'contactEmail' | 'scope';
+  field?: 'code' | 'label' | 'company' | 'scope';
 };
 
 export type AccessCodeAction = (
@@ -24,17 +31,40 @@ function randomCode() {
   return String(Math.floor(1000 + Math.random() * 9000));
 }
 
-/** Perfil de la empresa: todo opcional menos el nombre de la capacitación. */
-function profileOf(formData: FormData) {
+/**
+ * Datos de la capacitación. La empresa solo se guarda si está marcado que se
+ * dicta bajo contrato: desmarcar la casilla desengancha el PIN de su panel.
+ */
+async function profileOf(formData: FormData): Promise<
+  { label: string; contracted: boolean; companyId: number | null; notes: string | null } | AccessCodeState
+> {
+  const contracted = str(formData, 'contracted') === '1';
+  const wanted = Number(str(formData, 'companyId'));
+
+  let companyId: number | null = null;
+
+  if (contracted) {
+    if (!wanted) {
+      return {
+        error: 'Elige la empresa contratante, o desmarca que la dictas en su nombre.',
+        field: 'company',
+      };
+    }
+    // La empresa se resuelve contra la base: el formulario no decide qué existe.
+    const found = await db.query.companies.findFirst({ where: eq(companies.id, wanted) });
+    if (!found) return { error: 'No encuentro esa empresa.', field: 'company' };
+    companyId = found.id;
+  }
+
   return {
     label: str(formData, 'label') || 'Capacitación sin nombre',
-    company: orNull(str(formData, 'company')),
-    industry: orNull(str(formData, 'industry')),
-    contactName: orNull(str(formData, 'contactName')),
-    contactEmail: orNull(str(formData, 'contactEmail')),
+    contracted,
+    companyId,
     notes: orNull(str(formData, 'notes')),
   };
 }
+
+const isError = (value: object): value is AccessCodeState => 'error' in value;
 
 /**
  * Alcance elegido en el formulario. `null` es "todo el catálogo": se guarda
@@ -108,14 +138,14 @@ async function replacePlans(
   await db.insert(accessCodePlans).values(plans.map((p) => ({ accessCodeId, ...p })));
 }
 
-const emailLooksWrong = (value: string | null) => Boolean(value) && !/^\S+@\S+\.\S+$/.test(value!);
-
-/** Crea el PIN de una capacitación, con su perfil de empresa y su alcance. */
+/** Crea el PIN de una capacitación, con su empresa y su alcance. */
 export async function createAccessCode(
   _prev: AccessCodeState,
   formData: FormData,
 ): Promise<AccessCodeState> {
-  const profile = profileOf(formData);
+  const profile = await profileOf(formData);
+  if (isError(profile)) return profile;
+
   const wanted = str(formData, 'code').replace(/\D/g, '');
 
   if (wanted && wanted.length !== 4) {
@@ -127,10 +157,6 @@ export async function createAccessCode(
       field: 'code',
     };
   }
-  if (emailLooksWrong(profile.contactEmail)) {
-    return { error: 'Revisa el correo del contacto.', field: 'contactEmail' };
-  }
-
   const scope = await scopeOf(formData);
   if (scope !== null && scope.length === 0) {
     return {
@@ -179,10 +205,8 @@ export async function updateAccessCode(
   const current = await db.query.accessCodes.findFirst({ where: eq(accessCodes.id, id) });
   if (!current) return { error: 'No encuentro ese PIN.' };
 
-  const profile = profileOf(formData);
-  if (emailLooksWrong(profile.contactEmail)) {
-    return { error: 'Revisa el correo del contacto.', field: 'contactEmail' };
-  }
+  const profile = await profileOf(formData);
+  if (isError(profile)) return profile;
 
   const scope = await scopeOf(formData);
   if (scope !== null && scope.length === 0) {

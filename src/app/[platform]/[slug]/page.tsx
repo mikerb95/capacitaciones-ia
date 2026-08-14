@@ -1,11 +1,12 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { after } from 'next/server';
 import { PromptList } from '@/components/prompt-list';
 import { Abbr, Card, LevelBadge, SectionTitle, SiteHeader } from '@/components/ui';
 import { moduleLogo } from '@/lib/brand-logos';
 import { hasModule, requireScopedParticipant } from '@/lib/scope';
 import { AVAILABILITY_LABEL, AVAILABILITY_TONE, availabilityIn, noteIn } from '@/lib/plans';
-import { getModule, getPlatform } from '@/db/queries';
+import { getModule, getPlatform, recordModuleView } from '@/db/queries';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,7 +25,7 @@ export async function generateMetadata({ params }: Params) {
 export default async function ModulePage({ params, searchParams }: Params) {
   const { platform: platformId, slug } = await params;
   const { plan: planParam } = await searchParams;
-  const { scope, plans: codePlans } = await requireScopedParticipant();
+  const { participant, scope, plans: codePlans } = await requireScopedParticipant();
 
   const [mod, platform] = await Promise.all([
     getModule(platformId, slug),
@@ -32,6 +33,13 @@ export default async function ModulePage({ params, searchParams }: Params) {
   ]);
 
   if (!mod || !platform || !hasModule(scope, mod.id)) notFound();
+
+  // El avance se anota después de responder: que la ficha no espere a la
+  // escritura. `participant` ya está leído, así que el callback no toca la
+  // cookie, que dentro de un Server Component no se puede.
+  const participantId = participant.id;
+  const moduleId = mod.id;
+  after(() => recordModuleView(participantId, moduleId));
 
   // La navegación anterior/siguiente solo salta entre módulos en alcance.
   const siblings = platform.modules.filter((m) => hasModule(scope, m.id));

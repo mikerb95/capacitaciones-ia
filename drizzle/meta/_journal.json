@@ -64,6 +64,13 @@
       "when": 1786740796390,
       "tag": "0008_wooden_polaris",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1786740837278,
+      "tag": "0009_icy_doctor_doom",
+      "breakpoints": true
     }
   ]
 }

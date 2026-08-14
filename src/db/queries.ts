@@ -1,11 +1,13 @@
-import { asc, eq, and } from 'drizzle-orm';
+import { asc, eq, and, sql } from 'drizzle-orm';
 import { db } from './index';
 import {
   accessCodeModules,
   accessCodePlans,
   accessCodes,
+  companies,
   decks,
   liveSessions,
+  moduleViews,
   modules,
   platformPlans,
   platforms,
@@ -185,18 +187,23 @@ export async function getAccessCodes() {
   return db.query.accessCodes.findMany({
     orderBy: (c, { desc }) => [desc(c.active), desc(c.createdAt)],
     with: {
-      participants: { orderBy: (p, { desc }) => [desc(p.createdAt)] },
+      company: { columns: { id: true, name: true, industry: true } },
+      participants: {
+        orderBy: (p, { desc }) => [desc(p.createdAt)],
+        with: { views: { columns: { moduleId: true } } },
+      },
       scope: { columns: { moduleId: true } },
       plans: { with: { plan: { columns: { name: true } } } },
     },
   });
 }
 
-/** Un código con su perfil de empresa y su alcance, para la pantalla de edición. */
+/** Un código con su empresa y su alcance, para la pantalla de edición. */
 export async function getAccessCode(id: number) {
   return db.query.accessCodes.findFirst({
     where: eq(accessCodes.id, id),
     with: {
+      company: { columns: { id: true, name: true } },
       scope: { columns: { moduleId: true } },
       plans: { with: { plan: { columns: { key: true } } } },
     },
@@ -230,6 +237,100 @@ export async function getScopeModuleIds(accessCodeId: number) {
 
 export type AccessCodeRow = Awaited<ReturnType<typeof getAccessCodes>>[number];
 export type AccessCodeFull = NonNullable<Awaited<ReturnType<typeof getAccessCode>>>;
+
+/* ----------------------------------------------------------------- empresas */
+
+const byOrder = <T extends { sortOrder: unknown; id: unknown }>(t: T) => [
+  asc(t.sortOrder as never),
+  asc(t.id as never),
+];
+
+/** Empresas del admin, con sus responsables y las capacitaciones que llevan. */
+export async function getCompanies() {
+  return db.query.companies.findMany({
+    orderBy: (c) => [asc(c.name)],
+    with: {
+      contacts: { orderBy: byOrder },
+      accessCodes: {
+        columns: { id: true, code: true, label: true, active: true, contracted: true },
+        orderBy: (c, { desc }) => [desc(c.createdAt)],
+        with: { participants: { columns: { id: true } } },
+      },
+    },
+  });
+}
+
+/** Una empresa con todo lo suyo, para la pantalla de edición. */
+export async function getCompany(id: number) {
+  return db.query.companies.findFirst({
+    where: eq(companies.id, id),
+    with: {
+      contacts: { orderBy: byOrder },
+      accessCodes: {
+        orderBy: (c, { desc }) => [desc(c.createdAt)],
+        with: { participants: { columns: { id: true } } },
+      },
+    },
+  });
+}
+
+/** Empresas para el selector del formulario de capacitación. */
+export async function getCompanyOptions() {
+  return db
+    .select({ id: companies.id, name: companies.name })
+    .from(companies)
+    .orderBy(asc(companies.name));
+}
+
+/**
+ * Lo que ve el panel de la empresa: solo las capacitaciones marcadas como
+ * dictadas bajo contrato, con su gente y los módulos que cada uno recorrió.
+ * El teléfono no sale de aquí: lo dieron para la capacitación, no para la
+ * empresa.
+ */
+export async function getCompanyTrainings(companyId: number) {
+  return db.query.accessCodes.findMany({
+    where: and(eq(accessCodes.companyId, companyId), eq(accessCodes.contracted, true)),
+    orderBy: (c, { desc }) => [desc(c.createdAt)],
+    columns: { id: true, code: true, label: true, active: true, createdAt: true, notes: true },
+    with: {
+      scope: { columns: { moduleId: true } },
+      plans: {
+        with: {
+          plan: { columns: { name: true } },
+          platform: { columns: { id: true, name: true } },
+        },
+      },
+      participants: {
+        columns: { id: true, name: true, createdAt: true, lastSeenAt: true },
+        orderBy: (p, { desc }) => [desc(p.createdAt)],
+        with: { views: { columns: { moduleId: true, views: true, lastSeenAt: true } } },
+      },
+    },
+  });
+}
+
+export type CompanyRow = Awaited<ReturnType<typeof getCompanies>>[number];
+export type CompanyFull = NonNullable<Awaited<ReturnType<typeof getCompany>>>;
+export type CompanyTraining = Awaited<ReturnType<typeof getCompanyTrainings>>[number];
+
+/* ------------------------------------------------------------------- avance */
+
+/**
+ * Deja constancia de que el asistente abrió un módulo. Se cuenta la apertura y
+ * se pisa la fecha, así el panel puede decir cuándo fue la última vez.
+ */
+export async function recordModuleView(participantId: number, moduleId: number) {
+  const now = new Date();
+
+  await db
+    .insert(moduleViews)
+    .values({ participantId, moduleId, views: 1, firstSeenAt: now, lastSeenAt: now })
+    .onConflictDoUpdate({
+      target: [moduleViews.participantId, moduleViews.moduleId],
+      set: { views: sql`${moduleViews.views} + 1`, lastSeenAt: now },
+    });
+}
 
 export type DeckRow = Awaited<ReturnType<typeof getDecks>>[number];
 export type DeckFull = NonNullable<Awaited<ReturnType<typeof getDeck>>>;

@@ -1,8 +1,10 @@
 'use client';
 
+import Link from 'next/link';
 import { useActionState, useState, type ReactNode } from 'react';
 import type { AccessCodeState, AccessCodeAction } from '@/app/admin/accesos/actions';
 import { availabilityIn, entryPlan, type PlanInfo, type PlanRef } from '@/lib/plans';
+import { Field, FormError, Step, field } from './form-kit';
 
 export type ScopeModuleOption = {
   id: number;
@@ -21,13 +23,13 @@ export type ScopePlatformOption = {
   modules: ScopeModuleOption[];
 };
 
+export type CompanyOption = { id: number; name: string };
+
 export type AccessCodeDefaults = {
   code: string;
   label: string;
-  company: string;
-  industry: string;
-  contactName: string;
-  contactEmail: string;
+  contracted: boolean;
+  companyId: number | null;
   notes: string;
   moduleIds: number[];
   /** Clave del plan contratado por plataforma. Sin entrada, sin plan definido. */
@@ -37,79 +39,31 @@ export type AccessCodeDefaults = {
 const EMPTY: AccessCodeDefaults = {
   code: '',
   label: '',
-  company: '',
-  industry: '',
-  contactName: '',
-  contactEmail: '',
+  contracted: false,
+  companyId: null,
   notes: '',
   moduleIds: [],
   planKeys: {},
 };
 
-const field =
-  'w-full rounded-[10px] border border-line bg-surface px-3 py-2.5 text-[14px] outline-none transition-colors placeholder:text-faint focus:border-primary';
-
-function Step({
-  number,
-  title,
-  intro,
-  children,
-}: {
-  number: number;
-  title: string;
-  intro: string;
-  children: ReactNode;
-}) {
-  return (
-    <section className="rounded-card border border-line bg-surface p-5 shadow-card">
-      <div className="mb-4 flex items-start gap-3">
-        <span className="mt-0.5 grid size-6 flex-none place-items-center rounded-full bg-primary-soft font-mono text-[11.5px] font-semibold text-primary">
-          {number}
-        </span>
-        <div>
-          <h2 className="font-display text-[15.5px] font-semibold tracking-tight">{title}</h2>
-          <p className="mt-0.5 text-[12.5px] leading-relaxed text-faint">{intro}</p>
-        </div>
-      </div>
-      {children}
-    </section>
-  );
-}
-
-function Field({
-  label,
-  hint,
-  children,
-}: {
-  label: string;
-  hint?: string;
-  children: ReactNode;
-}) {
-  return (
-    <label className="flex flex-col gap-1.5">
-      <span className="text-[12.5px] font-medium text-muted">
-        {label}
-        {hint && <span className="ml-1 font-normal text-faint">{hint}</span>}
-      </span>
-      {children}
-    </label>
-  );
-}
-
 export function AccessCodeForm({
   action,
   platforms,
+  companies,
   defaults = EMPTY,
   mode,
   id,
 }: {
   action: AccessCodeAction;
   platforms: ScopePlatformOption[];
+  companies: CompanyOption[];
   defaults?: AccessCodeDefaults;
   mode: 'create' | 'edit';
   id?: number;
 }) {
   const [state, formAction, pending] = useActionState<AccessCodeState, FormData>(action, {});
+  const [contracted, setContracted] = useState(defaults.contracted);
+  const [companyId, setCompanyId] = useState(defaults.companyId ? String(defaults.companyId) : '');
   const [selected, setSelected] = useState<Set<number>>(new Set(defaults.moduleIds));
   const [planKeys, setPlanKeys] = useState<Record<string, string>>(defaults.planKeys);
   // Sin recorte, el código abre todo el catálogo: es lo normal cuando la
@@ -204,59 +158,75 @@ export function AccessCodeForm({
 
       <Step
         number={2}
-        title="Perfil de la empresa"
-        intro="Para quién es la capacitación. Sirve para reconocer el PIN meses después y para saber a quién escribirle."
+        title="Para quién es"
+        intro="Si la dictas en nombre de una empresa que te contrató, la capacitación entra en su panel: sus responsables ven a su gente y el avance de cada uno."
       >
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Empresa">
-            <input
-              name="company"
-              defaultValue={defaults.company}
-              placeholder="Ferretería del Norte S.A.S."
-              className={field}
-            />
-          </Field>
+        <input type="hidden" name="contracted" value={contracted ? '1' : ''} />
 
-          <Field label="Sector" hint="opcional">
-            <input
-              name="industry"
-              defaultValue={defaults.industry}
-              placeholder="Retail, salud, logística..."
-              className={field}
-            />
-          </Field>
+        <label className="flex cursor-pointer items-start gap-3 rounded-[10px] border border-line bg-surface-2 px-4 py-3.5 transition-colors hover:border-primary">
+          <input
+            type="checkbox"
+            checked={contracted}
+            onChange={(e) => setContracted(e.target.checked)}
+            className="mt-0.5 size-[15px] flex-none accent-primary"
+          />
+          <span>
+            <span className="block text-[13.5px] font-semibold">
+              Es parte de un contrato con una empresa, y la dicto en su nombre
+            </span>
+            <span className="mt-0.5 block text-[12.5px] leading-relaxed text-faint">
+              Déjalo sin marcar si la capacitación es tuya: aunque asista gente de una empresa,
+              nadie de su lado verá la lista de asistentes.
+            </span>
+          </span>
+        </label>
 
-          <Field label="Contacto" hint="opcional">
-            <input
-              name="contactName"
-              defaultValue={defaults.contactName}
-              placeholder="Quién coordina de su lado"
-              className={field}
-            />
-          </Field>
-
-          <Field label="Correo del contacto" hint="opcional">
-            <input
-              name="contactEmail"
-              type="email"
-              defaultValue={defaults.contactEmail}
-              aria-invalid={state.field === 'contactEmail'}
-              placeholder="nombre@empresa.com"
-              className={field}
-            />
-          </Field>
-
-          <div className="sm:col-span-2">
-            <Field label="Notas" hint="opcional">
-              <textarea
-                name="notes"
-                rows={2}
-                defaultValue={defaults.notes}
-                placeholder="Sala, horario, acuerdos, lo que convenga recordar."
-                className={`${field} resize-y`}
-              />
+        {contracted && (
+          <div className="mt-4 grid gap-4">
+            <Field label="Empresa contratante">
+              <select
+                name="companyId"
+                value={companyId}
+                onChange={(e) => setCompanyId(e.target.value)}
+                aria-invalid={state.field === 'company'}
+                className={field}
+              >
+                <option value="">Elige la empresa</option>
+                {companies.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
             </Field>
+
+            {companies.length === 0 && (
+              <p className="text-[12.5px] leading-relaxed text-faint">
+                Todavía no hay empresas cargadas.{' '}
+                <Link
+                  href="/admin/empresas/nueva"
+                  target="_blank"
+                  className="font-medium text-primary"
+                >
+                  Crea la primera
+                </Link>{' '}
+                y vuelve a este formulario: ahí van el contrato, sus responsables y la clave de
+                su panel.
+              </p>
+            )}
           </div>
+        )}
+
+        <div className="mt-4">
+          <Field label="Notas" hint="opcional, solo para ti">
+            <textarea
+              name="notes"
+              rows={2}
+              defaultValue={defaults.notes}
+              placeholder="Sala, horario, acuerdos, lo que convenga recordar."
+              className={`${field} resize-y`}
+            />
+          </Field>
         </div>
       </Step>
 
@@ -451,14 +421,7 @@ export function AccessCodeForm({
         )}
       </Step>
 
-      {state.error && (
-        <p
-          role="alert"
-          className="rounded-[10px] bg-[#fdebe2] px-4 py-2.5 text-[13px] text-[#c2410c] dark:bg-[#3a1e10] dark:text-[#f4a06a]"
-        >
-          {state.error}
-        </p>
-      )}
+      {state.error && <FormError>{state.error}</FormError>}
 
       <div className="flex flex-wrap items-center gap-3">
         <button

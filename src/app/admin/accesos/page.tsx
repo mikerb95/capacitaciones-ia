@@ -4,6 +4,7 @@ import { SiteHeader } from '@/components/ui';
 import { Flag } from '@/components/flag';
 import { getAccessCodes, getComparison, type AccessCodeRow } from '@/db/queries';
 import { countryOf, formatPhone, whatsappHref } from '@/lib/phone';
+import { progressLabel, progressOf } from '@/lib/progress';
 import { deleteAccessCode, toggleAccessCode } from './actions';
 
 export const dynamic = 'force-dynamic';
@@ -54,6 +55,10 @@ function CodeCard({
   totalModules: number;
 }) {
   const scope = scopeSummary(code, index, totalModules);
+  // Sin recorte, el denominador del avance es el catálogo entero.
+  const scopeIds = code.scope.length
+    ? new Set(code.scope.map((s) => s.moduleId))
+    : new Set(index.keys());
 
   return (
     <section className="overflow-hidden rounded-card border border-line bg-surface shadow-card">
@@ -69,11 +74,17 @@ function CodeCard({
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="truncate font-display text-[15.5px] font-semibold tracking-tight">
-              {code.company ?? code.label}
+              {code.company?.name ?? code.label}
             </h2>
             {code.system && (
               <span className="inline-flex items-center rounded-full bg-primary-soft px-2 py-0.5 text-[11px] font-semibold text-primary">
                 Reservado
+              </span>
+            )}
+            {code.contracted && (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-semibold text-accent">
+                <span aria-hidden="true" className="size-1.5 rounded-full bg-accent" />
+                Bajo contrato
               </span>
             )}
           </div>
@@ -146,10 +157,13 @@ function CodeCard({
           </div>
         )}
 
-        {(code.industry || code.contactName || code.contactEmail) && (
-          <span className="ml-auto truncate text-[12px] text-faint">
-            {[code.industry, code.contactName, code.contactEmail].filter(Boolean).join(' · ')}
-          </span>
+        {code.company && (
+          <Link
+            href={`/admin/empresas/${code.company.id}`}
+            className="ml-auto truncate text-[12px] text-faint transition-colors hover:text-primary"
+          >
+            {[code.company.name, code.company.industry].filter(Boolean).join(' · ')}
+          </Link>
         )}
       </div>
 
@@ -178,12 +192,21 @@ function CodeCard({
         </p>
       ) : (
         <ul>
-          {code.participants.map((p) => (
+          {code.participants.map((p) => {
+            const avance = progressOf(
+              p.views.map((v) => v.moduleId),
+              scopeIds,
+            );
+
+            return (
             <li
               key={p.id}
               className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-line px-5 py-3 last:border-0"
             >
               <span className="min-w-0 flex-1 truncate text-[14px] font-medium">{p.name}</span>
+              <span className="text-[12px] text-faint" title={progressLabel(avance)}>
+                {avance.done}/{avance.total}
+              </span>
               <a
                 href={whatsappHref(p.phone)}
                 target="_blank"
@@ -197,7 +220,8 @@ function CodeCard({
               </a>
               <span className="text-[12px] text-faint">{fecha.format(p.createdAt)}</span>
             </li>
-          ))}
+            );
+          })}
         </ul>
       )}
     </section>
@@ -230,6 +254,12 @@ export default async function AccesosPage({ searchParams }: Props) {
         subtitle="La llave que entregas al inicio de cada capacitación, con su empresa, su alcance y quienes entraron."
         back={{ href: '/admin', label: 'Administrar contenido' }}
       >
+        <Link
+          href="/admin/empresas"
+          className="rounded-[10px] border border-line bg-surface px-3 py-2 text-[12.5px] font-medium text-muted transition-colors hover:border-primary hover:text-text"
+        >
+          Empresas
+        </Link>
         <Link
           href="/admin/presentaciones"
           className="rounded-[10px] border border-line bg-surface px-3 py-2 text-[12.5px] font-medium text-muted transition-colors hover:border-primary hover:text-text"
