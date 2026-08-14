@@ -425,6 +425,56 @@ export const attendees = sqliteTable(
   ],
 );
 
+/* ------------------------------------------------------------------ empresas */
+
+/**
+ * Empresa que contrata las capacitaciones y en cuyo nombre se dictan. Tiene
+ * panel propio: sus responsables entran con `panelKey` y ven a su gente y el
+ * avance de cada uno, sin pasar por el admin.
+ */
+export const companies = sqliteTable(
+  'companies',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    name: text('name').notNull(),
+    industry: text('industry'),
+    // Clave del panel: se dicta o se manda por escrito al responsable. Es lo
+    // único que hace falta para entrar, así que se puede rotar cuando convenga.
+    panelKey: text('panel_key').notNull(),
+    panelActive: integer('panel_active', { mode: 'boolean' }).notNull().default(true),
+    // Contrato bajo el que se dictan las capacitaciones.
+    contractRef: text('contract_ref'),
+    contractStart: integer('contract_start', { mode: 'timestamp' }),
+    contractEnd: integer('contract_end', { mode: 'timestamp' }),
+    // Cuántas capacitaciones cubre el contrato: sirve para ver cuánto queda.
+    contractSessions: integer('contract_sessions'),
+    contractNotes: text('contract_notes'),
+    notes: text('notes'),
+    ...timestamps,
+  },
+  (t) => [uniqueIndex('companies_panel_key_idx').on(t.panelKey)],
+);
+
+/**
+ * Quien responde por la empresa. El primero de la lista es el responsable
+ * principal, el que recibe la clave del panel.
+ */
+export const companyContacts = sqliteTable(
+  'company_contacts',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    companyId: integer('company_id')
+      .notNull()
+      .references(() => companies.id, { onDelete: 'cascade' }),
+    name: text('name').notNull(),
+    role: text('role'),
+    email: text('email'),
+    phone: text('phone'),
+    sortOrder: integer('sort_order').notNull().default(0),
+  },
+  (t) => [index('company_contacts_company_idx').on(t.companyId)],
+);
+
 /* ------------------------------------------------------------------- acceso */
 
 /**
@@ -437,7 +487,13 @@ export const accessCodes = sqliteTable(
     id: integer('id').primaryKey({ autoIncrement: true }),
     code: text('code').notNull(),
     label: text('label').notNull(),
-    // Perfil de la empresa que contrata la capacitación.
+    /**
+     * La capacitación se dicta bajo contrato con una empresa, en su nombre.
+     * Con esto marcado la capacitación aparece en el panel de la empresa; sin
+     * marcar es una capacitación propia y la empresa no ve nada de ella.
+     */
+    contracted: integer('contracted', { mode: 'boolean' }).notNull().default(false),
+    companyId: integer('company_id').references(() => companies.id, { onDelete: 'set null' }),
     company: text('company'),
     industry: text('industry'),
     contactName: text('contact_name'),
@@ -523,6 +579,36 @@ export const participants = sqliteTable(
     // El mismo teléfono en la misma capacitación es la misma persona.
     uniqueIndex('participants_code_phone_idx').on(t.accessCodeId, t.phone),
     index('participants_code_idx').on(t.accessCodeId),
+  ],
+);
+
+/**
+ * Avance del asistente: un módulo abierto en el portal deja fila. Se cuenta la
+ * apertura, no la lectura, así que el panel de la empresa habla de "módulos
+ * recorridos" y no promete más de lo que el dato sabe.
+ */
+export const moduleViews = sqliteTable(
+  'module_views',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    participantId: integer('participant_id')
+      .notNull()
+      .references(() => participants.id, { onDelete: 'cascade' }),
+    moduleId: integer('module_id')
+      .notNull()
+      .references(() => modules.id, { onDelete: 'cascade' }),
+    views: integer('views').notNull().default(1),
+    firstSeenAt: integer('first_seen_at', { mode: 'timestamp' })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    lastSeenAt: integer('last_seen_at', { mode: 'timestamp' })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (t) => [
+    uniqueIndex('module_views_pair_idx').on(t.participantId, t.moduleId),
+    index('module_views_participant_idx').on(t.participantId),
+    index('module_views_module_idx').on(t.moduleId),
   ],
 );
 
@@ -644,7 +730,17 @@ export const attendeesRelations = relations(attendees, ({ one }) => ({
   }),
 }));
 
-export const accessCodesRelations = relations(accessCodes, ({ many }) => ({
+export const companiesRelations = relations(companies, ({ many }) => ({
+  contacts: many(companyContacts),
+  accessCodes: many(accessCodes),
+}));
+
+export const companyContactsRelations = relations(companyContacts, ({ one }) => ({
+  company: one(companies, { fields: [companyContacts.companyId], references: [companies.id] }),
+}));
+
+export const accessCodesRelations = relations(accessCodes, ({ one, many }) => ({
+  company: one(companies, { fields: [accessCodes.companyId], references: [companies.id] }),
   participants: many(participants),
   scope: many(accessCodeModules),
   plans: many(accessCodePlans),
@@ -673,11 +769,20 @@ export const accessCodeModulesRelations = relations(accessCodeModules, ({ one })
   module: one(modules, { fields: [accessCodeModules.moduleId], references: [modules.id] }),
 }));
 
-export const participantsRelations = relations(participants, ({ one }) => ({
+export const participantsRelations = relations(participants, ({ one, many }) => ({
   accessCode: one(accessCodes, {
     fields: [participants.accessCodeId],
     references: [accessCodes.id],
   }),
+  views: many(moduleViews),
+}));
+
+export const moduleViewsRelations = relations(moduleViews, ({ one }) => ({
+  participant: one(participants, {
+    fields: [moduleViews.participantId],
+    references: [participants.id],
+  }),
+  module: one(modules, { fields: [moduleViews.moduleId], references: [modules.id] }),
 }));
 
 /* ---------------------------------------------------------------------- tipos */
@@ -700,3 +805,6 @@ export type AccessCode = typeof accessCodes.$inferSelect;
 export type AccessCodeModule = typeof accessCodeModules.$inferSelect;
 export type AccessCodePlan = typeof accessCodePlans.$inferSelect;
 export type Participant = typeof participants.$inferSelect;
+export type Company = typeof companies.$inferSelect;
+export type CompanyContact = typeof companyContacts.$inferSelect;
+export type ModuleView = typeof moduleViews.$inferSelect;
