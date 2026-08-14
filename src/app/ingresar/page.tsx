@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { enterDemo } from '@/app/ingresar/actions';
 import { EnterForm } from '@/components/enter-form';
@@ -48,6 +49,13 @@ export default async function IngresarPage({ searchParams }: Props) {
               </button>
             </form>
           </div>
+
+          <p className="mt-6 text-center text-[12px] leading-relaxed text-faint">
+            ¿Contrataste la capacitación para tu equipo?{' '}
+            <Link href="/empresa" className="font-medium transition-colors hover:text-primary">
+              Entra al panel de tu empresa
+            </Link>
+          </p>
         </div>
       </main>
     </div>
