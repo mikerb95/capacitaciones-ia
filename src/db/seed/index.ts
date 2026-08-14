@@ -15,8 +15,13 @@ import {
   moduleSteps,
   moduleRoles,
   moduleMistakes,
+  modulePlans,
+  platformPlans,
+  platformModels,
+  platformModelPlans,
 } from '../schema';
-import type { PlatformSeed } from './types';
+import { PLANS } from './plans';
+import type { PlatformSeed, PlanRefSeed } from './types';
 import { claude } from './claude';
 import { copilot } from './copilot';
 import { gemini } from './gemini';
