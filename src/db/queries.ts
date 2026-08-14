@@ -78,6 +78,7 @@ export async function getModule(platformId: string, slug: string) {
       steps: { orderBy: bySort },
       roles: { orderBy: bySort },
       mistakes: { orderBy: bySort },
+      plans: { with: { plan: true } },
     },
   });
 }
@@ -92,6 +93,7 @@ export async function getModuleById(id: number) {
       steps: { orderBy: bySort },
       roles: { orderBy: bySort },
       mistakes: { orderBy: bySort },
+      plans: { with: { plan: true } },
     },
   });
 }
