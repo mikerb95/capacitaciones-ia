@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { SectionTitle, SiteHeader } from '@/components/ui';
 import { getModuleById, getPlatformIds } from '@/db/queries';
+import { AVAILABILITY_LABEL, AVAILABILITY_TONE } from '@/lib/plans';
 import { deleteModule, saveModule } from '../../actions';
 
 export const dynamic = 'force-dynamic';
@@ -284,6 +285,39 @@ export default async function ModuleFormPage({ params }: Params) {
             </Link>
           </div>
         </form>
+
+        {mod && mod.plans.length > 0 && (
+          <section className="mt-10 border-t border-line pt-6">
+            <SectionTitle
+              kicker="Facturación"
+              title="Planes que cubren este módulo"
+              intro="Se edita en src/db/seed/plans.ts y se aplica corriendo npm run db:seed. Vive en el seed porque se revisa junto con los precios de la plataforma, no módulo por módulo."
+            />
+            <ul className="flex flex-col gap-2">
+              {[...mod.plans]
+                .sort((a, b) => a.plan.tier - b.plan.tier)
+                .map((row) => (
+                  <li
+                    key={row.id}
+                    className="flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-card border border-line bg-surface px-4 py-2.5"
+                  >
+                    <span className="text-[13.5px] font-semibold">{row.plan.name}</span>
+                    <span className="font-mono text-[12px] text-faint">{row.plan.price}</span>
+                    <span
+                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold ${AVAILABILITY_TONE[row.availability]}`}
+                    >
+                      {AVAILABILITY_LABEL[row.availability]}
+                    </span>
+                    {row.note && (
+                      <span className="w-full text-[12.5px] leading-snug text-muted">
+                        {row.note}
+                      </span>
+                    )}
+                  </li>
+                ))}
+            </ul>
+          </section>
+        )}
 
         {mod && (
           <form action={deleteModule} className="mt-8 border-t border-line pt-6">
