@@ -87,6 +87,96 @@ export default async function ModulePage({ params, searchParams }: Params) {
           )}
         </div>
 
+        {mod.plans.length > 0 && (
+          <section className="mb-9">
+            <SectionTitle
+              kicker="Facturación"
+              title="En qué planes se puede dictar"
+              intro={
+                selected
+                  ? `Estás viendo el módulo con el plan ${selected.name} elegido en el portal.`
+                  : 'Antes de agendar la práctica, confirma en qué plan está el cliente.'
+              }
+            />
+
+            {selected && availability && (
+              <Card
+                className="mb-3"
+                style={{
+                  background: `color-mix(in srgb, ${mod.color} 9%, var(--surface))`,
+                  borderColor: `color-mix(in srgb, ${mod.color} 28%, var(--border))`,
+                }}
+              >
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-[14px] font-semibold">Con {selected.name}</span>
+                  <span
+                    className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold ${AVAILABILITY_TONE[availability]}`}
+                  >
+                    {AVAILABILITY_LABEL[availability]}
+                  </span>
+                </div>
+                <p className="mt-1.5 text-[13.5px] leading-relaxed text-muted">
+                  {planNote ??
+                    (availability === 'no'
+                      ? 'Este módulo no entra en el plan: conviene reemplazarlo por otro en la agenda.'
+                      : 'Sin restricciones que avisar en la sesión.')}
+                </p>
+              </Card>
+            )}
+
+            <div className="overflow-x-auto rounded-card border border-line bg-surface shadow-card">
+              <table className="w-full min-w-[520px] border-collapse text-left">
+                <thead>
+                  <tr className="border-b border-line text-[11.5px] uppercase tracking-[0.06em] text-faint">
+                    <th className="px-4 py-2.5 font-medium">Plan</th>
+                    <th className="px-4 py-2.5 font-medium">Precio</th>
+                    <th className="px-4 py-2.5 font-medium">Este módulo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {byTier.map((row) => (
+                    <tr
+                      key={row.id}
+                      className="border-b border-line align-top last:border-0"
+                      style={
+                        row.plan.key === planKey
+                          ? { background: `color-mix(in srgb, ${mod.color} 7%, transparent)` }
+                          : undefined
+                      }
+                    >
+                      <td className="px-4 py-3">
+                        <span className="block text-[13.5px] font-semibold">{row.plan.name}</span>
+                        <span className="text-[12px] text-faint">{row.plan.audience}</span>
+                      </td>
+                      <td className="px-4 py-3 font-mono text-[12.5px] text-muted">
+                        {row.plan.price}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold ${AVAILABILITY_TONE[row.availability]}`}
+                        >
+                          {AVAILABILITY_LABEL[row.availability]}
+                        </span>
+                        {row.note && (
+                          <span className="mt-1 block max-w-[42ch] text-[12.5px] leading-snug text-muted">
+                            {row.note}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {mod.platform.plansNote && (
+              <p className="mt-3 text-[12.5px] leading-relaxed text-faint">
+                {mod.platform.plansNote}
+              </p>
+            )}
+          </section>
+        )}
+
         {mod.outcomes.length > 0 && (
           <section className="mb-9">
             <SectionTitle kicker="Al terminar" title="Qué se lleva cada quien" />
@@ -279,7 +369,7 @@ export default async function ModulePage({ params, searchParams }: Params) {
         <nav className="no-print mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5">
           {previous ? (
             <Link
-              href={`/${platformId}/${previous.slug}`}
+              href={`/${platformId}/${previous.slug}${keep}`}
               className="flex items-center gap-2 text-[13.5px] text-muted transition-colors hover:text-primary"
             >
               <span aria-hidden="true">&larr;</span>
@@ -290,7 +380,7 @@ export default async function ModulePage({ params, searchParams }: Params) {
           )}
           {next ? (
             <Link
-              href={`/${platformId}/${next.slug}`}
+              href={`/${platformId}/${next.slug}${keep}`}
               className="flex items-center gap-2 text-[13.5px] text-muted transition-colors hover:text-primary"
             >
               {next.name}
