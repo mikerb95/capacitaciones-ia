@@ -4,7 +4,6 @@ import { Audience } from '@/components/audience';
 import { getLiveByPin } from '@/db/queries';
 import { joinLive } from '@/app/admin/presentaciones/actions';
 import { getParticipant } from '@/lib/session';
-import { formatPhone } from '@/lib/phone';
 
 export const dynamic = 'force-dynamic';
 
