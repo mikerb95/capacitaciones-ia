@@ -125,7 +125,7 @@ export async function pushSlide(deckId: number, slide: number) {
  */
 export async function joinLive(person: { pin: string; participantId?: number; name: string }) {
   const session = await db.query.liveSessions.findFirst({
-    where: eq(liveSessions.pin, person.pin),
+    where: and(eq(liveSessions.pin, person.pin), sessionOpen),
   });
   if (!session) return null;
 
