@@ -207,17 +207,6 @@ function CodeCard({
               <span className="text-[12px] text-faint" title={progressLabel(avance)}>
                 {avance.done}/{avance.total}
               </span>
-              <a
-                href={whatsappHref(p.phone)}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-1.5 font-mono text-[12.5px] text-muted transition-colors hover:text-primary"
-              >
-                {countryOf(p.phone) && (
-                  <Flag code={countryOf(p.phone)!} className="h-3 w-4 shrink-0 rounded-[2px] object-cover" />
-                )}
-                {formatPhone(p.phone)}
-              </a>
               <span className="text-[12px] text-faint">{fecha.format(p.createdAt)}</span>
             </li>
             );
