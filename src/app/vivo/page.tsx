@@ -20,15 +20,14 @@ async function enter(formData: FormData) {
 
   const pin = ((formData.get('pin') as string) ?? '').trim();
 
-  // La identidad se lee de la sesión, nunca del formulario: quien ya entró al
-  // portal no vuelve a escribir su nombre y tampoco puede entrar como otro.
-  const participant = await getParticipant();
+  // La identidad se lee de la sesión, nunca del formulario: así la asistencia
+  // queda atada a la capacitación con la que la persona entró, que es lo que
+  // permite mostrársela después a su empresa.
+  const participant = await requireParticipant();
 
-  const name = participant?.name ?? ((formData.get('nombre') as string) ?? '').trim();
+  if (!pin) redirect('/vivo?error=faltan');
 
-  if (!pin || !name) redirect('/vivo?error=faltan');
-
-  const session = await joinLive({ pin, participantId: participant?.id, name });
+  const session = await joinLive({ pin, participantId: participant.id, name: participant.name });
   if (!session) redirect('/vivo?error=pin');
 
   const jar = await cookies();
