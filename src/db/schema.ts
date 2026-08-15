@@ -563,7 +563,10 @@ export const participants = sqliteTable(
       .notNull()
       .references(() => accessCodes.id, { onDelete: 'cascade' }),
     name: text('name').notNull(),
-    phone: text('phone').notNull(), // normalizado a +dígitos, listo para WhatsApp
+    // El nombre normalizado (minúsculas, sin tildes) es lo único que identifica
+    // a alguien aquí. No verifica nada: sirve para no duplicar a quien vuelve
+    // desde otro dispositivo, y el portal no protege nada que valga suplantar.
+    nameKey: text('name_key').notNull(),
     token: text('token').notNull(),
     lastSeenAt: integer('last_seen_at', { mode: 'timestamp' })
       .notNull()
@@ -572,8 +575,7 @@ export const participants = sqliteTable(
   },
   (t) => [
     uniqueIndex('participants_token_idx').on(t.token),
-    // El mismo teléfono en la misma capacitación es la misma persona.
-    uniqueIndex('participants_code_phone_idx').on(t.accessCodeId, t.phone),
+    uniqueIndex('participants_code_name_idx').on(t.accessCodeId, t.nameKey),
     index('participants_code_idx').on(t.accessCodeId),
   ],
 );
