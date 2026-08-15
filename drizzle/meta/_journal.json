@@ -85,6 +85,13 @@
       "when": 1786820102855,
       "tag": "0011_borra_telefonos",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1786823197608,
+      "tag": "0012_cierre_de_sesiones",
+      "breakpoints": true
     }
   ]
 }
