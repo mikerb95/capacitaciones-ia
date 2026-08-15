@@ -2,10 +2,11 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { and, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { attendees, deckSlides, decks, liveSessions } from '@/db/schema';
 import { parseDeck, slugify } from '@/lib/import-deck';
+import { cleanName, nameKeyOf } from '@/lib/name';
 
 const str = (data: FormData, key: string) => (data.get(key) as string | null)?.trim() ?? '';
 
