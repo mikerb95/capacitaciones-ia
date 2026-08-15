@@ -412,7 +412,9 @@ export const attendees = sqliteTable(
     // Copia del nombre al momento de entrar: la lista de la sesión no cambia si
     // después se corrige el nombre en el registro.
     name: text('name').notNull(),
-    phone: text('phone'),
+    // Sin participante enlazado, el nombre normalizado evita que la misma
+    // persona figure dos veces por recargar la página.
+    nameKey: text('name_key').notNull(),
     joinedAt: integer('joined_at', { mode: 'timestamp' })
       .notNull()
       .default(sql`(unixepoch())`),
