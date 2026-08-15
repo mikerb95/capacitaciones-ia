@@ -76,11 +76,11 @@ function randomPin() {
 
 /** Abre la sesión en vivo de un mazo y devuelve el PIN para proyectarlo. */
 export async function startLive(deckId: number, slide = 0) {
-  // Solo una sesión viva a la vez por mazo.
-  await db.delete(liveSessions).where(eq(liveSessions.deckId, deckId));
+  // Solo una sesión viva a la vez por mazo. La anterior se cierra, no se borra.
+  await closeSessions(eq(liveSessions.deckId, deckId));
 
   let pin = randomPin();
-  while (await db.query.liveSessions.findFirst({ where: eq(liveSessions.pin, pin) })) {
+  while (await db.query.liveSessions.findFirst({ where: livePin(pin) })) {
     pin = randomPin();
   }
 
