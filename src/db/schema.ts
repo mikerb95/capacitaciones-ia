@@ -569,7 +569,8 @@ export const participants = sqliteTable(
     // El nombre normalizado (minúsculas, sin tildes) es lo único que identifica
     // a alguien aquí. No verifica nada: sirve para no duplicar a quien vuelve
     // desde otro dispositivo, y el portal no protege nada que valga suplantar.
-    nameKey: text('name_key').notNull(),
+    nameKey: text('name_key').notNull().default(''),
+    phone: text('phone').notNull(),
     token: text('token').notNull(),
     lastSeenAt: integer('last_seen_at', { mode: 'timestamp' })
       .notNull()
