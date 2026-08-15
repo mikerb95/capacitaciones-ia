@@ -40,7 +40,7 @@ export async function seedMasterAccess() {
   const person = await db.query.participants.findFirst({
     where: and(
       eq(participants.accessCodeId, code.id),
-      eq(participants.phone, MASTER_ACCESS.phone),
+      eq(participants.nameKey, nameKeyOf(MASTER_ACCESS.name)),
     ),
   });
 
@@ -48,7 +48,7 @@ export async function seedMasterAccess() {
     await db.insert(participants).values({
       accessCodeId: code.id,
       name: MASTER_ACCESS.name,
-      phone: MASTER_ACCESS.phone,
+      nameKey: nameKeyOf(MASTER_ACCESS.name),
       token: randomUUID(),
       updatedAt: new Date(),
     });
