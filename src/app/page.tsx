@@ -17,18 +17,10 @@ const firstName = (name: string) => name.split(' ')[0];
 const WORDS = ['Ninguna', 'Una', 'Dos', 'Tres', 'Cuatro', 'Cinco', 'Seis'];
 const spell = (n: number) => WORDS[n] ?? String(n);
 
-const dia = new Intl.DateTimeFormat('es', { day: '2-digit', month: 'long', year: 'numeric' });
-
 export default async function Home() {
   const { participant, scope } = await requireScopedParticipant();
   const platforms = scopeComparison(await getComparison(), scope);
   const totalModules = platforms.reduce((n, p) => n + p.modules.length, 0);
-  // Los modelos viajan con su plataforma: la fecha más reciente de todas es
-  // la última vez que se revisó el catálogo que se está mostrando.
-  const lastUpdate = platforms.reduce<Date | null>(
-    (latest, p) => (!latest || p.updatedAt > latest ? p.updatedAt : latest),
-    null,
-  );
 
   return (
     <div className="flex min-h-screen flex-col bg-bg">
