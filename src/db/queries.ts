@@ -317,6 +317,54 @@ export async function getCompanyTrainings(companyId: number) {
   });
 }
 
+/**
+ * Asistencia a las sesiones en vivo de una capacitación, agrupada por sesión.
+ * Se llega a ellas por la gente: una sesión pertenece a la capacitación si
+ * asistió alguien que entró con su código.
+ */
+export async function getTrainingSessions(accessCodeId: number) {
+  const rows = await db
+    .select({
+      sessionId: attendees.sessionId,
+      startedAt: liveSessions.startedAt,
+      endedAt: liveSessions.endedAt,
+      deckTitle: decks.title,
+      name: attendees.name,
+      joinedAt: attendees.joinedAt,
+    })
+    .from(attendees)
+    .innerJoin(participants, eq(attendees.participantId, participants.id))
+    .innerJoin(liveSessions, eq(attendees.sessionId, liveSessions.id))
+    .innerJoin(decks, eq(liveSessions.deckId, decks.id))
+    .where(eq(participants.accessCodeId, accessCodeId))
+    .orderBy(desc(liveSessions.startedAt), asc(attendees.name));
+
+  const bySession = new Map<number, TrainingSession>();
+
+  for (const row of rows) {
+    const session = bySession.get(row.sessionId) ?? {
+      id: row.sessionId,
+      title: row.deckTitle,
+      startedAt: row.startedAt,
+      endedAt: row.endedAt,
+      people: [] as { name: string; joinedAt: Date }[],
+    };
+
+    session.people.push({ name: row.name, joinedAt: row.joinedAt });
+    bySession.set(row.sessionId, session);
+  }
+
+  return [...bySession.values()];
+}
+
+export type TrainingSession = {
+  id: number;
+  title: string;
+  startedAt: Date;
+  endedAt: Date | null;
+  people: { name: string; joinedAt: Date }[];
+};
+
 export type CompanyRow = Awaited<ReturnType<typeof getCompanies>>[number];
 export type CompanyFull = NonNullable<Awaited<ReturnType<typeof getCompany>>>;
 export type CompanyTraining = Awaited<ReturnType<typeof getCompanyTrainings>>[number];
