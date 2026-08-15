@@ -107,20 +107,10 @@ export default async function LivePage({ searchParams }: Search) {
             />
           </label>
 
-          {participant ? (
-            <p className="rounded-[10px] bg-bg px-3 py-2.5 text-[13px] text-muted">
-              Entras como <span className="font-medium text-text">{participant.name}</span>
-            </p>
-          ) : (
-            <label className="flex flex-col gap-1.5">
-              <span className="text-[12.5px] font-medium text-muted">Tu nombre</span>
-              <input
-                name="nombre"
-                required
-                className="w-full rounded-[10px] border border-line bg-surface px-3 py-2 text-[14px] outline-none focus:border-primary"
-              />
-            </label>
-          )}
+          <p className="rounded-[10px] bg-bg px-3 py-2.5 text-[13px] text-muted">
+            Quedas en la lista como{' '}
+            <span className="font-medium text-text">{participant.name}</span>
+          </p>
 
           <button
             type="submit"
