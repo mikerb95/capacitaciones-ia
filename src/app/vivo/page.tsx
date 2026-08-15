@@ -44,7 +44,10 @@ async function enter(formData: FormData) {
 export default async function LivePage({ searchParams }: Search) {
   const { error } = await searchParams;
   const pin = (await cookies()).get(JOINED)?.value;
-  const participant = await getParticipant();
+
+  // Sin código de capacitación no hay a quién atribuir la asistencia, así que
+  // se pasa primero por el portal y se vuelve aquí.
+  const participant = await requireParticipant('/vivo');
 
   if (pin) {
     const session = await getLiveByPin(pin);
