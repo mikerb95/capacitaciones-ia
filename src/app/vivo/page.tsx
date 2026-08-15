@@ -79,9 +79,8 @@ export default async function LivePage({ searchParams }: Search) {
             Entrar a la sesión
           </h1>
           <p className="mt-1.5 text-[14px] leading-relaxed text-muted">
-            {participant
-              ? 'Escribe el PIN que aparece en la pantalla del expositor y sigue las láminas desde tu propio dispositivo.'
-              : 'Escribe el PIN que aparece en la pantalla del expositor y déjanos tu nombre para la lista de asistencia.'}
+            Escribe el PIN que aparece en la pantalla del expositor y sigue las láminas desde tu
+            propio dispositivo.
           </p>
         </div>
 
