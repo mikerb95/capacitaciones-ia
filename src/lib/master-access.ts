@@ -9,9 +9,6 @@ export const MASTER_ACCESS = {
   code: '0368',
   label: 'Usuario maestro de pruebas',
   name: 'Mike',
-  // El número llegó como 311 476 9114, un móvil colombiano: +57 por delante
-  // para que el enlace de WhatsApp del admin funcione.
-  phone: '+573114769114',
 } as const;
 
 /**

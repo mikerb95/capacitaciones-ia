@@ -4,6 +4,7 @@ import { and, eq } from 'drizzle-orm';
 import { db } from '../index';
 import { accessCodes, participants } from '../schema';
 import { MASTER_ACCESS } from '../../lib/master-access';
+import { nameKeyOf } from '../../lib/name';
 
 /**
  * Deja listo el código maestro de pruebas y su participante. Es idempotente:

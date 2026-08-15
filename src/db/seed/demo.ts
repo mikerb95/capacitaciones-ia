@@ -4,6 +4,7 @@ import { and, eq } from 'drizzle-orm';
 import { db } from '../index';
 import { accessCodes, participants } from '../schema';
 import { DEMO_ACCESS } from '../../lib/demo-access';
+import { nameKeyOf } from '../../lib/name';
 
 /**
  * Deja listo el código de demo pública y su participante. Es idempotente: se
