@@ -414,7 +414,8 @@ export const attendees = sqliteTable(
     name: text('name').notNull(),
     // Sin participante enlazado, el nombre normalizado evita que la misma
     // persona figure dos veces por recargar la página.
-    nameKey: text('name_key').notNull(),
+    nameKey: text('name_key').notNull().default(''),
+    phone: text('phone'),
     joinedAt: integer('joined_at', { mode: 'timestamp' })
       .notNull()
       .default(sql`(unixepoch())`),
