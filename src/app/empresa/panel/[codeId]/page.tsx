@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { Abbr, ProgressBar, SiteHeader } from '@/components/ui';
 import { moduleLogo } from '@/lib/brand-logos';
-import { getComparison, getCompanyTrainings } from '@/db/queries';
+import { getComparison, getCompanyTrainings, getTrainingSessions } from '@/db/queries';
 import { requireCompany } from '@/lib/company-access';
 import { progressLabel, progressOf, scopeSetOf } from '@/lib/progress';
 import { leaveCompanyPanel } from '../../actions';
