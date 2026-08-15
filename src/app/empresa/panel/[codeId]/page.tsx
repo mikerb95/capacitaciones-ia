@@ -202,9 +202,10 @@ export default async function CompanyTrainingPage({ params }: Props) {
         </section>
 
         <p className="text-[12px] leading-relaxed text-faint">
-          El avance cuenta los módulos que cada persona abrió en el portal, con la fecha de la
-          última visita. Es un indicio de recorrido, no una calificación, y no incluye datos de
-          contacto de tu gente.
+          La asistencia es la que cada quien declaró al entrar con su nombre: no pedimos ni
+          guardamos correo ni teléfono de tu gente, así que tómala como un registro de presencia,
+          no como una verificación de identidad. El avance cuenta los módulos que el grupo abrió en
+          el portal, sin atribuirlos a nadie en particular.
         </p>
       </main>
     </div>

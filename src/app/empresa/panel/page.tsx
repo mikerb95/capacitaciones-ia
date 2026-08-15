@@ -20,12 +20,12 @@ function TrainingCard({
 }) {
   const scopeIds = scopeSetOf(training.scope, catalog);
 
-  const done = training.participants.reduce(
-    (n, p) => n + progressOf(p.views.map((v) => v.moduleId), scopeIds).done,
-    0,
+  // Mismo criterio que el detalle: qué recorrió el grupo, no el promedio por
+  // persona. Un módulo cuenta una vez, lo haya abierto uno o veinte.
+  const { percent } = progressOf(
+    training.participants.flatMap((p) => p.views.map((v) => v.moduleId)),
+    scopeIds,
   );
-  const total = training.participants.length * scopeIds.size;
-  const percent = total === 0 ? 0 : Math.round((done / total) * 100);
 
   return (
     <Link
