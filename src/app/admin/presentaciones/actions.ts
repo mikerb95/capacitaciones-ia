@@ -74,6 +74,15 @@ function randomPin() {
   return String(Math.floor(1000 + Math.random() * 9000));
 }
 
+/** Cierra las sesiones abiertas que cumplan la condición. */
+async function closeSessions(condition: SQL | undefined) {
+  const now = new Date();
+  await db
+    .update(liveSessions)
+    .set({ endedAt: now, playing: false, updatedAt: now })
+    .where(and(condition, isNull(liveSessions.endedAt)));
+}
+
 /** Abre la sesión en vivo de un mazo y devuelve el PIN para proyectarlo. */
 export async function startLive(deckId: number, slide = 0) {
   // Solo una sesión viva a la vez por mazo. La anterior se cierra, no se borra.
