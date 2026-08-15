@@ -390,11 +390,21 @@ export const liveSessions = sqliteTable(
     startedAt: integer('started_at', { mode: 'timestamp' })
       .notNull()
       .default(sql`(unixepoch())`),
+    // Cerrar una sesión la marca, no la borra: la lista de asistencia es lo que
+    // la empresa viene a ver, y desaparecía al terminar la presentación.
+    endedAt: integer('ended_at', { mode: 'timestamp' }),
     updatedAt: integer('updated_at', { mode: 'timestamp' })
       .notNull()
       .default(sql`(unixepoch())`),
   },
-  (t) => [uniqueIndex('live_sessions_pin_idx').on(t.pin)],
+  (t) => [
+    // El PIN solo tiene que ser único entre las sesiones abiertas, así se puede
+    // reutilizar un número una vez terminada la sesión que lo tenía.
+    uniqueIndex('live_sessions_pin_idx')
+      .on(t.pin)
+      .where(sql`${t.endedAt} is null`),
+    index('live_sessions_deck_idx').on(t.deckId),
+  ],
 );
 
 export const attendees = sqliteTable(
