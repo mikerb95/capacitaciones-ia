@@ -34,6 +34,6 @@ export function scopeSetOf(scope: { moduleId: number }[], catalog: Set<number>) 
 /** Cómo llamarle a ese número en una línea, sin prometer más de lo que sabe. */
 export function progressLabel({ done, total }: Progress) {
   if (total === 0) return 'Sin módulos en alcance';
-  if (done === 0) return 'Todavía no abre ningún módulo';
+  if (done === 0) return 'Todavía no se ha abierto ningún módulo';
   return `${done} de ${total} ${total === 1 ? 'módulo' : 'módulos'} recorridos`;
 }
