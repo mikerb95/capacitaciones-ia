@@ -1,9 +1,7 @@
 import Link from 'next/link';
 import { AdminLogoutButton } from '@/components/admin-logout-button';
 import { SiteHeader } from '@/components/ui';
-import { Flag } from '@/components/flag';
 import { getAccessCodes, getComparison, type AccessCodeRow } from '@/db/queries';
-import { countryOf, formatPhone, whatsappHref } from '@/lib/phone';
 import { progressLabel, progressOf } from '@/lib/progress';
 import { deleteAccessCode, toggleAccessCode } from './actions';
 
