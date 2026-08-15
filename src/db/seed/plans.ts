@@ -1,3 +1,4 @@
+import { MODELS_REVISION } from '@/lib/revision';
 import type { PlansSeed } from './types';
 
 /**
@@ -17,7 +18,7 @@ import type { PlansSeed } from './types';
  * decir "desde el plan X". Los planes de empresa siguen la misma escala.
  */
 
-const REVISION = 'Revisado en agosto de 2026';
+const REVISION = `Revisado en ${MODELS_REVISION}`;
 
 /* ------------------------------------------------------------------ ChatGPT */
 
