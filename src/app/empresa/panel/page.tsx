@@ -159,8 +159,8 @@ export default async function CompanyPanelPage() {
         )}
 
         <p className="text-[12px] leading-relaxed text-faint">
-          El avance cuenta los módulos que cada persona abrió en el portal. Es un indicio de
-          recorrido, no una calificación.
+          El avance cuenta los módulos que el grupo abrió en el portal. Es un indicio de recorrido,
+          no una calificación.
         </p>
       </main>
     </div>
