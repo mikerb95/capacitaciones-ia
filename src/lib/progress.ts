@@ -10,11 +10,16 @@ export type Progress = {
   percent: number;
 };
 
+/**
+ * Los ids repetidos cuentan una sola vez, así se le puede pasar lo que vio una
+ * persona o lo que vio el grupo entero sin que el avance se pase del total.
+ */
 export function progressOf(viewedIds: Iterable<number>, scopeIds: Set<number>): Progress {
-  let done = 0;
-  for (const id of viewedIds) if (scopeIds.has(id)) done += 1;
+  const seen = new Set<number>();
+  for (const id of viewedIds) if (scopeIds.has(id)) seen.add(id);
 
   const total = scopeIds.size;
+  const done = seen.size;
   return { done, total, percent: total === 0 ? 0 : Math.round((done / total) * 100) };
 }
 
