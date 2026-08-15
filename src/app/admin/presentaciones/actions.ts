@@ -106,7 +106,7 @@ export async function startLive(deckId: number, slide = 0) {
 }
 
 export async function stopLive(deckId: number) {
-  await db.delete(liveSessions).where(eq(liveSessions.deckId, deckId));
+  await closeSessions(eq(liveSessions.deckId, deckId));
 }
 
 /** El expositor empuja la lámina actual. La audiencia la lee por polling. */
