@@ -2,8 +2,9 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { eq } from 'drizzle-orm';
+import { and, eq, isNull, type SQL } from 'drizzle-orm';
 import { db } from '@/db';
+import { sessionOpen } from '@/db/queries';
 import { attendees, deckSlides, decks, liveSessions } from '@/db/schema';
 import { parseDeck, slugify } from '@/lib/import-deck';
 import { cleanName, nameKeyOf } from '@/lib/name';
