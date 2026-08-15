@@ -38,14 +38,17 @@ export async function seedDemoAccess() {
   }
 
   const person = await db.query.participants.findFirst({
-    where: and(eq(participants.accessCodeId, code.id), eq(participants.phone, DEMO_ACCESS.phone)),
+    where: and(
+      eq(participants.accessCodeId, code.id),
+      eq(participants.nameKey, nameKeyOf(DEMO_ACCESS.name)),
+    ),
   });
 
   if (!person) {
     await db.insert(participants).values({
       accessCodeId: code.id,
       name: DEMO_ACCESS.name,
-      phone: DEMO_ACCESS.phone,
+      nameKey: nameKeyOf(DEMO_ACCESS.name),
       token: randomUUID(),
       updatedAt: new Date(),
     });
