@@ -17,10 +17,18 @@ const firstName = (name: string) => name.split(' ')[0];
 const WORDS = ['Ninguna', 'Una', 'Dos', 'Tres', 'Cuatro', 'Cinco', 'Seis'];
 const spell = (n: number) => WORDS[n] ?? String(n);
 
+const dia = new Intl.DateTimeFormat('es', { day: '2-digit', month: 'long', year: 'numeric' });
+
 export default async function Home() {
   const { participant, scope } = await requireScopedParticipant();
   const platforms = scopeComparison(await getComparison(), scope);
   const totalModules = platforms.reduce((n, p) => n + p.modules.length, 0);
+  // Los modelos viajan con su plataforma: la fecha más reciente de todas es
+  // la última vez que se revisó el catálogo que se está mostrando.
+  const lastUpdate = platforms.reduce<Date | null>(
+    (latest, p) => (!latest || p.updatedAt > latest ? p.updatedAt : latest),
+    null,
+  );
 
   return (
     <div className="flex min-h-screen flex-col bg-bg">
@@ -79,6 +87,13 @@ export default async function Home() {
             </Link>
           ))}
         </section>
+
+        {lastUpdate && (
+          <p className="mt-4 flex items-center gap-2 font-mono text-[11.5px] uppercase tracking-[0.08em] text-faint">
+            <span aria-hidden className="size-1.5 rounded-full bg-primary/60" />
+            Modelos y planes revisados el {dia.format(lastUpdate)}
+          </p>
+        )}
 
         <section className="mt-8 flex flex-wrap items-center justify-between gap-3 rounded-card border border-line bg-surface-2 px-5 py-4">
           <p className="text-[13.5px] leading-relaxed text-muted">
