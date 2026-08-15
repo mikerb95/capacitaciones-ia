@@ -50,19 +50,21 @@ export default async function CompanyTrainingPage({ params }: Props) {
     ),
   );
 
-  const people = training.participants.map((p) => {
-    const viewed = p.views.filter((v) => scopeIds.has(v.moduleId));
-    const last = viewed.reduce<Date | null>(
-      (latest, v) => (!latest || v.lastSeenAt > latest ? v.lastSeenAt : latest),
-      null,
-    );
+  // El avance se mira como grupo, no persona por persona: el panel responde
+  // "cuánto recorrió el equipo", no "quién hizo la tarea".
+  const viewedInScope = training.participants.flatMap((p) =>
+    p.views.filter((v) => scopeIds.has(v.moduleId)),
+  );
 
-    return {
-      ...p,
-      progress: progressOf(viewed.map((v) => v.moduleId), scopeIds),
-      lastActivity: last,
-    };
-  });
+  const groupProgress = progressOf(
+    [...new Set(viewedInScope.map((v) => v.moduleId))],
+    scopeIds,
+  );
+
+  const lastActivity = viewedInScope.reduce<Date | null>(
+    (latest, v) => (!latest || v.lastSeenAt > latest ? v.lastSeenAt : latest),
+    null,
+  );
 
   // Cuánta gente abrió cada módulo del alcance: dónde prendió y dónde no.
   const adoption = [...scopeIds]
