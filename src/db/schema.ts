@@ -415,7 +415,6 @@ export const attendees = sqliteTable(
     // Sin participante enlazado, el nombre normalizado evita que la misma
     // persona figure dos veces por recargar la página.
     nameKey: text('name_key').notNull().default(''),
-    phone: text('phone'),
     joinedAt: integer('joined_at', { mode: 'timestamp' })
       .notNull()
       .default(sql`(unixepoch())`),
@@ -571,7 +570,6 @@ export const participants = sqliteTable(
     // a alguien aquí. No verifica nada: sirve para no duplicar a quien vuelve
     // desde otro dispositivo, y el portal no protege nada que valga suplantar.
     nameKey: text('name_key').notNull().default(''),
-    phone: text('phone').notNull(),
     token: text('token').notNull(),
     lastSeenAt: integer('last_seen_at', { mode: 'timestamp' })
       .notNull()
