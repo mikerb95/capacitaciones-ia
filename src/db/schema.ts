@@ -421,9 +421,10 @@ export const attendees = sqliteTable(
   },
   (t) => [
     index('attendees_session_idx').on(t.sessionId),
-    // SQLite trata cada NULL como distinto, así que esto solo restringe a los
-    // identificados: uno por sesión, sin importar cómo escriban su nombre.
-    uniqueIndex('attendees_session_participant_idx').on(t.sessionId, t.participantId),
+    // Una asistencia por nombre y sesión, venga del portal o del PIN a secas.
+    // Dos personas que se llamen igual cuentan como una: es el precio de no
+    // pedir nada que las distinga, y es el precio que se decidió pagar.
+    uniqueIndex('attendees_session_name_idx').on(t.sessionId, t.nameKey),
   ],
 );
 
