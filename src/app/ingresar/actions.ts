@@ -6,16 +6,13 @@ import { redirect } from 'next/navigation';
 import { and, eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { accessCodes, participants } from '@/db/schema';
-import { DEFAULT_COUNTRY } from '@/lib/countries';
 import { DEMO_ACCESS } from '@/lib/demo-access';
-import { composePhone, expectedDigits } from '@/lib/phone';
+import { cleanName, nameKeyOf } from '@/lib/name';
 import { SESSION_COOKIE, SESSION_MAX_AGE } from '@/lib/session';
 
 export type EnterState = {
-  /** `nombre` solo aparece cuando el teléfono no estaba registrado en ese código. */
-  step?: 'nombre';
-  errors?: { code?: string; name?: string; phone?: string };
-  values?: { code: string; name: string; phone: string; country: string };
+  errors?: { code?: string; name?: string };
+  values?: { code: string; name: string };
 };
 
 const str = (data: FormData, key: string) => ((data.get(key) as string | null) ?? '').trim();
@@ -25,27 +22,21 @@ function safeDestination(raw: string) {
   return raw.startsWith('/') && !raw.startsWith('//') ? raw : '/';
 }
 
+/**
+ * Entrada al portal: el código de la capacitación y el nombre, nada más. No hay
+ * contraseña ni verificación, y es deliberado: detrás solo está el material que
+ * el grupo ya comparte, así que no se pide ningún dato de contacto a cambio.
+ */
 export async function enter(_prev: EnterState, formData: FormData): Promise<EnterState> {
   const code = str(formData, 'codigo').replace(/\D/g, '');
-  const name = str(formData, 'nombre').replace(/\s+/g, ' ');
-  const rawPhone = str(formData, 'telefono');
-  const country = str(formData, 'pais') || DEFAULT_COUNTRY;
-  const values = { code, name, phone: rawPhone, country };
+  const name = cleanName(str(formData, 'nombre'));
+  const values = { code, name };
 
   const errors: EnterState['errors'] = {};
 
   if (code.length !== 4) errors.code = 'El código son 4 dígitos.';
+  if (name.length < 2) errors.name = 'Escribe tu nombre.';
 
-  const phone = composePhone(country, rawPhone);
-  if (!phone) {
-    const digits = expectedDigits(country);
-    errors.phone = digits
-      ? `Ese país usa números de ${digits} dígitos, sin el indicativo.`
-      : 'Elige un país de la lista.';
-  }
-
-  // Un error de código o teléfono devuelve al primer paso: son justo los campos
-  // que hay que corregir, y el nombre ya escrito viaja en `values`.
   if (Object.keys(errors).length > 0) return { errors, values };
 
   const accessCode = await db.query.accessCodes.findFirst({
@@ -56,47 +47,7 @@ export async function enter(_prev: EnterState, formData: FormData): Promise<Ente
     return { errors: { code: 'Ese código no está activo. Confírmalo con el expositor.' }, values };
   }
 
-  // El teléfono es la identidad dentro de un código: quien ya entró antes vuelve
-  // sin escribir el nombre otra vez, aunque sea desde otro dispositivo.
-  const existing = await db.query.participants.findFirst({
-    where: and(eq(participants.accessCodeId, accessCode.id), eq(participants.phone, phone!)),
-  });
-
-  let token: string;
-
-  if (existing) {
-    token = existing.token;
-    await db
-      .update(participants)
-      .set({ lastSeenAt: new Date(), updatedAt: new Date() })
-      .where(eq(participants.id, existing.id));
-  } else {
-    // Segundo paso: el campo solo existe en el formulario cuando ya sabemos que
-    // el número es nuevo, así que su ausencia no es un error, es que falta pedirlo.
-    if (!formData.has('nombre')) return { step: 'nombre', values };
-    if (name.length < 2) {
-      return { step: 'nombre', errors: { name: 'Escribe tu nombre completo.' }, values };
-    }
-
-    // `onConflictDoUpdate` cubre el doble envío: si la fila apareció entre la
-    // consulta y el insert, se devuelve el token que ya tenía.
-    const [row] = await db
-      .insert(participants)
-      .values({
-        accessCodeId: accessCode.id,
-        name,
-        phone: phone!,
-        token: randomUUID(),
-        updatedAt: new Date(),
-      })
-      .onConflictDoUpdate({
-        target: [participants.accessCodeId, participants.phone],
-        set: { lastSeenAt: new Date(), updatedAt: new Date() },
-      })
-      .returning({ token: participants.token });
-
-    token = row.token;
-  }
+  const token = await tokenFor(accessCode.id, name);
 
   const jar = await cookies();
   jar.set(SESSION_COOKIE, token, {
@@ -111,9 +62,35 @@ export async function enter(_prev: EnterState, formData: FormData): Promise<Ente
 }
 
 /**
+ * Token de sesión de quien entra. El mismo nombre en la misma capacitación es
+ * la misma fila: quien vuelve desde otro dispositivo no aparece dos veces en la
+ * lista, y el `onConflictDoUpdate` devuelve el token que ya tenía.
+ */
+async function tokenFor(accessCodeId: number, name: string) {
+  const [row] = await db
+    .insert(participants)
+    .values({
+      accessCodeId,
+      name,
+      nameKey: nameKeyOf(name),
+      token: randomUUID(),
+      updatedAt: new Date(),
+    })
+    .onConflictDoUpdate({
+      target: [participants.accessCodeId, participants.nameKey],
+      // El nombre se refresca con la última forma en que la persona lo escribió,
+      // así corregir una tilde o un apellido no crea a nadie nuevo.
+      set: { name, lastSeenAt: new Date(), updatedAt: new Date() },
+    })
+    .returning({ token: participants.token });
+
+  return row.token;
+}
+
+/**
  * Entrada de un clic para quien solo quiere mirar el portal: usa el código
- * demo público, sin pedir ni código ni WhatsApp. Se autocrea si el seed
- * todavía no corrió, para que nunca falle en un deploy nuevo.
+ * demo público, sin pedir nada. Se autocrea si el seed todavía no corrió, para
+ * que nunca falle en un deploy nuevo.
  */
 export async function enterDemo(formData: FormData) {
   let accessCode = await db.query.accessCodes.findFirst({
@@ -140,23 +117,10 @@ export async function enterDemo(formData: FormData) {
 
   if (!accessCode || !accessCode.active) redirect('/ingresar');
 
-  const [person] = await db
-    .insert(participants)
-    .values({
-      accessCodeId: accessCode.id,
-      name: DEMO_ACCESS.name,
-      phone: DEMO_ACCESS.phone,
-      token: randomUUID(),
-      updatedAt: new Date(),
-    })
-    .onConflictDoUpdate({
-      target: [participants.accessCodeId, participants.phone],
-      set: { lastSeenAt: new Date(), updatedAt: new Date() },
-    })
-    .returning({ token: participants.token });
+  const token = await tokenFor(accessCode.id, DEMO_ACCESS.name);
 
   const jar = await cookies();
-  jar.set(SESSION_COOKIE, person.token, {
+  jar.set(SESSION_COOKIE, token, {
     httpOnly: true,
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production',
