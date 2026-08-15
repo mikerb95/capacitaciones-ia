@@ -164,17 +164,24 @@ export async function getDeck(slug: string) {
   });
 }
 
+/**
+ * Una sesión sigue abierta mientras no tenga fecha de cierre. Las cerradas se
+ * conservan por su lista de asistencia, así que hay que excluirlas a mano en
+ * todo lo que busque "la sesión de ahora".
+ */
+export const sessionOpen = isNull(liveSessions.endedAt);
+
 /** Sesión en vivo por PIN, con el mazo y sus láminas. */
 export async function getLiveByPin(pin: string) {
   return db.query.liveSessions.findFirst({
-    where: eq(liveSessions.pin, pin),
+    where: and(eq(liveSessions.pin, pin), sessionOpen),
     with: { deck: { with: { slides: { orderBy: bySort } } } },
   });
 }
 
 export async function getActiveSession(deckId: number) {
   return db.query.liveSessions.findFirst({
-    where: eq(liveSessions.deckId, deckId),
+    where: and(eq(liveSessions.deckId, deckId), sessionOpen),
     orderBy: (s, { desc }) => [desc(s.startedAt)],
     with: { attendees: true },
   });
