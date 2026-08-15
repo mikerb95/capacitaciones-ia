@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { participants } from '@/db/schema';
 
-/** La cookie solo lleva un token opaco: el nombre y el teléfono viven en la base. */
+/** La cookie solo lleva un token opaco: el nombre vive en la base. */
 export const SESSION_COOKIE = 'academia-acceso';
 export const SESSION_MAX_AGE = 60 * 60 * 24 * 90; // el trimestre de capacitación
 
