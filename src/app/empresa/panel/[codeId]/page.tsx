@@ -98,41 +98,69 @@ export default async function CompanyTrainingPage({ params }: Props) {
       </SiteHeader>
 
       <main className="mx-auto flex max-w-[900px] flex-col gap-5 px-4 py-8 sm:px-6">
-        {/* ---------------------------------------------------- la gente */}
+        {/* ------------------------------------------------- la asistencia */}
         <section className="overflow-hidden rounded-card border border-line bg-surface shadow-card">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-line px-5 py-4">
-            <h2 className="font-display text-[15.5px] font-semibold tracking-tight">Tu gente</h2>
+            <h2 className="font-display text-[15.5px] font-semibold tracking-tight">Asistencia</h2>
             <span className="text-[12.5px] text-faint">
-              {gente} {gente === 1 ? 'persona registrada' : 'personas registradas'} ·{' '}
-              {scopeIds.size} {scopeIds.size === 1 ? 'módulo' : 'módulos'} en la capacitación
+              quién siguió cada sesión en vivo desde su dispositivo
             </span>
           </div>
 
-          {gente === 0 ? (
+          {sessions.length === 0 ? (
             <p className="px-5 py-4 text-[13px] leading-relaxed text-faint">
-              Todavía no se ha registrado nadie con el código de esta capacitación.
+              Todavía no hay sesiones en vivo con asistentes de esta capacitación.
             </p>
           ) : (
             <ul>
-              {people.map((person) => (
-                <li
-                  key={person.id}
-                  className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-line px-5 py-3.5 last:border-0"
-                >
-                  <div className="min-w-[180px] flex-1">
-                    <div className="truncate text-[14px] font-medium">{person.name}</div>
-                    <div className="text-[12px] text-faint">
-                      {progressLabel(person.progress)}
-                      {person.lastActivity
-                        ? ` · última vez ${fechaHora.format(person.lastActivity)}`
-                        : ''}
-                    </div>
+              {sessions.map((session) => (
+                <li key={session.id} className="border-b border-line px-5 py-4 last:border-0">
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <span className="text-[14px] font-medium">{session.title}</span>
+                    <span className="text-[12px] text-faint">
+                      {fechaHora.format(session.startedAt)}
+                      {session.endedAt ? '' : ' · en curso'}
+                    </span>
+                    <span className="ml-auto text-[12.5px] text-muted">
+                      {session.people.length}{' '}
+                      {session.people.length === 1 ? 'asistente' : 'asistentes'}
+                    </span>
                   </div>
-                  <ProgressBar percent={person.progress.percent} />
+
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {session.people.map((person) => (
+                      <span
+                        key={person.name}
+                        className="rounded-full bg-surface-2 px-2.5 py-1 text-[12.5px] text-muted"
+                      >
+                        {person.name}
+                      </span>
+                    ))}
+                  </div>
                 </li>
               ))}
             </ul>
           )}
+        </section>
+
+        {/* ------------------------------------------------ avance del grupo */}
+        <section className="rounded-card border border-line bg-surface px-5 py-4 shadow-card">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <h2 className="font-display text-[15.5px] font-semibold tracking-tight">
+              Avance del grupo
+            </h2>
+            <span className="text-[12.5px] text-faint">
+              {gente} {gente === 1 ? 'persona entró' : 'personas entraron'} al material
+            </span>
+          </div>
+
+          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+            <span className="text-[13px] text-muted">
+              {progressLabel(groupProgress)}
+              {lastActivity ? ` · última visita ${fechaHora.format(lastActivity)}` : ''}
+            </span>
+            <ProgressBar percent={groupProgress.percent} />
+          </div>
         </section>
 
         {/* -------------------------------------------------- los módulos */}
