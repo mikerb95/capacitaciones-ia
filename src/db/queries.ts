@@ -4,11 +4,13 @@ import {
   accessCodeModules,
   accessCodePlans,
   accessCodes,
+  attendees,
   companies,
   decks,
   liveSessions,
   moduleViews,
   modules,
+  participants,
   platformPlans,
   platforms,
 } from './schema';
