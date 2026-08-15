@@ -39,6 +39,8 @@ export default async function CompanyTrainingPage({ params }: Props) {
   const training = trainings.find((t) => t.id === Number(codeId));
   if (!training) notFound();
 
+  const sessions = await getTrainingSessions(training.id);
+
   const catalog = new Set(platforms.flatMap((p) => p.modules.map((m) => m.id)));
   const scopeIds = scopeSetOf(training.scope, catalog);
 
