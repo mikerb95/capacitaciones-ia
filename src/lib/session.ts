@@ -28,11 +28,15 @@ export const getParticipant = cache(async () => {
   return found;
 });
 
-/** Para páginas que no deben verse sin registro. */
-export async function requireParticipant() {
+/**
+ * Para páginas que no deben verse sin registro. `destination` es a dónde volver
+ * después de entrar; sin él se cae al inicio.
+ */
+export async function requireParticipant(destination?: string) {
   const participant = await getParticipant();
-  if (!participant) redirect('/ingresar');
-  return participant;
+  if (participant) return participant;
+
+  redirect(destination ? `/ingresar?destino=${encodeURIComponent(destination)}` : '/ingresar');
 }
 
 export type ParticipantSession = NonNullable<Awaited<ReturnType<typeof getParticipant>>>;
