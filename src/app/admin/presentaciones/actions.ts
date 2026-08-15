@@ -108,48 +108,28 @@ export async function pushSlide(deckId: number, slide: number) {
  * `participantId` llega cuando la persona ya está identificada en el portal,
  * que es lo que permite reconocerla sin volver a preguntarle nada.
  */
-export async function joinLive(person: {
-  pin: string;
-  participantId?: number;
-  name: string;
-  phone?: string | null;
-}) {
+export async function joinLive(person: { pin: string; participantId?: number; name: string }) {
   const session = await db.query.liveSessions.findFirst({
     where: eq(liveSessions.pin, person.pin),
   });
   if (!session) return null;
 
-  const phone = person.phone || null;
+  const name = cleanName(person.name);
 
-  if (person.participantId) {
-    // Una fila por participante y sesión: reentrar desde otro dispositivo, o
-    // tras recargar, no lo duplica en la lista del expositor.
-    await db
-      .insert(attendees)
-      .values({
-        sessionId: session.id,
-        participantId: person.participantId,
-        name: person.name,
-        phone,
-      })
-      .onConflictDoUpdate({
-        target: [attendees.sessionId, attendees.participantId],
-        set: { name: person.name, phone },
-      });
-  } else {
-    // Sin registro en el portal solo queda lo que escribió: el teléfono
-    // distingue mejor que el nombre cuando hay dos personas que se llaman igual.
-    const alreadyIn = await db.query.attendees.findFirst({
-      where: and(
-        eq(attendees.sessionId, session.id),
-        phone ? eq(attendees.phone, phone) : eq(attendees.name, person.name),
-      ),
+  // Una asistencia por nombre y sesión: recargar la página, o reentrar desde
+  // otro dispositivo, no duplica a nadie en la lista del expositor.
+  await db
+    .insert(attendees)
+    .values({
+      sessionId: session.id,
+      participantId: person.participantId,
+      name,
+      nameKey: nameKeyOf(name),
+    })
+    .onConflictDoUpdate({
+      target: [attendees.sessionId, attendees.nameKey],
+      set: { name, participantId: person.participantId ?? null },
     });
-
-    if (!alreadyIn) {
-      await db.insert(attendees).values({ sessionId: session.id, name: person.name, phone });
-    }
-  }
 
   return { sessionId: session.id, deckId: session.deckId, slide: session.slide };
 }
