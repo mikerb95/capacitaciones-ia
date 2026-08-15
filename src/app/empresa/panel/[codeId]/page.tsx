@@ -78,7 +78,7 @@ export default async function CompanyTrainingPage({ params }: Props) {
     .filter((m) => m !== null)
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 
-  const gente = people.length;
+  const gente = training.participants.length;
 
   return (
     <div className="min-h-screen bg-bg">
