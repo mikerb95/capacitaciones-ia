@@ -89,7 +89,11 @@ export async function startLive(deckId: number, slide = 0) {
   await closeSessions(eq(liveSessions.deckId, deckId));
 
   let pin = randomPin();
-  while (await db.query.liveSessions.findFirst({ where: livePin(pin) })) {
+  while (
+    await db.query.liveSessions.findFirst({
+      where: and(eq(liveSessions.pin, pin), sessionOpen),
+    })
+  ) {
     pin = randomPin();
   }
 
