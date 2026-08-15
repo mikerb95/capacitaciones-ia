@@ -68,7 +68,7 @@ export default async function LivePage({ searchParams }: Search) {
     error === 'pin'
       ? 'Ese PIN no corresponde a ninguna sesión abierta. Confirma el número con el expositor.'
       : error === 'faltan'
-        ? 'Hace falta el PIN y tu nombre.'
+        ? 'Hace falta el PIN de la sesión.'
         : null;
 
   return (
