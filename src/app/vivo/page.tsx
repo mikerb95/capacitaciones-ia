@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { Audience } from '@/components/audience';
 import { getLiveByPin } from '@/db/queries';
 import { joinLive } from '@/app/admin/presentaciones/actions';
-import { getParticipant } from '@/lib/session';
+import { requireParticipant } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 
