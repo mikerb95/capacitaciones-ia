@@ -4,6 +4,7 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import { PlatformMark, StatusBadge } from '@/components/ui';
 import { platformLogo } from '@/lib/brand-logos';
 import { getComparison } from '@/db/queries';
+import { MODELS_REVISION } from '@/lib/revision';
 import { requireScopedParticipant, scopeComparison } from '@/lib/scope';
 
 export const dynamic = 'force-dynamic';
@@ -80,12 +81,10 @@ export default async function Home() {
           ))}
         </section>
 
-        {lastUpdate && (
-          <p className="mt-4 flex items-center gap-2 font-mono text-[11.5px] uppercase tracking-[0.08em] text-faint">
-            <span aria-hidden className="size-1.5 rounded-full bg-primary/60" />
-            Modelos y planes revisados el {dia.format(lastUpdate)}
-          </p>
-        )}
+        <p className="mt-4 flex items-center gap-2 font-mono text-[11.5px] uppercase tracking-[0.08em] text-faint">
+          <span aria-hidden className="size-1.5 rounded-full bg-primary/60" />
+          Modelos y planes revisados en {MODELS_REVISION}
+        </p>
 
         <section className="mt-8 flex flex-wrap items-center justify-between gap-3 rounded-card border border-line bg-surface-2 px-5 py-4">
           <p className="text-[13.5px] leading-relaxed text-muted">
