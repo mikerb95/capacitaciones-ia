@@ -25,11 +25,10 @@ async function enter(formData: FormData) {
   const participant = await getParticipant();
 
   const name = participant?.name ?? ((formData.get('nombre') as string) ?? '').trim();
-  const phone = participant?.phone ?? ((formData.get('telefono') as string) ?? '').trim();
 
   if (!pin || !name) redirect('/vivo?error=faltan');
 
-  const session = await joinLive({ pin, participantId: participant?.id, name, phone });
+  const session = await joinLive({ pin, participantId: participant?.id, name });
   if (!session) redirect('/vivo?error=pin');
 
   const jar = await cookies();
