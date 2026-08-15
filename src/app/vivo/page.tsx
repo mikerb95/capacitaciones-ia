@@ -109,31 +109,16 @@ export default async function LivePage({ searchParams }: Search) {
           {participant ? (
             <p className="rounded-[10px] bg-bg px-3 py-2.5 text-[13px] text-muted">
               Entras como <span className="font-medium text-text">{participant.name}</span>
-              <span className="mx-1.5 text-faint">·</span>
-              {formatPhone(participant.phone)}
             </p>
           ) : (
-            <>
-              <label className="flex flex-col gap-1.5">
-                <span className="text-[12.5px] font-medium text-muted">Tu nombre</span>
-                <input
-                  name="nombre"
-                  required
-                  className="w-full rounded-[10px] border border-line bg-surface px-3 py-2 text-[14px] outline-none focus:border-primary"
-                />
-              </label>
-
-              <label className="flex flex-col gap-1.5">
-                <span className="text-[12.5px] font-medium text-muted">
-                  Teléfono <span className="font-normal text-faint">opcional</span>
-                </span>
-                <input
-                  name="telefono"
-                  inputMode="tel"
-                  className="w-full rounded-[10px] border border-line bg-surface px-3 py-2 text-[14px] outline-none focus:border-primary"
-                />
-              </label>
-            </>
+            <label className="flex flex-col gap-1.5">
+              <span className="text-[12.5px] font-medium text-muted">Tu nombre</span>
+              <input
+                name="nombre"
+                required
+                className="w-full rounded-[10px] border border-line bg-surface px-3 py-2 text-[14px] outline-none focus:border-primary"
+              />
+            </label>
           )}
 
           <button
