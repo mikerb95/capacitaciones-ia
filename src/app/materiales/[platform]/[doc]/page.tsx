@@ -1,13 +1,46 @@
 import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { PlatformMark } from '@/components/ui';
-import { getPlatform } from '@/db/queries';
+import { getCompany, getPlatform } from '@/db/queries';
 import { platformLogo } from '@/lib/brand-logos';
+import { type CompanyBrief, fillPlaceholders, loadBrief, placeholderMap } from '@/lib/brief';
 import { ATAJOS, CHECKLIST, DECISION, POLITICA, findMaterial } from '@/lib/materiales';
 
 export const dynamic = 'force-dynamic';
 
-type Params = { params: Promise<{ platform: string; doc: string }> };
+type Params = {
+  params: Promise<{ platform: string; doc: string }>;
+  searchParams: Promise<{ empresa?: string }>;
+};
+
+/**
+ * La empresa para la que se está generando este documento. `null` es el
+ * material genérico, que es el que ve quien no tiene material a medida.
+ */
+type Client = {
+  name: string;
+  logo: string | null;
+  brief: CompanyBrief;
+  holes: Record<string, string>;
+};
+
+/** Carga el cliente del parámetro `?empresa=`, si lo hay. */
+async function loadClient(slug: string | undefined): Promise<Client | null> {
+  if (!slug) return null;
+
+  const brief = await loadBrief(slug);
+  if (!brief) throw new Error(`No encuentro clientes/${slug}.json`);
+
+  const company = await getCompany(brief.companyId);
+  if (!company) throw new Error(`El brief de ${slug} apunta a la empresa ${brief.companyId}, que no existe.`);
+
+  return {
+    name: company.name,
+    logo: company.logo,
+    brief,
+    holes: placeholderMap(brief),
+  };
+}
 
 /**
  * En desarrollo se abren en el navegador para revisarlas. En producción no son
@@ -27,21 +60,24 @@ async function assertBuilder() {
  * sección del portal: fuera de desarrollo solo responden si quien las pide es
  * el propio script, que se identifica con MATERIALES_BUILD_KEY.
  */
-export default async function MaterialPage({ params }: Params) {
+export default async function MaterialPage({ params, searchParams }: Params) {
   await assertBuilder();
   const { platform: id, doc } = await params;
+  const { empresa } = await searchParams;
 
   const material = findMaterial(id, doc);
   if (!material || material.source !== 'print') notFound();
 
-  const platform = await getPlatform(id);
+  const [platform, client] = await Promise.all([getPlatform(id), loadClient(empresa)]);
   if (!platform) notFound();
 
-  if (doc === 'guia-de-prompts') return <PromptGuide platform={platform} />;
-  if (doc.startsWith('checklist-')) return <Checklist platform={platform} title={material.title} />;
-  if (doc === 'tarjeta-de-atajos') return <ShortcutCard platform={platform} />;
-  if (doc === 'politica-de-uso-de-ia') return <Policy platform={platform} />;
-  if (doc === 'cuando-usar-chat-agente-o-cowork') return <Decision platform={platform} />;
+  if (doc === 'guia-de-prompts') return <PromptGuide platform={platform} client={client} />;
+  if (doc.startsWith('checklist-'))
+    return <Checklist platform={platform} client={client} title={material.title} />;
+  if (doc === 'tarjeta-de-atajos') return <ShortcutCard platform={platform} client={client} />;
+  if (doc === 'politica-de-uso-de-ia') return <Policy platform={platform} client={client} />;
+  if (doc === 'cuando-usar-chat-agente-o-cowork')
+    return <Decision platform={platform} client={client} />;
 
   notFound();
 }
@@ -55,11 +91,55 @@ function Sheet({ children }: { children: React.ReactNode }) {
 }
 
 /** Pie de página del documento. Puppeteer numera; aquí va la procedencia. */
-function Footnote({ platform }: { platform: Platform }) {
+function Footnote({ platform, client }: { platform: Platform; client: Client | null }) {
   return (
     <p className="mt-auto pt-8 text-[10px] text-faint">
-      {platform.portalName} · Material de la capacitación. Uso interno.
+      {client ? `${client.name} · ${platform.name}` : platform.portalName} · Material de la
+      capacitación. Uso interno.
     </p>
+  );
+}
+
+/**
+ * La marca de la cabecera. Con cliente van las dos, separadas por un aspa: el
+ * material es de la capacitación de esa herramienta, hecho para esa empresa.
+ *
+ * El logo del cliente se ajusta por altura y con un ancho máximo, porque
+ * muchos logos corporativos son apaisados y encajarlos en un cuadrado los
+ * deforma.
+ */
+function Marks({
+  platform,
+  client,
+  size,
+}: {
+  platform: Platform;
+  client: Client | null;
+  size: number;
+}) {
+  const mark = (
+    <PlatformMark
+      initial={platform.initial}
+      color={platform.color}
+      logo={platformLogo(platform.id)}
+      size={size}
+    />
+  );
+
+  if (!client?.logo) return mark;
+
+  return (
+    <span className="flex flex-none items-center gap-2.5">
+      {/* eslint-disable-next-line @next/next/no-img-element -- es un data: URI de la base */}
+      <img
+        src={client.logo}
+        alt=""
+        style={{ height: size, maxWidth: size * 2.6 }}
+        className="w-auto object-contain"
+      />
+      <span className="text-[13px] text-faint">×</span>
+      {mark}
+    </span>
   );
 }
 
@@ -67,24 +147,29 @@ function Footnote({ platform }: { platform: Platform }) {
  * Encabezado de los documentos de una hoja: el título grande a la izquierda y
  * el distintivo de la plataforma a la derecha.
  */
-function DocHead({ platform, title, intro }: { platform: Platform; title: string; intro: string }) {
+function DocHead({
+  platform,
+  client,
+  title,
+  intro,
+}: {
+  platform: Platform;
+  client: Client | null;
+  title: string;
+  intro: string;
+}) {
   return (
     <header className="flex items-start justify-between gap-6 border-b border-line pb-5">
       <div>
         <p className="text-[11px] font-semibold tracking-[0.14em] text-faint uppercase">
-          {platform.portalName}
+          {client ? `${client.name} · ${platform.name}` : platform.portalName}
         </p>
         <h1 className="font-display mt-1.5 text-[30px] leading-tight font-semibold tracking-tight">
           {title}
         </h1>
         <p className="mt-2 max-w-[68ch] text-[13px] leading-relaxed text-muted">{intro}</p>
       </div>
-      <PlatformMark
-        initial={platform.initial}
-        color={platform.color}
-        logo={platformLogo(platform.id)}
-        size={40}
-      />
+      <Marks platform={platform} client={client} size={40} />
     </header>
   );
 }
@@ -126,22 +211,17 @@ function PromptText({ text }: { text: string }) {
 
 // --- Guía de prompts -------------------------------------------------------
 
-function PromptGuide({ platform }: { platform: Platform }) {
+function PromptGuide({ platform, client }: { platform: Platform; client: Client | null }) {
   const total = platform.modules.reduce((n, m) => n + m.prompts.length, 0);
 
   return (
     <>
       <Sheet>
         <div className="flex items-center gap-3">
-          <PlatformMark
-            initial={platform.initial}
-            color={platform.color}
-            logo={platformLogo(platform.id)}
-            size={44}
-          />
+          <Marks platform={platform} client={client} size={44} />
           <div>
             <p className="text-[11px] font-semibold tracking-[0.14em] text-faint uppercase">
-              {platform.portalName}
+              {client ? `${client.name} · ${platform.name}` : platform.portalName}
             </p>
             <p className="text-[13px] text-muted">Material de la capacitación</p>
           </div>
@@ -150,13 +230,19 @@ function PromptGuide({ platform }: { platform: Platform }) {
         <h1 className="font-display mt-14 text-[42px] leading-[1.05] font-semibold tracking-tight">
           Guía de prompts
         </h1>
-        <p className="mt-4 max-w-[62ch] text-[15px] leading-relaxed text-muted">
-          Los {total} prompts del programa, agrupados por módulo y listos para copiar. Lo que va{' '}
-          <span className="rounded bg-primary-soft px-1 font-medium text-primary">
-            [entre corchetes]
-          </span>{' '}
-          se reemplaza por lo tuyo antes de enviarlo: el área, el cliente, el documento.
-        </p>
+        {client?.brief.intro ? (
+          <p className="mt-4 max-w-[62ch] text-[15px] leading-relaxed text-muted">
+            {client.brief.intro}
+          </p>
+        ) : (
+          <p className="mt-4 max-w-[62ch] text-[15px] leading-relaxed text-muted">
+            Los {total} prompts del programa, agrupados por módulo y listos para copiar. Lo que va{' '}
+            <span className="rounded bg-primary-soft px-1 font-medium text-primary">
+              [entre corchetes]
+            </span>{' '}
+            se reemplaza por lo tuyo antes de enviarlo: el área, el cliente, el documento.
+          </p>
+        )}
 
         <div className="mt-14">
           <p className="mb-3 text-[11px] font-semibold tracking-[0.14em] text-faint uppercase">
@@ -181,7 +267,7 @@ function PromptGuide({ platform }: { platform: Platform }) {
           </ol>
         </div>
 
-        <Footnote platform={platform} />
+        <Footnote platform={platform} client={client} />
       </Sheet>
 
       {platform.modules.map((m) => (
@@ -214,7 +300,7 @@ function PromptGuide({ platform }: { platform: Platform }) {
                   {p.tag}
                 </p>
                 <p className="text-[13.5px] leading-relaxed">
-                  <PromptText text={p.text} />
+                  <PromptText text={fillPlaceholders(p.text, client?.holes ?? {})} />
                 </p>
               </article>
             ))}
@@ -236,7 +322,7 @@ function PromptGuide({ platform }: { platform: Platform }) {
             </div>
           )}
 
-          <Footnote platform={platform} />
+          <Footnote platform={platform} client={client} />
         </Sheet>
       ))}
     </>
@@ -245,13 +331,21 @@ function PromptGuide({ platform }: { platform: Platform }) {
 
 // --- Checklist de revisión -------------------------------------------------
 
-function Checklist({ platform, title }: { platform: Platform; title: string }) {
+function Checklist({
+  platform,
+  client,
+  title,
+}: {
+  platform: Platform;
+  client: Client | null;
+  title: string;
+}) {
   const content = CHECKLIST[platform.id];
   if (!content) notFound();
 
   return (
     <Sheet>
-      <DocHead platform={platform} title={title} intro={content.intro} />
+      <DocHead platform={platform} client={client} title={title} intro={content.intro} />
 
       <div className="mt-6 grid grid-cols-2 gap-x-7 gap-y-6">
         {content.blocks.map((block) => (
@@ -268,6 +362,24 @@ function Checklist({ platform, title }: { platform: Platform; title: string }) {
           </div>
         ))}
       </div>
+
+      {/* Los límites de la empresa van antes de las prácticas generales: es lo
+          propio de la casa, y lo que de verdad se revisa antes de mandar. */}
+      {client?.brief.limites?.length ? (
+        <div className="avoid-break mt-8 rounded-[12px] border border-line p-5">
+          <p className="mb-3 text-[10.5px] font-semibold tracking-[0.12em] text-faint uppercase">
+            En {client.name} además
+          </p>
+          <ul className="flex flex-col gap-2">
+            {client.brief.limites.map((limite) => (
+              <li key={limite} className="flex gap-2.5">
+                <span className="mt-[3px] h-3 w-3 flex-none rounded-[3px] border border-line bg-surface-2" />
+                <span className="text-[12px] leading-snug text-muted">{limite}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
 
       {platform.practices.length > 0 && (
         <div className="avoid-break mt-8 rounded-[12px] bg-surface-2 p-5">
@@ -288,7 +400,7 @@ function Checklist({ platform, title }: { platform: Platform; title: string }) {
         </div>
       )}
 
-      <Footnote platform={platform} />
+      <Footnote platform={platform} client={client} />
     </Sheet>
   );
 }
@@ -300,13 +412,13 @@ function Checklist({ platform, title }: { platform: Platform; title: string }) {
  * aplicación y qué se le pide ahí. Va en dos columnas porque se lee de un
  * vistazo, no de corrido.
  */
-function ShortcutCard({ platform }: { platform: Platform }) {
+function ShortcutCard({ platform, client }: { platform: Platform; client: Client | null }) {
   const content = ATAJOS[platform.id];
   if (!content) notFound();
 
   return (
     <Sheet>
-      <DocHead platform={platform} title="Tarjeta de atajos" intro={content.intro} />
+      <DocHead platform={platform} client={client} title="Tarjeta de atajos" intro={content.intro} />
 
       <div className="mt-6 grid grid-cols-2 gap-x-7 gap-y-5">
         {content.apps.map((app) => (
@@ -325,7 +437,29 @@ function ShortcutCard({ platform }: { platform: Platform }) {
         ))}
       </div>
 
-      <div className="avoid-break mt-8 rounded-[12px] bg-surface-2 p-5">
+      {/* Los casos de la empresa: es lo que convierte la tarjeta genérica en
+          algo que alguien reconoce como su trabajo. Van en tres columnas y
+          recortados a seis, porque esta hoja se imprime y tiene que seguir
+          cabiendo en una. Los demás salen completos en la tabla de decisión. */}
+      {client?.brief.casos?.length ? (
+        <div className="avoid-break mt-5">
+          <p className="mb-2 text-[10.5px] font-semibold tracking-[0.12em] text-faint uppercase">
+            En {client.name}
+          </p>
+          <div className="grid grid-cols-3 gap-x-5 gap-y-1.5">
+            {client.brief.casos.slice(0, 6).map((caso) => (
+              <div key={`${caso.area}-${caso.situacion}`} className="flex gap-1.5">
+                <span className="text-accent">·</span>
+                <p className="text-[11.5px] leading-snug text-muted">
+                  <span className="font-semibold text-ink">{caso.area}:</span> {caso.situacion}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      <div className="avoid-break mt-6 rounded-[12px] bg-surface-2 p-5">
         <p className="mb-3 text-[10.5px] font-semibold tracking-[0.12em] text-faint uppercase">
           {content.formula.title}
         </p>
@@ -341,7 +475,7 @@ function ShortcutCard({ platform }: { platform: Platform }) {
         </div>
       </div>
 
-      <Footnote platform={platform} />
+      <Footnote platform={platform} client={client} />
     </Sheet>
   );
 }
@@ -352,7 +486,7 @@ function ShortcutCard({ platform }: { platform: Platform }) {
  * Base de política para adaptar. Los corchetes se dejan teñidos igual que en la
  * guía de prompts: marcan lo que cada empresa tiene que reemplazar.
  */
-function Policy({ platform }: { platform: Platform }) {
+function Policy({ platform, client }: { platform: Platform; client: Client | null }) {
   const content = POLITICA[platform.id];
   if (!content) notFound();
 
@@ -362,7 +496,7 @@ function Policy({ platform }: { platform: Platform }) {
         <Sheet key={page}>
           {page === 0 && (
             <>
-              <DocHead platform={platform} title="Política de uso de IA" intro={content.intro} />
+              <DocHead platform={platform} client={client} title="Política de uso de IA" intro={content.intro} />
               <p className="mt-5 rounded-[12px] bg-surface-2 p-4 text-[12px] leading-relaxed text-muted">
                 {content.note}
               </p>
@@ -375,7 +509,7 @@ function Policy({ platform }: { platform: Platform }) {
                 <SectionTitle platform={platform}>{section.title}</SectionTitle>
                 {section.body && (
                   <p className="max-w-[78ch] text-[12.5px] leading-relaxed text-muted">
-                    <PromptText text={section.body} />
+                    <PromptText text={fillPlaceholders(section.body, client?.holes ?? {})} />
                   </p>
                 )}
                 {section.items && (
@@ -384,7 +518,7 @@ function Policy({ platform }: { platform: Platform }) {
                       <li key={item} className="flex gap-2 text-[12.5px] leading-snug text-muted">
                         <span className="text-accent">·</span>
                         <span>
-                          <PromptText text={item} />
+                          <PromptText text={fillPlaceholders(item, client?.holes ?? {})} />
                         </span>
                       </li>
                     ))}
@@ -394,7 +528,7 @@ function Policy({ platform }: { platform: Platform }) {
             ))}
           </div>
 
-          <Footnote platform={platform} />
+          <Footnote platform={platform} client={client} />
         </Sheet>
       ))}
     </>
@@ -404,14 +538,29 @@ function Policy({ platform }: { platform: Platform }) {
 // --- Cuándo usar chat, modo agente o Cowork --------------------------------
 
 /** Tabla de decisión: tres tarjetas con las herramientas y los casos abajo. */
-function Decision({ platform }: { platform: Platform }) {
+function Decision({ platform, client }: { platform: Platform; client: Client | null }) {
   const content = DECISION[platform.id];
   if (!content) notFound();
+
+  // Los casos del cliente van primero, porque son los que la gente reconoce
+  // como su trabajo. El total se mantiene: esta hoja es de una página y sumar
+  // filas sin quitar otras la parte en dos.
+  const rows = [
+    ...(client?.brief.casos ?? [])
+      .filter((caso) => caso.herramienta)
+      .map((caso) => ({
+        situation: caso.situacion,
+        tool: caso.herramienta!,
+        why: caso.nota ?? caso.area,
+      })),
+    ...content.rows,
+  ].slice(0, content.rows.length);
 
   return (
     <Sheet>
       <DocHead
         platform={platform}
+        client={client}
         title="Cuándo usar chat, modo agente o Cowork"
         intro={content.intro}
       />
@@ -428,7 +577,7 @@ function Decision({ platform }: { platform: Platform }) {
 
       <div className="avoid-break mt-5">
         <p className="mb-2 text-[10.5px] font-semibold tracking-[0.12em] text-faint uppercase">
-          Lo que llega en el día
+          {client ? `Lo que llega en el día en ${client.name}` : 'Lo que llega en el día'}
         </p>
         <table className="w-full border-collapse text-left">
           <thead>
@@ -445,7 +594,7 @@ function Decision({ platform }: { platform: Platform }) {
             </tr>
           </thead>
           <tbody>
-            {content.rows.map((row) => (
+            {rows.map((row) => (
               <tr key={row.situation} className="avoid-break border-b border-line last:border-0">
                 <td className="py-2 pr-3 align-top text-[12px] leading-snug">{row.situation}</td>
                 <td className="py-2 pr-3 align-top text-[12px] leading-snug font-semibold">
@@ -462,7 +611,7 @@ function Decision({ platform }: { platform: Platform }) {
         {content.closing}
       </p>
 
-      <Footnote platform={platform} />
+      <Footnote platform={platform} client={client} />
     </Sheet>
   );
 }

@@ -46,3 +46,13 @@ local.db
 local.db-*
 verify.db
 verify.db-*
+
+# Briefs de cliente: llevan responsables, canales internos y límites de cada
+# empresa, y este repo es público. Se quedan en la máquina. El ejemplo sí entra,
+# porque documenta el formato y no tiene datos de nadie.
+clientes/*
+!clientes/EJEMPLO.json
+
+# Material a medida ya generado: sale de un brief que no está versionado, así
+# que versionarlo a él tampoco tiene sentido. Su sitio definitivo es Blob.
+private/materiales/empresas/

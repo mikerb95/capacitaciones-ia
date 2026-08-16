@@ -1,0 +1,34 @@
+{
+  "_comentario": "Copia este archivo a clientes/<slug>.json y llénalo con los datos del cliente. El slug es el nombre de la carpeta donde sale su material: `npm run materiales:empresa <slug>`. Todo es opcional menos companyId: lo que no pongas, sale genérico. Los archivos de esta carpeta no se versionan.",
+
+  "companyId": 0,
+
+  "intro": "Párrafo de apertura de la guía de prompts, con el porqué de la capacitación en esta empresa. Si lo dejas vacío, va el texto genérico.",
+
+  "areas": ["Comercial", "Servicio al cliente", "Operaciones", "Administración"],
+
+  "responsable": "la jefatura de operaciones",
+  "canal": "#academia-ia",
+  "revision": "cada tres meses",
+
+  "documentos": ["la lista de precios vigente", "el manual de garantías"],
+
+  "limites": [
+    "No prometer plazos de entrega: los confirma logística.",
+    "No dar precios que no estén en la lista vigente."
+  ],
+
+  "placeholders": {
+    "[área]": "Comercial",
+    "[empresa]": "Ferretería del Norte"
+  },
+
+  "casos": [
+    {
+      "area": "Comercial",
+      "situacion": "Preparar la visita a un cliente con el historial de sus pedidos",
+      "herramienta": "Chat",
+      "nota": "Una consulta, no un entregable."
+    }
+  ]
+}

@@ -244,6 +244,28 @@ export async function getScopeModuleIds(accessCodeId: number) {
   return rows;
 }
 
+/**
+ * Las plataformas que le tocan al material a medida de una empresa: la unión
+ * de los alcances de todos sus códigos.
+ *
+ * Un código sin filas de alcance abre el catálogo entero, así que si la
+ * empresa tiene uno así, le corresponden todas las plataformas. Devuelve
+ * `null` en ese caso, con el mismo significado que en `Scope`: sin recorte.
+ */
+export async function getCompanyPlatforms(companyId: number): Promise<string[] | null> {
+  const codes = await db
+    .select({ id: accessCodes.id })
+    .from(accessCodes)
+    .where(eq(accessCodes.companyId, companyId));
+
+  if (codes.length === 0) return [];
+
+  const scopes = await Promise.all(codes.map((c) => getScopeModuleIds(c.id)));
+  if (scopes.some((rows) => rows.length === 0)) return null;
+
+  return [...new Set(scopes.flat().map((r) => r.platformId))].sort();
+}
+
 export type AccessCodeRow = Awaited<ReturnType<typeof getAccessCodes>>[number];
 export type AccessCodeFull = NonNullable<Awaited<ReturnType<typeof getAccessCode>>>;
 

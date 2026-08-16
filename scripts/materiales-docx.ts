@@ -4,6 +4,7 @@
  * escribe aquí. Cada generador devuelve un Buffer listo para escribir a disco.
  */
 import { readFileSync } from 'node:fs';
+import { type CompanyBrief, fillPlaceholders } from '../src/lib/brief';
 import path from 'node:path';
 import {
   AlignmentType,
@@ -71,10 +72,18 @@ const hint = (text: string) =>
     children: [new TextRun({ text, size: 17, color: MUTED, italics: true })],
   });
 
-const fill = (label: string, len = 46) =>
+/**
+ * Una línea para llenar a mano. Si el brief del cliente ya trae el dato, sale
+ * escrito en vez de en blanco: nadie tiene que volver a escribir quién es el
+ * responsable si eso ya se sabe.
+ */
+const fill = (label: string, len = 46, value?: string) =>
   new Paragraph({
     spacing: { after: 160, line: 300 },
-    children: [new TextRun({ text: label, size: 20, color: INK }), blank(len)],
+    children: [
+      new TextRun({ text: label, size: 20, color: INK }),
+      value ? new TextRun({ text: value, size: 20, color: INK, bold: true }) : blank(len),
+    ],
   });
 
 const bullet = (text: string) =>
@@ -147,6 +156,31 @@ function table(head: string[], rows: string[][], widths: number[]) {
   });
 }
 
+/**
+ * La empresa para la que se genera el documento, ya resuelta por el script:
+ * el logo llega como PNG porque Word no dibuja SVG ni `data:` URI.
+ */
+export type DocClient = {
+  name: string;
+  /** PNG ya escalado a la altura del encabezado, con su ancho real. */
+  logo: { data: Buffer; width: number; height: number } | null;
+  brief: CompanyBrief;
+  holes: Record<string, string>;
+};
+
+/**
+ * Las filas de la tabla de documentos de referencia. Los del brief salen ya
+ * escritos y siempre quedan filas en blanco debajo: la plantilla sigue siendo
+ * para llenar, solo que con lo que ya se sabe puesto.
+ */
+const docRows = (client?: DocClient) => {
+  const names = client?.brief.documentos ?? [];
+  return [
+    ...names.map((name) => [name, '', '', '']),
+    ...Array.from({ length: 4 - Math.min(names.length, 3) }, () => ['', '', '', '']),
+  ];
+};
+
 type DocSpec = {
   /** Nombre de la plataforma como aparece en el encabezado y en el pie. */
   platform: string;
@@ -157,6 +191,7 @@ type DocSpec = {
   /** Los párrafos de entrada, antes del primer bloque. */
   lead: string[];
   children: FileChild[];
+  client?: DocClient;
 };
 
 /**
@@ -165,7 +200,7 @@ type DocSpec = {
  * documento sale sin logo en vez de fallar: es un adorno del encabezado y no
  * vale la pena perder la plantilla entera por él.
  */
-function brandLogo(id: string) {
+function brandLogo(id: string, client?: DocClient) {
   const file = path.join(process.cwd(), 'public', 'logos', `${id}.png`);
 
   let data: Buffer;
@@ -176,14 +211,28 @@ function brandLogo(id: string) {
     return [];
   }
 
+  const platform = new ImageRun({
+    type: 'png',
+    data,
+    transformation: { width: 13, height: 13 },
+  });
+
+  // Word pega la imagen al texto que sigue: los espacios son la separación.
+  const gap = new TextRun({ text: '  ' });
+
+  if (!client?.logo) return [platform, gap];
+
   return [
     new ImageRun({
       type: 'png',
-      data,
-      transformation: { width: 13, height: 13 },
+      data: client.logo.data,
+      // Con su proporción real: encajar un logo apaisado en un cuadrado lo
+      // deforma, y eso se nota en la cabecera de catorce documentos.
+      transformation: { width: client.logo.width, height: client.logo.height },
     }),
-    // Word pega la imagen al texto que sigue: el espacio es la separación.
-    new TextRun({ text: '  ' }),
+    new TextRun({ text: '  ×  ', size: 16, color: FAINT }),
+    platform,
+    gap,
   ];
 }
 
@@ -227,9 +276,12 @@ function buildDoc(spec: DocSpec): Promise<Buffer> {
           new Paragraph({
             spacing: { after: 40 },
             children: [
-              ...brandLogo(spec.id),
+              ...brandLogo(spec.id, spec.client),
               new TextRun({
-                text: `${spec.platform} · MATERIAL DE LA CAPACITACIÓN`.toUpperCase(),
+                text: (spec.client
+                  ? `${spec.client.name} · ${spec.platform} · MATERIAL DE LA CAPACITACIÓN`
+                  : `${spec.platform} · MATERIAL DE LA CAPACITACIÓN`
+                ).toUpperCase(),
                 bold: true,
                 size: 16,
                 color: FAINT,
@@ -250,7 +302,9 @@ function buildDoc(spec: DocSpec): Promise<Buffer> {
             alignment: AlignmentType.LEFT,
             children: [
               new TextRun({
-                text: `${spec.platform} · Material de la capacitación. Uso interno.`,
+                text: spec.client
+                  ? `${spec.client.name} · ${spec.platform} · Material de la capacitación. Uso interno.`
+                  : `${spec.platform} · Material de la capacitación. Uso interno.`,
                 size: 15,
                 color: FAINT,
               }),
@@ -265,10 +319,11 @@ function buildDoc(spec: DocSpec): Promise<Buffer> {
 }
 
 /** Plantilla de GPT de ChatGPT. */
-export function plantillaDeGpt(): Promise<Buffer> {
+export function plantillaDeGpt(client?: DocClient): Promise<Buffer> {
   const brand = BRAND.chatgpt;
 
   return buildDoc({
+    client,
     platform: 'ChatGPT',
     id: 'chatgpt',
     title: 'Plantilla de GPT',
@@ -325,12 +380,7 @@ export function plantillaDeGpt(): Promise<Buffer> {
       ),
       table(
         ['Archivo', 'Qué contiene', 'Dueño', 'Última revisión'],
-        [
-          ['', '', '', ''],
-          ['', '', '', ''],
-          ['', '', '', ''],
-          ['', '', '', ''],
-        ],
+        docRows(client),
         [30, 34, 20, 16],
       ),
 
@@ -351,8 +401,8 @@ export function plantillaDeGpt(): Promise<Buffer> {
 
       new Paragraph({ heading: HeadingLevel.HEADING_2, text: '7. Revisión' }),
       hint('Un GPT sin dueño queda con los archivos del año pasado y se sigue usando igual.'),
-      fill('Responsable del contenido: ', 34),
-      fill('Cada cuánto se revisa: ', 38),
+      fill('Responsable del contenido: ', 34, client?.brief.responsable),
+      fill('Cada cuánto se revisa: ', 38, client?.brief.revision),
       fill('Próxima revisión: ', 40),
 
       new Paragraph({
@@ -367,7 +417,7 @@ export function plantillaDeGpt(): Promise<Buffer> {
       hint(
         'Copia este bloque en el campo de instrucciones del GPT, ya con tus respuestas de las secciones 1 a 4.',
       ),
-      pasteBlock(PEGAR),
+      pasteBlock(PEGAR.map((line) => fillPlaceholders(line, client?.holes ?? {}))),
     ],
   });
 }
@@ -394,10 +444,11 @@ const PEGAR: string[] = [
 ];
 
 /** Plantilla de proyecto de Claude. */
-export function plantillaDeProyecto(): Promise<Buffer> {
+export function plantillaDeProyecto(client?: DocClient): Promise<Buffer> {
   const brand = BRAND.claude;
 
   return buildDoc({
+    client,
     platform: 'Claude',
     id: 'claude',
     title: 'Plantilla de proyecto',
@@ -453,12 +504,7 @@ export function plantillaDeProyecto(): Promise<Buffer> {
       ),
       table(
         ['Documento', 'Para qué se consulta', 'Dueño', 'Vigente hasta'],
-        [
-          ['', '', '', ''],
-          ['', '', '', ''],
-          ['', '', '', ''],
-          ['', '', '', ''],
-        ],
+        docRows(client),
         [30, 34, 20, 16],
       ),
 
@@ -466,8 +512,8 @@ export function plantillaDeProyecto(): Promise<Buffer> {
       hint(
         'Un proyecto sin dueño queda con el contrato del año pasado y se sigue consultando igual.',
       ),
-      fill('Responsable del contenido: ', 34),
-      fill('Cada cuánto se revisa: ', 38),
+      fill('Responsable del contenido: ', 34, client?.brief.responsable),
+      fill('Cada cuánto se revisa: ', 38, client?.brief.revision),
       fill('Próxima revisión: ', 40),
 
       new Paragraph({ pageBreakBefore: true, spacing: { after: 40 }, children: [] }),
@@ -478,7 +524,7 @@ export function plantillaDeProyecto(): Promise<Buffer> {
       hint(
         'Copia este bloque en las instrucciones del proyecto, ya con tus respuestas de las secciones 1 a 5.',
       ),
-      pasteBlock(PEGAR_PROYECTO),
+      pasteBlock(PEGAR_PROYECTO.map((line) => fillPlaceholders(line, client?.holes ?? {}))),
     ],
   });
 }
@@ -502,10 +548,11 @@ const PEGAR_PROYECTO: string[] = [
 ];
 
 /** Formato de skill de Claude. */
-export function formatoDeSkill(): Promise<Buffer> {
+export function formatoDeSkill(client?: DocClient): Promise<Buffer> {
   const brand = BRAND.claude;
 
   return buildDoc({
+    client,
     platform: 'Claude',
     id: 'claude',
     title: 'Formato de skill',
@@ -580,13 +627,13 @@ export function formatoDeSkill(): Promise<Buffer> {
         [40, 60],
       ),
       new Paragraph({ spacing: { after: 120 }, children: [] }),
-      fill('Responsable: ', 42),
+      fill('Responsable: ', 42, client?.brief.responsable),
       fill('Próxima revisión: ', 40),
 
       new Paragraph({ pageBreakBefore: true, spacing: { after: 40 }, children: [] }),
       new Paragraph({ heading: HeadingLevel.HEADING_2, text: 'La skill lista para pegar' }),
       hint('Copia este bloque con tus respuestas. Es el texto que lee Claude cuando la invocas.'),
-      pasteBlock(PEGAR_SKILL),
+      pasteBlock(PEGAR_SKILL.map((line) => fillPlaceholders(line, client?.holes ?? {}))),
     ],
   });
 }
@@ -613,10 +660,11 @@ const PEGAR_SKILL: string[] = [
 ];
 
 /** Plantilla de Gem de Gemini. */
-export function plantillaDeGem(): Promise<Buffer> {
+export function plantillaDeGem(client?: DocClient): Promise<Buffer> {
   const brand = BRAND.gemini;
 
   return buildDoc({
+    client,
     platform: 'Gemini',
     id: 'gemini',
     title: 'Plantilla de Gem',
@@ -664,12 +712,7 @@ export function plantillaDeGem(): Promise<Buffer> {
       ),
       table(
         ['Archivo en Drive', 'Qué contiene', 'Dueño', 'Última revisión'],
-        [
-          ['', '', '', ''],
-          ['', '', '', ''],
-          ['', '', '', ''],
-          ['', '', '', ''],
-        ],
+        docRows(client),
         [30, 34, 20, 16],
       ),
 
@@ -687,8 +730,8 @@ export function plantillaDeGem(): Promise<Buffer> {
 
       new Paragraph({ heading: HeadingLevel.HEADING_2, text: '7. Revisión' }),
       hint('Un Gem sin dueño queda con los archivos del año pasado y se sigue usando igual.'),
-      fill('Responsable del contenido: ', 34),
-      fill('Cada cuánto se revisa: ', 38),
+      fill('Responsable del contenido: ', 34, client?.brief.responsable),
+      fill('Cada cuánto se revisa: ', 38, client?.brief.revision),
       fill('Próxima revisión: ', 40),
 
       new Paragraph({ pageBreakBefore: true, spacing: { after: 40 }, children: [] }),
@@ -699,7 +742,7 @@ export function plantillaDeGem(): Promise<Buffer> {
       hint(
         'Copia este bloque en el campo de instrucciones del Gem, ya con tus respuestas de las secciones 1 a 4.',
       ),
-      pasteBlock(PEGAR_GEM),
+      pasteBlock(PEGAR_GEM.map((line) => fillPlaceholders(line, client?.holes ?? {}))),
     ],
   });
 }
@@ -723,10 +766,11 @@ const PEGAR_GEM: string[] = [
 ];
 
 /** Formato para tu caso, de Copilot. */
-export function formatoParaTuCaso(): Promise<Buffer> {
+export function formatoParaTuCaso(client?: DocClient): Promise<Buffer> {
   const brand = BRAND.copilot;
 
   return buildDoc({
+    client,
     platform: 'Microsoft 365 Copilot',
     id: 'copilot',
     title: 'Formato para tu caso',
@@ -802,7 +846,7 @@ export function formatoParaTuCaso(): Promise<Buffer> {
 }
 
 /** Catálogo de generadores, por `plataforma/slug`. */
-export const DOCX_BUILDERS: Record<string, () => Promise<Buffer>> = {
+export const DOCX_BUILDERS: Record<string, (client?: DocClient) => Promise<Buffer>> = {
   'chatgpt/plantilla-de-gpt': plantillaDeGpt,
   'claude/plantilla-de-proyecto': plantillaDeProyecto,
   'claude/formato-de-skill': formatoDeSkill,
