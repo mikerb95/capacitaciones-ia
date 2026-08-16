@@ -216,3 +216,5 @@ uno de conocimiento de la empresa, porque Sora se descontinuó en abril de 2026.
 | `npm run db:push` | Sincroniza el esquema directo (desarrollo) |
 | `npm run db:studio` | Explorador visual de la base |
 | `npm run db:seed` | Carga o actualiza el contenido |
+| `npm run logos` | Exporta los logos de marca a `public/logos/` como SVG y PNG |
+| `npm run materiales` | Genera el material descargable (necesita el servidor levantado) |
