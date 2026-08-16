@@ -240,7 +240,7 @@ export default async function PlatformPage({ params, searchParams }: Params) {
                   >
                     {l.label}
                     <span aria-hidden="true" className="text-faint">
-                      &nearr;
+                      ↗
                     </span>
                   </a>
                 ))}
