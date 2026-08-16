@@ -7,7 +7,7 @@ import { hasLogo } from './logos';
  * cuando el módulo no corresponde a un producto con logo propio (Cowork,
  * Gems, Canvas...).
  */
-const PLATFORM_LOGOS: Record<string, string> = {
+export const PLATFORM_LOGOS: Record<string, string> = {
   copilot: 'copilot',
   claude: 'claude',
   gemini: 'gemini',
