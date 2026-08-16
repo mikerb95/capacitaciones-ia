@@ -133,12 +133,12 @@ function PromptGuide({ platform }: { platform: Platform }) {
     <>
       <Sheet>
         <div className="flex items-center gap-3">
-          <span
-            className="flex h-11 w-11 flex-none items-center justify-center rounded-[12px] text-[17px] font-semibold text-white"
-            style={{ background: platform.color }}
-          >
-            {platform.initial}
-          </span>
+          <PlatformMark
+            initial={platform.initial}
+            color={platform.color}
+            logo={platformLogo(platform.id)}
+            size={44}
+          />
           <div>
             <p className="text-[11px] font-semibold tracking-[0.14em] text-faint uppercase">
               {platform.portalName}
