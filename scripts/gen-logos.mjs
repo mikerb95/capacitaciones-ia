@@ -77,7 +77,7 @@ const out = `/**
 
 type LogoDef = { ratio: number; src: string };
 
-const LOGOS: Record<string, LogoDef> = {
+export const LOGOS: Record<string, LogoDef> = {
 ${entries.join('\n')}
 };
 
