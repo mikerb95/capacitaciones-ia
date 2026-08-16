@@ -79,12 +79,12 @@ function DocHead({ platform, title, intro }: { platform: Platform; title: string
         </h1>
         <p className="mt-2 max-w-[68ch] text-[13px] leading-relaxed text-muted">{intro}</p>
       </div>
-      <span
-        className="flex h-10 w-10 flex-none items-center justify-center rounded-[11px] text-[15px] font-semibold text-white"
-        style={{ background: platform.color }}
-      >
-        {platform.initial}
-      </span>
+      <PlatformMark
+        initial={platform.initial}
+        color={platform.color}
+        logo={platformLogo(platform.id)}
+        size={40}
+      />
     </header>
   );
 }
