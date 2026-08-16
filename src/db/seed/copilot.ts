@@ -63,29 +63,34 @@ export const copilot: PlatformSeed = {
   ],
   "downloads": [
     {
-      "title": "Guía rápida de prompts",
-      "description": "Una página con cómo se arma un buen prompt y ejemplos por aplicación.",
-      "meta": "PDF · 1,2 MB"
+      "title": "Guía de prompts",
+      "description": "Los 51 prompts del programa, agrupados por módulo y listos para copiar.",
+      "meta": "PDF · 11 páginas",
+      "href": "/api/materiales/copilot/guia-de-prompts.pdf"
     },
     {
       "title": "Tarjeta de atajos",
-      "description": "Para imprimir y dejarla pegada al lado del computador.",
-      "meta": "PDF · 480 KB"
+      "description": "Dónde está Copilot en cada aplicación y qué pedirle ahí. Para imprimir y dejarla al lado del computador.",
+      "meta": "PDF · 1 página",
+      "href": "/api/materiales/copilot/tarjeta-de-atajos.pdf"
     },
     {
       "title": "Política de uso de IA",
-      "description": "Qué información se puede procesar y qué datos no salen del entorno de la empresa.",
-      "meta": "PDF · 760 KB"
+      "description": "Qué información se puede procesar y qué datos no salen del entorno de la empresa. Base para adaptar.",
+      "meta": "PDF · 2 páginas",
+      "href": "/api/materiales/copilot/politica-de-uso-de-ia.pdf"
     },
     {
       "title": "Cuándo usar chat, modo agente o Cowork",
       "description": "Tabla de una página para decidir con qué herramienta se resuelve cada tarea.",
-      "meta": "PDF · 350 KB"
+      "meta": "PDF · 1 página",
+      "href": "/api/materiales/copilot/cuando-usar-chat-agente-o-cowork.pdf"
     },
     {
       "title": "Formato para tu caso",
       "description": "Para escribir el caso de tu área y pasarlo a las demás.",
-      "meta": "DOCX · 90 KB"
+      "meta": "DOCX · 2 páginas",
+      "href": "/api/materiales/copilot/formato-para-tu-caso.docx"
     }
   ],
   "practices": [

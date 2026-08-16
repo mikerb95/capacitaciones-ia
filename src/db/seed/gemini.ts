@@ -62,18 +62,21 @@ export const gemini: PlatformSeed = {
   downloads: [
     {
       title: 'Guía de prompts',
-      description: 'Los 40 prompts del programa, agrupados por módulo.',
-      meta: 'PDF · 10 páginas',
+      description: 'Los 40 prompts del programa, agrupados por módulo y listos para copiar.',
+      meta: 'PDF · 9 páginas',
+      href: '/api/materiales/gemini/guia-de-prompts.pdf',
     },
     {
       title: 'Plantilla de Gem',
       description: 'Estructura de instrucciones para armar un Gem del área en 15 minutos.',
-      meta: 'DOCX',
+      meta: 'DOCX · 3 páginas',
+      href: '/api/materiales/gemini/plantilla-de-gem.docx',
     },
     {
       title: 'Checklist de Workspace',
       description: 'Qué revisar antes de mandar lo que Gemini redactó en Gmail o Docs.',
       meta: 'PDF · 1 página',
+      href: '/api/materiales/gemini/checklist-de-workspace.pdf',
     },
   ],
   practices: [

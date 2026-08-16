@@ -59,17 +59,20 @@ export const claude: PlatformSeed = {
     {
       "title": "Guía de prompts",
       "description": "Los 41 prompts del programa, agrupados por módulo.",
-      "meta": "PDF · 12 páginas"
+      "meta": "PDF · 10 páginas",
+      "href": "/api/materiales/claude/guia-de-prompts.pdf"
     },
     {
       "title": "Plantilla de proyecto",
       "description": "Instrucciones base y lista de archivos por cliente.",
-      "meta": "DOCX · 2 páginas"
+      "meta": "DOCX · 3 páginas",
+      "href": "/api/materiales/claude/plantilla-de-proyecto.docx"
     },
     {
       "title": "Formato de skill",
       "description": "Estructura para escribir un procedimiento de la empresa.",
-      "meta": "DOCX · 1 página"
+      "meta": "DOCX · 3 páginas",
+      "href": "/api/materiales/claude/formato-de-skill.docx"
     }
   ],
   "practices": [
