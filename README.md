@@ -192,10 +192,10 @@ hijas con `sort_order` y borrado en cascada.
 
 | Plataforma | Módulos | Prompts | Estado |
 | --- | --- | --- | --- |
-| Microsoft Copilot | 6 | 31 | Completo |
-| Claude | 9 | 41 | Completo |
-| Gemini | 8 | 40 | Completo |
-| ChatGPT | 8 | 40 | Completo |
+| <img src="public/logos/copilot.png" width="16" height="16" alt=""> Microsoft 365 Copilot | 9 | 51 | Completo |
+| <img src="public/logos/claude.png" width="16" height="16" alt=""> Claude | 9 | 41 | Completo |
+| <img src="public/logos/gemini.png" width="16" height="16" alt=""> Gemini | 8 | 40 | Completo |
+| <img src="public/logos/chatgpt.png" width="16" height="16" alt=""> ChatGPT | 8 | 40 | Completo |
 
 Copilot y Claude vienen del contenido que ya existía en los mockups. Gemini y ChatGPT se
 redactaron completos en el mismo formato.
