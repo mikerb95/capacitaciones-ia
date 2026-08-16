@@ -227,6 +227,7 @@ function buildDoc(spec: DocSpec): Promise<Buffer> {
           new Paragraph({
             spacing: { after: 40 },
             children: [
+              ...brandLogo(spec.id),
               new TextRun({
                 text: `${spec.platform} · MATERIAL DE LA CAPACITACIÓN`.toUpperCase(),
                 bold: true,
