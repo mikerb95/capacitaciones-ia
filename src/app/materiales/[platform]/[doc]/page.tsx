@@ -1,6 +1,8 @@
 import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
+import { PlatformMark } from '@/components/ui';
 import { getPlatform } from '@/db/queries';
+import { platformLogo } from '@/lib/brand-logos';
 import { ATAJOS, CHECKLIST, DECISION, POLITICA, findMaterial } from '@/lib/materiales';
 
 export const dynamic = 'force-dynamic';
