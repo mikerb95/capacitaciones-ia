@@ -150,12 +150,42 @@ function table(head: string[], rows: string[][], widths: number[]) {
 type DocSpec = {
   /** Nombre de la plataforma como aparece en el encabezado y en el pie. */
   platform: string;
+  /** Id de la plataforma: de ahí sale el PNG del logo en `public/logos/`. */
+  id: string;
   title: string;
   description: string;
   /** Los párrafos de entrada, antes del primer bloque. */
   lead: string[];
   children: FileChild[];
 };
+
+/**
+ * El logo de la marca para el encabezado. Word no entiende un `data:` URI ni
+ * un SVG, así que va el PNG que deja `npm run logos`. Si falta el archivo, el
+ * documento sale sin logo en vez de fallar: es un adorno del encabezado y no
+ * vale la pena perder la plantilla entera por él.
+ */
+function brandLogo(id: string) {
+  const file = path.join(process.cwd(), 'public', 'logos', `${id}.png`);
+
+  let data: Buffer;
+  try {
+    data = readFileSync(file);
+  } catch {
+    console.warn(`  ! sin logo para ${id}: falta ${file}. Corre \`npm run logos\`.`);
+    return [];
+  }
+
+  return [
+    new ImageRun({
+      type: 'png',
+      data,
+      transformation: { width: 13, height: 13 },
+    }),
+    // Word pega la imagen al texto que sigue: el espacio es la separación.
+    new TextRun({ text: '  ' }),
+  ];
+}
 
 /**
  * El armazón que comparten todas las plantillas: estilos, márgenes, el
