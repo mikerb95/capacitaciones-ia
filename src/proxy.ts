@@ -13,7 +13,8 @@ const COMPANY_LOGIN = '/empresa';
  * Fuera del candado de sesión quedan /ingresar, /vivo y /presentar: las dos
  * últimas tienen su propio PIN de sesión en vivo. /admin y /empresa tienen
  * cada uno el suyo: la cookie firmada del login del panel y la clave de la
- * empresa.
+ * empresa. /materiales también, pero por otra razón: no es una sección del
+ * sitio sino el insumo del generador de PDF, y se cierra con su propia clave.
  */
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
@@ -54,6 +55,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|ingresar|vivo|presentar|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|webp|ico)$).*)',
+    '/((?!api|_next/static|_next/image|ingresar|vivo|presentar|materiales|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|webp|ico)$).*)',
   ],
 };

@@ -66,22 +66,28 @@ export const chatgpt: PlatformSeed = {
       example: '"Voy manejando hacia el cliente. Repásame los tres puntos del acta anterior."',
     },
   ],
+  // Los archivos los genera `npm run materiales`. El `href` apunta a la
+  // descarga protegida, no a public: el portal está detrás del código y el
+  // material también.
   downloads: [
     {
       title: 'Guía de prompts',
       description: 'Los 40 prompts del programa, agrupados por módulo y listos para copiar.',
       meta: 'PDF · 10 páginas',
+      href: '/api/materiales/chatgpt/guia-de-prompts.pdf',
     },
     {
       title: 'Plantilla de GPT',
       description:
         'Estructura de instrucciones, límites y archivos para armar el GPT del área en 20 minutos.',
-      meta: 'DOCX',
+      meta: 'DOCX · 3 páginas',
+      href: '/api/materiales/chatgpt/plantilla-de-gpt.docx',
     },
     {
       title: 'Checklist de revisión',
       description: 'Qué verificar antes de mandar lo que ChatGPT redactó, calculó o investigó.',
       meta: 'PDF · 1 página',
+      href: '/api/materiales/chatgpt/checklist-de-revision.pdf',
     },
   ],
   practices: [

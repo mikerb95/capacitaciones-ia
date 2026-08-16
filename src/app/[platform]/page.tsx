@@ -220,20 +220,7 @@ export default async function PlatformPage({ params, searchParams }: Params) {
               <SectionTitle kicker="Material" title="Para llevarse" />
               <div className="flex flex-col gap-2.5">
                 {platform.downloads.map((d) => (
-                  <div
-                    key={d.id}
-                    className="flex items-center gap-3 rounded-card border border-line bg-surface p-4 shadow-card"
-                  >
-                    <div className="min-w-0 flex-1">
-                      <h3 className="text-[14px] font-semibold">{d.title}</h3>
-                      {d.description && (
-                        <p className="text-[12.5px] leading-snug text-muted">{d.description}</p>
-                      )}
-                    </div>
-                    {d.meta && (
-                      <span className="flex-none font-mono text-[11.5px] text-faint">{d.meta}</span>
-                    )}
-                  </div>
+                  <Download key={d.id} {...d} />
                 ))}
               </div>
             </div>
@@ -263,5 +250,54 @@ export default async function PlatformPage({ params, searchParams }: Params) {
         </section>
       </main>
     </div>
+  );
+}
+
+/**
+ * Ficha del material. Cuando ya hay archivo generado se vuelve descarga; si
+ * todavía no lo hay, se queda como anuncio de lo que viene, sin dar un enlace
+ * que llevaría a un 404.
+ */
+function Download({
+  title,
+  description,
+  meta,
+  href,
+}: {
+  title: string;
+  description: string | null;
+  meta: string | null;
+  href: string | null;
+}) {
+  const inner = (
+    <>
+      <div className="min-w-0 flex-1">
+        <h3 className="text-[14px] font-semibold">{title}</h3>
+        {description && <p className="text-[12.5px] leading-snug text-muted">{description}</p>}
+      </div>
+      {meta && <span className="flex-none font-mono text-[11.5px] text-faint">{meta}</span>}
+      {href && (
+        <span
+          aria-hidden="true"
+          className="flex-none text-[15px] text-faint transition-colors group-hover:text-[var(--tone)]"
+        >
+          &darr;
+        </span>
+      )}
+    </>
+  );
+
+  const shell = 'flex items-center gap-3 rounded-card border border-line bg-surface p-4 shadow-card';
+
+  if (!href) return <div className={shell}>{inner}</div>;
+
+  return (
+    <a
+      href={href}
+      download
+      className={`${shell} group transition-colors hover:border-[var(--tone-line)] hover:bg-[var(--tone-soft)]`}
+    >
+      {inner}
+    </a>
   );
 }
