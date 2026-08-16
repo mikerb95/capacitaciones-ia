@@ -24,8 +24,48 @@ function intOrNull(value: string) {
 
 export type CompanyState = {
   error?: string;
-  field?: 'name' | 'contacts' | 'contract';
+  field?: 'name' | 'contacts' | 'contract' | 'logo' | 'materials';
 };
+
+/** Lo que cabe en un logo. Un logo de marca no llega ni de lejos a esto. */
+const LOGO_MAX = 512 * 1024;
+
+const LOGO_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'];
+
+/**
+ * El logo del cliente, listo para guardar como `data:` URI.
+ *
+ * Tres caminos: la casilla de quitar lo borra, un archivo nuevo lo reemplaza,
+ * y un formulario enviado sin tocar el campo deja el que ya estaba. Ese último
+ * caso es el normal al editar cualquier otro dato de la empresa, así que no
+ * puede perder el logo.
+ */
+async function logoOf(
+  formData: FormData,
+  current: string | null,
+): Promise<{ ok: true; value: string | null } | { ok: false; state: CompanyState }> {
+  if (formData.get('logoRemove')) return { ok: true, value: null };
+
+  const file = formData.get('logo');
+  if (!(file instanceof File) || file.size === 0) return { ok: true, value: current };
+
+  if (!LOGO_TYPES.includes(file.type)) {
+    return {
+      ok: false,
+      state: { error: 'El logo debe ser PNG, JPG, WEBP o SVG.', field: 'logo' },
+    };
+  }
+
+  if (file.size > LOGO_MAX) {
+    return {
+      ok: false,
+      state: { error: 'El logo pesa más de 512 KB. Manda una versión más liviana.', field: 'logo' },
+    };
+  }
+
+  const bytes = Buffer.from(await file.arrayBuffer());
+  return { ok: true, value: `data:${file.type};base64,${bytes.toString('base64')}` };
+}
 
 export type CompanyAction = (prev: CompanyState, formData: FormData) => Promise<CompanyState>;
 
@@ -40,6 +80,7 @@ function profileOf(formData: FormData) {
     contractEnd: dateOrNull(str(formData, 'contractEnd')),
     contractSessions: intOrNull(str(formData, 'contractSessions')),
     contractNotes: orNull(str(formData, 'contractNotes')),
+    materialsUntil: dateOrNull(str(formData, 'materialsUntil')),
     notes: orNull(str(formData, 'notes')),
   };
 }
@@ -83,6 +124,15 @@ function validate(profile: ReturnType<typeof profileOf>, contacts: ReturnType<ty
     return { error: 'El contrato termina antes de empezar.', field: 'contract' as const };
   }
 
+  // Una fecha ya pasada deja el material a medida invisible desde el primer
+  // día, que casi siempre es un dedazo en el año y no una decisión.
+  if (profile.materialsUntil && profile.materialsUntil < new Date()) {
+    return {
+      error: 'La fecha del material a medida ya pasó: nadie llegaría a descargarlo.',
+      field: 'materials' as const,
+    };
+  }
+
   return null;
 }
 
@@ -96,9 +146,17 @@ export async function createCompany(
   const invalid = validate(profile, contacts);
   if (invalid) return invalid;
 
+  const logo = await logoOf(formData, null);
+  if (!logo.ok) return logo.state;
+
   const [created] = await db
     .insert(companies)
-    .values({ ...profile, panelKey: await freePanelKey(), updatedAt: new Date() })
+    .values({
+      ...profile,
+      logo: logo.value,
+      panelKey: await freePanelKey(),
+      updatedAt: new Date(),
+    })
     .returning({ id: companies.id });
 
   await replaceContacts(created.id, contacts);
@@ -120,9 +178,17 @@ export async function updateCompany(
   const invalid = validate(profile, contacts);
   if (invalid) return invalid;
 
+  const [existing] = await db
+    .select({ logo: companies.logo })
+    .from(companies)
+    .where(eq(companies.id, id));
+
+  const logo = await logoOf(formData, existing?.logo ?? null);
+  if (!logo.ok) return logo.state;
+
   await db
     .update(companies)
-    .set({ ...profile, updatedAt: new Date() })
+    .set({ ...profile, logo: logo.value, updatedAt: new Date() })
     .where(eq(companies.id, id));
 
   await replaceContacts(id, contacts);

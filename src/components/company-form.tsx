@@ -14,6 +14,9 @@ export type ContactDefaults = {
 export type CompanyDefaults = {
   name: string;
   industry: string;
+  /** El logo que ya tiene guardado, como `data:` URI. */
+  logo: string;
+  materialsUntil: string;
   contractRef: string;
   contractStart: string;
   contractEnd: string;
@@ -28,6 +31,8 @@ const EMPTY_CONTACT: ContactDefaults = { name: '', role: '', email: '', phone: '
 const EMPTY: CompanyDefaults = {
   name: '',
   industry: '',
+  logo: '',
+  materialsUntil: '',
   contractRef: '',
   contractStart: '',
   contractEnd: '',
@@ -36,6 +41,59 @@ const EMPTY: CompanyDefaults = {
   notes: '',
   contacts: [EMPTY_CONTACT],
 };
+
+/**
+ * El logo del cliente, que es lo que después lleva su material a medida. Se
+ * previsualiza al escogerlo porque un logo equivocado no se nota hasta que
+ * sale impreso en catorce documentos.
+ */
+function LogoField({ current }: { current: string }) {
+  const [preview, setPreview] = useState(current);
+  const [remove, setRemove] = useState(false);
+
+  return (
+    <div className="flex items-start gap-4">
+      <span className="grid h-16 w-16 flex-none place-items-center overflow-hidden rounded-[10px] border border-line bg-surface-2">
+        {preview && !remove ? (
+          // eslint-disable-next-line @next/next/no-img-element -- es un data: URI o un blob: local
+          <img src={preview} alt="" className="max-h-12 max-w-12 object-contain" />
+        ) : (
+          <span className="text-[10px] text-faint">sin logo</span>
+        )}
+      </span>
+
+      <div className="flex flex-col gap-2">
+        <input
+          type="file"
+          name="logo"
+          accept="image/png,image/jpeg,image/webp,image/svg+xml"
+          disabled={remove}
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) setPreview(URL.createObjectURL(file));
+          }}
+          className="text-[12.5px] text-muted file:mr-3 file:rounded-[8px] file:border file:border-line file:bg-surface-2 file:px-3 file:py-1.5 file:text-[12.5px] file:font-medium file:text-ink"
+        />
+        <p className="text-[11.5px] text-faint">
+          PNG, JPG, WEBP o SVG, hasta 512 KB. Sale en la cabecera de su material junto al logo de
+          la herramienta.
+        </p>
+
+        {current && (
+          <label className="flex items-center gap-2 text-[12px] text-muted">
+            <input
+              type="checkbox"
+              name="logoRemove"
+              checked={remove}
+              onChange={(e) => setRemove(e.target.checked)}
+            />
+            Quitar el logo guardado
+          </label>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export function CompanyForm({
   action,
@@ -93,6 +151,15 @@ export function CompanyForm({
               className={field}
             />
           </Field>
+
+          <div className="flex flex-col gap-1.5 sm:col-span-2">
+            {/* Sin <Field>: adentro hay un checkbox con su propia etiqueta y las
+                etiquetas no se pueden anidar. */}
+            <span className="text-[12.5px] font-medium text-muted">
+              Logo <span className="ml-1 font-normal text-faint">opcional</span>
+            </span>
+            <LogoField current={defaults.logo} />
+          </div>
         </div>
       </Step>
 
@@ -140,6 +207,22 @@ export function CompanyForm({
               className={field}
             />
           </Field>
+
+          <div className="sm:col-span-2">
+            <Field label="Material a medida vigente hasta" hint="opcional">
+              <input
+                name="materialsUntil"
+                type="date"
+                defaultValue={defaults.materialsUntil}
+                aria-invalid={state.field === 'materials'}
+                className={field}
+              />
+              <span className="text-[11.5px] text-faint">
+                Hasta esta fecha su gente descarga el material con la marca y los casos de la
+                empresa. Después vuelve al material genérico.
+              </span>
+            </Field>
+          </div>
 
           <div className="sm:col-span-2">
             <Field label="Detalles del contrato" hint="opcional">

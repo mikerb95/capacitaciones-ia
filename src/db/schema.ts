@@ -451,6 +451,21 @@ export const companies = sqliteTable(
     id: integer('id').primaryKey({ autoIncrement: true }),
     name: text('name').notNull(),
     industry: text('industry'),
+    /**
+     * Logo del cliente, como `data:` URI, para el material a medida.
+     *
+     * Va en la base y no en un almacenamiento aparte a propósito: son uno por
+     * empresa, pesan pocos KB y hacen falta en dos sitios muy distintos (el
+     * admin y el generador de documentos, que corre en consola). Una URL
+     * externa obligaría a los dos a salir a la red para pintar un logo.
+     */
+    logo: text('logo'),
+    /**
+     * Hasta cuándo vale el material a medida de esta empresa. Sin fecha, o
+     * pasada la fecha, el portal sirve el material genérico: nadie se queda
+     * sin descargas.
+     */
+    materialsUntil: integer('materials_until', { mode: 'timestamp' }),
     // Clave del panel: se dicta o se manda por escrito al responsable. Es lo
     // único que hace falta para entrar, así que se puede rotar cuando convenga.
     panelKey: text('panel_key').notNull(),
