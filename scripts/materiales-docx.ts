@@ -3,12 +3,15 @@
  * derivan de la base: son documentos para editar, así que el contenido se
  * escribe aquí. Cada generador devuelve un Buffer listo para escribir a disco.
  */
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import {
   AlignmentType,
   BorderStyle,
   Document,
   type FileChild,
   HeadingLevel,
+  ImageRun,
   Packer,
   Paragraph,
   ShadingType,
