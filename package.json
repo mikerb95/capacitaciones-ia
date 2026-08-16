@@ -14,6 +14,7 @@
     "db:seed": "tsx --env-file=.env.local src/db/seed/index.ts",
     "db:seed:master": "tsx --env-file=.env.local src/db/seed/master.ts",
     "db:seed:demo": "tsx --env-file=.env.local src/db/seed/demo.ts",
+    "logos": "tsx scripts/gen-logo-assets.mts",
     "materiales": "tsx --env-file=.env.local scripts/build-materiales.ts"
   },
   "dependencies": {
