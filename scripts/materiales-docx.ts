@@ -270,6 +270,7 @@ export function plantillaDeGpt(): Promise<Buffer> {
 
   return buildDoc({
     platform: 'ChatGPT',
+    id: 'chatgpt',
     title: 'Plantilla de GPT',
     description: 'Estructura de instrucciones, límites y archivos para armar el GPT del área.',
     lead: [
@@ -398,6 +399,7 @@ export function plantillaDeProyecto(): Promise<Buffer> {
 
   return buildDoc({
     platform: 'Claude',
+    id: 'claude',
     title: 'Plantilla de proyecto',
     description: 'Instrucciones base y lista de archivos para armar el proyecto de un cliente.',
     lead: [
@@ -505,6 +507,7 @@ export function formatoDeSkill(): Promise<Buffer> {
 
   return buildDoc({
     platform: 'Claude',
+    id: 'claude',
     title: 'Formato de skill',
     description: 'Estructura para escribir un procedimiento de la empresa como skill.',
     lead: [
@@ -615,6 +618,7 @@ export function plantillaDeGem(): Promise<Buffer> {
 
   return buildDoc({
     platform: 'Gemini',
+    id: 'gemini',
     title: 'Plantilla de Gem',
     description: 'Estructura de instrucciones y archivos para armar el Gem del área.',
     lead: [
@@ -724,6 +728,7 @@ export function formatoParaTuCaso(): Promise<Buffer> {
 
   return buildDoc({
     platform: 'Microsoft 365 Copilot',
+    id: 'copilot',
     title: 'Formato para tu caso',
     description: 'Para escribir el caso de tu área y pasarlo a las demás.',
     lead: [
