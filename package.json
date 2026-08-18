@@ -16,10 +16,12 @@
     "db:seed:demo": "tsx --env-file=.env.local src/db/seed/demo.ts",
     "logos": "tsx scripts/gen-logo-assets.mts",
     "materiales": "tsx --env-file=.env.local scripts/build-materiales.ts",
-    "materiales:empresa": "tsx --env-file=.env.local scripts/build-materiales-empresa.mts"
+    "materiales:empresa": "tsx --env-file=.env.local scripts/build-materiales-empresa.mts",
+    "materiales:subir": "tsx --env-file=.env.local scripts/subir-materiales-empresa.mts"
   },
   "dependencies": {
     "@libsql/client": "^0.17.4",
+    "@vercel/blob": "^2.8.0",
     "country-flag-icons": "^1.6.20",
     "drizzle-orm": "^0.45.2",
     "next": "16.3.0",

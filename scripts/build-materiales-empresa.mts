@@ -9,7 +9,9 @@
  * base (de ahí salen el nombre y el logo) y el servidor levantado, porque los
  * PDF salen de las rutas imprimibles igual que los genéricos.
  *
- * Esto solo deja los archivos en local para revisarlos. Subirlos es otro paso.
+ * Esto solo deja los archivos en local para revisarlos. Subirlos a Vercel Blob,
+ * que es de donde los sirve el portal, es el paso siguiente:
+ * `npm run materiales:subir <slug>`.
  */
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -114,7 +116,7 @@ try {
 }
 
 console.log(`\nListo. Revisa los archivos en private/materiales/empresas/${slug}/`);
-console.log('Cuando estén bien, el siguiente paso es subirlos.');
+console.log(`Cuando estén bien, súbelos con \`npm run materiales:subir ${slug}\`.`);
 
 async function assertServer() {
   try {

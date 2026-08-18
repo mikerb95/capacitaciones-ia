@@ -305,6 +305,19 @@ export async function getCompany(id: number) {
   });
 }
 
+/**
+ * ¿Tiene esta empresa material a medida vigente ahora mismo? Sin fecha, o con
+ * la fecha pasada, la respuesta es que no y el portal sirve el genérico.
+ */
+export async function hasCustomMaterials(companyId: number) {
+  const [row] = await db
+    .select({ materialsUntil: companies.materialsUntil })
+    .from(companies)
+    .where(eq(companies.id, companyId));
+
+  return Boolean(row?.materialsUntil && row.materialsUntil > new Date());
+}
+
 /** Empresas para el selector del formulario de capacitación. */
 export async function getCompanyOptions() {
   return db
