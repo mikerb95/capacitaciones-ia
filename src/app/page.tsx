@@ -98,6 +98,19 @@ export default async function Home() {
             Ver comparativa
           </Link>
         </section>
+
+        <section className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-card border border-line bg-surface-2 px-5 py-4">
+          <p className="text-[13.5px] leading-relaxed text-muted">
+            ¿Te quedó una duda? Déjala anotada y la respondemos en la capacitación. Puedes
+            preguntar con tu nombre o en anónimo.
+          </p>
+          <Link
+            href="/preguntas"
+            className="rounded-[10px] border border-line bg-surface px-4 py-2 text-[13px] font-semibold text-muted transition-colors hover:border-primary hover:text-text"
+          >
+            Dejar una pregunta
+          </Link>
+        </section>
       </main>
 
       <footer className="px-4 py-6 text-center sm:px-8">
