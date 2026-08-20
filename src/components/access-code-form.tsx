@@ -196,32 +196,72 @@ export function AccessCodeForm({
 
       <Step
         number={2}
-        title="Para quién es"
-        intro="Si la dictas en nombre de una empresa que te contrató, la capacitación entra en su panel: sus responsables ven a su gente y el avance de cada uno."
+        title="Cómo llegó el trabajo"
+        intro="De aquí sale quién ve la capacitación en su panel. Cuando hay un intermediario de por medio, quien la contrata y quien la recibe dejan de ser la misma empresa, y las dos necesitan verla."
       >
-        <input type="hidden" name="contracted" value={contracted ? '1' : ''} />
+        <input type="hidden" name="modo" value={origin} />
 
-        <label className="flex cursor-pointer items-start gap-3 rounded-[10px] border border-line bg-surface-2 px-4 py-3.5 transition-colors hover:border-primary">
-          <input
-            type="checkbox"
-            checked={contracted}
-            onChange={(e) => setContracted(e.target.checked)}
-            className="mt-0.5 size-[15px] flex-none accent-primary"
-          />
-          <span>
-            <span className="block text-[13.5px] font-semibold">
-              Es parte de un contrato con una empresa, y la dicto en su nombre
-            </span>
-            <span className="mt-0.5 block text-[12.5px] leading-relaxed text-faint">
-              Déjalo sin marcar si la capacitación es tuya: aunque asista gente de una empresa,
-              nadie de su lado verá la lista de asistentes.
-            </span>
-          </span>
-        </label>
+        <div className="grid gap-2 sm:grid-cols-3">
+          {MODES.map((option) => {
+            const active = origin === option.value;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setOrigin(option.value)}
+                aria-pressed={active}
+                className={`rounded-[10px] border px-3.5 py-3 text-left transition-colors ${
+                  active
+                    ? 'border-primary bg-primary-soft text-primary'
+                    : 'border-line bg-surface text-muted hover:border-primary'
+                }`}
+              >
+                <span className="block text-[13px] font-semibold">{option.title}</span>
+                <span className="mt-0.5 block text-[11.5px] leading-snug opacity-80">
+                  {option.hint}
+                </span>
+              </button>
+            );
+          })}
+        </div>
 
-        {contracted && (
+        {origin !== 'propia' && (
           <div className="mt-4 grid gap-4">
-            <Field label="Empresa contratante">
+            {origin === 'tercerizada' && (
+              <Field
+                label="Capacitadora que te contrató"
+                hint="quien pone el contrato y factura"
+              >
+                <select
+                  name="contractorId"
+                  value={contractorId}
+                  onChange={(e) => setContractorId(e.target.value)}
+                  aria-invalid={state.field === 'contractor'}
+                  className={field}
+                >
+                  <option value="">Elige la capacitadora</option>
+                  {capacitadoras.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+                {capacitadoras.length === 0 && (
+                  <span className="text-[11.5px] leading-relaxed text-faint">
+                    Ninguna empresa está marcada como capacitadora todavía. Abre su ficha en{' '}
+                    <Link href="/admin/empresas" target="_blank" className="font-medium text-primary">
+                      Empresas
+                    </Link>{' '}
+                    y cámbiale el tipo, o crea la que falta.
+                  </span>
+                )}
+              </Field>
+            )}
+
+            <Field
+              label={origin === 'tercerizada' ? 'Empresa que recibe la capacitación' : 'Empresa que te contrató'}
+              hint="de quién es la gente que asiste"
+            >
               <select
                 name="companyId"
                 value={companyId}
@@ -230,12 +270,16 @@ export function AccessCodeForm({
                 className={field}
               >
                 <option value="">Elige la empresa</option>
-                {companies.map((c) => (
+                {clientes.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}
                   </option>
                 ))}
               </select>
+              <span className="text-[11.5px] leading-relaxed text-faint">
+                Es la que manda en el material a medida: su logo y sus casos son los que descarga
+                su gente desde el portal.
+              </span>
             </Field>
 
             {companies.length === 0 && (
