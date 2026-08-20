@@ -5,6 +5,7 @@ import { getComparison, getCompanyTrainings, getTrainingSessions } from '@/db/qu
 import { requireCompany } from '@/lib/company-access';
 import { progressLabel, progressOf, scopeSetOf } from '@/lib/progress';
 import { leaveCompanyPanel } from '../../actions';
+import { counterpart } from '../counterpart';
 
 export const dynamic = 'force-dynamic';
 
@@ -84,7 +85,9 @@ export default async function CompanyTrainingPage({ params }: Props) {
     <div className="min-h-screen bg-bg">
       <SiteHeader
         title={training.label}
-        subtitle={`${company.name} · ${fecha.format(training.createdAt)}`}
+        subtitle={[company.name, counterpart(training, company.id), fecha.format(training.createdAt)]
+          .filter(Boolean)
+          .join(' · ')}
         back={{ href: '/empresa/panel', label: 'Todas tus capacitaciones' }}
       >
         <form action={leaveCompanyPanel}>

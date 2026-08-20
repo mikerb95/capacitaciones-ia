@@ -4,6 +4,7 @@ import { getComparison, getCompanyTrainings, type CompanyTraining } from '@/db/q
 import { requireCompany } from '@/lib/company-access';
 import { progressOf, scopeSetOf } from '@/lib/progress';
 import { leaveCompanyPanel } from '../actions';
+import { counterpart } from './counterpart';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,11 +15,14 @@ const fecha = new Intl.DateTimeFormat('es', { day: '2-digit', month: 'short', ye
 function TrainingCard({
   training,
   catalog,
+  companyId,
 }: {
   training: CompanyTraining;
   catalog: Set<number>;
+  companyId: number;
 }) {
   const scopeIds = scopeSetOf(training.scope, catalog);
+  const via = counterpart(training, companyId);
 
   // Mismo criterio que el detalle: qué recorrió el grupo, no el promedio por
   // persona. Un módulo cuenta una vez, lo haya abierto uno o veinte.
@@ -50,6 +54,7 @@ function TrainingCard({
           </div>
 
           <p className="mt-1 text-[12.5px] text-faint">
+            {via ? `${via} · ` : ''}
             {fecha.format(training.createdAt)} · {training.participants.length}{' '}
             {training.participants.length === 1 ? 'asistente' : 'asistentes'} ·{' '}
             {scopeIds.size} {scopeIds.size === 1 ? 'módulo' : 'módulos'}
@@ -148,12 +153,18 @@ export default async function CompanyPanelPage() {
         {trainings.length === 0 ? (
           <p className="rounded-card border border-line bg-surface-2 p-5 text-[13.5px] leading-relaxed text-muted">
             Todavía no hay capacitaciones registradas a nombre de tu empresa. En cuanto dictemos la
-            primera, aquí verás quién se registró y hasta dónde llegó cada quien.
+            primera, aquí verás quién se registró y hasta dónde llegó cada quien. Si contratas
+            capacitaciones para tus clientes, también aparecerán aquí.
           </p>
         ) : (
           <div className="flex flex-col gap-4">
             {trainings.map((training) => (
-              <TrainingCard key={training.id} training={training} catalog={catalog} />
+              <TrainingCard
+                key={training.id}
+                training={training}
+                catalog={catalog}
+                companyId={company.id}
+              />
             ))}
           </div>
         )}
