@@ -80,7 +80,7 @@ que haría falta.
 El plan viaja en la URL (`/claude?plan=pro`), así que la ficha de cada módulo se abre con el
 mismo recorte y el enlace se puede mandar al cliente ya filtrado.
 
-Al crear el PIN se elige el **plan contratado** por la empresa en cada plataforma (paso 3 del
+Al crear el código se elige el **plan contratado** por la empresa en cada plataforma (paso 3 del
 formulario, tabla `access_code_plans`). Con eso el portal abre ya filtrado por lo que esa empresa
 paga, sin que nadie tenga que acordarse. Es una preselección, no un recorte: el selector sigue
 ahí, que es lo que sirve para mostrar en la sesión qué se gana subiendo de plan. Si además hay un
@@ -192,7 +192,7 @@ hijas con `sort_order` y borrado en cascada.
 
 ## Trabajo directo y trabajo tercerizado
 
-Una capacitación puede llegar de tres maneras, y el paso 2 del formulario del PIN es donde se
+Una capacitación puede llegar de tres maneras, y el paso 2 del formulario del código es donde se
 elige cuál:
 
 | Cómo llegó | `contracted` | `company_id` | `contractor_id` |
