@@ -187,6 +187,33 @@ hijas con `sort_order` y borrado en cascada.
   guardan `availability` y una nota con el límite concreto.
 - **Presentaciones:** `decks` con `deck_slides`, más `live_sessions` y `attendees` para el modo
   en vivo.
+- **Empresas y accesos:** `companies` (con `kind`, `panel_key` y los datos del contrato) y
+  `access_codes`, unidas por dos columnas distintas. Ver abajo.
+
+## Trabajo directo y trabajo tercerizado
+
+Una capacitación puede llegar de tres maneras, y el paso 2 del formulario del PIN es donde se
+elige cuál:
+
+| Cómo llegó | `contracted` | `company_id` | `contractor_id` |
+| --- | --- | --- | --- |
+| Es mía | `false` | vacío | vacío |
+| Me contrató la empresa | `true` | la empresa | vacío |
+| Me contrató una capacitadora | `true` | la empresa destinataria | la capacitadora |
+
+Las dos columnas de `access_codes` responden preguntas distintas y por eso no son una sola.
+`company_id` es **de quién es la gente que asiste**: manda en el material a medida, en el logo
+que sale impreso y en el plan contratado. `contractor_id` es **quién puso el contrato**, que solo
+existe cuando hay un intermediario de por medio.
+
+En el panel de `/empresa` la capacitación aparece para las dos: la capacitadora la necesita para
+reportarle a su cliente lo que se dictó, y la destinataria para ver el avance de su gente. Cada
+una la ve etiquetada desde su lado (`para X` o `contratada por Y`).
+
+`companies.kind` (`cliente`, `capacitadora` o `ambas`) es lo que recorta los dos selectores del
+formulario: en el de la capacitadora solo salen las intermediarias, y en el de quien recibe solo
+las que capacitan a su propia gente. Todo lo cargado antes de esta división quedó como `cliente`
+con `contractor_id` vacío, que es exactamente lo que era: trabajo contratado directo.
 
 ## Estado del contenido
 
