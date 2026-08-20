@@ -214,7 +214,13 @@ function CodeCard({
               key={p.id}
               className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-line px-5 py-3 last:border-0"
             >
-              <span className="min-w-0 flex-1 truncate text-[14px] font-medium">{p.name}</span>
+              <span
+                className={`min-w-0 flex-1 truncate text-[14px] font-medium ${
+                  p.name ? '' : 'text-faint'
+                }`}
+              >
+                {p.name ?? 'Sin nombre'}
+              </span>
               <span className="text-[12px] text-faint" title={progressLabel(avance)}>
                 {avance.done}/{avance.total}
               </span>

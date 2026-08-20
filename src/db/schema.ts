@@ -625,10 +625,15 @@ export const participants = sqliteTable(
     accessCodeId: integer('access_code_id')
       .notNull()
       .references(() => accessCodes.id, { onDelete: 'cascade' }),
-    name: text('name').notNull(),
-    // El nombre normalizado (minúsculas, sin tildes) es lo único que identifica
-    // a alguien aquí. No verifica nada: sirve para no duplicar a quien vuelve
-    // desde otro dispositivo, y el portal no protege nada que valga suplantar.
+    // Opcional: al portal se entra solo con el código. El nombre llega después
+    // y solo donde hace falta, como al sumarse a una sesión en vivo o al firmar
+    // una pregunta.
+    name: text('name'),
+    // Lo que identifica a la fila. Con nombre es el nombre normalizado
+    // (minúsculas, sin tildes), que evita duplicar a quien vuelve desde otro
+    // dispositivo. Sin nombre es una clave de dispositivo (`anon:<uuid>`), que
+    // mantiene el índice único y le deja su propio avance a cada navegador.
+    // No verifica nada: el portal no protege nada que valga suplantar.
     nameKey: text('name_key').notNull().default(''),
     token: text('token').notNull(),
     lastSeenAt: integer('last_seen_at', { mode: 'timestamp' })

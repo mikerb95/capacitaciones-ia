@@ -22,7 +22,7 @@ export default async function PreguntasPage() {
         subtitle={participant.accessCode.label}
         back={{ href: '/', label: 'Volver al portal' }}
       >
-        <LeaveButton name={participant.name} />
+        <LeaveButton name={participant.name ?? undefined} />
       </SiteHeader>
 
       <main className="mx-auto flex max-w-[760px] flex-col gap-5 px-4 py-8 sm:px-6">
@@ -36,7 +36,7 @@ export default async function PreguntasPage() {
             sesiones.
           </p>
 
-          <QuestionForm name={participant.name} />
+          <QuestionForm name={participant.name ?? ''} />
         </section>
 
         <section className="overflow-hidden rounded-card border border-line bg-surface shadow-card">

@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { Audience } from '@/components/audience';
 import { getLiveByPin } from '@/db/queries';
 import { joinLive } from '@/app/admin/presentaciones/actions';
+import { rememberName } from '@/lib/participants';
 import { requireParticipant } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
@@ -20,14 +21,21 @@ async function enter(formData: FormData) {
 
   const pin = ((formData.get('pin') as string) ?? '').trim();
 
-  // La identidad se lee de la sesión, nunca del formulario: así la asistencia
-  // queda atada a la capacitación con la que la persona entró, que es lo que
+  // La capacitación se lee de la sesión, nunca del formulario: así la
+  // asistencia queda atada al código con el que la persona entró, que es lo que
   // permite mostrársela después a su empresa.
   const participant = await requireParticipant();
 
   if (!pin) redirect('/vivo?error=faltan');
 
-  const session = await joinLive({ pin, participantId: participant.id, name: participant.name });
+  // Aquí sí hace falta el nombre: es una lista de asistencia, no el material.
+  // Se guarda en la sesión para no volver a pedirlo en la siguiente.
+  const name =
+    participant.name ?? (await rememberName(participant, (formData.get('nombre') as string) ?? ''));
+
+  if (!name) redirect('/vivo?error=nombre');
+
+  const session = await joinLive({ pin, participantId: participant.id, name });
   if (!session) redirect('/vivo?error=pin');
 
   const jar = await cookies();
@@ -69,7 +77,9 @@ export default async function LivePage({ searchParams }: Search) {
       ? 'Ese PIN no corresponde a ninguna sesión abierta. Confirma el número con el expositor.'
       : error === 'faltan'
         ? 'Hace falta el PIN de la sesión.'
-        : null;
+        : error === 'nombre'
+          ? 'Escribe tu nombre para quedar en la lista de asistencia.'
+          : null;
 
   return (
     <div className="grid min-h-screen place-items-center bg-bg px-4 py-10">
@@ -107,10 +117,27 @@ export default async function LivePage({ searchParams }: Search) {
             />
           </label>
 
-          <p className="rounded-[10px] bg-bg px-3 py-2.5 text-[13px] text-muted">
-            Quedas en la lista como{' '}
-            <span className="font-medium text-text">{participant.name}</span>
-          </p>
+          {participant.name ? (
+            <p className="rounded-[10px] bg-bg px-3 py-2.5 text-[13px] text-muted">
+              Quedas en la lista como{' '}
+              <span className="font-medium text-text">{participant.name}</span>
+            </p>
+          ) : (
+            <label className="flex flex-col gap-1.5">
+              <span className="text-[12.5px] font-medium text-muted">Tu nombre</span>
+              <input
+                name="nombre"
+                autoComplete="name"
+                required
+                className="w-full rounded-[10px] border border-line bg-surface px-3 py-2.5 text-[14.5px] outline-none transition-colors placeholder:text-faint focus:border-primary"
+                placeholder="Nombre y apellido"
+              />
+              <span className="text-[12px] text-faint">
+                Es para la lista de asistencia de esta sesión. Al portal se entra sin nombre; aquí
+                hace falta porque el expositor pasa lista.
+              </span>
+            </label>
+          )}
 
           <button
             type="submit"

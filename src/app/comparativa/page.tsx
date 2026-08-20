@@ -20,7 +20,7 @@ export default async function ComparativaPage() {
         subtitle={`${platforms.length} plataformas · ${totalModules} módulos`}
         back={{ href: '/', label: 'Inicio' }}
       >
-        <LeaveButton name={participant.name} />
+        <LeaveButton name={participant.name ?? undefined} />
       </SiteHeader>
 
       <main className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6">

@@ -8,12 +8,12 @@ import { db } from '@/db';
 import { accessCodes, participants } from '@/db/schema';
 import { codeProblem, normalizeCode } from '@/lib/access-code';
 import { DEMO_ACCESS } from '@/lib/demo-access';
-import { cleanName, nameKeyOf } from '@/lib/name';
+import { nameKeyOf } from '@/lib/name';
 import { SESSION_COOKIE, SESSION_MAX_AGE } from '@/lib/session';
 
 export type EnterState = {
-  errors?: { code?: string; name?: string };
-  values?: { code: string; name: string };
+  error?: string;
+  value?: string;
 };
 
 const str = (data: FormData, key: string) => ((data.get(key) as string | null) ?? '').trim();
@@ -24,32 +24,25 @@ function safeDestination(raw: string) {
 }
 
 /**
- * Entrada al portal: el código de la capacitación y el nombre, nada más. No hay
+ * Entrada al portal: el código de la capacitación y nada más. No hay nombre,
  * contraseña ni verificación, y es deliberado: detrás solo está el material que
- * el grupo ya comparte, así que no se pide ningún dato de contacto a cambio.
+ * el grupo ya comparte, así que no se pide ningún dato a cambio de mirarlo.
  */
 export async function enter(_prev: EnterState, formData: FormData): Promise<EnterState> {
   const code = normalizeCode(str(formData, 'codigo'));
-  const name = cleanName(str(formData, 'nombre'));
-  const values = { code, name };
-
-  const errors: EnterState['errors'] = {};
 
   const problem = codeProblem(code);
-  if (problem) errors.code = problem;
-  if (name.length < 2) errors.name = 'Escribe tu nombre.';
-
-  if (Object.keys(errors).length > 0) return { errors, values };
+  if (problem) return { error: problem, value: code };
 
   const accessCode = await db.query.accessCodes.findFirst({
     where: and(eq(accessCodes.code, code), eq(accessCodes.active, true)),
   });
 
   if (!accessCode) {
-    return { errors: { code: 'Ese código no está activo. Confírmalo con el expositor.' }, values };
+    return { error: 'Ese código no está activo. Confírmalo con el expositor.', value: code };
   }
 
-  const token = await tokenFor(accessCode.id, name);
+  const token = await anonymousToken(accessCode.id);
 
   const jar = await cookies();
   jar.set(SESSION_COOKIE, token, {
@@ -61,6 +54,27 @@ export async function enter(_prev: EnterState, formData: FormData): Promise<Ente
   });
 
   redirect(safeDestination(str(formData, 'destino')));
+}
+
+/**
+ * Sesión sin nombre: una fila por dispositivo, identificada por una clave
+ * propia. La clave existe solo para que el índice único de la tabla siga
+ * teniendo sentido y para que cada navegador lleve su propio avance; el nombre
+ * se pide después, y solo donde de verdad hace falta.
+ */
+async function anonymousToken(accessCodeId: number) {
+  const [row] = await db
+    .insert(participants)
+    .values({
+      accessCodeId,
+      name: null,
+      nameKey: `anon:${randomUUID()}`,
+      token: randomUUID(),
+      updatedAt: new Date(),
+    })
+    .returning({ token: participants.token });
+
+  return row.token;
 }
 
 /**

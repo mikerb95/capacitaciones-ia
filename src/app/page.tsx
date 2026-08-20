@@ -11,9 +11,6 @@ export const dynamic = 'force-dynamic';
 
 export const metadata = { title: 'Academia IA' };
 
-/** Solo el primer nombre: la portada saluda, no llena un formulario. */
-const firstName = (name: string) => name.split(' ')[0];
-
 /** El titular cuenta con palabras, y el alcance del código decide cuántas son. */
 const WORDS = ['Ninguna', 'Una', 'Dos', 'Tres', 'Cuatro', 'Cinco', 'Seis'];
 const spell = (n: number) => WORDS[n] ?? String(n);
@@ -29,14 +26,14 @@ export default async function Home() {
         <span className="flex-1 font-display text-[15px] font-semibold tracking-tight">
           Academia IA
         </span>
-        <LeaveButton name={participant.name} />
+        <LeaveButton name={participant.name ?? undefined} />
         <ThemeToggle />
       </header>
 
       <main className="mx-auto w-full max-w-[1080px] flex-1 px-4 pb-16 pt-6 sm:px-8 sm:pt-14">
         <section className="max-w-[62ch]">
           <p className="font-mono text-[12px] uppercase tracking-[0.1em] text-faint">
-            Hola, {firstName(participant.name)}
+            {participant.accessCode.label}
           </p>
           <h1 className="mt-3 font-display text-[32px] font-semibold leading-[1.15] tracking-tight sm:text-[42px]">
             {spell(platforms.length)}{' '}

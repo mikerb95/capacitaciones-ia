@@ -235,10 +235,11 @@ export default async function CompanyTrainingPage({ params }: Props) {
         </section>
 
         <p className="text-[12px] leading-relaxed text-faint">
-          La asistencia es la que cada quien declaró al entrar con su nombre: no pedimos ni
-          guardamos correo ni teléfono de tu gente, así que tómala como un registro de presencia,
-          no como una verificación de identidad. El avance cuenta los módulos que el grupo abrió en
-          el portal, sin atribuirlos a nadie en particular. Las preguntas marcadas como anónimas
+          Al material se entra solo con el código de la capacitación: no pedimos nombre, correo ni
+          teléfono, así que quien entró se cuenta por dispositivo y sin identificar. Los nombres de
+          la lista son los que cada quien declaró al sumarse a una sesión en vivo, y valen como
+          registro de presencia, no como verificación de identidad. El avance cuenta los módulos
+          que el grupo abrió en el portal, sin atribuirlos a nadie en particular. Las preguntas marcadas como anónimas
           lo son de verdad: no guardamos quién las escribió, ni aquí ni en ningún otro lado.
         </p>
       </main>

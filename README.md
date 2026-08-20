@@ -49,7 +49,7 @@ del proyecto, y correr el seed una vez contra la base de producción.
 El portal se cierra en `src/proxy.ts`. Cada sección entra por su lado: `/admin` con el login de
 `ADMIN_USER` y `ADMIN_PASS` (cookie firmada, formulario en `/admin/login`), `/empresa` con la
 clave de la empresa, `/vivo` y `/presentar` con el PIN de la sesión en vivo, y el resto del sitio
-con el registro de `/ingresar`.
+con el código de `/ingresar`.
 
 ## Actualizar contenido
 
@@ -146,9 +146,11 @@ un script que venga en el HTML importado nunca corre.
 ### Sesión en vivo
 
 1. Abres `/presentar/[slug]` y le das a **Transmitir en vivo**. Sale un PIN de cuatro dígitos.
-2. Los asistentes entran a `/vivo`, escriben el PIN y su nombre, y quedan registrados. El PIN
-   queda en una cookie, no en la URL, así que el nombre no viaja en el enlace y solo ve las
-   láminas quien pasó por el registro.
+2. Los asistentes entran a `/vivo`, escriben el PIN y su nombre, y quedan registrados. Es el
+   único lugar donde se pide el nombre, porque es una lista de asistencia: al material se entra
+   solo con el código. Queda guardado en la sesión, así que no se vuelve a preguntar. El PIN va
+   en una cookie, no en la URL, así que el nombre no viaja en el enlace y solo ve las láminas
+   quien pasó por ahí.
 3. Cada vez que avanzas, sus pantallas siguen la tuya (revisan el estado cada dos segundos).
 4. Quien quiera adelantarse puede navegar por su cuenta y volver a seguirte con un botón.
 
@@ -222,9 +224,9 @@ con `contractor_id` vacío, que es exactamente lo que era: trabajo contratado di
 
 ## Preguntas de la capacitación
 
-El asistente deja su duda en `/preguntas`. El nombre es opcional aunque la sesión ya sepa quién
-es, y el check de anónimo lo tapa del todo: marcada así, la fila no guarda ni `name` ni
-`participant_id`, así que nadie puede deshacerlo después, ni desde el admin ni desde la base.
+El asistente deja su duda en `/preguntas`. El nombre es opcional, y el check de anónimo lo tapa
+del todo: marcada así, la fila no guarda ni `name` ni `participant_id`, así que nadie puede
+deshacerlo después, ni desde el admin ni desde la base.
 
 La pregunta cuelga del código de acceso, no del participante, y por eso sobrevive a la sesión:
 queda como registro de la capacitación de esa empresa y como material para preparar la siguiente.
