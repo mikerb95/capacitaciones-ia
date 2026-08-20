@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useActionState, useState, type ReactNode } from 'react';
 import type { AccessCodeState, AccessCodeAction } from '@/app/admin/accesos/actions';
+import type { CompanyKind } from '@/db/schema';
 import { availabilityIn, entryPlan, type PlanInfo, type PlanRef } from '@/lib/plans';
 import { Field, FormError, Step, field } from './form-kit';
 
@@ -23,13 +24,21 @@ export type ScopePlatformOption = {
   modules: ScopeModuleOption[];
 };
 
-export type CompanyOption = { id: number; name: string };
+export type CompanyOption = { id: number; name: string; kind: CompanyKind };
+
+/**
+ * Cómo llegó el trabajo. Es la pregunta que ordena todo lo demás: de ella
+ * salen quién ve la capacitación en su panel y de quién es el material que
+ * descarga la gente.
+ */
+export type TrainingMode = 'propia' | 'directa' | 'tercerizada';
 
 export type AccessCodeDefaults = {
   code: string;
   label: string;
-  contracted: boolean;
+  mode: TrainingMode;
   companyId: number | null;
+  contractorId: number | null;
   notes: string;
   moduleIds: number[];
   /** Clave del plan contratado por plataforma. Sin entrada, sin plan definido. */
@@ -39,12 +48,31 @@ export type AccessCodeDefaults = {
 const EMPTY: AccessCodeDefaults = {
   code: '',
   label: '',
-  contracted: false,
+  mode: 'propia',
   companyId: null,
+  contractorId: null,
   notes: '',
   moduleIds: [],
   planKeys: {},
 };
+
+const MODES: { value: TrainingMode; title: string; hint: string }[] = [
+  {
+    value: 'propia',
+    title: 'Es mía',
+    hint: 'La dicto por mi cuenta. Nadie más ve la lista de asistentes.',
+  },
+  {
+    value: 'directa',
+    title: 'Me contrató la empresa',
+    hint: 'Trato directo con la empresa cuya gente asiste.',
+  },
+  {
+    value: 'tercerizada',
+    title: 'Me contrató una capacitadora',
+    hint: 'Un intermediario pone el contrato y la gente es de su cliente.',
+  },
+];
 
 export function AccessCodeForm({
   action,
@@ -62,8 +90,11 @@ export function AccessCodeForm({
   id?: number;
 }) {
   const [state, formAction, pending] = useActionState<AccessCodeState, FormData>(action, {});
-  const [contracted, setContracted] = useState(defaults.contracted);
+  const [mode, setMode] = useState<TrainingMode>(defaults.mode);
   const [companyId, setCompanyId] = useState(defaults.companyId ? String(defaults.companyId) : '');
+  const [contractorId, setContractorId] = useState(
+    defaults.contractorId ? String(defaults.contractorId) : '',
+  );
   const [selected, setSelected] = useState<Set<number>>(new Set(defaults.moduleIds));
   const [planKeys, setPlanKeys] = useState<Record<string, string>>(defaults.planKeys);
   // Sin recorte, el código abre todo el catálogo: es lo normal cuando la
@@ -87,6 +118,11 @@ export function AccessCodeForm({
       }
       return next;
     });
+
+  // Una capacitadora no recibe capacitaciones, y un cliente puro no contrata a
+  // nombre de otro: cada lista se queda con las que de verdad pueden ir ahí.
+  const clientes = companies.filter((c) => c.kind !== 'capacitadora');
+  const capacitadoras = companies.filter((c) => c.kind !== 'cliente');
 
   const total = platforms.reduce((n, p) => n + p.modules.length, 0);
   const chosen = everything ? total : selected.size;
