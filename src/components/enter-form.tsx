@@ -2,6 +2,7 @@
 
 import { useActionState } from 'react';
 import { enter, type EnterState } from '@/app/ingresar/actions';
+import { CODE_MAX } from '@/lib/access-code';
 
 const field =
   'w-full rounded-[10px] border border-line bg-surface px-3 py-2.5 text-[14.5px] outline-none transition-colors placeholder:text-faint focus:border-primary';
@@ -22,14 +23,16 @@ export function EnterForm({ destination }: { destination: string }) {
         <span className="text-[12.5px] font-medium text-muted">Código de la capacitación</span>
         <input
           name="codigo"
-          inputMode="numeric"
           autoComplete="off"
-          maxLength={4}
+          autoCapitalize="characters"
+          autoCorrect="off"
+          spellCheck={false}
+          maxLength={CODE_MAX}
           autoFocus
           defaultValue={state.values?.code}
           aria-invalid={Boolean(state.errors?.code)}
-          className={`${field} text-center font-mono text-[26px] tracking-[0.4em]`}
-          placeholder="0000"
+          className={`${field} text-center font-mono text-[26px] uppercase tracking-[0.3em]`}
+          placeholder="K7M4RD"
         />
         <Error message={state.errors?.code} />
       </label>

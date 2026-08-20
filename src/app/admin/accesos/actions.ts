@@ -12,6 +12,7 @@ import {
   modules,
   platformPlans,
 } from '@/db/schema';
+import { codeProblem, normalizeCode, randomCode } from '@/lib/access-code';
 import { RESERVED_CODES } from '@/lib/master-access';
 
 const str = (data: FormData, key: string) => ((data.get(key) as string | null) ?? '').trim();
@@ -26,10 +27,6 @@ export type AccessCodeAction = (
   prev: AccessCodeState,
   formData: FormData,
 ) => Promise<AccessCodeState>;
-
-function randomCode() {
-  return String(Math.floor(1000 + Math.random() * 9000));
-}
 
 type Profile = {
   label: string;
@@ -180,7 +177,7 @@ async function replacePlans(
   await db.insert(accessCodePlans).values(plans.map((p) => ({ accessCodeId, ...p })));
 }
 
-/** Crea el PIN de una capacitación, con su empresa y su alcance. */
+/** Crea el código de una capacitación, con su empresa y su alcance. */
 export async function createAccessCode(
   _prev: AccessCodeState,
   formData: FormData,
@@ -188,14 +185,15 @@ export async function createAccessCode(
   const profile = await profileOf(formData);
   if (isError(profile)) return profile;
 
-  const wanted = str(formData, 'code').replace(/\D/g, '');
+  const wanted = normalizeCode(str(formData, 'code'));
 
-  if (wanted && wanted.length !== 4) {
-    return { error: 'El PIN son exactamente 4 dígitos.', field: 'code' };
+  if (wanted) {
+    const problem = codeProblem(wanted);
+    if (problem) return { error: problem, field: 'code' };
   }
   if (wanted && RESERVED_CODES.includes(wanted)) {
     return {
-      error: 'Ese PIN está reservado para pruebas y no se puede asignar a una capacitación.',
+      error: 'Ese código está reservado para pruebas y no se puede asignar a una capacitación.',
       field: 'code',
     };
   }
@@ -212,7 +210,7 @@ export async function createAccessCode(
   if (wanted) {
     const taken = await db.query.accessCodes.findFirst({ where: eq(accessCodes.code, code) });
     if (taken) {
-      return { error: 'Ese PIN ya existe. Elige otro o deja el campo vacío.', field: 'code' };
+      return { error: 'Ese código ya existe. Elige otro o deja el campo vacío.', field: 'code' };
     }
   } else {
     // El sorteo también esquiva los reservados.
@@ -236,16 +234,16 @@ export async function createAccessCode(
   redirect(`/admin/accesos?creado=${code}`);
 }
 
-/** Edita el perfil y el alcance de un PIN ya creado. El número no se toca. */
+/** Edita el perfil y el alcance de un código ya creado. El código no se toca. */
 export async function updateAccessCode(
   _prev: AccessCodeState,
   formData: FormData,
 ): Promise<AccessCodeState> {
   const id = Number(str(formData, 'id'));
-  if (!id) return { error: 'No encuentro ese PIN.' };
+  if (!id) return { error: 'No encuentro ese código.' };
 
   const current = await db.query.accessCodes.findFirst({ where: eq(accessCodes.id, id) });
-  if (!current) return { error: 'No encuentro ese PIN.' };
+  if (!current) return { error: 'No encuentro ese código.' };
 
   const profile = await profileOf(formData);
   if (isError(profile)) return profile;

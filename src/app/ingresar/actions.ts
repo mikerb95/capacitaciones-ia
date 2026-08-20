@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import { and, eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { accessCodes, participants } from '@/db/schema';
+import { codeProblem, normalizeCode } from '@/lib/access-code';
 import { DEMO_ACCESS } from '@/lib/demo-access';
 import { cleanName, nameKeyOf } from '@/lib/name';
 import { SESSION_COOKIE, SESSION_MAX_AGE } from '@/lib/session';
@@ -28,13 +29,14 @@ function safeDestination(raw: string) {
  * el grupo ya comparte, así que no se pide ningún dato de contacto a cambio.
  */
 export async function enter(_prev: EnterState, formData: FormData): Promise<EnterState> {
-  const code = str(formData, 'codigo').replace(/\D/g, '');
+  const code = normalizeCode(str(formData, 'codigo'));
   const name = cleanName(str(formData, 'nombre'));
   const values = { code, name };
 
   const errors: EnterState['errors'] = {};
 
-  if (code.length !== 4) errors.code = 'El código son 4 dígitos.';
+  const problem = codeProblem(code);
+  if (problem) errors.code = problem;
   if (name.length < 2) errors.name = 'Escribe tu nombre.';
 
   if (Object.keys(errors).length > 0) return { errors, values };
