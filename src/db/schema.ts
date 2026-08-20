@@ -673,6 +673,54 @@ export const moduleViews = sqliteTable(
   ],
 );
 
+/* --------------------------------------------------------------- preguntas */
+
+/**
+ * Estado de una pregunta. `abierta` es lo que queda por contestar, y es lo que
+ * el expositor mira antes de la siguiente sesión; `respondida` guarda además
+ * la respuesta, que es lo que convierte el buzón en material de consulta.
+ */
+export const QUESTION_STATUS = ['abierta', 'respondida'] as const;
+
+/**
+ * Pregunta que deja alguien de la capacitación. Se guarda contra el código y
+ * no contra la persona, porque lo que vale para la siguiente sesión es la duda
+ * del grupo: quién la hizo es opcional y puede no estar.
+ *
+ * Anónima significa anónima: no se guarda ni el nombre ni el participante, así
+ * que ni el admin ni el panel de la empresa pueden deshacerlo. Es el precio de
+ * que la gente pregunte lo que de verdad no sabe.
+ */
+export const questions = sqliteTable(
+  'questions',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    accessCodeId: integer('access_code_id')
+      .notNull()
+      .references(() => accessCodes.id, { onDelete: 'cascade' }),
+    // Quién preguntó, cuando quiso decirlo. Nulo en las anónimas y en las de
+    // quien ya no tiene registro.
+    participantId: integer('participant_id').references(() => participants.id, {
+      onDelete: 'set null',
+    }),
+    // Copia del nombre al momento de preguntar: la pregunta sigue firmada igual
+    // aunque después se borre el registro de la persona.
+    name: text('name'),
+    anonymous: integer('anonymous', { mode: 'boolean' }).notNull().default(false),
+    body: text('body').notNull(),
+    status: text('status', { enum: QUESTION_STATUS }).notNull().default('abierta'),
+    // La respuesta la escribe el expositor desde el admin, durante la sesión o
+    // después. Queda a la vista de quien preguntó y del panel de la empresa.
+    answer: text('answer'),
+    answeredAt: integer('answered_at', { mode: 'timestamp' }),
+    ...timestamps,
+  },
+  (t) => [
+    index('questions_code_idx').on(t.accessCodeId),
+    index('questions_participant_idx').on(t.participantId),
+  ],
+);
+
 /* ------------------------------------------------------------------ relations */
 
 export const platformsRelations = relations(platforms, ({ many }) => ({
@@ -818,6 +866,7 @@ export const accessCodesRelations = relations(accessCodes, ({ one, many }) => ({
   participants: many(participants),
   scope: many(accessCodeModules),
   plans: many(accessCodePlans),
+  questions: many(questions),
 }));
 
 export const accessCodePlansRelations = relations(accessCodePlans, ({ one }) => ({
@@ -849,6 +898,18 @@ export const participantsRelations = relations(participants, ({ one, many }) => 
     references: [accessCodes.id],
   }),
   views: many(moduleViews),
+  questions: many(questions),
+}));
+
+export const questionsRelations = relations(questions, ({ one }) => ({
+  accessCode: one(accessCodes, {
+    fields: [questions.accessCodeId],
+    references: [accessCodes.id],
+  }),
+  participant: one(participants, {
+    fields: [questions.participantId],
+    references: [participants.id],
+  }),
 }));
 
 export const moduleViewsRelations = relations(moduleViews, ({ one }) => ({

@@ -62,7 +62,7 @@ function CodeCard({
     <section className="overflow-hidden rounded-card border border-line bg-surface shadow-card">
       <div className="flex flex-wrap items-center gap-x-4 gap-y-3 border-b border-line px-5 py-4">
         <span
-          className={`font-mono text-[28px] font-semibold tracking-[0.2em] ${
+          className={`break-all font-mono text-[26px] font-semibold tracking-[0.15em] ${
             code.active ? 'text-text' : 'text-faint line-through'
           }`}
         >
