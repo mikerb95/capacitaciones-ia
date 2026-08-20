@@ -1,4 +1,4 @@
-import { asc, desc, eq, and, or, isNull, sql } from 'drizzle-orm';
+import { asc, desc, eq, and, inArray, or, isNull, sql } from 'drizzle-orm';
 import { db } from './index';
 import {
   accessCodeModules,
@@ -13,6 +13,7 @@ import {
   participants,
   platformPlans,
   platforms,
+  questions,
 } from './schema';
 
 const bySort = <T extends { sortOrder: unknown }>(t: T) => asc(t.sortOrder as never);
@@ -465,6 +466,43 @@ export async function recordModuleView(participantId: number, moduleId: number) 
       set: { views: sql`${moduleViews.views} + 1`, lastSeenAt: now },
     });
 }
+
+/* ---------------------------------------------------------------- preguntas */
+
+/**
+ * Buzón de una capacitación: lo que preguntó el grupo, lo más nuevo arriba.
+ * Es el registro que se mira antes de la siguiente sesión, así que trae tanto
+ * lo pendiente como lo ya contestado.
+ */
+export async function getTrainingQuestions(accessCodeId: number) {
+  return db.query.questions.findMany({
+    where: eq(questions.accessCodeId, accessCodeId),
+    orderBy: (q, { desc }) => [desc(q.createdAt)],
+  });
+}
+
+/**
+ * Cuántas preguntas tiene cada capacitación y cuántas siguen sin respuesta.
+ * Sirve para la lista del panel y la del admin, que solo necesitan el número
+ * y no el texto.
+ */
+export async function getQuestionCounts(accessCodeIds: number[]) {
+  if (accessCodeIds.length === 0) return new Map<number, { total: number; open: number }>();
+
+  const rows = await db
+    .select({
+      accessCodeId: questions.accessCodeId,
+      total: sql<number>`count(*)`,
+      open: sql<number>`sum(case when ${questions.status} = 'abierta' then 1 else 0 end)`,
+    })
+    .from(questions)
+    .where(inArray(questions.accessCodeId, accessCodeIds))
+    .groupBy(questions.accessCodeId);
+
+  return new Map(rows.map((r) => [r.accessCodeId, { total: r.total, open: r.open }]));
+}
+
+export type QuestionRow = Awaited<ReturnType<typeof getTrainingQuestions>>[number];
 
 export type DeckRow = Awaited<ReturnType<typeof getDecks>>[number];
 export type DeckFull = NonNullable<Awaited<ReturnType<typeof getDeck>>>;
