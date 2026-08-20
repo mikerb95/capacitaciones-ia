@@ -18,9 +18,21 @@ function contractWindow(company: CompanyRow) {
   return null;
 }
 
+/** Etiqueta del tipo, solo cuando dice algo: casi todas son clientes. */
+const KIND_LABEL: Record<CompanyRow['kind'], string | null> = {
+  cliente: null,
+  capacitadora: 'Capacitadora',
+  ambas: 'Cliente y capacitadora',
+};
+
 function CompanyCard({ company }: { company: CompanyRow }) {
   const contratadas = company.accessCodes.filter((c) => c.contracted);
-  const asistentes = contratadas.reduce((n, c) => n + c.participants.length, 0);
+  const intermediadas = company.brokeredCodes.filter((c) => c.contracted);
+  const asistentes = [...contratadas, ...intermediadas].reduce(
+    (n, c) => n + c.participants.length,
+    0,
+  );
+  const kind = KIND_LABEL[company.kind];
   const window = contractWindow(company);
   const lead = company.contacts[0];
 
@@ -39,6 +51,11 @@ function CompanyCard({ company }: { company: CompanyRow }) {
             {company.industry && (
               <span className="text-[12px] text-faint">{company.industry}</span>
             )}
+            {kind && (
+              <span className="rounded-full bg-primary-soft px-2 py-0.5 text-[11px] font-semibold text-primary">
+                {kind}
+              </span>
+            )}
           </div>
 
           <p className="mt-1 text-[12.5px] text-faint">
@@ -46,6 +63,7 @@ function CompanyCard({ company }: { company: CompanyRow }) {
             {contratadas.length === 1
               ? 'capacitación bajo contrato'
               : 'capacitaciones bajo contrato'}
+            {intermediadas.length > 0 ? ` · ${intermediadas.length} para sus clientes` : ''}
             {' · '}
             {asistentes} {asistentes === 1 ? 'asistente' : 'asistentes'}
             {company.contractSessions ? ` · ${company.contractSessions} contratadas` : ''}
@@ -87,7 +105,7 @@ export default async function EmpresasPage() {
     <div className="min-h-screen bg-bg">
       <SiteHeader
         title="Empresas"
-        subtitle="Las empresas que te contratan, su contrato, sus responsables y la clave con la que entran a su panel."
+        subtitle="Las que reciben tus capacitaciones y las que te subcontratan para dárselas a sus clientes, con su contrato, sus responsables y la clave de su panel."
         back={{ href: '/admin', label: 'Administrar contenido' }}
       >
         <Link

@@ -82,12 +82,13 @@ function CodeCard({
             {code.contracted && (
               <span className="inline-flex items-center gap-1.5 rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-semibold text-accent">
                 <span aria-hidden="true" className="size-1.5 rounded-full bg-accent" />
-                Bajo contrato
+                {code.contractor ? 'Tercerizada' : 'Bajo contrato'}
               </span>
             )}
           </div>
           <p className="truncate text-[12.5px] text-faint">
             {code.company ? `${code.label} · ` : ''}
+            {code.contractor ? `contratada por ${code.contractor.name} · ` : ''}
             {code.active ? 'Activo' : 'Cerrado'} · {code.participants.length}{' '}
             {code.participants.length === 1 ? 'registrado' : 'registrados'}
           </p>
@@ -238,7 +239,7 @@ export default async function AccesosPage({ searchParams }: Props) {
     <div className="min-h-screen bg-bg">
       <SiteHeader
         title="Códigos de acceso"
-        subtitle="La llave que entregas al inicio de cada capacitación, con su empresa, su alcance y quienes entraron."
+        subtitle="La llave que entregas al inicio de cada capacitación, con quién la contrató, quién la recibe, su alcance y quienes entraron."
         back={{ href: '/admin', label: 'Administrar contenido' }}
       >
         <Link
