@@ -38,6 +38,10 @@ export default async function EmpresaPage({ params, searchParams }: Props) {
   const contratadas = company.accessCodes.filter((c) => c.contracted);
   const sueltas = company.accessCodes.filter((c) => !c.contracted);
   const asistentes = contratadas.reduce((n, c) => n + c.participants.length, 0);
+  // Las que contrató para terceros: no son suyas, pero las ve en su panel y le
+  // cuentan como trabajo hecho, así que aquí van en su propia lista.
+  const intermediadas = company.brokeredCodes.filter((c) => c.contracted);
+  const asistentesIntermediados = intermediadas.reduce((n, c) => n + c.participants.length, 0);
 
   return (
     <div className="min-h-screen bg-bg">
@@ -74,8 +78,9 @@ export default async function EmpresaPage({ params, searchParams }: Props) {
                 <Link href="/empresa" className="font-medium text-primary">
                   /empresa
                 </Link>{' '}
-                y ven a su gente y el avance de cada uno. Solo aparecen las capacitaciones marcadas
-                como dictadas bajo contrato, y el teléfono de los asistentes no se muestra.
+                y ven las capacitaciones que recibió su gente y las que contrataron para otros.
+                Solo aparecen las marcadas como dictadas bajo contrato, y el teléfono de los
+                asistentes no se muestra.
               </p>
             </div>
 
@@ -109,6 +114,56 @@ export default async function EmpresaPage({ params, searchParams }: Props) {
           </div>
         </section>
 
+        {/* --------------------------------- capacitaciones que contrató */}
+        {intermediadas.length > 0 && (
+          <section className="overflow-hidden rounded-card border border-line bg-surface shadow-card">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-line px-5 py-4">
+              <h2 className="font-display text-[15.5px] font-semibold tracking-tight">
+                Contratadas para sus clientes
+              </h2>
+              <span className="text-[12.5px] text-faint">
+                {asistentesIntermediados}{' '}
+                {asistentesIntermediados === 1 ? 'asistente' : 'asistentes'} en total
+              </span>
+            </div>
+
+            <ul>
+              {intermediadas.map((code) => (
+                <li
+                  key={code.id}
+                  className="flex flex-wrap items-center gap-x-4 gap-y-1.5 border-b border-line px-5 py-3 last:border-0"
+                >
+                  <span className="font-mono text-[15px] font-semibold tracking-[0.14em] text-muted">
+                    {code.code}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-[13.5px] font-medium">
+                    {code.label}
+                  </span>
+                  {code.company && (
+                    <Link
+                      href={`/admin/empresas/${code.company.id}`}
+                      className="truncate text-[12px] text-faint transition-colors hover:text-primary"
+                    >
+                      para {code.company.name}
+                    </Link>
+                  )}
+                  <span className="text-[12px] text-faint">
+                    {code.participants.length}{' '}
+                    {code.participants.length === 1 ? 'asistente' : 'asistentes'}
+                  </span>
+                  <span className="text-[12px] text-faint">{fecha.format(code.createdAt)}</span>
+                  <Link
+                    href={`/admin/accesos/${code.id}`}
+                    className="rounded-md bg-surface-2 px-2.5 py-1 text-[12.5px] font-medium text-text transition-colors hover:bg-primary-soft hover:text-primary"
+                  >
+                    Editar
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
         {/* ------------------------------------------- capacitaciones */}
         <section className="overflow-hidden rounded-card border border-line bg-surface shadow-card">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-line px-5 py-4">
@@ -128,8 +183,9 @@ export default async function EmpresaPage({ params, searchParams }: Props) {
 
           {company.accessCodes.length === 0 ? (
             <p className="px-5 py-4 text-[13px] leading-relaxed text-faint">
-              Todavía no hay capacitaciones de esta empresa. Crea el PIN, marca que la dictas en su
-              nombre y elígela como contratante.
+              {company.kind === 'capacitadora'
+                ? 'Esta empresa es una capacitadora: su gente no asiste, contrata para la de otros. Sus capacitaciones salen en la lista de arriba.'
+                : 'Todavía no hay capacitaciones de esta empresa. Crea el PIN, marca cómo llegó el trabajo y elígela como la empresa que recibe la capacitación.'}
             </p>
           ) : (
             <ul>
@@ -144,6 +200,15 @@ export default async function EmpresaPage({ params, searchParams }: Props) {
                   <span className="min-w-0 flex-1 truncate text-[13.5px] font-medium">
                     {code.label}
                   </span>
+                  {code.contractor && (
+                    <Link
+                      href={`/admin/empresas/${code.contractor.id}`}
+                      className="truncate text-[12px] text-faint transition-colors hover:text-primary"
+                      title="La contrató una capacitadora, no ellos directamente."
+                    >
+                      vía {code.contractor.name}
+                    </Link>
+                  )}
                   {!code.contracted && (
                     <span
                       className="rounded-full bg-surface-2 px-2 py-0.5 text-[11px] font-semibold text-faint"
