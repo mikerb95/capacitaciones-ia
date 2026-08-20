@@ -1,4 +1,4 @@
-import { asc, desc, eq, and, isNull, sql } from 'drizzle-orm';
+import { asc, desc, eq, and, or, isNull, sql } from 'drizzle-orm';
 import { db } from './index';
 import {
   accessCodeModules,
@@ -197,6 +197,7 @@ export async function getAccessCodes() {
     orderBy: (c, { desc }) => [desc(c.active), desc(c.createdAt)],
     with: {
       company: { columns: { id: true, name: true, industry: true } },
+      contractor: { columns: { id: true, name: true } },
       participants: {
         orderBy: (p, { desc }) => [desc(p.createdAt)],
         with: { views: { columns: { moduleId: true } } },
@@ -213,6 +214,7 @@ export async function getAccessCode(id: number) {
     where: eq(accessCodes.id, id),
     with: {
       company: { columns: { id: true, name: true } },
+      contractor: { columns: { id: true, name: true } },
       scope: { columns: { moduleId: true } },
       plans: { with: { plan: { columns: { key: true } } } },
     },
@@ -287,6 +289,14 @@ export async function getCompanies() {
         orderBy: (c, { desc }) => [desc(c.createdAt)],
         with: { participants: { columns: { id: true } } },
       },
+      brokeredCodes: {
+        columns: { id: true, code: true, label: true, active: true, contracted: true },
+        orderBy: (c, { desc }) => [desc(c.createdAt)],
+        with: {
+          company: { columns: { id: true, name: true } },
+          participants: { columns: { id: true } },
+        },
+      },
     },
   });
 }
@@ -299,7 +309,17 @@ export async function getCompany(id: number) {
       contacts: { orderBy: byOrder },
       accessCodes: {
         orderBy: (c, { desc }) => [desc(c.createdAt)],
-        with: { participants: { columns: { id: true } } },
+        with: {
+          contractor: { columns: { id: true, name: true } },
+          participants: { columns: { id: true } },
+        },
+      },
+      brokeredCodes: {
+        orderBy: (c, { desc }) => [desc(c.createdAt)],
+        with: {
+          company: { columns: { id: true, name: true } },
+          participants: { columns: { id: true } },
+        },
       },
     },
   });
@@ -318,10 +338,14 @@ export async function hasCustomMaterials(companyId: number) {
   return Boolean(row?.materialsUntil && row.materialsUntil > new Date());
 }
 
-/** Empresas para el selector del formulario de capacitación. */
+/**
+ * Empresas para los selectores del formulario de capacitación. Va el `kind`
+ * porque el formulario tiene dos listas, la de quien recibe y la de quien
+ * contrata, y cada una se queda con las que corresponden.
+ */
 export async function getCompanyOptions() {
   return db
-    .select({ id: companies.id, name: companies.name })
+    .select({ id: companies.id, name: companies.name, kind: companies.kind })
     .from(companies)
     .orderBy(asc(companies.name));
 }
@@ -331,13 +355,31 @@ export async function getCompanyOptions() {
  * dictadas bajo contrato, con su gente y los módulos que cada uno recorrió.
  * El teléfono no sale de aquí: lo dieron para la capacitación, no para la
  * empresa.
+ *
+ * Entran las que recibió su gente y las que contrató para un tercero. Una
+ * capacitadora tiene que poder reportarle a su cliente lo que se dictó, y sin
+ * esto su panel saldría vacío justo cuando más lo necesita.
  */
 export async function getCompanyTrainings(companyId: number) {
   return db.query.accessCodes.findMany({
-    where: and(eq(accessCodes.companyId, companyId), eq(accessCodes.contracted, true)),
+    where: and(
+      eq(accessCodes.contracted, true),
+      or(eq(accessCodes.companyId, companyId), eq(accessCodes.contractorId, companyId)),
+    ),
     orderBy: (c, { desc }) => [desc(c.createdAt)],
-    columns: { id: true, code: true, label: true, active: true, createdAt: true, notes: true },
+    columns: {
+      id: true,
+      code: true,
+      label: true,
+      active: true,
+      createdAt: true,
+      notes: true,
+      companyId: true,
+      contractorId: true,
+    },
     with: {
+      company: { columns: { id: true, name: true } },
+      contractor: { columns: { id: true, name: true } },
       scope: { columns: { moduleId: true } },
       plans: {
         with: {

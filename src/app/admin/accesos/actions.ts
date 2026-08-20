@@ -19,7 +19,7 @@ const orNull = (value: string) => (value.length ? value : null);
 
 export type AccessCodeState = {
   error?: string;
-  field?: 'code' | 'label' | 'company' | 'scope';
+  field?: 'code' | 'label' | 'company' | 'contractor' | 'scope';
 };
 
 export type AccessCodeAction = (
@@ -31,37 +31,79 @@ function randomCode() {
   return String(Math.floor(1000 + Math.random() * 9000));
 }
 
+type Profile = {
+  label: string;
+  contracted: boolean;
+  companyId: number | null;
+  contractorId: number | null;
+  notes: string | null;
+};
+
 /**
- * Datos de la capacitación. La empresa solo se guarda si está marcado que se
- * dicta bajo contrato: desmarcar la casilla desengancha el PIN de su panel.
+ * Datos de la capacitación, según cómo llegó el trabajo.
+ *
+ * `propia` no engancha ninguna empresa. `directa` guarda a la destinataria, que
+ * fue la que contrató. `tercerizada` guarda además a la capacitadora que puso
+ * el contrato: son dos empresas distintas y las dos verán la capacitación en su
+ * panel, cada una por su lado.
  */
-async function profileOf(formData: FormData): Promise<
-  { label: string; contracted: boolean; companyId: number | null; notes: string | null } | AccessCodeState
-> {
-  const contracted = str(formData, 'contracted') === '1';
-  const wanted = Number(str(formData, 'companyId'));
+async function profileOf(formData: FormData): Promise<Profile | AccessCodeState> {
+  const mode = str(formData, 'modo');
+  const contracted = mode === 'directa' || mode === 'tercerizada';
 
-  let companyId: number | null = null;
-
-  if (contracted) {
-    if (!wanted) {
-      return {
-        error: 'Elige la empresa contratante, o desmarca que la dictas en su nombre.',
-        field: 'company',
-      };
-    }
-    // La empresa se resuelve contra la base: el formulario no decide qué existe.
-    const found = await db.query.companies.findFirst({ where: eq(companies.id, wanted) });
-    if (!found) return { error: 'No encuentro esa empresa.', field: 'company' };
-    companyId = found.id;
-  }
-
-  return {
+  const base = {
     label: str(formData, 'label') || 'Capacitación sin nombre',
-    contracted,
-    companyId,
     notes: orNull(str(formData, 'notes')),
   };
+
+  if (!contracted) return { ...base, contracted: false, companyId: null, contractorId: null };
+
+  const company = await findCompany(formData, 'companyId');
+  if (!company) {
+    return {
+      error: 'Elige la empresa que recibe la capacitación, o marca que la capacitación es tuya.',
+      field: 'company',
+    };
+  }
+
+  if (mode === 'directa') {
+    return { ...base, contracted, companyId: company.id, contractorId: null };
+  }
+
+  const contractor = await findCompany(formData, 'contractorId');
+  if (!contractor) {
+    return {
+      error: 'Elige la capacitadora que te contrató, o marca que contrataron directo.',
+      field: 'contractor',
+    };
+  }
+
+  // Una empresa que se contrata a sí misma es trabajo directo con un rodeo, y
+  // dejarlo pasar duplicaría la capacitación en su propio panel.
+  if (contractor.id === company.id) {
+    return {
+      error: `${contractor.name} no puede ser a la vez la capacitadora y la destinataria. Si te contrató para su propia gente, es trabajo directo.`,
+      field: 'contractor',
+    };
+  }
+
+  if (contractor.kind === 'cliente') {
+    return {
+      error: `${contractor.name} está marcada como cliente. Cámbiale el tipo a capacitadora en su ficha para poder contratar a nombre de otros.`,
+      field: 'contractor',
+    };
+  }
+
+  return { ...base, contracted, companyId: company.id, contractorId: contractor.id };
+}
+
+/** La empresa se resuelve contra la base: el formulario no decide qué existe. */
+async function findCompany(formData: FormData, key: string) {
+  const wanted = Number(str(formData, key));
+  if (!wanted) return null;
+
+  const found = await db.query.companies.findFirst({ where: eq(companies.id, wanted) });
+  return found ?? null;
 }
 
 const isError = (value: object): value is AccessCodeState => 'error' in value;

@@ -99,6 +99,13 @@
       "when": 1786906431612,
       "tag": "0013_material_a_medida",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "6",
+      "when": 1787194194849,
+      "tag": "0014_trabajo_tercerizado",
+      "breakpoints": true
     }
   ]
 }

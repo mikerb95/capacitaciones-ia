@@ -441,9 +441,20 @@ export const attendees = sqliteTable(
 /* ------------------------------------------------------------------ empresas */
 
 /**
- * Empresa que contrata las capacitaciones y en cuyo nombre se dictan. Tiene
- * panel propio: sus responsables entran con `panelKey` y ven a su gente y el
- * avance de cada uno, sin pasar por el admin.
+ * Qué papel juega la empresa en las capacitaciones.
+ *
+ * `cliente` es quien recibe la capacitación: su gente asiste. `capacitadora`
+ * es el intermediario que contrata el trabajo para dictárselo a un tercero, y
+ * nunca es el destinatario. `ambas` es la que hace las dos cosas: unas veces
+ * capacita a su propia gente, otras te subcontrata para sus clientes.
+ */
+export const COMPANY_KINDS = ['cliente', 'capacitadora', 'ambas'] as const;
+
+/**
+ * Empresa que participa en las capacitaciones, sea porque las recibe, porque
+ * las contrata para un tercero, o ambas. Tiene panel propio: sus responsables
+ * entran con `panelKey` y ven las capacitaciones que le tocan, sin pasar por
+ * el admin.
  */
 export const companies = sqliteTable(
   'companies',
@@ -451,6 +462,11 @@ export const companies = sqliteTable(
     id: integer('id').primaryKey({ autoIncrement: true }),
     name: text('name').notNull(),
     industry: text('industry'),
+    /**
+     * De qué lado está esta empresa. Recorta los selectores del PIN: en el de
+     * la capacitadora no aparecen los clientes puros, y al revés.
+     */
+    kind: text('kind', { enum: COMPANY_KINDS }).notNull().default('cliente'),
     /**
      * Logo del cliente, como `data:` URI, para el material a medida.
      *
@@ -516,12 +532,29 @@ export const accessCodes = sqliteTable(
     code: text('code').notNull(),
     label: text('label').notNull(),
     /**
-     * La capacitación se dicta bajo contrato con una empresa, en su nombre.
-     * Con esto marcado la capacitación aparece en el panel de la empresa; sin
-     * marcar es una capacitación propia y la empresa no ve nada de ella.
+     * La capacitación se dicta bajo contrato, en nombre de una empresa. Con
+     * esto marcado la capacitación aparece en los paneles de las empresas
+     * involucradas; sin marcar es una capacitación propia y nadie más la ve.
      */
     contracted: integer('contracted', { mode: 'boolean' }).notNull().default(false),
+    /**
+     * La empresa destinataria: de quién es la gente que asiste. Es la que
+     * manda en todo lo que se ve del lado del asistente, su material a medida
+     * y su logo, porque es la empresa a la que él pertenece.
+     */
     companyId: integer('company_id').references(() => companies.id, { onDelete: 'set null' }),
+    /**
+     * La capacitadora que contrató el trabajo, cuando es tercerizado. Vacío
+     * cuando la destinataria contrató directo, que es el caso normal.
+     *
+     * Va aparte de `companyId` porque quien paga y quien recibe dejan de ser
+     * la misma empresa en cuanto hay un intermediario, y las dos necesitan
+     * cosas distintas: la capacitadora quiere la asistencia para reportarle a
+     * su cliente, la destinataria quiere el avance de su gente.
+     */
+    contractorId: integer('contractor_id').references(() => companies.id, {
+      onDelete: 'set null',
+    }),
     notes: text('notes'),
     active: integer('active', { mode: 'boolean' }).notNull().default(true),
     // Código maestro de pruebas: no se cierra, no se borra y su número queda
@@ -758,7 +791,11 @@ export const attendeesRelations = relations(attendees, ({ one }) => ({
 
 export const companiesRelations = relations(companies, ({ many }) => ({
   contacts: many(companyContacts),
-  accessCodes: many(accessCodes),
+  // Las que recibe su gente, y las que contrató para otros. Van con nombre
+  // explícito porque las dos salen de la misma tabla y drizzle no adivina
+  // cuál columna es cuál.
+  accessCodes: many(accessCodes, { relationName: 'destinataria' }),
+  brokeredCodes: many(accessCodes, { relationName: 'capacitadora' }),
 }));
 
 export const companyContactsRelations = relations(companyContacts, ({ one }) => ({
@@ -766,7 +803,16 @@ export const companyContactsRelations = relations(companyContacts, ({ one }) => 
 }));
 
 export const accessCodesRelations = relations(accessCodes, ({ one, many }) => ({
-  company: one(companies, { fields: [accessCodes.companyId], references: [companies.id] }),
+  company: one(companies, {
+    fields: [accessCodes.companyId],
+    references: [companies.id],
+    relationName: 'destinataria',
+  }),
+  contractor: one(companies, {
+    fields: [accessCodes.contractorId],
+    references: [companies.id],
+    relationName: 'capacitadora',
+  }),
   participants: many(participants),
   scope: many(accessCodeModules),
   plans: many(accessCodePlans),
@@ -832,5 +878,6 @@ export type AccessCodeModule = typeof accessCodeModules.$inferSelect;
 export type AccessCodePlan = typeof accessCodePlans.$inferSelect;
 export type Participant = typeof participants.$inferSelect;
 export type Company = typeof companies.$inferSelect;
+export type CompanyKind = (typeof COMPANY_KINDS)[number];
 export type CompanyContact = typeof companyContacts.$inferSelect;
 export type ModuleView = typeof moduleViews.$inferSelect;
