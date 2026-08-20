@@ -463,7 +463,7 @@ export const companies = sqliteTable(
     name: text('name').notNull(),
     industry: text('industry'),
     /**
-     * De qué lado está esta empresa. Recorta los selectores del PIN: en el de
+     * De qué lado está esta empresa. Recorta los selectores del código: en el de
      * la capacitadora no aparecen los clientes puros, y al revés.
      */
     kind: text('kind', { enum: COMPANY_KINDS }).notNull().default('cliente'),
@@ -522,8 +522,10 @@ export const companyContacts = sqliteTable(
 /* ------------------------------------------------------------------- acceso */
 
 /**
- * Código de 4 dígitos que se entrega al inicio de una capacitación. Sirve de
- * llave para todo el sitio público: sin uno activo no se entra.
+ * Código alfanumérico que se entrega al inicio de una capacitación. Sirve de
+ * llave para todo el sitio público: sin uno activo no se entra. Se guarda en
+ * mayúsculas y sin separadores, que es la forma en que llega normalizado desde
+ * el formulario de ingreso.
  */
 export const accessCodes = sqliteTable(
   'access_codes',
@@ -557,8 +559,8 @@ export const accessCodes = sqliteTable(
     }),
     notes: text('notes'),
     active: integer('active', { mode: 'boolean' }).notNull().default(true),
-    // Código maestro de pruebas: no se cierra, no se borra y su número queda
-    // reservado, así nunca se le entrega a una capacitación real.
+    // Código maestro de pruebas: no se cierra, no se borra y su clave queda
+    // reservada, así nunca se le entrega a una capacitación real.
     system: integer('system', { mode: 'boolean' }).notNull().default(false),
     ...timestamps,
   },

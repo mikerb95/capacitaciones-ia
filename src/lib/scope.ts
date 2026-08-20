@@ -4,7 +4,7 @@ import { requireParticipant } from './session';
 
 /**
  * Alcance de una capacitación: los módulos de IA que el admin dejó marcados al
- * crear el PIN. `null` significa "sin recorte", es decir, todo el catálogo: así
+ * crear el código. `null` significa "sin recorte", es decir, todo el catálogo: así
  * los códigos viejos (y el maestro de pruebas) siguen viendo todo.
  */
 export type Scope = {

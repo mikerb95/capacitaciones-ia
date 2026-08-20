@@ -230,9 +230,9 @@ export default async function AccesosPage({ searchParams }: Props) {
   const totalModules = index.size;
 
   const message = creado
-    ? `PIN ${creado} creado y activo.`
+    ? `Código ${creado} creado y activo.`
     : guardado
-      ? `PIN ${guardado} actualizado.`
+      ? `Código ${guardado} actualizado.`
       : null;
 
   return (
@@ -258,7 +258,7 @@ export default async function AccesosPage({ searchParams }: Props) {
           href="/admin/accesos/nuevo"
           className="rounded-[10px] bg-primary px-3 py-2 text-[12.5px] font-semibold text-white transition-opacity hover:opacity-90"
         >
-          Nuevo PIN
+          Nuevo código
         </Link>
         <AdminLogoutButton />
       </SiteHeader>

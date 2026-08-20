@@ -203,7 +203,7 @@ export function CompanyForm({
               })}
             </div>
             <span className="text-[11.5px] leading-relaxed text-faint">
-              Recorta los selectores al crear un PIN: en el de la capacitadora solo salen las
+              Recorta los selectores al crear un código: en el de la capacitadora solo salen las
               intermediarias, y en el de quien recibe solo las que capacitan a su propia gente.
             </span>
           </div>

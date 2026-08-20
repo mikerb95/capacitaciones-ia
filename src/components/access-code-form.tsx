@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useActionState, useState, type ReactNode } from 'react';
 import type { AccessCodeState, AccessCodeAction } from '@/app/admin/accesos/actions';
 import type { CompanyKind } from '@/db/schema';
+import { CODE_MAX } from '@/lib/access-code';
 import { availabilityIn, entryPlan, type PlanInfo, type PlanRef } from '@/lib/plans';
 import { Field, FormError, Step, field } from './form-kit';
 
@@ -159,21 +160,23 @@ export function AccessCodeForm({
 
       <Step
         number={1}
-        title="El PIN"
-        intro="Los cuatro dígitos que dictas al abrir la sesión. Déjalo vacío y se sortea uno libre."
+        title="El código"
+        intro="La clave que dictas al abrir la sesión: letras y números, hasta 12. Puedes escribir uno que se recuerde fácil, o dejarlo vacío y se sortea uno libre."
       >
         <div className="flex flex-wrap items-end gap-3">
-          <Field label="PIN" hint={mode === 'edit' ? 'no se cambia' : 'opcional'}>
+          <Field label="Código" hint={mode === 'edit' ? 'no se cambia' : 'opcional'}>
             <input
               name="code"
-              inputMode="numeric"
-              maxLength={4}
+              maxLength={CODE_MAX}
               autoComplete="off"
+              autoCapitalize="characters"
+              autoCorrect="off"
+              spellCheck={false}
               readOnly={mode === 'edit'}
               defaultValue={defaults.code}
               aria-invalid={state.field === 'code'}
-              placeholder="0000"
-              className={`w-[120px] rounded-[10px] border border-line px-3 py-2.5 text-center font-mono text-[20px] tracking-[0.25em] outline-none focus:border-primary ${
+              placeholder="ACME24"
+              className={`w-[180px] rounded-[10px] border border-line px-3 py-2.5 text-center font-mono text-[20px] uppercase tracking-[0.2em] outline-none focus:border-primary ${
                 mode === 'edit' ? 'bg-surface-2 text-muted' : 'bg-surface'
               }`}
             />
@@ -375,7 +378,7 @@ export function AccessCodeForm({
       <Step
         number={4}
         title="Alcance"
-        intro="Qué módulos de IA y qué componentes ve quien entra con este PIN. Lo que quede fuera no aparece en el sitio."
+        intro="Qué módulos de IA y qué componentes ve quien entra con este código. Lo que quede fuera no aparece en el sitio."
       >
         <div className="mb-4 flex flex-wrap gap-2">
           {(
@@ -406,7 +409,7 @@ export function AccessCodeForm({
 
         {everything ? (
           <p className="rounded-[10px] bg-surface-2 px-4 py-3 text-[13px] leading-relaxed text-muted">
-            Este PIN abre las {platforms.length} plataformas completas, con sus {total} módulos.
+            Este código abre las {platforms.length} plataformas completas, con sus {total} módulos.
           </p>
         ) : (
           <div className="flex flex-col gap-4">
@@ -514,7 +517,7 @@ export function AccessCodeForm({
           {pending
             ? 'Guardando...'
             : mode === 'create'
-              ? 'Crear PIN'
+              ? 'Crear código'
               : 'Guardar cambios'}
         </button>
         <span className="text-[12.5px] text-faint">

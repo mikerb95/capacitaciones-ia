@@ -74,7 +74,7 @@ export function PlanExplorer({
   modules: ModuleCard[];
   note: string | null;
   initialPlan: string | null;
-  /** El que quedó guardado en el PIN de la empresa, si lo hay. */
+  /** El que quedó guardado en el código de la empresa, si lo hay. */
   contractedPlan?: string | null;
 }) {
   const known = plans.some((p) => p.key === initialPlan);

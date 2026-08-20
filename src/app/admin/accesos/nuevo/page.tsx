@@ -7,7 +7,7 @@ import { getScopeOptions } from '../scope-options';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Nuevo PIN · Academia IA' };
+export const metadata = { title: 'Nuevo código · Academia IA' };
 
 export default async function NuevoAccesoPage() {
   const [platforms, companies] = await Promise.all([getScopeOptions(), getCompanyOptions()]);
@@ -15,7 +15,7 @@ export default async function NuevoAccesoPage() {
   return (
     <div className="min-h-screen bg-bg">
       <SiteHeader
-        title="Nuevo PIN"
+        title="Nuevo código"
         subtitle="El código, para quién se dicta, el plan que tiene contratado y el alcance de la capacitación."
         back={{ href: '/admin/accesos', label: 'Códigos de acceso' }}
       >

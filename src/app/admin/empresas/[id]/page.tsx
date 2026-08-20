@@ -191,7 +191,7 @@ export default async function EmpresaPage({ params, searchParams }: Props) {
             <p className="px-5 py-4 text-[13px] leading-relaxed text-faint">
               {company.kind === 'capacitadora'
                 ? 'Esta empresa es una capacitadora: su gente no asiste, contrata para la de otros. Sus capacitaciones salen en la lista de arriba.'
-                : 'Todavía no hay capacitaciones de esta empresa. Crea el PIN, marca cómo llegó el trabajo y elígela como la empresa que recibe la capacitación.'}
+                : 'Todavía no hay capacitaciones de esta empresa. Crea el código, marca cómo llegó el trabajo y elígela como la empresa que recibe la capacitación.'}
             </p>
           ) : (
             <ul>
