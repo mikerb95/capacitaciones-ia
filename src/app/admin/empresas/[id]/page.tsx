@@ -176,6 +176,7 @@ export default async function EmpresaPage({ params, searchParams }: Props) {
           defaults={{
             name: company.name,
             industry: company.industry ?? '',
+            kind: company.kind,
             logo: company.logo ?? '',
             materialsUntil: toDateInput(company.materialsUntil),
             contractRef: company.contractRef ?? '',
