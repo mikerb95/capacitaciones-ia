@@ -43,14 +43,20 @@ export default async function EmpresaPage({ params, searchParams }: Props) {
   const intermediadas = company.brokeredCodes.filter((c) => c.contracted);
   const asistentesIntermediados = intermediadas.reduce((n, c) => n + c.participants.length, 0);
 
+  // Lo dictado bajo su nombre, reciba su gente o la de su cliente. Sumar las
+  // dos listas vale para los tres tipos de empresa sin preguntar cuál es: a un
+  // cliente puro no le sobra nada, y a una capacitadora pura, que no recibe
+  // capacitaciones, era lo único que le faltaba para no salir siempre en cero.
+  const dictadas = contratadas.length + intermediadas.length;
+
   return (
     <div className="min-h-screen bg-bg">
       <SiteHeader
         title={company.name}
         subtitle={
           company.contractSessions
-            ? `${contratadas.length} de ${company.contractSessions} capacitaciones dictadas`
-            : `${contratadas.length} ${contratadas.length === 1 ? 'capacitación dictada' : 'capacitaciones dictadas'}`
+            ? `${dictadas} de ${company.contractSessions} capacitaciones dictadas`
+            : `${dictadas} ${dictadas === 1 ? 'capacitación dictada' : 'capacitaciones dictadas'}`
         }
         back={{ href: '/admin/empresas', label: 'Empresas' }}
       >
