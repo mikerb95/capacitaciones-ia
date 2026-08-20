@@ -90,7 +90,9 @@ export function AccessCodeForm({
   id?: number;
 }) {
   const [state, formAction, pending] = useActionState<AccessCodeState, FormData>(action, {});
-  const [mode, setMode] = useState<TrainingMode>(defaults.mode);
+  // `mode` ya es el de la pantalla (crear o editar), así que el del trabajo va
+  // con su propio nombre.
+  const [origin, setOrigin] = useState<TrainingMode>(defaults.mode);
   const [companyId, setCompanyId] = useState(defaults.companyId ? String(defaults.companyId) : '');
   const [contractorId, setContractorId] = useState(
     defaults.contractorId ? String(defaults.contractorId) : '',
