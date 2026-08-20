@@ -1,7 +1,13 @@
 import { notFound } from 'next/navigation';
 import { Abbr, ProgressBar, SiteHeader } from '@/components/ui';
 import { moduleLogo } from '@/lib/brand-logos';
-import { getComparison, getCompanyTrainings, getTrainingSessions } from '@/db/queries';
+import { QuestionList } from '@/components/question-list';
+import {
+  getComparison,
+  getCompanyTrainings,
+  getTrainingQuestions,
+  getTrainingSessions,
+} from '@/db/queries';
 import { requireCompany } from '@/lib/company-access';
 import { progressLabel, progressOf, scopeSetOf } from '@/lib/progress';
 import { leaveCompanyPanel } from '../../actions';
@@ -40,7 +46,10 @@ export default async function CompanyTrainingPage({ params }: Props) {
   const training = trainings.find((t) => t.id === Number(codeId));
   if (!training) notFound();
 
-  const sessions = await getTrainingSessions(training.id);
+  const [sessions, questions] = await Promise.all([
+    getTrainingSessions(training.id),
+    getTrainingQuestions(training.id),
+  ]);
 
   const catalog = new Set(platforms.flatMap((p) => p.modules.map((m) => m.id)));
   const scopeIds = scopeSetOf(training.scope, catalog);
@@ -80,6 +89,7 @@ export default async function CompanyTrainingPage({ params }: Props) {
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 
   const gente = training.participants.length;
+  const sinResponder = questions.filter((q) => q.status === 'abierta').length;
 
   return (
     <div className="min-h-screen bg-bg">
@@ -166,6 +176,26 @@ export default async function CompanyTrainingPage({ params }: Props) {
           </div>
         </section>
 
+        {/* ------------------------------------------------- las preguntas */}
+        <section className="overflow-hidden rounded-card border border-line bg-surface shadow-card">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-line px-5 py-4">
+            <h2 className="font-display text-[15.5px] font-semibold tracking-tight">Preguntas</h2>
+            <span className="text-[12.5px] text-faint">
+              lo que dejó anotado tu gente durante la capacitación
+            </span>
+            {sinResponder > 0 && (
+              <span className="ml-auto rounded-full bg-surface-2 px-2.5 py-0.5 text-[12px] text-muted">
+                {sinResponder} sin responder
+              </span>
+            )}
+          </div>
+
+          <QuestionList
+            questions={questions}
+            empty="Todavía nadie dejó una pregunta en esta capacitación."
+          />
+        </section>
+
         {/* -------------------------------------------------- los módulos */}
         <section className="overflow-hidden rounded-card border border-line bg-surface shadow-card">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-line px-5 py-4">
@@ -208,7 +238,8 @@ export default async function CompanyTrainingPage({ params }: Props) {
           La asistencia es la que cada quien declaró al entrar con su nombre: no pedimos ni
           guardamos correo ni teléfono de tu gente, así que tómala como un registro de presencia,
           no como una verificación de identidad. El avance cuenta los módulos que el grupo abrió en
-          el portal, sin atribuirlos a nadie en particular.
+          el portal, sin atribuirlos a nadie en particular. Las preguntas marcadas como anónimas
+          lo son de verdad: no guardamos quién las escribió, ni aquí ni en ningún otro lado.
         </p>
       </main>
     </div>

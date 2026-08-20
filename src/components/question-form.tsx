@@ -1,39 +1,29 @@
 'use client';
 
-import { useActionState, useEffect, useRef, useState } from 'react';
-import { ask, QUESTION_MAX, type AskState } from '@/app/preguntas/actions';
+import { useActionState, useState } from 'react';
+import { ask } from '@/app/preguntas/actions';
+import { QUESTION_MAX, type AskState } from '@/lib/questions';
 
 const field =
   'w-full rounded-[10px] border border-line bg-surface px-3 py-2.5 text-[14.5px] outline-none transition-colors placeholder:text-faint focus:border-primary';
 
 /**
- * Buzón de preguntas del asistente. El nombre viene puesto con el de la sesión
- * porque es lo más común, pero se puede borrar o tapar con el anónimo: quien
- * quiere preguntar sin firmar no tiene que pelearse con el formulario.
+ * Los campos, aparte del formulario y con vida propia: enviada la pregunta, el
+ * padre los vuelve a montar con otra llave y quedan limpios para la siguiente,
+ * sin tener que sincronizar nada a mano.
  */
-export function QuestionForm({ name }: { name: string }) {
-  const [state, action, pending] = useActionState<AskState, FormData>(ask, {});
+function Fields({ name, error }: { name: string; error?: string }) {
   const [anonymous, setAnonymous] = useState(false);
-  const form = useRef<HTMLFormElement>(null);
-
-  // Enviada la pregunta, el formulario queda limpio para la siguiente.
-  useEffect(() => {
-    if (state.ok) {
-      form.current?.reset();
-      setAnonymous(false);
-    }
-  }, [state.ok]);
 
   return (
-    <form ref={form} action={action} className="flex flex-col gap-4">
+    <>
       <label className="flex flex-col gap-1.5">
         <span className="text-[12.5px] font-medium text-muted">Tu pregunta</span>
         <textarea
           name="pregunta"
           rows={4}
           maxLength={QUESTION_MAX}
-          defaultValue={state.error ? state.values?.body : ''}
-          aria-invalid={Boolean(state.error)}
+          aria-invalid={Boolean(error)}
           className={`${field} resize-y leading-relaxed`}
           placeholder="¿Cómo le pido a la IA que respete el formato de nuestros informes?"
         />
@@ -68,6 +58,21 @@ export function QuestionForm({ name }: { name: string }) {
           </span>
         </span>
       </label>
+    </>
+  );
+}
+
+/**
+ * Buzón de preguntas del asistente. El nombre viene puesto con el de la sesión
+ * porque es lo más común, pero se puede borrar o tapar con el anónimo: quien
+ * quiere preguntar sin firmar no tiene que pelearse con el formulario.
+ */
+export function QuestionForm({ name }: { name: string }) {
+  const [state, action, pending] = useActionState<AskState, FormData>(ask, {});
+
+  return (
+    <form action={action} className="flex flex-col gap-4">
+      <Fields key={state.sentAt ?? 'nueva'} name={name} error={state.error} />
 
       {state.error && (
         <p
@@ -78,7 +83,7 @@ export function QuestionForm({ name }: { name: string }) {
         </p>
       )}
 
-      {state.ok && (
+      {state.sentAt && (
         <p
           role="status"
           className="rounded-[10px] bg-accent-soft px-4 py-2.5 text-[13px] text-accent"

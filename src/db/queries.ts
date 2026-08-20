@@ -393,6 +393,9 @@ export async function getCompanyTrainings(companyId: number) {
         orderBy: (p, { desc }) => [desc(p.createdAt)],
         with: { views: { columns: { moduleId: true, views: true, lastSeenAt: true } } },
       },
+      // Solo el estado: la lista del panel cuenta preguntas, el detalle es el
+      // que trae el texto.
+      questions: { columns: { id: true, status: true } },
     },
   });
 }

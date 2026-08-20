@@ -11,6 +11,7 @@ import {
   companies,
   modules,
   platformPlans,
+  questions,
 } from '@/db/schema';
 import { codeProblem, normalizeCode, randomCode } from '@/lib/access-code';
 import { RESERVED_CODES } from '@/lib/master-access';
@@ -297,4 +298,50 @@ export async function deleteAccessCode(formData: FormData) {
 
   revalidatePath('/admin/accesos');
   redirect('/admin/accesos');
+}
+
+/* ---------------------------------------------------------------- preguntas */
+
+/**
+ * Responde una pregunta del buzón. La respuesta la ve quien preguntó, en el
+ * portal, y la empresa en su panel: es la misma fila para los tres.
+ *
+ * Vaciar el campo la devuelve a pendiente, que es la forma de deshacer una
+ * respuesta escrita a medias sin tener que borrar la pregunta.
+ */
+export async function answerQuestion(formData: FormData) {
+  const id = Number(str(formData, 'id'));
+  if (!id) return;
+
+  const question = await db.query.questions.findFirst({ where: eq(questions.id, id) });
+  if (!question) return;
+
+  const answer = orNull(str(formData, 'respuesta'));
+
+  await db
+    .update(questions)
+    .set({
+      answer,
+      status: answer ? 'respondida' : 'abierta',
+      answeredAt: answer ? new Date() : null,
+      updatedAt: new Date(),
+    })
+    .where(eq(questions.id, id));
+
+  revalidatePath(`/admin/accesos/${question.accessCodeId}`);
+  revalidatePath('/preguntas');
+}
+
+/** Borra una pregunta. Es para lo que llegó repetido o fuera de lugar. */
+export async function deleteQuestion(formData: FormData) {
+  const id = Number(str(formData, 'id'));
+  if (!id) return;
+
+  const question = await db.query.questions.findFirst({ where: eq(questions.id, id) });
+  if (!question) return;
+
+  await db.delete(questions).where(eq(questions.id, id));
+
+  revalidatePath(`/admin/accesos/${question.accessCodeId}`);
+  revalidatePath('/preguntas');
 }

@@ -1,7 +1,12 @@
 import Link from 'next/link';
 import { AdminLogoutButton } from '@/components/admin-logout-button';
 import { SiteHeader } from '@/components/ui';
-import { getAccessCodes, getComparison, type AccessCodeRow } from '@/db/queries';
+import {
+  getAccessCodes,
+  getComparison,
+  getQuestionCounts,
+  type AccessCodeRow,
+} from '@/db/queries';
 import { progressLabel, progressOf } from '@/lib/progress';
 import { deleteAccessCode, toggleAccessCode } from './actions';
 
@@ -46,11 +51,13 @@ function CodeCard({
   index,
   platformNames,
   totalModules,
+  questions,
 }: {
   code: AccessCodeRow;
   index: ScopeIndex;
   platformNames: Map<string, string>;
   totalModules: number;
+  questions?: { total: number; open: number };
 }) {
   const scope = scopeSummary(code, index, totalModules);
   // Sin recorte, el denominador del avance es el catálogo entero.
@@ -91,6 +98,11 @@ function CodeCard({
             {code.contractor ? `contratada por ${code.contractor.name} · ` : ''}
             {code.active ? 'Activo' : 'Cerrado'} · {code.participants.length}{' '}
             {code.participants.length === 1 ? 'registrado' : 'registrados'}
+            {questions
+              ? ` · ${questions.total} ${questions.total === 1 ? 'pregunta' : 'preguntas'}${
+                  questions.open > 0 ? ` (${questions.open} sin responder)` : ''
+                }`
+              : ''}
           </p>
         </div>
 
@@ -219,6 +231,7 @@ function CodeCard({
 export default async function AccesosPage({ searchParams }: Props) {
   const { creado, guardado } = await searchParams;
   const [codes, platforms] = await Promise.all([getAccessCodes(), getComparison()]);
+  const questionCounts = await getQuestionCounts(codes.map((c) => c.id));
 
   const index: ScopeIndex = new Map();
   const platformNames = new Map(platforms.map((p) => [p.id, p.name]));
@@ -287,6 +300,7 @@ export default async function AccesosPage({ searchParams }: Props) {
                 index={index}
                 platformNames={platformNames}
                 totalModules={totalModules}
+                questions={questionCounts.get(code.id)}
               />
             ))}
           </div>

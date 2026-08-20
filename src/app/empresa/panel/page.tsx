@@ -58,6 +58,8 @@ function TrainingCard({
             {fecha.format(training.createdAt)} · {training.participants.length}{' '}
             {training.participants.length === 1 ? 'asistente' : 'asistentes'} ·{' '}
             {scopeIds.size} {scopeIds.size === 1 ? 'módulo' : 'módulos'}
+            {training.questions.length > 0 &&
+              ` · ${training.questions.length} ${training.questions.length === 1 ? 'pregunta' : 'preguntas'}`}
           </p>
 
           {training.plans.length > 0 && (

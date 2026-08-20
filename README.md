@@ -44,6 +44,7 @@ del proyecto, y correr el seed una vez contra la base de producción.
 | `/admin/presentaciones` | Importar presentaciones y lanzarlas |
 | `/presentar/[slug]` | Vista de expositor, con control de la sesión en vivo |
 | `/vivo` | Vista de audiencia: se entra con el PIN |
+| `/preguntas` | Buzón del asistente: deja su duda, con nombre o en anónimo, y ve las del grupo |
 
 El admin no tiene autenticación. Si el sitio se publica, conviene protegerlo con Vercel
 Authentication o con un middleware antes de compartir la URL.
@@ -166,7 +167,7 @@ src/
 │   └── vivo/                       vista de audiencia
 ├── components/                     UI compartida
 └── db/
-    ├── schema.ts                   22 tablas normalizadas
+    ├── schema.ts                   29 tablas normalizadas
     ├── queries.ts                  consultas de lectura
     ├── index.ts                    cliente libSQL
     └── seed/                       contenido por plataforma
@@ -189,6 +190,8 @@ hijas con `sort_order` y borrado en cascada.
   en vivo.
 - **Empresas y accesos:** `companies` (con `kind`, `panel_key` y los datos del contrato) y
   `access_codes`, unidas por dos columnas distintas. Ver abajo.
+- **Preguntas:** `questions` cuelga del código de acceso, no de la persona: lo que sirve para la
+  siguiente sesión es la duda del grupo. Ver abajo.
 
 ## Trabajo directo y trabajo tercerizado
 
@@ -214,6 +217,17 @@ una la ve etiquetada desde su lado (`para X` o `contratada por Y`).
 formulario: en el de la capacitadora solo salen las intermediarias, y en el de quien recibe solo
 las que capacitan a su propia gente. Todo lo cargado antes de esta división quedó como `cliente`
 con `contractor_id` vacío, que es exactamente lo que era: trabajo contratado directo.
+
+## Preguntas de la capacitación
+
+El asistente deja su duda en `/preguntas`. El nombre es opcional aunque la sesión ya sepa quién
+es, y el check de anónimo lo tapa del todo: marcada así, la fila no guarda ni `name` ni
+`participant_id`, así que nadie puede deshacerlo después, ni desde el admin ni desde la base.
+
+La pregunta cuelga del código de acceso, no del participante, y por eso sobrevive a la sesión:
+queda como registro de la capacitación de esa empresa y como material para preparar la siguiente.
+Se responde desde `/admin/accesos/[id]`, y la respuesta la ven quien preguntó (en `/preguntas`) y
+la empresa en su panel. Vaciar el campo de la respuesta devuelve la pregunta a pendiente.
 
 ## Estado del contenido
 

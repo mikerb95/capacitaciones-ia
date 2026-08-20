@@ -5,17 +5,8 @@ import { and, desc, eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { questions } from '@/db/schema';
 import { cleanName } from '@/lib/name';
+import { QUESTION_MAX, QUESTION_MIN, type AskState } from '@/lib/questions';
 import { requireParticipant } from '@/lib/session';
-
-/** Lo que cabe en una pregunta. Corta obliga a escribir algo; larga es un correo. */
-export const QUESTION_MIN = 8;
-export const QUESTION_MAX = 800;
-
-export type AskState = {
-  error?: string;
-  ok?: boolean;
-  values?: { body: string; name: string; anonymous: boolean };
-};
 
 const str = (data: FormData, key: string) => ((data.get(key) as string | null) ?? '').trim();
 
@@ -33,10 +24,9 @@ export async function ask(_prev: AskState, formData: FormData): Promise<AskState
   const body = str(formData, 'pregunta').slice(0, QUESTION_MAX);
   const anonymous = formData.get('anonimo') === 'on';
   const name = cleanName(str(formData, 'nombre'));
-  const values = { body, name, anonymous };
 
   if (body.length < QUESTION_MIN) {
-    return { error: 'Escribe la pregunta completa, con un poco más de detalle.', values };
+    return { error: 'Escribe la pregunta completa, con un poco más de detalle.' };
   }
 
   // Doble envío por recargar o por darle dos veces: la misma pregunta del mismo
@@ -47,7 +37,7 @@ export async function ask(_prev: AskState, formData: FormData): Promise<AskState
   });
 
   if (repeated && Date.now() - repeated.createdAt.getTime() < 60 * 60 * 1000) {
-    return { ok: true };
+    return { sentAt: Date.now() };
   }
 
   await db.insert(questions).values({
@@ -60,5 +50,5 @@ export async function ask(_prev: AskState, formData: FormData): Promise<AskState
   });
 
   revalidatePath('/preguntas');
-  return { ok: true };
+  return { sentAt: Date.now() };
 }
