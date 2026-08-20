@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from 'react';
 import type { CompanyAction, CompanyState } from '@/app/admin/empresas/actions';
+import type { CompanyKind } from '@/db/schema';
 import { Field, FormError, Step, field } from './form-kit';
 
 export type ContactDefaults = {
@@ -14,6 +15,7 @@ export type ContactDefaults = {
 export type CompanyDefaults = {
   name: string;
   industry: string;
+  kind: CompanyKind;
   /** El logo que ya tiene guardado, como `data:` URI. */
   logo: string;
   materialsUntil: string;
@@ -31,6 +33,7 @@ const EMPTY_CONTACT: ContactDefaults = { name: '', role: '', email: '', phone: '
 const EMPTY: CompanyDefaults = {
   name: '',
   industry: '',
+  kind: 'cliente',
   logo: '',
   materialsUntil: '',
   contractRef: '',
@@ -41,6 +44,24 @@ const EMPTY: CompanyDefaults = {
   notes: '',
   contacts: [EMPTY_CONTACT],
 };
+
+const KINDS: { value: CompanyKind; title: string; hint: string }[] = [
+  {
+    value: 'cliente',
+    title: 'Cliente',
+    hint: 'Su gente recibe las capacitaciones.',
+  },
+  {
+    value: 'capacitadora',
+    title: 'Capacitadora',
+    hint: 'Te contrata para dictárselas a sus clientes.',
+  },
+  {
+    value: 'ambas',
+    title: 'Las dos cosas',
+    hint: 'Unas veces capacita a su gente, otras te subcontrata.',
+  },
+];
 
 /**
  * El logo del cliente, que es lo que después lleva su material a medida. Se
@@ -107,6 +128,7 @@ export function CompanyForm({
   id?: number;
 }) {
   const [state, formAction, pending] = useActionState<CompanyState, FormData>(action, {});
+  const [kind, setKind] = useState<CompanyKind>(defaults.kind);
   // Una fila en blanco de arranque: pedir "agregar contacto" antes de poder
   // escribir el primero es un clic de más en el caso normal.
   const [contacts, setContacts] = useState<ContactDefaults[]>(
@@ -151,6 +173,40 @@ export function CompanyForm({
               className={field}
             />
           </Field>
+
+          <div className="flex flex-col gap-1.5 sm:col-span-2">
+            {/* Sin <Field>: adentro hay botones, no un solo control al que
+                pueda apuntar una etiqueta. */}
+            <span className="text-[12.5px] font-medium text-muted">De qué lado está</span>
+            <input type="hidden" name="kind" value={kind} />
+            <div className="grid gap-2 sm:grid-cols-3">
+              {KINDS.map((option) => {
+                const active = kind === option.value;
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setKind(option.value)}
+                    aria-pressed={active}
+                    className={`rounded-[10px] border px-3.5 py-3 text-left transition-colors ${
+                      active
+                        ? 'border-primary bg-primary-soft text-primary'
+                        : 'border-line bg-surface text-muted hover:border-primary'
+                    }`}
+                  >
+                    <span className="block text-[13px] font-semibold">{option.title}</span>
+                    <span className="mt-0.5 block text-[11.5px] leading-snug opacity-80">
+                      {option.hint}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            <span className="text-[11.5px] leading-relaxed text-faint">
+              Recorta los selectores al crear un PIN: en el de la capacitadora solo salen las
+              intermediarias, y en el de quien recibe solo las que capacitan a su propia gente.
+            </span>
+          </div>
 
           <div className="flex flex-col gap-1.5 sm:col-span-2">
             {/* Sin <Field>: adentro hay un checkbox con su propia etiqueta y las

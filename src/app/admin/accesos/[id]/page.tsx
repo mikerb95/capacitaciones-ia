@@ -27,7 +27,11 @@ export default async function EditarAccesoPage({ params }: Props) {
     <div className="min-h-screen bg-bg">
       <SiteHeader
         title={`PIN ${code.code}`}
-        subtitle={code.company?.name ?? code.label}
+        subtitle={
+          code.contractor
+            ? `${code.company?.name ?? code.label} · vía ${code.contractor.name}`
+            : (code.company?.name ?? code.label)
+        }
         back={{ href: '/admin/accesos', label: 'Códigos de acceso' }}
       >
         <AdminLogoutButton />
@@ -43,8 +47,9 @@ export default async function EditarAccesoPage({ params }: Props) {
           defaults={{
             code: code.code,
             label: code.label,
-            contracted: code.contracted,
+            mode: !code.contracted ? 'propia' : code.contractorId ? 'tercerizada' : 'directa',
             companyId: code.companyId,
+            contractorId: code.contractorId,
             notes: code.notes ?? '',
             moduleIds: code.scope.map((s) => s.moduleId),
             planKeys: Object.fromEntries(code.plans.map((p) => [p.platformId, p.plan.key])),

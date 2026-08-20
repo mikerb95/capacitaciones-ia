@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { eq } from 'drizzle-orm';
 import { db } from '@/db';
-import { companies, companyContacts } from '@/db/schema';
+import { COMPANY_KINDS, companies, companyContacts, type CompanyKind } from '@/db/schema';
 import { freePanelKey } from '@/lib/company-access';
 
 const str = (data: FormData, key: string) => ((data.get(key) as string | null) ?? '').trim();
@@ -71,10 +71,19 @@ export type CompanyAction = (prev: CompanyState, formData: FormData) => Promise<
 
 const emailLooksWrong = (value: string | null) => Boolean(value) && !/^\S+@\S+\.\S+$/.test(value!);
 
+/** El tipo llega de unos botones nuestros, pero se comprueba igual. */
+function kindOf(formData: FormData): CompanyKind {
+  const value = str(formData, 'kind');
+  return (COMPANY_KINDS as readonly string[]).includes(value)
+    ? (value as CompanyKind)
+    : 'cliente';
+}
+
 function profileOf(formData: FormData) {
   return {
     name: str(formData, 'name'),
     industry: orNull(str(formData, 'industry')),
+    kind: kindOf(formData),
     contractRef: orNull(str(formData, 'contractRef')),
     contractStart: dateOrNull(str(formData, 'contractStart')),
     contractEnd: dateOrNull(str(formData, 'contractEnd')),
