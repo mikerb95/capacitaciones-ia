@@ -46,8 +46,10 @@ del proyecto, y correr el seed una vez contra la base de producción.
 | `/vivo` | Vista de audiencia: se entra con el PIN |
 | `/preguntas` | Buzón del asistente: deja su duda, con nombre o en anónimo, y ve las del grupo |
 
-El admin no tiene autenticación. Si el sitio se publica, conviene protegerlo con Vercel
-Authentication o con un middleware antes de compartir la URL.
+El portal se cierra en `src/proxy.ts`. Cada sección entra por su lado: `/admin` con el login de
+`ADMIN_USER` y `ADMIN_PASS` (cookie firmada, formulario en `/admin/login`), `/empresa` con la
+clave de la empresa, `/vivo` y `/presentar` con el PIN de la sesión en vivo, y el resto del sitio
+con el registro de `/ingresar`.
 
 ## Actualizar contenido
 
@@ -257,5 +259,9 @@ uno de conocimiento de la empresa, porque Sora se descontinuó en abril de 2026.
 | `npm run db:push` | Sincroniza el esquema directo (desarrollo) |
 | `npm run db:studio` | Explorador visual de la base |
 | `npm run db:seed` | Carga o actualiza el contenido |
+| `npm run db:seed:master` | Deja listo el código maestro de pruebas y su participante |
+| `npm run db:seed:demo` | Deja listo el código de demo pública y su participante |
 | `npm run logos` | Exporta los logos de marca a `public/logos/` como SVG y PNG |
-| `npm run materiales` | Genera el material descargable (necesita el servidor levantado) |
+| `npm run materiales` | Genera el material descargable genérico (necesita el servidor levantado) |
+| `npm run materiales:empresa <slug>` | Lo mismo, pero a medida de un cliente de `clientes/<slug>.json` |
+| `npm run materiales:subir <slug>` | Sube ese material a Vercel Blob |
