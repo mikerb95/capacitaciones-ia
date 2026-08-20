@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState, useState, type ReactNode } from 'react';
+import { useActionState, useMemo, useState, type ReactNode } from 'react';
 import type { AccessCodeState, AccessCodeAction } from '@/app/admin/accesos/actions';
 import type { CompanyKind } from '@/db/schema';
 import { CODE_MAX } from '@/lib/access-code';
@@ -98,11 +98,24 @@ export function AccessCodeForm({
   const [contractorId, setContractorId] = useState(
     defaults.contractorId ? String(defaults.contractorId) : '',
   );
-  const [selected, setSelected] = useState<Set<number>>(new Set(defaults.moduleIds));
   const [planKeys, setPlanKeys] = useState<Record<string, string>>(defaults.planKeys);
-  // Sin recorte, el código abre todo el catálogo: es lo normal cuando la
-  // capacitación cubre las cuatro plataformas.
-  const [everything, setEverything] = useState(defaults.moduleIds.length === 0);
+
+  const allIds = useMemo(
+    () => platforms.flatMap((p) => p.modules.map((m) => m.id)),
+    [platforms],
+  );
+
+  // Al crear no viene nada marcado: una capacitación es de una plataforma, o de
+  // dos, y abrir el catálogo entero tiene que ser una decisión y no el descuido
+  // de pasar de largo por este paso. Al editar, un código sin recorte llega con
+  // todo marcado, que es exactamente lo que abre hoy.
+  const [selected, setSelected] = useState<Set<number>>(
+    () => new Set(mode === 'create' || defaults.moduleIds.length ? defaults.moduleIds : allIds),
+  );
+
+  // Marcado todo el catálogo, se guarda como ausencia de recorte: así un módulo
+  // nuevo entra solo en los códigos que de verdad abren todo.
+  const everything = allIds.length > 0 && allIds.every((id) => selected.has(id));
 
   const toggle = (id: number) =>
     setSelected((current) => {
@@ -111,12 +124,16 @@ export function AccessCodeForm({
       return next;
     });
 
+  /**
+   * La plataforma entra entera o no entra. Con algo marcado, el clic la saca:
+   * es lo que espera quien ve la casilla del encabezado marcada.
+   */
   const togglePlatform = (platform: ScopePlatformOption) =>
     setSelected((current) => {
       const next = new Set(current);
-      const all = platform.modules.every((m) => next.has(m.id));
+      const some = platform.modules.some((m) => next.has(m.id));
       for (const m of platform.modules) {
-        if (all) next.delete(m.id);
+        if (some) next.delete(m.id);
         else next.add(m.id);
       }
       return next;
@@ -128,7 +145,7 @@ export function AccessCodeForm({
   const capacitadoras = companies.filter((c) => c.kind !== 'cliente');
 
   const total = platforms.reduce((n, p) => n + p.modules.length, 0);
-  const chosen = everything ? total : selected.size;
+  const chosen = selected.size;
 
   /** Módulos de la plataforma que el plan contratado no cubre. */
   const outOfPlan = (platform: ScopePlatformOption) => {
@@ -378,132 +395,140 @@ export function AccessCodeForm({
       <Step
         number={4}
         title="Alcance"
-        intro="Qué módulos de IA y qué componentes ve quien entra con este código. Lo que quede fuera no aparece en el sitio."
+        intro="Qué plataformas cubre la capacitación. Lo que quede fuera no existe para quien entra con este código: no sale en la portada, ni en la comparativa, ni en los materiales."
       >
-        <div className="mb-4 flex flex-wrap gap-2">
-          {(
-            [
-              ['todo', 'Todo el catálogo', `${total} módulos`],
-              ['seleccion', 'A la medida', 'eliges los módulos'],
-            ] as const
-          ).map(([value, title, hint]) => {
-            const active = everything === (value === 'todo');
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setSelected(new Set(allIds))}
+            className="rounded-[10px] border border-line bg-surface px-3 py-1.5 text-[12.5px] font-medium text-muted transition-colors hover:border-primary hover:text-primary"
+          >
+            Todo el catálogo
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelected(new Set())}
+            className="rounded-[10px] border border-line bg-surface px-3 py-1.5 text-[12.5px] font-medium text-muted transition-colors hover:border-primary hover:text-primary"
+          >
+            Limpiar
+          </button>
+          <span className="text-[12.5px] text-faint">
+            {selected.size === 0
+              ? 'Marca la plataforma de la capacitación.'
+              : everything
+                ? `Las ${platforms.length} plataformas completas, con sus ${total} módulos.`
+                : `${chosen} de ${total} módulos.`}
+          </span>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          {platforms.map((platform) => {
+            const picked = platform.modules.filter((m) => selected.has(m.id)).length;
+            const on = picked > 0;
+            const all = picked === platform.modules.length;
+            const plan = platform.plans.find((p) => p.key === planKeys[platform.id]) ?? null;
+            const marcadosFuera = outOfPlan(platform).filter((m) => selected.has(m.id));
+
             return (
-              <button
-                key={value}
-                type="button"
-                onClick={() => setEverything(value === 'todo')}
-                aria-pressed={active}
-                className={`rounded-[10px] border px-3.5 py-2 text-left transition-colors ${
-                  active
-                    ? 'border-primary bg-primary-soft text-primary'
-                    : 'border-line bg-surface text-muted hover:border-primary'
+              <div
+                key={platform.id}
+                className={`tone rounded-[12px] border p-3.5 transition-colors ${
+                  on ? 'border-[var(--tone)] bg-surface-2' : 'border-line bg-surface'
                 }`}
+                style={{ ['--tone' as string]: platform.color }}
               >
-                <span className="block text-[13px] font-semibold">{title}</span>
-                <span className="block text-[11.5px] opacity-80">{hint}</span>
-              </button>
+                <label className="flex cursor-pointer items-center gap-2.5">
+                  <input
+                    type="checkbox"
+                    checked={on}
+                    onChange={() => togglePlatform(platform)}
+                    className="size-[16px] flex-none accent-[var(--tone)]"
+                  />
+                  {platform.mark}
+                  <span
+                    className={`font-display text-[14px] font-semibold tracking-tight ${
+                      on ? '' : 'text-muted'
+                    }`}
+                  >
+                    {platform.name}
+                  </span>
+                  <span className="flex-1 text-[12px] text-faint">
+                    {on
+                      ? all
+                        ? `sus ${platform.modules.length} módulos`
+                        : `${picked} de ${platform.modules.length} módulos`
+                      : 'fuera de la capacitación'}
+                  </span>
+                </label>
+
+                {on && (
+                  <>
+                    {marcadosFuera.length > 0 && plan && (
+                      <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-[10px] bg-[#fdebe2] px-3 py-2 text-[12.5px] text-[#c2410c] dark:bg-[#3a1e10] dark:text-[#f4a06a]">
+                        <span>
+                          {marcadosFuera.length}{' '}
+                          {marcadosFuera.length === 1
+                            ? 'módulo marcado no entra'
+                            : 'módulos marcados no entran'}{' '}
+                          en {plan.name}.
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => dropOutOfPlan(platform)}
+                          className="font-semibold underline underline-offset-2"
+                        >
+                          Quitarlos
+                        </button>
+                      </div>
+                    )}
+
+                    <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                      {platform.modules.map((m) => {
+                        const marked = selected.has(m.id);
+                        const sinPlan = plan ? availabilityIn(m.plans, plan.key) === 'no' : false;
+                        const minimo = sinPlan ? entryPlan(m.plans, platform.plans) : null;
+
+                        return (
+                          <label
+                            key={m.id}
+                            title={
+                              minimo
+                                ? `No entra en ${plan!.name}: necesita ${minimo.name}.`
+                                : undefined
+                            }
+                            className={`flex cursor-pointer items-center gap-2.5 rounded-[10px] border px-3 py-2 transition-colors ${
+                              marked
+                                ? 'border-[var(--tone)] bg-surface'
+                                : 'border-line bg-surface hover:border-[var(--tone)]'
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={marked}
+                              onChange={() => toggle(m.id)}
+                              className="size-[15px] flex-none accent-[var(--tone)]"
+                            />
+                            {m.mark}
+                            <span
+                              className={`min-w-0 flex-1 truncate text-[13px] font-medium ${
+                                sinPlan ? 'text-faint line-through decoration-1' : ''
+                              }`}
+                            >
+                              {m.name}
+                            </span>
+                            <span className="text-[11px] text-faint">
+                              {minimo ? `desde ${minimo.name}` : m.level}
+                            </span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
+              </div>
             );
           })}
         </div>
-
-        {everything ? (
-          <p className="rounded-[10px] bg-surface-2 px-4 py-3 text-[13px] leading-relaxed text-muted">
-            Este código abre las {platforms.length} plataformas completas, con sus {total} módulos.
-          </p>
-        ) : (
-          <div className="flex flex-col gap-4">
-            {platforms.map((platform) => {
-              const picked = platform.modules.filter((m) => selected.has(m.id)).length;
-              const all = picked === platform.modules.length && picked > 0;
-              const plan = platform.plans.find((p) => p.key === planKeys[platform.id]) ?? null;
-              const fuera = outOfPlan(platform);
-              const marcadosFuera = fuera.filter((m) => selected.has(m.id));
-
-              return (
-                <div
-                  key={platform.id}
-                  className="tone rounded-[12px] border border-line bg-surface-2 p-3.5"
-                  style={{ ['--tone' as string]: platform.color }}
-                >
-                  <div className="mb-2.5 flex items-center gap-2.5">
-                    {platform.mark}
-                    <span className="font-display text-[14px] font-semibold tracking-tight">
-                      {platform.name}
-                    </span>
-                    <span className="flex-1 text-[12px] text-faint">
-                      {picked} de {platform.modules.length}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => togglePlatform(platform)}
-                      className="rounded-md border border-line bg-surface px-2.5 py-1 text-[12px] font-medium text-muted transition-colors hover:border-[var(--tone)] hover:text-[var(--tone)]"
-                    >
-                      {all ? 'Ninguno' : 'Todos'}
-                    </button>
-                  </div>
-
-                  {marcadosFuera.length > 0 && plan && (
-                    <div className="mb-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-[10px] bg-[#fdebe2] px-3 py-2 text-[12.5px] text-[#c2410c] dark:bg-[#3a1e10] dark:text-[#f4a06a]">
-                      <span>
-                        {marcadosFuera.length}{' '}
-                        {marcadosFuera.length === 1 ? 'módulo marcado no entra' : 'módulos marcados no entran'}{' '}
-                        en {plan.name}.
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => dropOutOfPlan(platform)}
-                        className="font-semibold underline underline-offset-2"
-                      >
-                        Quitarlos
-                      </button>
-                    </div>
-                  )}
-
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    {platform.modules.map((m) => {
-                      const on = selected.has(m.id);
-                      const sinPlan = plan ? availabilityIn(m.plans, plan.key) === 'no' : false;
-                      const minimo = sinPlan ? entryPlan(m.plans, platform.plans) : null;
-
-                      return (
-                        <label
-                          key={m.id}
-                          title={
-                            minimo ? `No entra en ${plan!.name}: necesita ${minimo.name}.` : undefined
-                          }
-                          className={`flex cursor-pointer items-center gap-2.5 rounded-[10px] border px-3 py-2 transition-colors ${
-                            on
-                              ? 'border-[var(--tone)] bg-surface'
-                              : 'border-line bg-surface hover:border-[var(--tone)]'
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={on}
-                            onChange={() => toggle(m.id)}
-                            className="size-[15px] flex-none accent-[var(--tone)]"
-                          />
-                          {m.mark}
-                          <span
-                            className={`min-w-0 flex-1 truncate text-[13px] font-medium ${
-                              sinPlan ? 'text-faint line-through decoration-1' : ''
-                            }`}
-                          >
-                            {m.name}
-                          </span>
-                          <span className="text-[11px] text-faint">
-                            {minimo ? `desde ${minimo.name}` : m.level}
-                          </span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
       </Step>
 
       {state.error && <FormError>{state.error}</FormError>}

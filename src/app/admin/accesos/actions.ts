@@ -201,7 +201,7 @@ export async function createAccessCode(
   const scope = await scopeOf(formData);
   if (scope !== null && scope.length === 0) {
     return {
-      error: 'Elige al menos un módulo, o cambia el alcance a todo el catálogo.',
+      error: 'Marca al menos una plataforma en el paso de alcance.',
       field: 'scope',
     };
   }
@@ -252,7 +252,7 @@ export async function updateAccessCode(
   const scope = await scopeOf(formData);
   if (scope !== null && scope.length === 0) {
     return {
-      error: 'Elige al menos un módulo, o cambia el alcance a todo el catálogo.',
+      error: 'Marca al menos una plataforma en el paso de alcance.',
       field: 'scope',
     };
   }
