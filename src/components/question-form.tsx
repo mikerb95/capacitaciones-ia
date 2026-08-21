@@ -15,7 +15,19 @@ const NEAR_MAX = QUESTION_MAX - 100;
  * padre los vuelve a montar con otra llave y quedan limpios para la siguiente,
  * sin tener que sincronizar nada a mano.
  */
-function Fields({ name, error, pending }: { name: string; error?: string; pending: boolean }) {
+function Fields({
+  name,
+  error,
+  pending,
+  notice,
+}: {
+  name: string;
+  error?: string;
+  pending: boolean;
+  // El aviso del último envío. Entra como prop para quedar pegado al botón,
+  // que es donde se mira después de darle.
+  notice?: React.ReactNode;
+}) {
   const [anonymous, setAnonymous] = useState(false);
   const [body, setBody] = useState('');
 
