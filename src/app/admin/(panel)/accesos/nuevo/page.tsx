@@ -1,6 +1,5 @@
 import { AccessCodeForm } from '@/components/access-code-form';
-import { AdminLogoutButton } from '@/components/admin-logout-button';
-import { SiteHeader } from '@/components/ui';
+import { AdminPage } from '@/components/admin-page';
 import { getCompanyOptions } from '@/db/queries';
 import { createAccessCode } from '../actions';
 import { getScopeOptions } from '../scope-options';
@@ -13,16 +12,12 @@ export default async function NuevoAccesoPage() {
   const [platforms, companies] = await Promise.all([getScopeOptions(), getCompanyOptions()]);
 
   return (
-    <div className="min-h-screen bg-bg">
-      <SiteHeader
-        title="Nuevo código"
-        subtitle="El código, para quién se dicta, el plan que tiene contratado y el alcance de la capacitación."
-        back={{ href: '/admin/accesos', label: 'Códigos de acceso' }}
-      >
-        <AdminLogoutButton />
-      </SiteHeader>
-
-      <main className="mx-auto max-w-[900px] px-4 py-8 sm:px-6">
+    <AdminPage
+      title="Nueva capacitación"
+      subtitle="El código, para quién se dicta, el plan que tiene contratado y el alcance de la capacitación."
+      back={{ href: '/admin/accesos', label: 'Capacitaciones' }}
+      max={900}
+    >
         <AccessCodeForm
           action={createAccessCode}
           platforms={platforms}
