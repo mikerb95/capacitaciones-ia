@@ -25,52 +25,30 @@ function MoveButton({ id, direction }: { id: number; direction: 'up' | 'down' })
   );
 }
 
-export default async function AdminPage() {
+export default async function ModulesPage() {
   const platforms = await getComparison();
 
   return (
-    <div className="min-h-screen bg-bg">
-      <SiteHeader
-        title="Administrar contenido"
-        subtitle="Edita los módulos sin tocar el seed. Los cambios se ven de una en la comparativa."
-        back={{ href: '/', label: 'Volver a la comparativa' }}
-      >
-        <Link
-          href="/admin/accesos"
-          className="rounded-[10px] border border-line bg-surface px-3 py-2 text-[12.5px] font-medium text-muted transition-colors hover:border-primary hover:text-text"
-        >
-          Códigos de acceso
-        </Link>
-        <Link
-          href="/admin/empresas"
-          className="rounded-[10px] border border-line bg-surface px-3 py-2 text-[12.5px] font-medium text-muted transition-colors hover:border-primary hover:text-text"
-        >
-          Empresas
-        </Link>
-        <Link
-          href="/admin/presentaciones"
-          className="rounded-[10px] border border-line bg-surface px-3 py-2 text-[12.5px] font-medium text-muted transition-colors hover:border-primary hover:text-text"
-        >
-          Presentaciones
-        </Link>
-        <Link
-          href="/admin/modules/new"
-          className="rounded-[10px] bg-primary px-3 py-2 text-[12.5px] font-semibold text-white transition-opacity hover:opacity-90"
-        >
-          Nuevo módulo
-        </Link>
-        <AdminLogoutButton />
-      </SiteHeader>
+    <AdminPage
+      title="Módulos y portales"
+      subtitle="Edita los módulos sin tocar el seed. Los cambios se ven de una en la comparativa."
+      actions={
+        <>
+          <AdminAction href="/">Ver comparativa</AdminAction>
+          <AdminAction href="/admin/modulos/new" primary>
+            Nuevo módulo
+          </AdminAction>
+        </>
+      }
+    >
+      <div className="mb-6 rounded-card border border-line bg-surface-2 p-4 text-[13px] leading-relaxed text-muted">
+        Para cambios grandes o para dejar el contenido versionado, sigue usando los archivos de{' '}
+        <code className="font-mono text-[12.5px]">src/db/seed</code> y corriendo{' '}
+        <code className="font-mono text-[12.5px]">npm run db:seed</code>: el seed hace upsert por
+        plataforma y slug, así que no duplica nada.
+      </div>
 
-      <main className="mx-auto max-w-[1100px] px-4 py-8 sm:px-6">
-        <div className="mb-6 rounded-card border border-line bg-surface-2 p-4 text-[13px] leading-relaxed text-muted">
-          Para cambios grandes o para dejar el contenido versionado,
-          sigue usando los archivos de <code className="font-mono text-[12.5px]">src/db/seed</code> y
-          corriendo <code className="font-mono text-[12.5px]">npm run db:seed</code>: el seed hace
-          upsert por plataforma y slug, así que no duplica nada.
-        </div>
-
-        <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8">
           {platforms.map((platform) => (
             <section key={platform.id}>
               <div className="mb-3 flex items-center gap-3">
