@@ -4,6 +4,7 @@ import { after } from 'next/server';
 import { PromptList } from '@/components/prompt-list';
 import { Abbr, Card, LevelBadge, SectionTitle, SiteHeader } from '@/components/ui';
 import { moduleLogo } from '@/lib/brand-logos';
+import { seEntrena } from '@/lib/entrenador';
 import { hasModule, requireScopedParticipant } from '@/lib/scope';
 import { AVAILABILITY_LABEL, AVAILABILITY_TONE, availabilityIn, noteIn } from '@/lib/plans';
 import { getModule, getPlatform, recordModuleView } from '@/db/queries';
