@@ -74,46 +74,53 @@ export default async function EditarAccesoPage({ params }: Props) {
             )}
           </div>
 
+          {/*
+            El formulario va por `extras` y no como hijo: `QuestionList` es un
+            componente de cliente, y una función de render no cruza esa
+            frontera. Por eso llega ya renderizado, en un mapa por id.
+          */}
           <QuestionList
             questions={questions}
             empty="Nadie preguntó nada con este código todavía."
-          >
-            {(question) => (
-              <div className="mt-3 flex flex-col gap-2">
-                <form action={answerQuestion} className="flex flex-col gap-2">
-                  <input type="hidden" name="id" value={question.id} />
-                  <textarea
-                    name="respuesta"
-                    rows={2}
-                    defaultValue={question.answer ?? ''}
-                    className={`${field} resize-y leading-relaxed`}
-                    placeholder="Escribe la respuesta que verá quien preguntó"
-                  />
-                  <div className="flex flex-wrap items-center gap-2">
+            extras={Object.fromEntries(
+              questions.map((question) => [
+                question.id,
+                <div key={question.id} className="mt-3 flex flex-col gap-2">
+                  <form action={answerQuestion} className="flex flex-col gap-2">
+                    <input type="hidden" name="id" value={question.id} />
+                    <textarea
+                      name="respuesta"
+                      rows={2}
+                      defaultValue={question.answer ?? ''}
+                      className={`${field} resize-y leading-relaxed`}
+                      placeholder="Escribe la respuesta que verá quien preguntó"
+                    />
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="submit"
+                        className="rounded-[10px] bg-primary px-3 py-1.5 text-[12.5px] font-semibold text-white transition-opacity hover:opacity-90"
+                      >
+                        {question.answer ? 'Actualizar respuesta' : 'Responder'}
+                      </button>
+                      <span className="text-[12px] text-faint">
+                        Vaciar el campo la devuelve a pendiente.
+                      </span>
+                    </div>
+                  </form>
+
+                  <form action={deleteQuestion}>
+                    <input type="hidden" name="id" value={question.id} />
                     <button
                       type="submit"
-                      className="rounded-[10px] bg-primary px-3 py-1.5 text-[12.5px] font-semibold text-white transition-opacity hover:opacity-90"
+                      className="text-[12px] text-faint underline decoration-line underline-offset-4 transition-colors hover:text-[#c2410c]"
                     >
-                      {question.answer ? 'Actualizar respuesta' : 'Responder'}
+                      Borrar pregunta
                     </button>
-                    <span className="text-[12px] text-faint">
-                      Vaciar el campo la devuelve a pendiente.
-                    </span>
-                  </div>
-                </form>
-
-                <form action={deleteQuestion}>
-                  <input type="hidden" name="id" value={question.id} />
-                  <button
-                    type="submit"
-                    className="text-[12px] text-faint underline decoration-line underline-offset-4 transition-colors hover:text-[#c2410c]"
-                  >
-                    Borrar pregunta
-                  </button>
-                </form>
-              </div>
+                  </form>
+                </div>,
+              ]),
             )}
-          </QuestionList>
+          />
         </section>
       </div>
     </AdminPage>
