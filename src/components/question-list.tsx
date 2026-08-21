@@ -315,7 +315,9 @@ export function QuestionList({
   }
 
   const open = questions.filter((q) => q.status === 'abierta');
-  const answered = questions.filter((q) => q.status === 'respondida');
+  // Las contestadas en la sesión cuentan como respondidas aunque no tengan
+  // texto: para quien filtra, lo que importa es que ya no están pendientes.
+  const answered = questions.filter((q) => q.status !== 'abierta');
 
   // Los filtros aparecen cuando hay algo que filtrar: lista larga y las dos
   // pilas con contenido. Con todo sin responder, la barra no diría nada.
