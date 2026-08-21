@@ -512,12 +512,47 @@ export async function recordModuleView(participantId: number, moduleId: number) 
  * Buzón de una capacitación: lo que preguntó el grupo, lo más nuevo arriba.
  * Es el registro que se mira antes de la siguiente sesión, así que trae tanto
  * lo pendiente como lo ya contestado.
+ *
+ * Cada pregunta viaja con cuántos dijeron "yo también tengo esta duda" y, si
+ * quien mira es un asistente (`viewerId`), si el voto es suyo. En el admin y en
+ * el panel de la empresa no hay votante: ahí `voted` siempre es falso y el
+ * número es lo único que importa.
  */
-export async function getTrainingQuestions(accessCodeId: number) {
-  return db.query.questions.findMany({
+export async function getTrainingQuestions(accessCodeId: number, viewerId?: number) {
+  const rows = await db.query.questions.findMany({
     where: eq(questions.accessCodeId, accessCodeId),
     orderBy: (q, { desc }) => [desc(q.createdAt)],
   });
+
+  if (rows.length === 0) return [];
+
+  const ids = rows.map((q) => q.id);
+
+  // Dos consultas cortas en vez de una con subconsultas: la cuenta del grupo y
+  // los votos de quien mira. Se cruzan aquí, que es más barato de leer.
+  const [counts, own] = await Promise.all([
+    db
+      .select({ questionId: questionVotes.questionId, n: sql<number>`count(*)` })
+      .from(questionVotes)
+      .where(inArray(questionVotes.questionId, ids))
+      .groupBy(questionVotes.questionId),
+    viewerId
+      ? db
+          .select({ questionId: questionVotes.questionId })
+          .from(questionVotes)
+          .where(
+            and(
+              inArray(questionVotes.questionId, ids),
+              eq(questionVotes.participantId, viewerId),
+            ),
+          )
+      : Promise.resolve([] as { questionId: number }[]),
+  ]);
+
+  const byId = new Map(counts.map((c) => [c.questionId, c.n]));
+  const mine = new Set(own.map((v) => v.questionId));
+
+  return rows.map((q) => ({ ...q, votes: byId.get(q.id) ?? 0, voted: mine.has(q.id) }));
 }
 
 /**
