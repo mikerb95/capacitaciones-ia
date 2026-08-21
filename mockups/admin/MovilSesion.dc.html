@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+.root{--bg:#f4f6fc;--surface:#ffffff;--surface2:#edf1fb;--border:#dce3f3;--text:#101426;--muted:#565f7a;--faint:#8189a3;--primary:#3b5bdb;--primary-strong:#2a3f9e;--primary-soft:#e5eafd;--accent:#0fa97a;--accent-soft:#dcf6ec;--warn:#c2410c;--warn-soft:#fdebe2;--adv:#a32079;--adv-soft:#f3e8f6;--shadow:0 1px 2px rgb(20 26 56 / .06), 0 8px 24px rgb(20 26 56 / .06)}
+.root[data-theme="oscuro"]{--bg:#0b0e1a;--surface:#141828;--surface2:#1b2133;--border:#2a3149;--text:#ebeef8;--muted:#a2aac4;--faint:#7f87a3;--primary:#7d97ff;--primary-strong:#a5b6ff;--primary-soft:#1c2547;--accent:#2fd3a0;--accent-soft:#0f3a2e;--warn:#f4a06a;--warn-soft:#3a1e10;--adv:#e39ad0;--adv-soft:#2c1730;--shadow:0 1px 2px rgb(0 0 0 / .4), 0 10px 30px rgb(0 0 0 / .35)}
+.root,.root *,.root *::before,.root *::after{box-sizing:border-box}
+body{margin:0;font-family:'IBM Plex Sans',Segoe UI,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--primary);text-decoration:none}
+a:hover{color:var(--primary-strong)}
+.h{font-family:Geist,system-ui,sans-serif;font-weight:600;letter-spacing:-.02em}
+.k{font-family:'Geist Mono',ui-monospace,monospace}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
+.nav{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:10px;font-size:13.5px;font-weight:500;color:var(--muted);text-decoration:none}
+.nav:hover{background:var(--surface2);color:var(--text)}
+.navon{background:var(--primary-soft);color:var(--primary);font-weight:600}
+.grp{font-family:'Geist Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);padding:0 10px;margin:20px 0 6px}
+.bd{justify-self:start;display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:2.5px 9px;font-size:11px;font-weight:600;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;gap:6px;border-radius:10px;border:1px solid var(--border);background:var(--surface);padding:7px 12px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;font-weight:500;color:var(--muted);cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:var(--primary);color:var(--text)}
+.btnp{background:var(--primary);border-color:transparent;color:#ffffff;font-weight:600}
+.btnp:hover{color:#ffffff;opacity:.9}
+.btns{background:var(--surface2);border-color:transparent;color:var(--text)}
+.btns:hover{background:var(--primary-soft);color:var(--primary)}
+.th{font-size:11px;font-weight:600;color:var(--faint);text-transform:uppercase;letter-spacing:.07em}
+.dot{width:7px;height:7px;border-radius:99px;flex:none}
+
+.root main > *{flex:none}</style>
+</helmet>
+<div class="root" data-theme="{{ tema }}" style="display:flex;flex-direction:column;width:390px;height:844px;background:var(--bg);color:var(--text);overflow:hidden">
+<header style="flex:none;display:flex;align-items:center;gap:12px;height:54px;padding:0 14px;background:var(--surface);border-bottom:1px solid var(--border)">
+<button aria-label="Volver" style="width:44px;height:44px;flex:none;display:grid;place-items:center;border:0;background:transparent;color:var(--muted);cursor:pointer"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7"/></svg></button>
+<div style="min-width:0;flex:1"><div style="min-width:0">
+  <div class="h" style="font-size:14.5px;line-height:1.2">Ferretería del Norte</div>
+  <div style="display:flex;align-items:center;gap:6px;margin-top:1px">
+    <span class="k" style="font-size:11px;font-weight:600;letter-spacing:.13em;color:var(--text)">FN-AGOSTO</span>
+    <span style="font-size:11px;color:var(--faint)">· Capacitación de agosto</span>
+  </div>
+</div></div>
+<button aria-label="Más acciones" style="width:44px;height:44px;flex:none;display:grid;place-items:center;border:0;background:transparent;color:var(--muted);cursor:pointer"><svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+</header>
+<main style="flex:1;overflow:hidden;padding:14px;display:flex;flex-direction:column;gap:13px">
+<section class="card" style="padding:15px;background:color-mix(in srgb, var(--accent) 7%, var(--surface))">
+  <div style="display:flex;align-items:center;gap:14px">
+    <div style="min-width:0;flex:1">
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px">
+        <span class="dot" style="background:var(--accent)"></span>
+        <span style="font-size:11.5px;font-weight:600;color:var(--accent)">Sesión en vivo</span>
+      </div>
+      <div style="font-size:12.5px;color:var(--muted)">Proyectando <span style="color:var(--text);font-weight:500">Kickoff · Copilot</span>, lámina 6 de 14</div>
+    </div>
+    <div style="flex:none;text-align:center">
+      <div class="th" style="margin-bottom:2px">PIN</div>
+      <span class="k" style="font-size:19px;font-weight:600;letter-spacing:.1em">4821</span>
+    </div>
+  </div>
+</section>
+<section style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden">
+  <div style="background:var(--surface);padding:12px 13px">
+    <div class="h" style="font-size:20px;line-height:1.1">12</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:2px">conectados</div>
+  </div>
+  <div style="background:var(--surface);padding:12px 13px">
+    <div class="h" style="font-size:20px;line-height:1.1">62%</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:2px">avance</div>
+  </div>
+  <div style="background:var(--surface);padding:12px 13px">
+    <div class="h" style="font-size:20px;line-height:1.1">3</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:2px">preguntas</div>
+  </div>
+</section>
+<div style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:3px;padding:3px;background:var(--surface2);border-radius:12px">
+  <button style="min-height:44px;border:0;cursor:pointer;border-radius:9px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;font-weight:600;background:var(--surface);color:var(--text);box-shadow:0 1px 2px rgb(20 26 56 / .1)">Asistentes</button>
+  <button style="min-height:44px;border:0;cursor:pointer;border-radius:9px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;font-weight:500;background:transparent;color:var(--muted);box-shadow:none">Preguntas · 3</button>
+  <button style="min-height:44px;border:0;cursor:pointer;border-radius:9px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;font-weight:500;background:transparent;color:var(--muted);box-shadow:none">Alcance</button>
+</div>
+<section class="card" style="overflow:hidden">
+  <div style="display:flex;align-items:center;gap:11px;min-height:56px;padding:10px 14px;">
+    <span class="h" style="width:32px;height:32px;flex:none;border-radius:99px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary);font-size:11px">PG</span>
+    <span style="min-width:0;flex:1">
+      <span style="display:block;font-size:13px;font-weight:600;">Paula Grez</span>
+      <span style="display:block;font-size:11.5px;color:var(--faint);margin-top:1px">6 de 6 módulos · ahora</span>
+    </span>
+    <span style="display:inline-flex;align-items:center;gap:9px"><span style="width:54px;height:6px;border-radius:99px;background:var(--surface2);overflow:hidden;display:block"><span style="display:block;height:100%;width:100%;border-radius:99px;background:var(--primary)"></span></span><span class="k" style="font-size:11.5px;color:var(--muted)">100%</span></span>
+  </div>
+  <div style="display:flex;align-items:center;gap:11px;min-height:56px;padding:10px 14px;border-top:1px solid var(--border)">
+    <span class="h" style="width:32px;height:32px;flex:none;border-radius:99px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary);font-size:11px">RN</span>
+    <span style="min-width:0;flex:1">
+      <span style="display:block;font-size:13px;font-weight:600;">Rodrigo Nuñez</span>
+      <span style="display:block;font-size:11.5px;color:var(--faint);margin-top:1px">5 de 6 módulos · ahora</span>
+    </span>
+    <span style="display:inline-flex;align-items:center;gap:9px"><span style="width:54px;height:6px;border-radius:99px;background:var(--surface2);overflow:hidden;display:block"><span style="display:block;height:100%;width:83%;border-radius:99px;background:var(--primary)"></span></span><span class="k" style="font-size:11.5px;color:var(--muted)">83%</span></span>
+  </div>
+  <div style="display:flex;align-items:center;gap:11px;min-height:56px;padding:10px 14px;border-top:1px solid var(--border)">
+    <span class="h" style="width:32px;height:32px;flex:none;border-radius:99px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary);font-size:11px">CS</span>
+    <span style="min-width:0;flex:1">
+      <span style="display:block;font-size:13px;font-weight:600;">Camila Soto</span>
+      <span style="display:block;font-size:11.5px;color:var(--faint);margin-top:1px">4 de 6 módulos · hace 2 min</span>
+    </span>
+    <span style="display:inline-flex;align-items:center;gap:9px"><span style="width:54px;height:6px;border-radius:99px;background:var(--surface2);overflow:hidden;display:block"><span style="display:block;height:100%;width:67%;border-radius:99px;background:var(--primary)"></span></span><span class="k" style="font-size:11.5px;color:var(--muted)">67%</span></span>
+  </div>
+  <div style="display:flex;align-items:center;gap:11px;min-height:56px;padding:10px 14px;border-top:1px solid var(--border)">
+    <span class="h" style="width:32px;height:32px;flex:none;border-radius:99px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary);font-size:11px">IF</span>
+    <span style="min-width:0;flex:1">
+      <span style="display:block;font-size:13px;font-weight:600;">Ignacio Ferrada</span>
+      <span style="display:block;font-size:11.5px;color:var(--faint);margin-top:1px">3 de 6 módulos · hace 5 min</span>
+    </span>
+    <span style="display:inline-flex;align-items:center;gap:9px"><span style="width:54px;height:6px;border-radius:99px;background:var(--surface2);overflow:hidden;display:block"><span style="display:block;height:100%;width:50%;border-radius:99px;background:var(--primary)"></span></span><span class="k" style="font-size:11.5px;color:var(--muted)">50%</span></span>
+  </div>
+  <div style="display:flex;align-items:center;gap:11px;min-height:56px;padding:10px 14px;border-top:1px solid var(--border)">
+    <span class="h" style="width:32px;height:32px;flex:none;border-radius:99px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary);font-size:11px">VR</span>
+    <span style="min-width:0;flex:1">
+      <span style="display:block;font-size:13px;font-weight:600;">Valentina Ruiz</span>
+      <span style="display:block;font-size:11.5px;color:var(--faint);margin-top:1px">2 de 6 módulos · hace 11 min</span>
+    </span>
+    <span style="display:inline-flex;align-items:center;gap:9px"><span style="width:54px;height:6px;border-radius:99px;background:var(--surface2);overflow:hidden;display:block"><span style="display:block;height:100%;width:33%;border-radius:99px;background:var(--primary)"></span></span><span class="k" style="font-size:11.5px;color:var(--muted)">33%</span></span>
+  </div>
+  <div style="display:flex;align-items:center;gap:11px;min-height:56px;padding:10px 14px;border-top:1px solid var(--border)">
+    <span class="h" style="width:32px;height:32px;flex:none;border-radius:99px;display:grid;place-items:center;background:var(--surface2);color:var(--faint);font-size:11px">?</span>
+    <span style="min-width:0;flex:1">
+      <span style="display:block;font-size:13px;font-weight:600;color:var(--faint);font-weight:500">Sin nombre</span>
+      <span style="display:block;font-size:11.5px;color:var(--faint);margin-top:1px">1 de 6 módulos · hace 14 min</span>
+    </span>
+    <span style="display:inline-flex;align-items:center;gap:9px"><span style="width:54px;height:6px;border-radius:99px;background:var(--surface2);overflow:hidden;display:block"><span style="display:block;height:100%;width:17%;border-radius:99px;background:var(--primary)"></span></span><span class="k" style="font-size:11.5px;color:var(--muted)">17%</span></span>
+  </div>
+</section>
+</main>
+<nav style="flex:none;display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));background:var(--surface);border-top:1px solid var(--border);padding:8px 6px 22px">
+  <button style="display:flex;flex-direction:column;align-items:center;gap:4px;min-height:48px;justify-content:center;border:0;background:transparent;cursor:pointer;color:var(--faint);font-family:'IBM Plex Sans',sans-serif">
+    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V19a1 1 0 0 1-1 1h-4v-5H9v5H5a1 1 0 0 1-1-1z"/></svg>
+    <span style="font-size:10.5px;font-weight:500">Inicio</span>
+  </button>
+  <button style="display:flex;flex-direction:column;align-items:center;gap:4px;min-height:48px;justify-content:center;border:0;background:transparent;cursor:pointer;color:var(--primary);font-family:'IBM Plex Sans',sans-serif">
+    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M8 10h5M8 14h3"/></svg>
+    <span style="font-size:10.5px;font-weight:600">Sesiones</span>
+  </button>
+  <button style="display:flex;flex-direction:column;align-items:center;gap:4px;min-height:48px;justify-content:center;border:0;background:transparent;cursor:pointer;color:var(--faint);font-family:'IBM Plex Sans',sans-serif">
+    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 15a2 2 0 0 1-2 2H8l-4 3V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"/><path d="M9.5 9.5a2.5 2.5 0 0 1 4.6 1.3c0 1.7-2.1 1.9-2.1 3.2"/></svg>
+    <span style="font-size:10.5px;font-weight:500">Preguntas</span>
+  </button>
+  <button style="display:flex;flex-direction:column;align-items:center;gap:4px;min-height:48px;justify-content:center;border:0;background:transparent;cursor:pointer;color:var(--faint);font-family:'IBM Plex Sans',sans-serif">
+    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v14"/><path d="M14 10h4a2 2 0 0 1 2 2v8"/><path d="M3 20h18M7.5 8h3M7.5 12h3M7.5 16h3"/></svg>
+    <span style="font-size:10.5px;font-weight:500">Empresas</span>
+  </button>
+</nav>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"tema":{"editor":"enum","options":["claro","oscuro"],"default":"claro","section":"Tema"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { tema: this.props.tema ?? 'claro' };
+  }
+}
+</script>
+</body>
+</html>

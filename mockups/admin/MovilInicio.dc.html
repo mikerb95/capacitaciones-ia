@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+.root{--bg:#f4f6fc;--surface:#ffffff;--surface2:#edf1fb;--border:#dce3f3;--text:#101426;--muted:#565f7a;--faint:#8189a3;--primary:#3b5bdb;--primary-strong:#2a3f9e;--primary-soft:#e5eafd;--accent:#0fa97a;--accent-soft:#dcf6ec;--warn:#c2410c;--warn-soft:#fdebe2;--adv:#a32079;--adv-soft:#f3e8f6;--shadow:0 1px 2px rgb(20 26 56 / .06), 0 8px 24px rgb(20 26 56 / .06)}
+.root[data-theme="oscuro"]{--bg:#0b0e1a;--surface:#141828;--surface2:#1b2133;--border:#2a3149;--text:#ebeef8;--muted:#a2aac4;--faint:#7f87a3;--primary:#7d97ff;--primary-strong:#a5b6ff;--primary-soft:#1c2547;--accent:#2fd3a0;--accent-soft:#0f3a2e;--warn:#f4a06a;--warn-soft:#3a1e10;--adv:#e39ad0;--adv-soft:#2c1730;--shadow:0 1px 2px rgb(0 0 0 / .4), 0 10px 30px rgb(0 0 0 / .35)}
+.root,.root *,.root *::before,.root *::after{box-sizing:border-box}
+body{margin:0;font-family:'IBM Plex Sans',Segoe UI,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--primary);text-decoration:none}
+a:hover{color:var(--primary-strong)}
+.h{font-family:Geist,system-ui,sans-serif;font-weight:600;letter-spacing:-.02em}
+.k{font-family:'Geist Mono',ui-monospace,monospace}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
+.nav{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:10px;font-size:13.5px;font-weight:500;color:var(--muted);text-decoration:none}
+.nav:hover{background:var(--surface2);color:var(--text)}
+.navon{background:var(--primary-soft);color:var(--primary);font-weight:600}
+.grp{font-family:'Geist Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);padding:0 10px;margin:20px 0 6px}
+.bd{justify-self:start;display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:2.5px 9px;font-size:11px;font-weight:600;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;gap:6px;border-radius:10px;border:1px solid var(--border);background:var(--surface);padding:7px 12px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;font-weight:500;color:var(--muted);cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:var(--primary);color:var(--text)}
+.btnp{background:var(--primary);border-color:transparent;color:#ffffff;font-weight:600}
+.btnp:hover{color:#ffffff;opacity:.9}
+.btns{background:var(--surface2);border-color:transparent;color:var(--text)}
+.btns:hover{background:var(--primary-soft);color:var(--primary)}
+.th{font-size:11px;font-weight:600;color:var(--faint);text-transform:uppercase;letter-spacing:.07em}
+.dot{width:7px;height:7px;border-radius:99px;flex:none}
+
+.root main > *{flex:none}</style>
+</helmet>
+<div class="root" data-theme="{{ tema }}" style="display:flex;flex-direction:column;width:390px;height:844px;background:var(--bg);color:var(--text);overflow:hidden">
+<header style="flex:none;display:flex;align-items:center;gap:12px;height:54px;padding:0 14px;background:var(--surface);border-bottom:1px solid var(--border)">
+<div style="display:flex;align-items:center;gap:9px">
+  <svg width="24" height="24" viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="1" width="24" height="24" rx="7" fill="var(--primary)"></rect><circle cx="9" cy="9" r="2.4" fill="#ffffff"></circle><circle cx="17.5" cy="16.5" r="2.4" fill="var(--accent)"></circle><path d="M9 9 L17.5 16.5" stroke="#ffffff" stroke-opacity=".65" stroke-width="1.4"></path></svg>
+  <div>
+    <div class="h" style="font-size:14px;line-height:1.15">Academia IA</div>
+    <div style="font-size:11px;color:var(--faint)">Viernes 21 de agosto</div>
+  </div>
+</div>
+<div style="min-width:0;flex:1"></div>
+<button aria-label="Buscar" style="width:44px;height:44px;flex:none;display:grid;place-items:center;border:0;background:transparent;color:var(--muted);cursor:pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg></button>
+</header>
+<main style="flex:1;overflow:hidden;padding:13px;display:flex;flex-direction:column;gap:10px">
+<section class="card" style="padding:16px;background:color-mix(in srgb, var(--primary) 5%, var(--surface))">
+  <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
+    <span class="dot" style="background:var(--accent)"></span>
+    <span style="font-size:11.5px;font-weight:600;color:var(--muted)">Hoy, 09:30 · presencial</span>
+  </div>
+  <div class="h" style="font-size:20px;line-height:1.2;margin-bottom:7px">Ferretería del Norte</div>
+  <div style="display:flex;align-items:center;gap:7px;margin-bottom:14px">
+    <span class="h" style="width:19px;height:19px;border-radius:6px;display:grid;place-items:center;flex:none;background:#0B63CE;color:#ffffff;font-size:8px">M</span>
+    <span style="font-size:12.5px;color:var(--muted)">Copilot · 6 módulos</span>
+    <span class="bd" style="background:var(--accent-soft);color:var(--accent)"><span class="dot" style="background:var(--accent)"></span>Contrato</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:11px;background:var(--surface);border:1px solid var(--border);margin-bottom:12px">
+    <div style="min-width:0;flex:1">
+      <div class="th" style="margin-bottom:3px">Código</div>
+      <span class="k" style="font-size:17px;font-weight:600;letter-spacing:.13em;color:var(--text)">FN-AGOSTO</span>
+    </div>
+    <div style="text-align:right;flex:none">
+      <div class="h" style="font-size:19px;line-height:1.1">12<span style="color:var(--faint);font-size:14px">/18</span></div>
+      <div style="font-size:11px;color:var(--faint)">registrados</div>
+    </div>
+  </div>
+  <button class="btn btnp" style="width:100%;min-height:46px;justify-content:center;font-size:14px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="2.5"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 16.2a6 6 0 0 0 0-8.4M4.9 4.9a10 10 0 0 0 0 14.2M19.1 19.1a10 10 0 0 0 0-14.2"/></svg> Abrir sesión en vivo</button>
+</section>
+<section style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden">
+  <div style="background:var(--surface);padding:12px 13px">
+    <div class="h" style="font-size:21px;line-height:1.1">3</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:2px;line-height:1.3">sesiones abiertas</div>
+  </div>
+  <div style="background:var(--surface);padding:12px 13px">
+    <div class="h" style="font-size:21px;line-height:1.1">5</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:2px;line-height:1.3">preguntas</div>
+  </div>
+  <div style="background:var(--surface);padding:12px 13px">
+    <div class="h" style="font-size:21px;line-height:1.1">7</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:2px;line-height:1.3">empresas</div>
+  </div>
+</section>
+<section class="card" style="overflow:hidden">
+  <div style="display:flex;align-items:center;gap:9px;padding:13px 15px;border-bottom:1px solid var(--border)">
+    <div class="h" style="font-size:13.5px">Requiere tu atención</div>
+    <span class="bd" style="background:var(--warn-soft);color:var(--warn)">3</span>
+  </div>
+  <button style="display:flex;align-items:center;gap:11px;width:100%;min-height:56px;padding:11px 15px;border:0;border-bottom:1px solid var(--border);background:transparent;text-align:left;cursor:pointer;font-family:'IBM Plex Sans',sans-serif">
+    <span class="dot" style="background:var(--warn)"></span>
+    <span style="min-width:0;flex:1">
+      <span style="display:block;font-size:13px;font-weight:500;color:var(--text);line-height:1.35">5 preguntas sin responder</span>
+      <span style="display:block;font-size:11.5px;color:var(--faint);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Ferretería del Norte, Andes Logística</span>
+    </span>
+    <span style="color:var(--faint);flex:none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span>
+  </button>
+  <button style="display:flex;align-items:center;gap:11px;width:100%;min-height:56px;padding:11px 15px;border:0;border-bottom:1px solid var(--border);background:transparent;text-align:left;cursor:pointer;font-family:'IBM Plex Sans',sans-serif">
+    <span class="dot" style="background:var(--warn)"></span>
+    <span style="min-width:0;flex:1">
+      <span style="display:block;font-size:13px;font-weight:500;color:var(--text);line-height:1.35">Material de Andes Logística vence en 12 días</span>
+      <span style="display:block;font-size:11.5px;color:var(--faint);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Vigente hasta el 1 de septiembre</span>
+    </span>
+    <span style="color:var(--faint);flex:none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span>
+  </button>
+  <button style="display:flex;align-items:center;gap:11px;width:100%;min-height:56px;padding:11px 15px;border:0;border-bottom:1px solid var(--border);background:transparent;text-align:left;cursor:pointer;font-family:'IBM Plex Sans',sans-serif">
+    <span class="dot" style="background:var(--primary)"></span>
+    <span style="min-width:0;flex:1">
+      <span style="display:block;font-size:13px;font-weight:500;color:var(--text);line-height:1.35">A Grupo Sarmiento le quedan 2 de 8 sesiones</span>
+      <span style="display:block;font-size:11.5px;color:var(--faint);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Contrato CT-2026-14</span>
+    </span>
+    <span style="color:var(--faint);flex:none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span>
+  </button>
+</section>
+<section>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;padding:0 2px">
+    <div class="h" style="font-size:13.5px">Otras sesiones abiertas</div>
+    <div style="flex:1"></div>
+    <a href="#" style="font-size:12px;font-weight:500">Ver todas</a>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:9px">
+    <button class="card" style="display:flex;align-items:center;gap:12px;width:100%;min-height:58px;padding:12px 15px;text-align:left;cursor:pointer;font-family:'IBM Plex Sans',sans-serif">
+      <span style="min-width:0;flex:1">
+        <span style="display:flex;align-items:center;gap:7px"><span class="k" style="font-size:12px;font-weight:600;letter-spacing:.13em;color:var(--text)">AL-2608</span><span class="bd" style="background:var(--warn-soft);color:var(--warn)">2</span></span>
+        <span style="display:block;font-size:13.5px;font-weight:600;color:var(--text);margin-top:3px">Andes Logística</span>
+      </span>
+      <span style="flex:none;text-align:right">
+        <span style="display:block"><span style="display:inline-flex;align-items:center;gap:9px"><span style="width:62px;height:6px;border-radius:99px;background:var(--surface2);overflow:hidden;display:block"><span style="display:block;height:100%;width:34%;border-radius:99px;background:var(--primary)"></span></span><span class="k" style="font-size:11.5px;color:var(--muted)">34%</span></span></span>
+        <span style="display:block;font-size:11px;color:var(--faint);margin-top:3px">17 registrados</span>
+      </span>
+    </button>
+  </div>
+</section>
+</main>
+<nav style="flex:none;display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));background:var(--surface);border-top:1px solid var(--border);padding:8px 6px 22px">
+  <button style="display:flex;flex-direction:column;align-items:center;gap:4px;min-height:48px;justify-content:center;border:0;background:transparent;cursor:pointer;color:var(--primary);font-family:'IBM Plex Sans',sans-serif">
+    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V19a1 1 0 0 1-1 1h-4v-5H9v5H5a1 1 0 0 1-1-1z"/></svg>
+    <span style="font-size:10.5px;font-weight:600">Inicio</span>
+  </button>
+  <button style="display:flex;flex-direction:column;align-items:center;gap:4px;min-height:48px;justify-content:center;border:0;background:transparent;cursor:pointer;color:var(--faint);font-family:'IBM Plex Sans',sans-serif">
+    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M8 10h5M8 14h3"/></svg>
+    <span style="font-size:10.5px;font-weight:500">Sesiones</span>
+  </button>
+  <button style="display:flex;flex-direction:column;align-items:center;gap:4px;min-height:48px;justify-content:center;border:0;background:transparent;cursor:pointer;color:var(--faint);font-family:'IBM Plex Sans',sans-serif">
+    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 15a2 2 0 0 1-2 2H8l-4 3V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"/><path d="M9.5 9.5a2.5 2.5 0 0 1 4.6 1.3c0 1.7-2.1 1.9-2.1 3.2"/></svg>
+    <span style="font-size:10.5px;font-weight:500">Preguntas</span>
+  </button>
+  <button style="display:flex;flex-direction:column;align-items:center;gap:4px;min-height:48px;justify-content:center;border:0;background:transparent;cursor:pointer;color:var(--faint);font-family:'IBM Plex Sans',sans-serif">
+    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v14"/><path d="M14 10h4a2 2 0 0 1 2 2v8"/><path d="M3 20h18M7.5 8h3M7.5 12h3M7.5 16h3"/></svg>
+    <span style="font-size:10.5px;font-weight:500">Empresas</span>
+  </button>
+</nav>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"tema":{"editor":"enum","options":["claro","oscuro"],"default":"claro","section":"Tema"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { tema: this.props.tema ?? 'claro' };
+  }
+}
+</script>
+</body>
+</html>
