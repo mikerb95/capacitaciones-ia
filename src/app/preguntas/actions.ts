@@ -37,18 +37,50 @@ export async function ask(_prev: AskState, formData: FormData): Promise<AskState
   });
 
   if (repeated && Date.now() - repeated.createdAt.getTime() < 60 * 60 * 1000) {
-    return { sentAt: Date.now() };
+    return { sentAt: Date.now(), questionId: repeated.id };
   }
 
-  await db.insert(questions).values({
-    accessCodeId: participant.accessCodeId,
-    participantId: anonymous ? null : participant.id,
-    name: anonymous ? null : name || null,
-    anonymous,
-    body,
-    updatedAt: new Date(),
-  });
+  const [saved] = await db
+    .insert(questions)
+    .values({
+      accessCodeId: participant.accessCodeId,
+      participantId: anonymous ? null : participant.id,
+      name: anonymous ? null : name || null,
+      anonymous,
+      body,
+      updatedAt: new Date(),
+    })
+    .returning({ id: questions.id });
 
   revalidatePath('/preguntas');
-  return { sentAt: Date.now() };
+  return { sentAt: Date.now(), questionId: saved.id };
+}
+
+/**
+ * Borra la propia pregunta recién hecha, mientras dure la ventana de gracia.
+ *
+ * Solo alcanza a las firmadas: en las anónimas no guardamos de quién son, así
+ * que no hay forma de comprobar que quien borra es quien preguntó, y averiguarlo
+ * sería romper justo lo que se prometió. Tampoco se borra una ya respondida:
+ * ahí la conversación es de dos.
+ */
+export async function unask(formData: FormData) {
+  const participant = await requireParticipant('/preguntas');
+  const id = Number(formData.get('id'));
+  if (!Number.isInteger(id)) return;
+
+  const question = await db.query.questions.findFirst({ where: eq(questions.id, id) });
+
+  const own =
+    question &&
+    !question.anonymous &&
+    question.participantId === participant.id &&
+    question.accessCodeId === participant.accessCodeId;
+
+  if (!own) return;
+  if (question.status !== 'abierta') return;
+  if (Date.now() - question.createdAt.getTime() > QUESTION_GRACE_MS) return;
+
+  await db.delete(questions).where(eq(questions.id, id));
+  revalidatePath('/preguntas');
 }
