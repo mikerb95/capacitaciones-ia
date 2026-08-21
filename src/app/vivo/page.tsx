@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { Audience } from '@/components/audience';
 import { getLiveByPin } from '@/db/queries';
-import { joinLive } from '@/app/admin/presentaciones/actions';
+import { joinLive } from '@/app/admin/(panel)/presentaciones/actions';
 import { rememberName } from '@/lib/participants';
 import { requireParticipant } from '@/lib/session';
 

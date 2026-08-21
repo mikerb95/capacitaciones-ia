@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useActionState, useMemo, useState, type ReactNode } from 'react';
-import type { AccessCodeState, AccessCodeAction } from '@/app/admin/accesos/actions';
+import type { AccessCodeState, AccessCodeAction } from '@/app/admin/(panel)/accesos/actions';
 import type { CompanyKind } from '@/db/schema';
 import { CODE_MAX } from '@/lib/access-code';
 import { availabilityIn, entryPlan, type PlanInfo, type PlanRef } from '@/lib/plans';

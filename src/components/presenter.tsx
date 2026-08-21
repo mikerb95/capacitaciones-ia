@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useState, useTransition } from 'react';
 import type { DeckFull } from '@/db/queries';
-import { pushSlide, startLive, stopLive } from '@/app/admin/presentaciones/actions';
+import { pushSlide, startLive, stopLive } from '@/app/admin/(panel)/presentaciones/actions';
 import { SlideStage } from './slide-stage';
 
 export function Presenter({

@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState, useState } from 'react';
-import type { CompanyAction, CompanyState } from '@/app/admin/empresas/actions';
+import type { CompanyAction, CompanyState } from '@/app/admin/(panel)/empresas/actions';
 import type { CompanyKind } from '@/db/schema';
 import { Field, FormError, Step, field } from './form-kit';
 
