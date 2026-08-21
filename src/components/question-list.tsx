@@ -366,6 +366,7 @@ export function QuestionList({
             question={question}
             mine={mine.has(question.id)}
             flash={flash === question.id}
+            onVote={onVote}
           >
             {onRemove && canRemove.has(question.id) && (
               <form action={onRemove} className="mt-2.5">
