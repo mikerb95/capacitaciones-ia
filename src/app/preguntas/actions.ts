@@ -26,7 +26,9 @@ export async function ask(prev: AskState, formData: FormData): Promise<AskState>
   const name = cleanName(str(formData, 'nombre'));
 
   if (body.length < QUESTION_MIN) {
-    return { error: 'Escribe la pregunta completa, con un poco más de detalle.' };
+    // El envío anterior viaja con el error: el formulario usa esa marca de
+    // llave y perderla le borraría al asistente lo que acaba de escribir.
+    return { ...prev, error: 'Escribe la pregunta completa, con un poco más de detalle.' };
   }
 
   // Doble envío por recargar o por darle dos veces: la misma pregunta del mismo
