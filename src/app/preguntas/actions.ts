@@ -70,9 +70,9 @@ export async function unask(formData: FormData) {
   if (!Number.isInteger(id)) return;
 
   const question = await db.query.questions.findFirst({ where: eq(questions.id, id) });
+  if (!question) return;
 
   const own =
-    question &&
     !question.anonymous &&
     question.participantId === participant.id &&
     question.accessCodeId === participant.accessCodeId;
