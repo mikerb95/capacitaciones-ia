@@ -17,6 +17,15 @@ export default async function PreguntasPage() {
 
   const pendientes = questions.filter((q) => q.status === 'abierta').length;
 
+  // Las que firmó quien está mirando. Las anónimas no salen de aquí: el
+  // servidor no sabe de quién son, y la lista las reconoce por su cuenta con lo
+  // que guardó el navegador al enviarlas.
+  const propias = questions.filter((q) => !q.anonymous && q.participantId === participant.id);
+
+  const borrables = propias.filter(
+    (q) => q.status === 'abierta' && Date.now() - q.createdAt.getTime() < QUESTION_GRACE_MS,
+  );
+
   return (
     <div className="min-h-screen bg-bg">
       <SiteHeader
