@@ -130,12 +130,16 @@ function Fields({
  */
 export function QuestionForm({ name }: { name: string }) {
   const [state, action, pending] = useActionState<AskState, FormData>(ask, {});
+  const avisada = useRef<number>(0);
 
   // Guardada la pregunta, la lista de abajo tiene que saber cuál es para
   // marcarla y llevarla a la vista. Van por un aviso del navegador y no por un
   // contexto porque son dos hermanos sueltos dentro de la misma página.
   useEffect(() => {
-    if (!state.sentAt) return;
+    if (!state.sentAt || state.error) return;
+    if (avisada.current === state.sentAt) return;
+
+    avisada.current = state.sentAt;
     window.dispatchEvent(new CustomEvent<AskState>(ASKED_EVENT, { detail: state }));
   }, [state]);
 

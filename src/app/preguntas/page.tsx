@@ -3,7 +3,9 @@ import { QuestionList } from '@/components/question-list';
 import { LeaveButton } from '@/components/leave-button';
 import { SiteHeader } from '@/components/ui';
 import { getTrainingQuestions } from '@/db/queries';
+import { QUESTION_GRACE_MS } from '@/lib/questions';
 import { requireParticipant } from '@/lib/session';
+import { unask } from './actions';
 
 export const dynamic = 'force-dynamic';
 
