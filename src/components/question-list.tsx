@@ -78,19 +78,67 @@ function parseIds(raw: string): number[] {
   }
 }
 
+/**
+ * El botón de "yo también", que es de ida y vuelta: el mismo clic suma el voto
+ * y lo retira. Va en su propio componente para poder usar el estado del envío y
+ * que el número no se quede quieto mientras viaja al servidor.
+ */
+function VoteButton({ votes, voted }: { votes: number; voted: boolean }) {
+  const { pending } = useFormStatus();
+
+  // Mientras el envío está en camino se pinta lo que va a quedar. Es un clic
+  // con una consulta detrás: sin esto parece que no pasó nada.
+  const going = pending ? !voted : voted;
+  const shown = pending ? votes + (voted ? -1 : 1) : votes;
+
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      aria-pressed={going}
+      title={going ? 'Quitar tu voto' : undefined}
+      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[12.5px] font-medium transition-colors ${
+        going
+          ? 'border-primary bg-primary-soft text-primary'
+          : 'border-line bg-surface text-muted hover:border-primary hover:text-text'
+      }`}
+    >
+      <span aria-hidden>{going ? '✓' : '+'}</span>
+      {going ? 'También la tienes' : 'Yo también tengo esta duda'}
+      {shown > 0 && <span className="tabular-nums opacity-70">{shown}</span>}
+    </button>
+  );
+}
+
+/** El mismo dato cuando no hay nada que apretar: la cuenta, y solo si hay. */
+function VoteCount({ votes }: { votes: number }) {
+  if (votes === 0) return null;
+
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-2 px-3 py-1 text-[12.5px] text-muted">
+      <span aria-hidden>✓</span>
+      {votes === 1 ? '1 persona más tiene esta duda' : `${votes} personas más tienen esta duda`}
+    </span>
+  );
+}
+
 /** Una pregunta con su respuesta, si ya la tiene, y lo que quepa debajo. */
 function QuestionItem({
   question,
   mine,
   flash,
+  onVote,
   children,
 }: {
   question: QuestionRow;
   mine: boolean;
   flash: boolean;
+  /** Sin acción no se vota: el admin y el panel de la empresa solo miran. */
+  onVote?: (formData: FormData) => void | Promise<void>;
   children?: React.ReactNode;
 }) {
   const answered = question.status === 'respondida' && question.answer;
+  const live = question.status === 'en_sesion';
 
   return (
     <li
