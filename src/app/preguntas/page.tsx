@@ -18,7 +18,10 @@ async function leerReloj() {
 
 export default async function PreguntasPage() {
   const participant = await requireParticipant('/preguntas');
-  const questions = await getTrainingQuestions(participant.accessCodeId);
+  const [questions, ahora] = await Promise.all([
+    getTrainingQuestions(participant.accessCodeId),
+    leerReloj(),
+  ]);
 
   const pendientes = questions.filter((q) => q.status === 'abierta').length;
 
