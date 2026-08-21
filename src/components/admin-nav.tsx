@@ -43,6 +43,13 @@ const PATHS = {
       <path d="M12 15v4M8.5 21l3.5-2 3.5 2" />
     </>
   ),
+  materiales: (
+    <>
+      <path d="M5 4h9l5 5v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z" />
+      <path d="M13.5 4v5.5H19" />
+      <path d="M8 14h7M8 17.5h4.5" />
+    </>
+  ),
 };
 
 function Icon({ name, size = 17 }: { name: keyof typeof PATHS; size?: number }) {
