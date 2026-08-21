@@ -139,6 +139,7 @@ function QuestionItem({
 }) {
   const answered = question.status === 'respondida' && question.answer;
   const live = question.status === 'en_sesion';
+  const votable = Boolean(onVote) && !mine;
 
   return (
     <li
