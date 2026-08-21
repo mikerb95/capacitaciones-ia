@@ -218,6 +218,40 @@ export default async function ModulePage({ params, searchParams }: Params) {
           </section>
         )}
 
+        {/* Copiar un prompt no enseña a escribirlo: el entrenador va justo
+            después de la lista, que es donde da la tentación de copiar. */}
+        {seEntrena(mod) && (
+          <section className="mb-9">
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-3 rounded-card border border-[var(--tone-line)] bg-[var(--tone-soft)] p-5">
+              <div className="min-w-[260px] flex-1">
+                <div className="mb-1.5 flex items-center gap-2">
+                  <span
+                    className="h-2 w-2 flex-none rounded-full"
+                    style={{ background: 'var(--tone)' }}
+                    aria-hidden="true"
+                  />
+                  <span className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-muted">
+                    Practica
+                  </span>
+                </div>
+                <h3 className="font-display text-[16px] font-semibold tracking-tight">
+                  Escribe el tuyo antes de copiar estos
+                </h3>
+                <p className="mt-1.5 max-w-[58ch] text-[13.5px] leading-relaxed text-muted">
+                  {mod.roles.length} {mod.roles.length === 1 ? 'caso' : 'casos'} de tu área para
+                  resolver a ciegas. Nada de lo que escribas se guarda.
+                </p>
+              </div>
+              <Link
+                href={`/entrenador/${platformId}/${slug}`}
+                className="rounded-lg bg-[var(--tone)] px-4 py-2 text-[13px] font-semibold text-white transition-opacity hover:opacity-90"
+              >
+                Entrenar
+              </Link>
+            </div>
+          </section>
+        )}
+
         {(mod.before || mod.after) && (
           <section className="mb-9">
             <SectionTitle kicker="El caso" title="Antes y después" intro={mod.baIntro ?? undefined} />
