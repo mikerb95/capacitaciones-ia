@@ -684,8 +684,12 @@ export const moduleViews = sqliteTable(
  * Estado de una pregunta. `abierta` es lo que queda por contestar, y es lo que
  * el expositor mira antes de la siguiente sesión; `respondida` guarda además
  * la respuesta, que es lo que convierte el buzón en material de consulta.
+ *
+ * `en_sesion` es la que se contestó en voz alta y nadie escribió: sale de la
+ * pila de pendientes porque ya no hay nada que hacer con ella, pero no finge
+ * tener respuesta guardada. Si después alguien la escribe, pasa a `respondida`.
  */
-export const QUESTION_STATUS = ['abierta', 'respondida'] as const;
+export const QUESTION_STATUS = ['abierta', 'respondida', 'en_sesion'] as const;
 
 /**
  * Pregunta que deja alguien de la capacitación. Se guarda contra el código y
