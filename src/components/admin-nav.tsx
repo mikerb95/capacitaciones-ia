@@ -101,6 +101,7 @@ function groups({ openCodes, drafts }: NavCounts): Group[] {
           badge: drafts || undefined,
         },
         { href: '/admin/presentaciones', label: 'Presentaciones', icon: 'presentaciones' },
+        { href: '/admin/materiales', label: 'Materiales', icon: 'materiales' },
       ],
     },
   ];
