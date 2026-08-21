@@ -730,6 +730,35 @@ export const questions = sqliteTable(
   ],
 );
 
+/**
+ * "Yo también tengo esta duda". Un voto por persona y por pregunta, y por eso
+ * el índice único: el botón se aprieta y se suelta, no se acumula.
+ *
+ * El voto sí queda con nombre y apellido aunque la pregunta sea anónima, porque
+ * nadie lo muestra: lo único que se pinta es el número. Se guarda contra el
+ * participante y no contra el navegador para que la cuenta signifique algo
+ * (personas de la capacitación) y no se infle recargando en otra pestaña.
+ */
+export const questionVotes = sqliteTable(
+  'question_votes',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    questionId: integer('question_id')
+      .notNull()
+      .references(() => questions.id, { onDelete: 'cascade' }),
+    participantId: integer('participant_id')
+      .notNull()
+      .references(() => participants.id, { onDelete: 'cascade' }),
+    createdAt: integer('created_at', { mode: 'timestamp' })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (t) => [
+    uniqueIndex('question_votes_unique').on(t.questionId, t.participantId),
+    index('question_votes_question_idx').on(t.questionId),
+  ],
+);
+
 /* ------------------------------------------------------------------ relations */
 
 export const platformsRelations = relations(platforms, ({ many }) => ({
