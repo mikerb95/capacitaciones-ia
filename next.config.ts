@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
   // Sin esto los archivos no viajan al bundle y la descarga da 404 en Vercel.
   outputFileTracingIncludes: {
     '/api/materiales/[platform]/[file]': ['./private/materiales/**/*'],
+    // El panel de materiales lista esa misma carpeta para saber de qué
+    // documentos hay genérico y de cuáles no hay nada que descargar.
+    '/admin/materiales/[id]': ['./private/materiales/**/*'],
   },
 };
 
