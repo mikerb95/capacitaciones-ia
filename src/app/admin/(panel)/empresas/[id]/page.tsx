@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { AdminLogoutButton } from '@/components/admin-logout-button';
+import { AdminPage } from '@/components/admin-page';
 import { CompanyForm } from '@/components/company-form';
-import { SiteHeader } from '@/components/ui';
 import { getCompany } from '@/db/queries';
 import {
   deleteCompany,
@@ -56,20 +55,17 @@ export default async function EmpresaPage({ params, searchParams }: Props) {
   const dictadas = contratadas.length + intermediadas.length;
 
   return (
-    <div className="min-h-screen bg-bg">
-      <SiteHeader
-        title={company.name}
-        subtitle={
-          company.contractSessions
-            ? `${dictadas} de ${company.contractSessions} capacitaciones dictadas`
-            : `${dictadas} ${dictadas === 1 ? 'capacitación dictada' : 'capacitaciones dictadas'}`
-        }
-        back={{ href: '/admin/empresas', label: 'Empresas' }}
-      >
-        <AdminLogoutButton />
-      </SiteHeader>
-
-      <main className="mx-auto flex max-w-[900px] flex-col gap-5 px-4 py-8 sm:px-6">
+    <AdminPage
+      title={company.name}
+      subtitle={
+        company.contractSessions
+          ? `${dictadas} de ${company.contractSessions} capacitaciones dictadas`
+          : `${dictadas} ${dictadas === 1 ? 'capacitación dictada' : 'capacitaciones dictadas'}`
+      }
+      back={{ href: '/admin/empresas', label: 'Empresas' }}
+      max={900}
+    >
+      <div className="flex flex-col gap-5">
         {(creada || guardada) && (
           <p className="rounded-[10px] bg-accent-soft px-4 py-2.5 text-[13px] text-accent">
             {creada
@@ -306,7 +302,7 @@ export default async function EmpresaPage({ params, searchParams }: Props) {
             contrato, y el panel deja de existir.
           </span>
         </form>
-      </main>
-    </div>
+      </div>
+    </AdminPage>
   );
 }

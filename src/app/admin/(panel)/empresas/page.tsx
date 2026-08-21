@@ -1,6 +1,5 @@
 import Link from 'next/link';
-import { AdminLogoutButton } from '@/components/admin-logout-button';
-import { SiteHeader } from '@/components/ui';
+import { AdminAction, AdminPage } from '@/components/admin-page';
 import { getCompanies, type CompanyRow } from '@/db/queries';
 
 export const dynamic = 'force-dynamic';
@@ -102,45 +101,32 @@ export default async function EmpresasPage() {
   const companies = await getCompanies();
 
   return (
-    <div className="min-h-screen bg-bg">
-      <SiteHeader
-        title="Empresas"
-        subtitle="Las que reciben tus capacitaciones y las que te subcontratan para dárselas a sus clientes, con su contrato, sus responsables y la clave de su panel."
-        back={{ href: '/admin', label: 'Administrar contenido' }}
-      >
-        <Link
-          href="/admin/accesos"
-          className="rounded-[10px] border border-line bg-surface px-3 py-2 text-[12.5px] font-medium text-muted transition-colors hover:border-primary hover:text-text"
-        >
-          Códigos de acceso
-        </Link>
-        <Link
-          href="/admin/empresas/nueva"
-          className="rounded-[10px] bg-primary px-3 py-2 text-[12.5px] font-semibold text-white transition-opacity hover:opacity-90"
-        >
+    <AdminPage
+      title="Empresas"
+      subtitle="Las que reciben tus capacitaciones y las que te subcontratan para dárselas a sus clientes, con su contrato, sus responsables y la clave de su panel."
+      max={900}
+      actions={
+        <AdminAction href="/admin/empresas/nueva" primary>
           Nueva empresa
-        </Link>
-        <AdminLogoutButton />
-      </SiteHeader>
-
-      <main className="mx-auto max-w-[900px] px-4 py-8 sm:px-6">
-        {companies.length === 0 ? (
-          <p className="rounded-card border border-line bg-surface-2 p-5 text-[13.5px] leading-relaxed text-muted">
-            Aún no hay empresas.{' '}
-            <Link href="/admin/empresas/nueva" className="font-medium text-primary">
-              Crea la primera
-            </Link>
-            : con ella cargas el contrato, sus responsables y la clave con la que entran a ver a su
-            gente y el avance de cada uno.
-          </p>
-        ) : (
-          <div className="flex flex-col gap-4">
-            {companies.map((company) => (
-              <CompanyCard key={company.id} company={company} />
-            ))}
-          </div>
-        )}
-      </main>
-    </div>
+        </AdminAction>
+      }
+    >
+      {companies.length === 0 ? (
+        <p className="rounded-card border border-line bg-surface-2 p-5 text-[13.5px] leading-relaxed text-muted">
+          Aún no hay empresas.{' '}
+          <Link href="/admin/empresas/nueva" className="font-medium text-primary">
+            Crea la primera
+          </Link>
+          : con ella cargas el contrato, sus responsables y la clave con la que entran a ver a su
+          gente y el avance de cada uno.
+        </p>
+      ) : (
+        <div className="flex flex-col gap-4">
+          {companies.map((company) => (
+            <CompanyCard key={company.id} company={company} />
+          ))}
+        </div>
+      )}
+    </AdminPage>
   );
 }
