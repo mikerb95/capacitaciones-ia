@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import type { QuestionRow } from '@/db/queries';
 import { ASKED_EVENT, ASKED_STORAGE_KEY, type AskState } from '@/lib/questions';
 
