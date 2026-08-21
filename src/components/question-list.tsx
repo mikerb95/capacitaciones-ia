@@ -26,24 +26,54 @@ export function questionAuthor(question: QuestionRow) {
  * Las preguntas hechas desde este navegador. Es lo único que reconoce a una
  * anónima como propia: el servidor no guarda de quién es y no vamos a inventar
  * la forma de averiguarlo. Vive en el dispositivo, no viaja a ningún lado.
+ *
+ * Se lee como lo que es, un sistema externo a React: un almacén con su
+ * suscripción, en vez de copiarlo a un estado desde un efecto.
  */
-function readAsked(): number[] {
+const NINGUNA = '[]';
+
+const listeners = new Set<() => void>();
+let cached: string | null = null;
+
+function subscribeAsked(onChange: () => void) {
+  listeners.add(onChange);
+  return () => listeners.delete(onChange);
+}
+
+function askedSnapshot() {
+  if (cached === null) {
+    try {
+      cached = window.localStorage.getItem(ASKED_STORAGE_KEY) ?? NINGUNA;
+    } catch {
+      cached = NINGUNA;
+    }
+  }
+  return cached;
+}
+
+/** En el servidor no hay dispositivo que recuerde nada. */
+const serverSnapshot = () => NINGUNA;
+
+function rememberAsked(id: number) {
+  const previas: number[] = parseIds(askedSnapshot());
+  cached = JSON.stringify([...new Set([...previas, id])].slice(-50));
+
   try {
-    const raw = window.localStorage.getItem(ASKED_STORAGE_KEY);
-    const ids: unknown = raw ? JSON.parse(raw) : [];
+    window.localStorage.setItem(ASKED_STORAGE_KEY, cached);
+  } catch {
+    // Navegación privada o almacenamiento bloqueado: la marca de "tuya" dura
+    // lo que dure la pestaña y no pasa nada más, la pregunta ya está guardada.
+  }
+
+  for (const listener of listeners) listener();
+}
+
+function parseIds(raw: string): number[] {
+  try {
+    const ids: unknown = JSON.parse(raw);
     return Array.isArray(ids) ? ids.filter((id) => typeof id === 'number') : [];
   } catch {
     return [];
-  }
-}
-
-function rememberAsked(id: number) {
-  try {
-    const ids = [...new Set([...readAsked(), id])].slice(-50);
-    window.localStorage.setItem(ASKED_STORAGE_KEY, JSON.stringify(ids));
-  } catch {
-    // Navegación privada o almacenamiento bloqueado: se pierde la marca de
-    // "tuya" y no pasa nada más, la pregunta ya está guardada.
   }
 }
 
