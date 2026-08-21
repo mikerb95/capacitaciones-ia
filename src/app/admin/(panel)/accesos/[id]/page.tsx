@@ -113,45 +113,46 @@ export default async function EditarAccesoPage({ params }: Props) {
                   {/* Plegado: con quince preguntas, quince campos de texto
                       abiertos no dejan leer ninguna. */}
                   <details className="group mt-3">
-                  <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 text-[12.5px] font-semibold text-primary">
-                    <span aria-hidden className="transition-transform group-open:rotate-90">
-                      ›
-                    </span>
-                    {question.answer ? 'Editar respuesta' : 'Responder'}
-                  </summary>
+                    <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 text-[12.5px] font-semibold text-primary">
+                      <span aria-hidden className="transition-transform group-open:rotate-90">
+                        ›
+                      </span>
+                      {question.answer ? 'Editar respuesta' : 'Responder por escrito'}
+                    </summary>
 
-                  <form action={answerQuestion} className="mt-2 flex flex-col gap-2">
-                    <input type="hidden" name="id" value={question.id} />
-                    <textarea
-                      name="respuesta"
-                      rows={2}
-                      defaultValue={question.answer ?? ''}
-                      className={`${field} resize-y leading-relaxed`}
-                      placeholder="Escribe la respuesta que verá quien preguntó"
-                    />
-                    <div className="flex flex-wrap items-center gap-2">
+                    <form action={answerQuestion} className="mt-2 flex flex-col gap-2">
+                      <input type="hidden" name="id" value={question.id} />
+                      <textarea
+                        name="respuesta"
+                        rows={2}
+                        defaultValue={question.answer ?? ''}
+                        className={`${field} resize-y leading-relaxed`}
+                        placeholder="Escribe la respuesta que verá quien preguntó"
+                      />
+                      <div className="flex flex-wrap items-center gap-2">
+                        <button
+                          type="submit"
+                          className="rounded-[10px] bg-primary px-3 py-1.5 text-[12.5px] font-semibold text-white transition-opacity hover:opacity-90"
+                        >
+                          {question.answer ? 'Actualizar respuesta' : 'Responder'}
+                        </button>
+                        <span className="text-[12px] text-faint">
+                          Vaciar el campo la devuelve a pendiente.
+                        </span>
+                      </div>
+                    </form>
+
+                    <form action={deleteQuestion} className="mt-2">
+                      <input type="hidden" name="id" value={question.id} />
                       <button
                         type="submit"
-                        className="rounded-[10px] bg-primary px-3 py-1.5 text-[12.5px] font-semibold text-white transition-opacity hover:opacity-90"
+                        className="text-[12px] text-faint underline decoration-line underline-offset-4 transition-colors hover:text-[#c2410c]"
                       >
-                        {question.answer ? 'Actualizar respuesta' : 'Responder'}
+                        Borrar pregunta
                       </button>
-                      <span className="text-[12px] text-faint">
-                        Vaciar el campo la devuelve a pendiente.
-                      </span>
-                    </div>
-                  </form>
-
-                  <form action={deleteQuestion} className="mt-2">
-                    <input type="hidden" name="id" value={question.id} />
-                    <button
-                      type="submit"
-                      className="text-[12px] text-faint underline decoration-line underline-offset-4 transition-colors hover:text-[#c2410c]"
-                    >
-                      Borrar pregunta
-                    </button>
-                  </form>
-                </details>,
+                    </form>
+                  </details>
+                </div>,
               ]),
             )}
           />
