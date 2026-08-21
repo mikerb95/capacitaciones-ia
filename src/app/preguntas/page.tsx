@@ -76,6 +76,7 @@ export default async function PreguntasPage() {
             ownIds={propias.map((q) => q.id)}
             removable={borrables.map((q) => q.id)}
             onRemove={unask}
+            onVote={vote}
             removeLabel="Me arrepentí, bórrala"
           />
         </section>
