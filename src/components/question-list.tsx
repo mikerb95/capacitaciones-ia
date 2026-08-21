@@ -155,14 +155,42 @@ function QuestionItem({
           </span>
         )}
         <span className="text-[12px] text-faint">{fechaHora.format(question.createdAt)}</span>
-        {!answered && (
-          <span className="rounded-full bg-surface-2 px-2 py-0.5 text-[11px] font-semibold text-faint">
-            Sin responder
+        {live ? (
+          <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-semibold text-accent">
+            Respondida en la sesión
           </span>
+        ) : (
+          !answered && (
+            <span className="rounded-full bg-surface-2 px-2 py-0.5 text-[11px] font-semibold text-faint">
+              Sin responder
+            </span>
+          )
         )}
       </div>
 
       <p className="mt-2 whitespace-pre-line text-[14px] leading-relaxed">{question.body}</p>
+
+      {live && (
+        <p className="mt-2 text-[12.5px] leading-relaxed text-faint">
+          Se contestó hablando durante la capacitación, así que no quedó escrita.
+        </p>
+      )}
+
+      {/*
+        El voto solo lo ve quien no la escribió: sumarse a la propia duda no
+        dice nada. A quien preguntó le queda la cuenta, que es lo que le
+        interesa saber (cuánta gente estaba en las mismas).
+      */}
+      <div className="mt-3">
+        {onVote && !mine ? (
+          <form action={onVote}>
+            <input type="hidden" name="id" value={question.id} />
+            <VoteButton votes={question.votes} voted={question.voted} />
+          </form>
+        ) : (
+          <VoteCount votes={question.votes} />
+        )}
+      </div>
 
       {answered && (
         <div className="mt-3 rounded-[10px] bg-surface-2 px-4 py-3">
