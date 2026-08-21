@@ -1,6 +1,5 @@
 import Link from 'next/link';
-import { AdminLogoutButton } from '@/components/admin-logout-button';
-import { SiteHeader } from '@/components/ui';
+import { AdminAction, AdminPage } from '@/components/admin-page';
 import {
   getAccessCodes,
   getComparison,
@@ -255,9 +254,8 @@ export default async function AccesosPage({ searchParams }: Props) {
       : null;
 
   return (
-    <div className="min-h-screen bg-bg">
-      <SiteHeader
-        title="Códigos de acceso"
+    <AdminPage
+      title="Capacitaciones"
         subtitle="La llave que entregas al inicio de cada capacitación, con quién la contrató, quién la recibe, su alcance y quienes entraron."
         back={{ href: '/admin', label: 'Administrar contenido' }}
       >
