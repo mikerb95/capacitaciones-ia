@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { AdminLogoutButton } from '@/components/admin-logout-button';
-import { Card, PlatformMark, SectionTitle, SiteHeader } from '@/components/ui';
+import { AdminAction, AdminPage } from '@/components/admin-page';
+import { Card, PlatformMark, SectionTitle } from '@/components/ui';
 import { platformLogo } from '@/lib/brand-logos';
 import { getDecks, getPlatformIds } from '@/db/queries';
 import { deleteDeck, importDeck } from './actions';
@@ -22,22 +22,12 @@ export default async function DecksPage({ searchParams }: Search) {
   ]);
 
   return (
-    <div className="min-h-screen bg-bg">
-      <SiteHeader
-        title="Presentaciones"
-        subtitle="Importa el HTML que armaste en Claude Design y proyéctalo desde acá"
-        back={{ href: '/admin', label: 'Volver al admin' }}
-      >
-        <Link
-          href="/vivo"
-          className="rounded-[10px] border border-line bg-surface px-3 py-2 text-[12.5px] font-medium text-muted transition-colors hover:border-primary hover:text-text"
-        >
-          Vista de audiencia
-        </Link>
-        <AdminLogoutButton />
-      </SiteHeader>
-
-      <main className="mx-auto max-w-[1000px] px-4 py-8 sm:px-6">
+    <AdminPage
+      title="Presentaciones"
+      subtitle="Importa el HTML que armaste en Claude Design y proyéctalo desde acá"
+      max={1000}
+      actions={<AdminAction href="/vivo">Vista de audiencia</AdminAction>}
+    >
         {error && (
           <p className="mb-5 rounded-card bg-[#fdebe2] px-4 py-3 text-[13.5px] text-[#c2410c] dark:bg-[#3a1e10] dark:text-[#f4a06a]">
             {error === 'sin-secciones'
@@ -184,8 +174,7 @@ export default async function DecksPage({ searchParams }: Search) {
               ))}
             </div>
           )}
-        </section>
-      </main>
-    </div>
+      </section>
+    </AdminPage>
   );
 }
