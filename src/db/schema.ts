@@ -992,3 +992,6 @@ export type Company = typeof companies.$inferSelect;
 export type CompanyKind = (typeof COMPANY_KINDS)[number];
 export type CompanyContact = typeof companyContacts.$inferSelect;
 export type ModuleView = typeof moduleViews.$inferSelect;
+export type Question = typeof questions.$inferSelect;
+export type QuestionStatus = (typeof QUESTION_STATUS)[number];
+export type QuestionVote = typeof questionVotes.$inferSelect;
