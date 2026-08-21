@@ -18,13 +18,12 @@ export default async function NuevoAccesoPage() {
       back={{ href: '/admin/accesos', label: 'Capacitaciones' }}
       max={900}
     >
-        <AccessCodeForm
-          action={createAccessCode}
-          platforms={platforms}
-          companies={companies}
-          mode="create"
-        />
-      </main>
-    </div>
+      <AccessCodeForm
+        action={createAccessCode}
+        platforms={platforms}
+        companies={companies}
+        mode="create"
+      />
+    </AdminPage>
   );
 }

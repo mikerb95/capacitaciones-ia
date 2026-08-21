@@ -14,8 +14,7 @@ export default function NuevaEmpresaPage() {
       back={{ href: '/admin/empresas', label: 'Empresas' }}
       max={900}
     >
-        <CompanyForm action={createCompany} mode="create" />
-      </main>
-    </div>
+      <CompanyForm action={createCompany} mode="create" />
+    </AdminPage>
   );
 }
