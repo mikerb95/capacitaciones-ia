@@ -181,16 +181,18 @@ function QuestionItem({
         dice nada. A quien preguntó le queda la cuenta, que es lo que le
         interesa saber (cuánta gente estaba en las mismas).
       */}
-      <div className="mt-3">
-        {onVote && !mine ? (
-          <form action={onVote}>
-            <input type="hidden" name="id" value={question.id} />
-            <VoteButton votes={question.votes} voted={question.voted} />
-          </form>
-        ) : (
-          <VoteCount votes={question.votes} />
-        )}
-      </div>
+      {votable ? (
+        <form action={onVote} className="mt-3">
+          <input type="hidden" name="id" value={question.id} />
+          <VoteButton votes={question.votes} voted={question.voted} />
+        </form>
+      ) : (
+        question.votes > 0 && (
+          <div className="mt-3">
+            <VoteCount votes={question.votes} />
+          </div>
+        )
+      )}
 
       {answered && (
         <div className="mt-3 rounded-[10px] bg-surface-2 px-4 py-3">
