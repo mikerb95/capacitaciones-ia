@@ -332,6 +332,44 @@ export async function answerQuestion(formData: FormData) {
   revalidatePath('/preguntas');
 }
 
+/**
+ * Marca una pregunta como contestada en voz alta, sin texto.
+ *
+ * Es el caso normal en vivo: la duda se responde hablando, y obligar al
+ * expositor a transcribirla para sacarla de pendientes termina en un buzón que
+ * miente, con veinte preguntas "sin responder" que ya se contestaron. Queda con
+ * su marca de tiempo y sin respuesta escrita, que es exactamente lo que pasó.
+ *
+ * El mismo botón la devuelve a pendiente, para el clic equivocado. Si después
+ * alguien escribe la respuesta, `answerQuestion` la pasa a respondida y este
+ * estado desaparece solo.
+ */
+export async function answerInSession(formData: FormData) {
+  const id = Number(str(formData, 'id'));
+  if (!id) return;
+
+  const question = await db.query.questions.findFirst({ where: eq(questions.id, id) });
+  if (!question) return;
+
+  // Sobre una respondida por escrito no hace nada: ahí el estado lo manda el
+  // texto guardado, y degradarlo perdería la respuesta de vista.
+  if (question.status === 'respondida') return;
+
+  const live = question.status !== 'en_sesion';
+
+  await db
+    .update(questions)
+    .set({
+      status: live ? 'en_sesion' : 'abierta',
+      answeredAt: live ? new Date() : null,
+      updatedAt: new Date(),
+    })
+    .where(eq(questions.id, id));
+
+  revalidatePath(`/admin/accesos/${question.accessCodeId}`);
+  revalidatePath('/preguntas');
+}
+
 /** Borra una pregunta. Es para lo que llegó repetido o fuera de lugar. */
 export async function deleteQuestion(formData: FormData) {
   const id = Number(str(formData, 'id'));
