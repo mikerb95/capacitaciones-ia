@@ -141,25 +141,29 @@ export function QuestionForm({ name }: { name: string }) {
 
   return (
     <form action={action} className="flex flex-col gap-4">
-      <Fields key={state.sentAt ?? 'nueva'} name={name} error={state.error} pending={pending} />
-
-      {state.error && (
-        <p
-          role="alert"
-          className="rounded-[10px] bg-[#fdebe2] px-4 py-2.5 text-[13px] text-[#c2410c] dark:bg-[#3a1e10] dark:text-[#f4a06a]"
-        >
-          {state.error}
-        </p>
-      )}
-
-      {state.sentAt && (
-        <p
-          role="status"
-          className="rounded-[10px] bg-accent-soft px-4 py-2.5 text-[13px] text-accent"
-        >
-          Pregunta enviada. Queda anotada abajo para responderla en la capacitación.
-        </p>
-      )}
+      <Fields
+        key={state.sentAt ?? 'nueva'}
+        name={name}
+        error={state.error}
+        pending={pending}
+        notice={
+          state.error ? (
+            <p
+              role="alert"
+              className="rounded-[10px] bg-[#fdebe2] px-4 py-2.5 text-[13px] text-[#c2410c] dark:bg-[#3a1e10] dark:text-[#f4a06a]"
+            >
+              {state.error}
+            </p>
+          ) : state.sentAt ? (
+            <p
+              role="status"
+              className="rounded-[10px] bg-accent-soft px-4 py-2.5 text-[13px] text-accent"
+            >
+              Pregunta enviada. Queda anotada abajo para responderla en la capacitación.
+            </p>
+          ) : null
+        }
+      />
     </form>
   );
 }
