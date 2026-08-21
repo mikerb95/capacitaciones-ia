@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+.root{--bg:#f4f6fc;--surface:#ffffff;--surface2:#edf1fb;--border:#dce3f3;--text:#101426;--muted:#565f7a;--faint:#8189a3;--primary:#3b5bdb;--primary-strong:#2a3f9e;--primary-soft:#e5eafd;--accent:#0fa97a;--accent-soft:#dcf6ec;--warn:#c2410c;--warn-soft:#fdebe2;--adv:#a32079;--adv-soft:#f3e8f6;--shadow:0 1px 2px rgb(20 26 56 / .06), 0 8px 24px rgb(20 26 56 / .06)}
+.root[data-theme="oscuro"]{--bg:#0b0e1a;--surface:#141828;--surface2:#1b2133;--border:#2a3149;--text:#ebeef8;--muted:#a2aac4;--faint:#7f87a3;--primary:#7d97ff;--primary-strong:#a5b6ff;--primary-soft:#1c2547;--accent:#2fd3a0;--accent-soft:#0f3a2e;--warn:#f4a06a;--warn-soft:#3a1e10;--adv:#e39ad0;--adv-soft:#2c1730;--shadow:0 1px 2px rgb(0 0 0 / .4), 0 10px 30px rgb(0 0 0 / .35)}
+body{margin:0;font-family:'IBM Plex Sans',Segoe UI,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--primary);text-decoration:none}
+a:hover{color:var(--primary-strong)}
+.h{font-family:Geist,system-ui,sans-serif;font-weight:600;letter-spacing:-.02em}
+.k{font-family:'Geist Mono',ui-monospace,monospace}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
+.nav{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:10px;font-size:13.5px;font-weight:500;color:var(--muted);text-decoration:none}
+.nav:hover{background:var(--surface2);color:var(--text)}
+.navon{background:var(--primary-soft);color:var(--primary);font-weight:600}
+.grp{font-family:'Geist Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);padding:0 10px;margin:20px 0 6px}
+.bd{display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:2.5px 9px;font-size:11px;font-weight:600;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;gap:6px;border-radius:10px;border:1px solid var(--border);background:var(--surface);padding:7px 12px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;font-weight:500;color:var(--muted);cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:var(--primary);color:var(--text)}
+.btnp{background:var(--primary);border-color:transparent;color:#ffffff;font-weight:600}
+.btnp:hover{color:#ffffff;opacity:.9}
+.btns{background:var(--surface2);border-color:transparent;color:var(--text)}
+.btns:hover{background:var(--primary-soft);color:var(--primary)}
+.th{font-size:11px;font-weight:600;color:var(--faint);text-transform:uppercase;letter-spacing:.07em}
+.dot{width:7px;height:7px;border-radius:99px;flex:none}
+</style>
+</helmet>
+<div class="root" data-theme="{{ tema }}" style="display:flex;min-height:1060px;background:var(--bg);color:var(--text)">
+<aside style="width:238px;flex:none;display:flex;flex-direction:column;background:var(--surface);border-right:1px solid var(--border)">
+  <div style="display:flex;align-items:center;gap:10px;padding:18px 18px 4px">
+    <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="1" width="24" height="24" rx="7" fill="var(--primary)"></rect><circle cx="9" cy="9" r="2.4" fill="#ffffff"></circle><circle cx="17.5" cy="16.5" r="2.4" fill="var(--accent)"></circle><path d="M9 9 L17.5 16.5" stroke="#ffffff" stroke-opacity=".65" stroke-width="1.4"></path></svg>
+    <div style="min-width:0">
+      <div class="h" style="font-size:14.5px;line-height:1.2">Academia IA</div>
+      <div style="font-size:11.5px;color:var(--faint)">Administración</div>
+    </div>
+  </div>
+  <nav style="display:flex;flex-direction:column;gap:2px;padding:0 12px 18px;flex:1"><div class="grp">Operación</div><a href="#" class="nav navon"><span style="opacity:1"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V19a1 1 0 0 1-1 1h-4v-5H9v5H5a1 1 0 0 1-1-1z"/></svg></span>Inicio</a><a href="#" class="nav"><span style="opacity:.7"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M8 10h5M8 14h3"/></svg></span>Capacitaciones<span class="bd k" style="margin-left:auto;padding:1px 7px;font-size:10.5px;background:var(--surface2);color:var(--faint)">3</span></a><a href="#" class="nav"><span style="opacity:.7"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 15a2 2 0 0 1-2 2H8l-4 3V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"/><path d="M9.5 9.5a2.5 2.5 0 0 1 4.6 1.3c0 1.7-2.1 1.9-2.1 3.2"/></svg></span>Preguntas<span class="bd k" style="margin-left:auto;padding:1px 7px;font-size:10.5px;background:var(--warn-soft);color:var(--warn)">5</span></a><a href="#" class="nav"><span style="opacity:.7"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="2.5"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 16.2a6 6 0 0 0 0-8.4M4.9 4.9a10 10 0 0 0 0 14.2M19.1 19.1a10 10 0 0 0 0-14.2"/></svg></span>En vivo</a><div class="grp">Clientes</div><a href="#" class="nav"><span style="opacity:.7"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v14"/><path d="M14 10h4a2 2 0 0 1 2 2v8"/><path d="M3 20h18M7.5 8h3M7.5 12h3M7.5 16h3"/></svg></span>Empresas</a><a href="#" class="nav"><span style="opacity:.7"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9z"/><path d="M13 3v6h6M9 13h6M9 17h4"/></svg></span>Material a medida</a><div class="grp">Contenido</div><a href="#" class="nav"><span style="opacity:.7"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8.5 4.5L12 12 3.5 7.5z"/><path d="m3.5 12 8.5 4.5 8.5-4.5M3.5 16.5 12 21l8.5-4.5"/></svg></span>Módulos y portales</a><a href="#" class="nav"><span style="opacity:.7"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="11" rx="2"/><path d="M12 15v4M8.5 21l3.5-2 3.5 2"/></svg></span>Presentaciones</a></nav>
+  <div style="display:flex;align-items:center;gap:8px;padding:12px 14px;border-top:1px solid var(--border)">
+    <span style="width:28px;height:28px;border-radius:99px;display:grid;place-items:center;background:var(--surface2);color:var(--muted);font-size:11.5px;font-weight:600">MP</span>
+    <div style="min-width:0;flex:1">
+      <div style="font-size:12.5px;font-weight:600;line-height:1.2">Mike P.</div>
+      <div style="font-size:11px;color:var(--faint)">Administrador</div>
+    </div>
+    <button class="btn" style="padding:6px;border:0;background:transparent" aria-label="Cerrar sesión"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 17v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v1M19 12H9m7-3.5 3.5 3.5-3.5 3.5"/></svg></button>
+  </div>
+</aside>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<header style="display:flex;align-items:center;gap:16px;padding:0 30px;height:62px;flex:none;background:var(--surface);border-bottom:1px solid var(--border)">
+  <div style="min-width:0">
+    <div class="h" style="font-size:16.5px;line-height:1.25">Inicio</div>
+    <div style="font-size:12px;color:var(--faint);line-height:1.3">Jueves 20 de agosto de 2026</div>
+  </div>
+  <div style="flex:1"></div>
+  <label style="display:flex;align-items:center;gap:8px;width:236px;padding:7px 11px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--faint)">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+    <span style="font-size:12.5px">Buscar empresa o código</span>
+    <span class="k" style="margin-left:auto;font-size:10.5px;padding:1px 5px;border:1px solid var(--border);border-radius:5px">⌘K</span>
+  </label>
+  <a href="#" class="btn">Nueva empresa</a>
+  <a href="#" class="btn btnp">Nueva capacitación</a>
+</header>
+<main style="flex:1;padding:26px 30px 36px;display:flex;flex-direction:column;gap:22px">
+<section class="card" style="display:flex;align-items:center;gap:26px;padding:20px 24px;background:color-mix(in srgb, var(--primary) 5%, var(--surface))">
+  <div style="min-width:0;flex:1">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+      <span class="dot" style="background:var(--accent)"></span>
+      <span style="font-size:12px;font-weight:600;color:var(--muted)">Próxima capacitación · mañana, viernes 21 de agosto, 09:30</span>
+    </div>
+    <div class="h" style="font-size:24px;line-height:1.15;margin-bottom:6px">Ferretería del Norte</div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--muted)">
+      <span class="h" style="width:20px;height:20px;border-radius:6px;display:grid;place-items:center;flex:none;background:#0B63CE;color:#ffffff;font-size:9px">M</span> Copilot · 6 módulos del alcance · presencial, Santiago Centro
+      <span class="bd" style="background:var(--accent-soft);color:var(--accent)"><span class="dot" style="background:var(--accent)"></span>Bajo contrato</span>
+    </div>
+  </div>
+  <div style="width:1px;height:64px;background:var(--border);flex:none"></div>
+  <div style="flex:none;text-align:center">
+    <div class="th" style="margin-bottom:5px">Código</div>
+    <span class="k" style="font-size:25px;font-weight:600;letter-spacing:.13em;color:var(--text)">FN-AGOSTO</span>
+    <div style="font-size:12px;color:var(--faint);margin-top:6px">12 de 18 registrados</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:8px;flex:none">
+    <a href="#" class="btn btnp"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="2.5"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 16.2a6 6 0 0 0 0-8.4M4.9 4.9a10 10 0 0 0 0 14.2M19.1 19.1a10 10 0 0 0 0-14.2"/></svg> Abrir sesión en vivo</a>
+    <a href="#" class="btn">Ver alcance y planes</a>
+  </div>
+</section>
+<section style="display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden">
+  <div style="background:var(--surface);padding:16px 20px">
+    <div class="h" style="font-size:27px;line-height:1.1">3</div>
+    <div style="font-size:13px;color:var(--text);margin-top:3px">capacitaciones abiertas</div>
+    <div style="font-size:11.5px;color:var(--faint);margin-top:2px">2 bajo contrato</div>
+  </div>
+  <div style="background:var(--surface);padding:16px 20px">
+    <div class="h" style="font-size:27px;line-height:1.1">7</div>
+    <div style="font-size:13px;color:var(--text);margin-top:3px">empresas</div>
+    <div style="font-size:11.5px;color:var(--faint);margin-top:2px">2 capacitadoras</div>
+  </div>
+  <div style="background:var(--surface);padding:16px 20px">
+    <div class="h" style="font-size:27px;line-height:1.1">5</div>
+    <div style="font-size:13px;color:var(--text);margin-top:3px">preguntas sin responder</div>
+    <div style="font-size:11.5px;color:var(--faint);margin-top:2px">de 3 capacitaciones</div>
+  </div>
+  <div style="background:var(--surface);padding:16px 20px">
+    <div class="h" style="font-size:27px;line-height:1.1">34</div>
+    <div style="font-size:13px;color:var(--text);margin-top:3px">módulos publicados</div>
+    <div style="font-size:11.5px;color:var(--faint);margin-top:2px">4 en borrador</div>
+  </div>
+</section>
+<section style="display:grid;grid-template-columns:1.12fr 1fr;gap:22px;align-items:start">
+<section class="card" style="overflow:hidden">
+<div style="display:flex;align-items:center;gap:12px;padding:15px 18px;border-bottom:1px solid var(--border)"><div class="h" style="font-size:14px">Requiere tu atención</div><div style="flex:1"></div><span class="bd" style="background:var(--warn-soft);color:var(--warn)">4</span></div>
+  <div style="display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--border)">
+    <span class="dot" style="background:var(--warn);margin-top:1px"></span>
+    <div style="min-width:0;flex:1">
+      <div style="font-size:13.5px;font-weight:500;line-height:1.35">5 preguntas sin responder</div>
+      <div style="font-size:12px;color:var(--faint);margin-top:2px">Ferretería del Norte (3), Andes Logística (2)</div>
+    </div>
+    <a href="#" class="btn btns">Responder</a>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--border)">
+    <span class="dot" style="background:var(--warn);margin-top:1px"></span>
+    <div style="min-width:0;flex:1">
+      <div style="font-size:13.5px;font-weight:500;line-height:1.35">El material a medida de Andes Logística vence en 12 días</div>
+      <div style="font-size:12px;color:var(--faint);margin-top:2px">Vigente hasta el 1 de septiembre · 4 documentos</div>
+    </div>
+    <a href="#" class="btn btns">Regenerar</a>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--border)">
+    <span class="dot" style="background:var(--primary);margin-top:1px"></span>
+    <div style="min-width:0;flex:1">
+      <div style="font-size:13.5px;font-weight:500;line-height:1.35">A Grupo Sarmiento le quedan 2 de 8 sesiones</div>
+      <div style="font-size:12px;color:var(--faint);margin-top:2px">Contrato CT-2026-14 · hasta el 31 de diciembre</div>
+    </div>
+    <a href="#" class="btn btns">Ver contrato</a>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--border)">
+    <span class="dot" style="background:var(--faint);margin-top:1px"></span>
+    <div style="min-width:0;flex:1">
+      <div style="font-size:13.5px;font-weight:500;line-height:1.35">4 módulos de Claude siguen en borrador</div>
+      <div style="font-size:12px;color:var(--faint);margin-top:2px">No se ven en el portal ni entran en ningún alcance</div>
+    </div>
+    <a href="#" class="btn btns">Editar</a>
+  </div>
+  <div style="padding:11px 18px"><a href="#" style="font-size:12.5px;font-weight:500">Ver todo lo pendiente</a></div>
+</section>
+<section class="card" style="overflow:hidden">
+<div style="display:flex;align-items:center;gap:12px;padding:15px 18px;border-bottom:1px solid var(--border)"><div class="h" style="font-size:14px">Actividad reciente</div><div style="flex:1"></div></div>
+  <div style="padding:6px 18px 14px">
+    <div style="display:flex;gap:14px;padding:9px 0">
+      <span class="k" style="width:44px;flex:none;font-size:11.5px;color:var(--faint);padding-top:1px">09:12</span>
+      <div style="min-width:0">
+        <div style="font-size:13px;line-height:1.35">Entraron 4 asistentes con FN-AGOSTO</div>
+        <div style="font-size:11.5px;color:var(--faint);margin-top:1px">Ferretería del Norte</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:14px;padding:9px 0">
+      <span class="k" style="width:44px;flex:none;font-size:11.5px;color:var(--faint);padding-top:1px">08:40</span>
+      <div style="min-width:0">
+        <div style="font-size:13px;line-height:1.35">Nueva pregunta sin responder</div>
+        <div style="font-size:11.5px;color:var(--faint);margin-top:1px">Andes Logística · anónima</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:14px;padding:9px 0">
+      <span class="k" style="width:44px;flex:none;font-size:11.5px;color:var(--faint);padding-top:1px">ayer</span>
+      <div style="min-width:0">
+        <div style="font-size:13px;line-height:1.35">Se generó el material a medida</div>
+        <div style="font-size:11.5px;color:var(--faint);margin-top:1px">Ferretería del Norte · 4 documentos</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:14px;padding:9px 0">
+      <span class="k" style="width:44px;flex:none;font-size:11.5px;color:var(--faint);padding-top:1px">ayer</span>
+      <div style="min-width:0">
+        <div style="font-size:13px;line-height:1.35">Se importó la presentación Kickoff · Copilot</div>
+        <div style="font-size:11.5px;color:var(--faint);margin-top:1px">14 láminas</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:14px;padding:9px 0">
+      <span class="k" style="width:44px;flex:none;font-size:11.5px;color:var(--faint);padding-top:1px">17 ago</span>
+      <div style="min-width:0">
+        <div style="font-size:13px;line-height:1.35">Se cerró el código GS-JULIO</div>
+        <div style="font-size:11.5px;color:var(--faint);margin-top:1px">Grupo Sarmiento · 22 asistentes</div>
+      </div>
+    </div>
+  </div>
+</section>
+</section>
+<section class="card" style="overflow:hidden">
+<div style="display:flex;align-items:center;gap:12px;padding:15px 18px;border-bottom:1px solid var(--border)"><div class="h" style="font-size:14px">Capacitaciones abiertas</div><div style="flex:1"></div><a href="#" style="font-size:12.5px;font-weight:500">Ver todas</a></div>
+  <div style="display:grid;grid-template-columns:132px 1fr 190px 150px 92px 96px 84px;gap:14px;padding:9px 18px;background:var(--surface2)">
+    <span class="th">Código</span><span class="th">Empresa</span><span class="th">Alcance</span><span class="th">Avance</span><span class="th">Asisten</span><span class="th">Preguntas</span><span></span>
+  </div>
+  <div style="display:grid;grid-template-columns:132px 1fr 190px 150px 92px 96px 84px;gap:14px;align-items:center;padding:13px 18px;border-top:1px solid var(--border)">
+    <span class="k" style="font-size:13.5px;font-weight:600;letter-spacing:.13em;color:var(--text)">FN-AGOSTO</span>
+    <div style="min-width:0">
+      <div style="display:flex;align-items:center;gap:7px"><span style="font-size:13.5px;font-weight:600">Ferretería del Norte</span><span class="bd" style="background:var(--accent-soft);color:var(--accent)"><span class="dot" style="background:var(--accent)"></span>Contrato</span></div>
+      <div style="font-size:11.5px;color:var(--faint);margin-top:1px">Capacitación de agosto</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <span class="h" style="width:22px;height:22px;border-radius:7px;display:grid;place-items:center;flex:none;background:#0B63CE;color:#ffffff;font-size:10px">M</span>
+      <span style="font-size:12px;color:var(--muted);margin-left:2px">6 módulos</span>
+    </div>
+    <span style="display:inline-flex;align-items:center;gap:9px"><span style="width:88px;height:6px;border-radius:99px;background:var(--surface2);overflow:hidden;display:block"><span style="display:block;height:100%;width:62%;border-radius:99px;background:var(--primary)"></span></span><span class="k" style="font-size:11.5px;color:var(--muted)">62%</span></span>
+    <span class="k" style="font-size:13px">12</span>
+    <span><span class="bd" style="background:var(--warn-soft);color:var(--warn)">3 sin responder</span></span>
+    <a href="#" class="btn btns" style="justify-self:end">Abrir</a>
+  </div>
+  <div style="display:grid;grid-template-columns:132px 1fr 190px 150px 92px 96px 84px;gap:14px;align-items:center;padding:13px 18px;border-top:1px solid var(--border)">
+    <span class="k" style="font-size:13.5px;font-weight:600;letter-spacing:.13em;color:var(--text)">AL-2608</span>
+    <div style="min-width:0">
+      <div style="display:flex;align-items:center;gap:7px"><span style="font-size:13.5px;font-weight:600">Andes Logística</span><span class="bd" style="background:var(--accent-soft);color:var(--accent)"><span class="dot" style="background:var(--accent)"></span>Contrato</span></div>
+      <div style="font-size:11.5px;color:var(--faint);margin-top:1px">Onboarding IA · turno tarde</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <span class="h" style="width:22px;height:22px;border-radius:7px;display:grid;place-items:center;flex:none;background:#0E7C63;color:#ffffff;font-size:10px">O</span><span class="h" style="width:22px;height:22px;border-radius:7px;display:grid;place-items:center;flex:none;background:#3B5BDB;color:#ffffff;font-size:10px">G</span>
+      <span style="font-size:12px;color:var(--muted);margin-left:2px">9 módulos</span>
+    </div>
+    <span style="display:inline-flex;align-items:center;gap:9px"><span style="width:88px;height:6px;border-radius:99px;background:var(--surface2);overflow:hidden;display:block"><span style="display:block;height:100%;width:34%;border-radius:99px;background:var(--primary)"></span></span><span class="k" style="font-size:11.5px;color:var(--muted)">34%</span></span>
+    <span class="k" style="font-size:13px">17</span>
+    <span><span class="bd" style="background:var(--warn-soft);color:var(--warn)">2 sin responder</span></span>
+    <a href="#" class="btn btns" style="justify-self:end">Abrir</a>
+  </div>
+  <div style="display:grid;grid-template-columns:132px 1fr 190px 150px 92px 96px 84px;gap:14px;align-items:center;padding:13px 18px;border-top:1px solid var(--border)">
+    <span class="k" style="font-size:13.5px;font-weight:600;letter-spacing:.13em;color:var(--text)">CV-PILOTO</span>
+    <div style="min-width:0">
+      <div style="display:flex;align-items:center;gap:7px"><span style="font-size:13.5px;font-weight:600">Clínica Vallemar</span></div>
+      <div style="font-size:11.5px;color:var(--faint);margin-top:1px">Piloto con jefaturas</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <span class="h" style="width:22px;height:22px;border-radius:7px;display:grid;place-items:center;flex:none;background:#C15F3C;color:#ffffff;font-size:10px">C</span>
+      <span style="font-size:12px;color:var(--muted);margin-left:2px">4 módulos</span>
+    </div>
+    <span style="display:inline-flex;align-items:center;gap:9px"><span style="width:88px;height:6px;border-radius:99px;background:var(--surface2);overflow:hidden;display:block"><span style="display:block;height:100%;width:88%;border-radius:99px;background:var(--primary)"></span></span><span class="k" style="font-size:11.5px;color:var(--muted)">88%</span></span>
+    <span class="k" style="font-size:13px">6</span>
+    <span><span style="font-size:12.5px;color:var(--faint)">—</span></span>
+    <a href="#" class="btn btns" style="justify-self:end">Abrir</a>
+  </div>
+</section>
+</main>
+</div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"tema":{"editor":"enum","options":["claro","oscuro"],"default":"claro","section":"Tema"},"$preview":{"width":1440,"height":1060}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { tema: this.props.tema ?? 'claro' };
+  }
+}
+</script>
+</body>
+</html>

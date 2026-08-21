@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+.root{--bg:#f4f6fc;--surface:#ffffff;--surface2:#edf1fb;--border:#dce3f3;--text:#101426;--muted:#565f7a;--faint:#8189a3;--primary:#3b5bdb;--primary-strong:#2a3f9e;--primary-soft:#e5eafd;--accent:#0fa97a;--accent-soft:#dcf6ec;--warn:#c2410c;--warn-soft:#fdebe2;--adv:#a32079;--adv-soft:#f3e8f6;--shadow:0 1px 2px rgb(20 26 56 / .06), 0 8px 24px rgb(20 26 56 / .06)}
+.root[data-theme="oscuro"]{--bg:#0b0e1a;--surface:#141828;--surface2:#1b2133;--border:#2a3149;--text:#ebeef8;--muted:#a2aac4;--faint:#7f87a3;--primary:#7d97ff;--primary-strong:#a5b6ff;--primary-soft:#1c2547;--accent:#2fd3a0;--accent-soft:#0f3a2e;--warn:#f4a06a;--warn-soft:#3a1e10;--adv:#e39ad0;--adv-soft:#2c1730;--shadow:0 1px 2px rgb(0 0 0 / .4), 0 10px 30px rgb(0 0 0 / .35)}
+body{margin:0;font-family:'IBM Plex Sans',Segoe UI,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--primary);text-decoration:none}
+a:hover{color:var(--primary-strong)}
+.h{font-family:Geist,system-ui,sans-serif;font-weight:600;letter-spacing:-.02em}
+.k{font-family:'Geist Mono',ui-monospace,monospace}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
+.nav{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:10px;font-size:13.5px;font-weight:500;color:var(--muted);text-decoration:none}
+.nav:hover{background:var(--surface2);color:var(--text)}
+.navon{background:var(--primary-soft);color:var(--primary);font-weight:600}
+.grp{font-family:'Geist Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);padding:0 10px;margin:20px 0 6px}
+.bd{display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:2.5px 9px;font-size:11px;font-weight:600;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;gap:6px;border-radius:10px;border:1px solid var(--border);background:var(--surface);padding:7px 12px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;font-weight:500;color:var(--muted);cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:var(--primary);color:var(--text)}
+.btnp{background:var(--primary);border-color:transparent;color:#ffffff;font-weight:600}
+.btnp:hover{color:#ffffff;opacity:.9}
+.btns{background:var(--surface2);border-color:transparent;color:var(--text)}
+.btns:hover{background:var(--primary-soft);color:var(--primary)}
+.th{font-size:11px;font-weight:600;color:var(--faint);text-transform:uppercase;letter-spacing:.07em}
+.dot{width:7px;height:7px;border-radius:99px;flex:none}
+</style>
+</helmet>
+<div class="root" data-theme="{{ tema }}" style="display:flex;min-height:1020px;background:var(--bg);color:var(--text)">
+<aside style="width:238px;flex:none;display:flex;flex-direction:column;background:var(--surface);border-right:1px solid var(--border)">
+  <div style="display:flex;align-items:center;gap:10px;padding:18px 18px 4px">
+    <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="1" width="24" height="24" rx="7" fill="var(--primary)"></rect><circle cx="9" cy="9" r="2.4" fill="#ffffff"></circle><circle cx="17.5" cy="16.5" r="2.4" fill="var(--accent)"></circle><path d="M9 9 L17.5 16.5" stroke="#ffffff" stroke-opacity=".65" stroke-width="1.4"></path></svg>
+    <div style="min-width:0">
+      <div class="h" style="font-size:14.5px;line-height:1.2">Academia IA</div>
+      <div style="font-size:11.5px;color:var(--faint)">Administración</div>
+    </div>
+  </div>
+  <nav style="display:flex;flex-direction:column;gap:2px;padding:0 12px 18px;flex:1"><div class="grp">Operación</div><a href="#" class="nav"><span style="opacity:.7"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V19a1 1 0 0 1-1 1h-4v-5H9v5H5a1 1 0 0 1-1-1z"/></svg></span>Inicio</a><a href="#" class="nav"><span style="opacity:.7"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M8 10h5M8 14h3"/></svg></span>Capacitaciones<span class="bd k" style="margin-left:auto;padding:1px 7px;font-size:10.5px;background:var(--surface2);color:var(--faint)">3</span></a><a href="#" class="nav"><span style="opacity:.7"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 15a2 2 0 0 1-2 2H8l-4 3V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"/><path d="M9.5 9.5a2.5 2.5 0 0 1 4.6 1.3c0 1.7-2.1 1.9-2.1 3.2"/></svg></span>Preguntas<span class="bd k" style="margin-left:auto;padding:1px 7px;font-size:10.5px;background:var(--warn-soft);color:var(--warn)">5</span></a><a href="#" class="nav"><span style="opacity:.7"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="2.5"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 16.2a6 6 0 0 0 0-8.4M4.9 4.9a10 10 0 0 0 0 14.2M19.1 19.1a10 10 0 0 0 0-14.2"/></svg></span>En vivo</a><div class="grp">Clientes</div><a href="#" class="nav"><span style="opacity:.7"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v14"/><path d="M14 10h4a2 2 0 0 1 2 2v8"/><path d="M3 20h18M7.5 8h3M7.5 12h3M7.5 16h3"/></svg></span>Empresas</a><a href="#" class="nav"><span style="opacity:.7"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9z"/><path d="M13 3v6h6M9 13h6M9 17h4"/></svg></span>Material a medida</a><div class="grp">Contenido</div><a href="#" class="nav navon"><span style="opacity:1"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8.5 4.5L12 12 3.5 7.5z"/><path d="m3.5 12 8.5 4.5 8.5-4.5M3.5 16.5 12 21l8.5-4.5"/></svg></span>Módulos y portales</a><a href="#" class="nav"><span style="opacity:.7"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="11" rx="2"/><path d="M12 15v4M8.5 21l3.5-2 3.5 2"/></svg></span>Presentaciones</a></nav>
+  <div style="display:flex;align-items:center;gap:8px;padding:12px 14px;border-top:1px solid var(--border)">
+    <span style="width:28px;height:28px;border-radius:99px;display:grid;place-items:center;background:var(--surface2);color:var(--muted);font-size:11.5px;font-weight:600">MP</span>
+    <div style="min-width:0;flex:1">
+      <div style="font-size:12.5px;font-weight:600;line-height:1.2">Mike P.</div>
+      <div style="font-size:11px;color:var(--faint)">Administrador</div>
+    </div>
+    <button class="btn" style="padding:6px;border:0;background:transparent" aria-label="Cerrar sesión"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 17v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v1M19 12H9m7-3.5 3.5 3.5-3.5 3.5"/></svg></button>
+  </div>
+</aside>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<header style="display:flex;align-items:center;gap:16px;padding:0 30px;height:62px;flex:none;background:var(--surface);border-bottom:1px solid var(--border)">
+  <div style="min-width:0">
+    <div class="h" style="font-size:16.5px;line-height:1.25">Módulos y portales</div>
+    <div style="font-size:12px;color:var(--faint);line-height:1.3">4 portales · 34 módulos publicados · 4 en borrador</div>
+  </div>
+  <div style="flex:1"></div>
+  <label style="display:flex;align-items:center;gap:8px;width:236px;padding:7px 11px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--faint)">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+    <span style="font-size:12.5px">Buscar empresa o código</span>
+    <span class="k" style="margin-left:auto;font-size:10.5px;padding:1px 5px;border:1px solid var(--border);border-radius:5px">⌘K</span>
+  </label>
+  <a href="#" class="btn">Ver comparativa</a>
+  <a href="#" class="btn btnp">Nuevo módulo</a>
+</header>
+<main style="flex:1;padding:26px 30px 36px;display:flex;flex-direction:column;gap:22px">
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+  <button style="display:flex;align-items:center;gap:9px;cursor:pointer;padding:8px 14px 8px 9px;border-radius:12px;border:1px solid #0B63CE;background:color-mix(in srgb, #0B63CE 8%, var(--surface));font-family:'IBM Plex Sans',sans-serif">
+    <span class="h" style="width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex:none;background:#0B63CE;color:#ffffff;font-size:11px">M</span>
+    <span style="text-align:left">
+      <span class="h" style="display:block;font-size:13.5px;color:var(--text)">Copilot</span>
+      <span style="display:block;font-size:11px;color:var(--faint);margin-top:1px">9 módulos</span>
+    </span>
+  </button>
+  <button style="display:flex;align-items:center;gap:9px;cursor:pointer;padding:8px 14px 8px 9px;border-radius:12px;border:1px solid var(--border);background:var(--surface);font-family:'IBM Plex Sans',sans-serif">
+    <span class="h" style="width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex:none;background:#C15F3C;color:#ffffff;font-size:11px">C</span>
+    <span style="text-align:left">
+      <span class="h" style="display:block;font-size:13.5px;color:var(--text)">Claude</span>
+      <span style="display:block;font-size:11px;color:var(--faint);margin-top:1px">9 módulos</span>
+    </span>
+  </button>
+  <button style="display:flex;align-items:center;gap:9px;cursor:pointer;padding:8px 14px 8px 9px;border-radius:12px;border:1px solid var(--border);background:var(--surface);font-family:'IBM Plex Sans',sans-serif">
+    <span class="h" style="width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex:none;background:#3B5BDB;color:#ffffff;font-size:11px">G</span>
+    <span style="text-align:left">
+      <span class="h" style="display:block;font-size:13.5px;color:var(--text)">Gemini</span>
+      <span style="display:block;font-size:11px;color:var(--faint);margin-top:1px">8 módulos</span>
+    </span>
+  </button>
+  <button style="display:flex;align-items:center;gap:9px;cursor:pointer;padding:8px 14px 8px 9px;border-radius:12px;border:1px solid var(--border);background:var(--surface);font-family:'IBM Plex Sans',sans-serif">
+    <span class="h" style="width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex:none;background:#0E7C63;color:#ffffff;font-size:11px">O</span>
+    <span style="text-align:left">
+      <span class="h" style="display:block;font-size:13.5px;color:var(--text)">ChatGPT</span>
+      <span style="display:block;font-size:11px;color:var(--faint);margin-top:1px">8 módulos</span>
+    </span>
+  </button>
+  <button class="btn" style="border-style:dashed;padding:8px 14px">+ Nuevo portal</button>
+</div>
+<section class="card" style="display:flex;align-items:center;gap:18px;padding:18px 22px">
+  <span class="h" style="width:46px;height:46px;border-radius:14px;display:grid;place-items:center;flex:none;background:#0B63CE;color:#ffffff;font-size:20px">M</span>
+  <div style="min-width:0;flex:1">
+    <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+      <span class="h" style="font-size:18px">Microsoft 365 Copilot</span>
+      <span class="bd" style="background:var(--accent-soft);color:var(--accent)"><span class="dot" style="background:var(--accent)"></span>Publicado</span>
+    </div>
+    <div style="font-size:13px;color:var(--muted);margin-top:3px">La IA que ya está dentro de Word, Excel, Teams y Outlook, con los archivos de la empresa detrás.</div>
+    <div style="font-size:11.5px;color:var(--faint);margin-top:5px">9 módulos · 3 planes · 4 descargas · editado hace 3 días</div>
+  </div>
+  <div style="display:flex;gap:8px;flex:none">
+    <a href="#" class="btn">Ver el portal</a>
+    <a href="#" class="btn">Planes y modelos</a>
+    <a href="#" class="btn btns">Editar portada</a>
+  </div>
+</section>
+<section class="card" style="overflow:hidden">
+<div style="display:flex;align-items:center;gap:12px;padding:15px 18px;border-bottom:1px solid var(--border)"><div class="h" style="font-size:14px">Módulos del portal</div><div style="flex:1"></div><span style="font-size:12px;color:var(--faint)">Arrastra para cambiar el orden en que se ven</span></div>
+  <div style="display:grid;grid-template-columns:34px 1fr 108px 150px 106px 132px;gap:14px;padding:9px 18px;background:var(--surface2)">
+    <span></span><span class="th">Módulo</span><span class="th">Nivel</span><span class="th">Planes</span><span class="th">Estado</span><span></span>
+  </div>
+  <div style="display:grid;grid-template-columns:34px 1fr 108px 150px 106px 132px;gap:14px;align-items:center;padding:11px 18px;border-top:1px solid var(--border)">
+    <span style="color:var(--faint);cursor:grab;display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg></span>
+    <div style="display:flex;align-items:center;gap:11px;min-width:0">
+      <span class="k" style="width:28px;height:28px;flex:none;border-radius:8px;display:grid;place-items:center;background:color-mix(in srgb, #0B63CE 12%, transparent);color:#0B63CE;font-size:10.5px;font-weight:600">C</span>
+      <div style="min-width:0">
+        <div style="font-size:13.5px;font-weight:600;letter-spacing:-.01em">Copilot Chat y Notebooks</div>
+        <div style="font-size:11.5px;color:var(--faint);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">El punto de entrada: preguntarle a los archivos y correos de la empresa.</div>
+      </div>
+    </div>
+    <span class="bd" style="background:var(--accent-soft);color:var(--accent)"><span class="dot" style="background:var(--accent)"></span>Básico</span>
+    <span style="font-size:12px;color:var(--muted)">Todos los planes</span>
+    <span class="bd" style="background:var(--accent-soft);color:var(--accent)"><span class="dot" style="background:var(--accent)"></span>Publicado</span>
+    <div style="display:flex;gap:7px;justify-self:end">
+      <a href="#" class="btn" style="padding:5px 10px">Ver</a>
+      <a href="#" class="btn btns" style="padding:5px 10px">Editar</a>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:34px 1fr 108px 150px 106px 132px;gap:14px;align-items:center;padding:11px 18px;border-top:1px solid var(--border)">
+    <span style="color:var(--faint);cursor:grab;display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg></span>
+    <div style="display:flex;align-items:center;gap:11px;min-width:0">
+      <span class="k" style="width:28px;height:28px;flex:none;border-radius:8px;display:grid;place-items:center;background:color-mix(in srgb, #0B63CE 12%, transparent);color:#0B63CE;font-size:10.5px;font-weight:600">W</span>
+      <div style="min-width:0">
+        <div style="font-size:13.5px;font-weight:600;letter-spacing:-.01em">Copilot en Word</div>
+        <div style="font-size:11.5px;color:var(--faint);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Armar una propuesta, reescribir un comunicado y resumir contratos largos.</div>
+      </div>
+    </div>
+    <span class="bd" style="background:var(--accent-soft);color:var(--accent)"><span class="dot" style="background:var(--accent)"></span>Básico</span>
+    <span style="font-size:12px;color:var(--muted)">Todos los planes</span>
+    <span class="bd" style="background:var(--accent-soft);color:var(--accent)"><span class="dot" style="background:var(--accent)"></span>Publicado</span>
+    <div style="display:flex;gap:7px;justify-self:end">
+      <a href="#" class="btn" style="padding:5px 10px">Ver</a>
+      <a href="#" class="btn btns" style="padding:5px 10px">Editar</a>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:34px 1fr 108px 150px 106px 132px;gap:14px;align-items:center;padding:11px 18px;border-top:1px solid var(--border)">
+    <span style="color:var(--faint);cursor:grab;display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg></span>
+    <div style="display:flex;align-items:center;gap:11px;min-width:0">
+      <span class="k" style="width:28px;height:28px;flex:none;border-radius:8px;display:grid;place-items:center;background:color-mix(in srgb, #0B63CE 12%, transparent);color:#0B63CE;font-size:10.5px;font-weight:600">O</span>
+      <div style="min-width:0">
+        <div style="font-size:13.5px;font-weight:600;letter-spacing:-.01em">Copilot en Outlook</div>
+        <div style="font-size:11.5px;color:var(--faint);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Resumir hilos largos, preguntarle a la bandeja y contestar con el tono de la empresa.</div>
+      </div>
+    </div>
+    <span class="bd" style="background:var(--accent-soft);color:var(--accent)"><span class="dot" style="background:var(--accent)"></span>Básico</span>
+    <span style="font-size:12px;color:var(--muted)">Todos los planes</span>
+    <span class="bd" style="background:var(--accent-soft);color:var(--accent)"><span class="dot" style="background:var(--accent)"></span>Publicado</span>
+    <div style="display:flex;gap:7px;justify-self:end">
+      <a href="#" class="btn" style="padding:5px 10px">Ver</a>
+      <a href="#" class="btn btns" style="padding:5px 10px">Editar</a>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:34px 1fr 108px 150px 106px 132px;gap:14px;align-items:center;padding:11px 18px;border-top:1px solid var(--border)">
+    <span style="color:var(--faint);cursor:grab;display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg></span>
+    <div style="display:flex;align-items:center;gap:11px;min-width:0">
+      <span class="k" style="width:28px;height:28px;flex:none;border-radius:8px;display:grid;place-items:center;background:color-mix(in srgb, #0B63CE 12%, transparent);color:#0B63CE;font-size:10.5px;font-weight:600">T</span>
+      <div style="min-width:0">
+        <div style="font-size:13.5px;font-weight:600;letter-spacing:-.01em">Copilot en Teams</div>
+        <div style="font-size:11.5px;color:var(--faint);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Resumen de la reunión y compromisos con responsable, sin tomar notas.</div>
+      </div>
+    </div>
+    <span class="bd" style="background:var(--accent-soft);color:var(--accent)"><span class="dot" style="background:var(--accent)"></span>Básico</span>
+    <span style="font-size:12px;color:var(--muted)">Todos los planes</span>
+    <span class="bd" style="background:var(--accent-soft);color:var(--accent)"><span class="dot" style="background:var(--accent)"></span>Publicado</span>
+    <div style="display:flex;gap:7px;justify-self:end">
+      <a href="#" class="btn" style="padding:5px 10px">Ver</a>
+      <a href="#" class="btn btns" style="padding:5px 10px">Editar</a>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:34px 1fr 108px 150px 106px 132px;gap:14px;align-items:center;padding:11px 18px;border-top:1px solid var(--border)">
+    <span style="color:var(--faint);cursor:grab;display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg></span>
+    <div style="display:flex;align-items:center;gap:11px;min-width:0">
+      <span class="k" style="width:28px;height:28px;flex:none;border-radius:8px;display:grid;place-items:center;background:color-mix(in srgb, #0B63CE 12%, transparent);color:#0B63CE;font-size:10.5px;font-weight:600">E</span>
+      <div style="min-width:0">
+        <div style="font-size:13.5px;font-weight:600;letter-spacing:-.01em">Copilot en Excel</div>
+        <div style="font-size:11.5px;color:var(--faint);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Leer el informe de ventas, armar fórmulas y encontrar los datos raros.</div>
+      </div>
+    </div>
+    <span class="bd" style="background:var(--primary-soft);color:var(--primary)">Intermedio</span>
+    <span style="font-size:12px;color:var(--muted)">Copilot M365</span>
+    <span class="bd" style="background:var(--accent-soft);color:var(--accent)"><span class="dot" style="background:var(--accent)"></span>Publicado</span>
+    <div style="display:flex;gap:7px;justify-self:end">
+      <a href="#" class="btn" style="padding:5px 10px">Ver</a>
+      <a href="#" class="btn btns" style="padding:5px 10px">Editar</a>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:34px 1fr 108px 150px 106px 132px;gap:14px;align-items:center;padding:11px 18px;border-top:1px solid var(--border)">
+    <span style="color:var(--faint);cursor:grab;display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg></span>
+    <div style="display:flex;align-items:center;gap:11px;min-width:0">
+      <span class="k" style="width:28px;height:28px;flex:none;border-radius:8px;display:grid;place-items:center;background:color-mix(in srgb, #0B63CE 12%, transparent);color:#0B63CE;font-size:10.5px;font-weight:600">P</span>
+      <div style="min-width:0">
+        <div style="font-size:13.5px;font-weight:600;letter-spacing:-.01em">Copilot en PowerPoint</div>
+        <div style="font-size:11.5px;color:var(--faint);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Pasar un informe a presentación y dejarlo con la plantilla de la empresa.</div>
+      </div>
+    </div>
+    <span class="bd" style="background:var(--primary-soft);color:var(--primary)">Intermedio</span>
+    <span style="font-size:12px;color:var(--muted)">Copilot M365</span>
+    <span class="bd" style="background:var(--accent-soft);color:var(--accent)"><span class="dot" style="background:var(--accent)"></span>Publicado</span>
+    <div style="display:flex;gap:7px;justify-self:end">
+      <a href="#" class="btn" style="padding:5px 10px">Ver</a>
+      <a href="#" class="btn btns" style="padding:5px 10px">Editar</a>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:34px 1fr 108px 150px 106px 132px;gap:14px;align-items:center;padding:11px 18px;border-top:1px solid var(--border)">
+    <span style="color:var(--faint);cursor:grab;display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg></span>
+    <div style="display:flex;align-items:center;gap:11px;min-width:0">
+      <span class="k" style="width:28px;height:28px;flex:none;border-radius:8px;display:grid;place-items:center;background:color-mix(in srgb, #0B63CE 12%, transparent);color:#0B63CE;font-size:10.5px;font-weight:600">CW</span>
+      <div style="min-width:0">
+        <div style="font-size:13.5px;font-weight:600;letter-spacing:-.01em">Copilot Cowork</div>
+        <div style="font-size:11.5px;color:var(--faint);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Encargar una tarea de varias horas y recibir el entregable terminado.</div>
+      </div>
+    </div>
+    <span class="bd" style="background:var(--adv-soft);color:var(--adv)">Avanzado</span>
+    <span style="font-size:12px;color:var(--muted)">Copilot M365</span>
+    <span class="bd" style="background:var(--accent-soft);color:var(--accent)"><span class="dot" style="background:var(--accent)"></span>Publicado</span>
+    <div style="display:flex;gap:7px;justify-self:end">
+      <a href="#" class="btn" style="padding:5px 10px">Ver</a>
+      <a href="#" class="btn btns" style="padding:5px 10px">Editar</a>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:34px 1fr 108px 150px 106px 132px;gap:14px;align-items:center;padding:11px 18px;border-top:1px solid var(--border)">
+    <span style="color:var(--faint);cursor:grab;display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg></span>
+    <div style="display:flex;align-items:center;gap:11px;min-width:0">
+      <span class="k" style="width:28px;height:28px;flex:none;border-radius:8px;display:grid;place-items:center;background:color-mix(in srgb, #0B63CE 12%, transparent);color:#0B63CE;font-size:10.5px;font-weight:600">AG</span>
+      <div style="min-width:0">
+        <div style="font-size:13.5px;font-weight:600;letter-spacing:-.01em">Agentes: Agent Builder y Copilot Studio</div>
+        <div style="font-size:11.5px;color:var(--faint);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Armar un agente con las políticas de tu área y publicarlo para el resto.</div>
+      </div>
+    </div>
+    <span class="bd" style="background:var(--adv-soft);color:var(--adv)">Avanzado</span>
+    <span style="font-size:12px;color:var(--muted)">Copilot Studio</span>
+    <span class="bd" style="background:var(--accent-soft);color:var(--accent)"><span class="dot" style="background:var(--accent)"></span>Publicado</span>
+    <div style="display:flex;gap:7px;justify-self:end">
+      <a href="#" class="btn" style="padding:5px 10px">Ver</a>
+      <a href="#" class="btn btns" style="padding:5px 10px">Editar</a>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:34px 1fr 108px 150px 106px 132px;gap:14px;align-items:center;padding:11px 18px;border-top:1px solid var(--border)">
+    <span style="color:var(--faint);cursor:grab;display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg></span>
+    <div style="display:flex;align-items:center;gap:11px;min-width:0">
+      <span class="k" style="width:28px;height:28px;flex:none;border-radius:8px;display:grid;place-items:center;background:color-mix(in srgb, #0B63CE 12%, transparent);color:#0B63CE;font-size:10.5px;font-weight:600">RA</span>
+      <div style="min-width:0">
+        <div style="font-size:13.5px;font-weight:600;letter-spacing:-.01em">Researcher y Analyst</div>
+        <div style="font-size:11.5px;color:var(--faint);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Investigación con fuentes citadas o análisis de datos con el paso a paso a la vista.</div>
+      </div>
+    </div>
+    <span class="bd" style="background:var(--adv-soft);color:var(--adv)">Avanzado</span>
+    <span style="font-size:12px;color:var(--muted)">Copilot M365</span>
+    <span class="bd" style="background:var(--surface2);color:var(--faint)">Borrador</span>
+    <div style="display:flex;gap:7px;justify-self:end">
+      <a href="#" class="btn" style="padding:5px 10px">Ver</a>
+      <a href="#" class="btn btns" style="padding:5px 10px">Editar</a>
+    </div>
+  </div>
+  <div style="padding:12px 18px;border-top:1px solid var(--border)"><a href="#" class="btn" style="border-style:dashed;width:100%;justify-content:center">+ Agregar módulo a Copilot</a></div>
+</section>
+</main>
+</div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"tema":{"editor":"enum","options":["claro","oscuro"],"default":"claro","section":"Tema"},"$preview":{"width":1440,"height":1020}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { tema: this.props.tema ?? 'claro' };
+  }
+}
+</script>
+</body>
+</html>

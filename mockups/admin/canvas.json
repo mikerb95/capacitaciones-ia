@@ -1,0 +1,33 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 1440, "h": 1060, "title": "Inicio · dashboard" },
+    { "file": "Capacitaciones.dc.html", "x": 1560, "y": 0, "w": 1440, "h": 1000, "title": "Capacitaciones" },
+    { "file": "Empresa.dc.html", "x": 3120, "y": 0, "w": 1440, "h": 940, "title": "Ficha de empresa" },
+    { "file": "Contenido.dc.html", "x": 0, "y": 1220, "w": 1440, "h": 1020, "title": "Módulos y portales" },
+    { "file": "Material.dc.html", "x": 1560, "y": 1220, "w": 1440, "h": 900, "title": "Material y presentaciones" }
+  ],
+  "annotations": [
+    {
+      "id": "direccion",
+      "x": 0,
+      "y": -190,
+      "w": 620,
+      "text": "Panel admin · una dirección\n\nSidebar fijo con las tres cosas que haces (Operación, Clientes, Contenido) y una portada que responde \"¿qué tengo que hacer hoy?\" antes de listar nada.\n\nTokens, tipografías y densidad salen tal cual de globals.css: IBM Plex Sans, Geist para títulos, Geist Mono para códigos, primario #3b5bdb, radio 14px. El tweak \"tema\" de arriba cambia entre claro y oscuro."
+    },
+    {
+      "id": "datos",
+      "x": 3120,
+      "y": -190,
+      "w": 560,
+      "text": "Los datos son de muestra: nombres de empresa, códigos, contratos y fechas están inventados para que la densidad sea realista. La estructura sí sale del esquema real (companies, access_codes, participants, questions, modules)."
+    },
+    {
+      "id": "nota-contenido",
+      "x": 0,
+      "y": 2300,
+      "w": 620,
+      "text": "Contenido: lo que hoy es /admin. Cambia de lista larga por plataforma a pestañas de portal + una tabla con nivel, planes y estado, y el orden se arrastra en vez de subir y bajar de a un botón."
+    }
+  ],
+  "launch": { "view": "canvas" }
+}

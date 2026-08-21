@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+.root{--bg:#f4f6fc;--surface:#ffffff;--surface2:#edf1fb;--border:#dce3f3;--text:#101426;--muted:#565f7a;--faint:#8189a3;--primary:#3b5bdb;--primary-strong:#2a3f9e;--primary-soft:#e5eafd;--accent:#0fa97a;--accent-soft:#dcf6ec;--warn:#c2410c;--warn-soft:#fdebe2;--adv:#a32079;--adv-soft:#f3e8f6;--shadow:0 1px 2px rgb(20 26 56 / .06), 0 8px 24px rgb(20 26 56 / .06)}
+.root[data-theme="oscuro"]{--bg:#0b0e1a;--surface:#141828;--surface2:#1b2133;--border:#2a3149;--text:#ebeef8;--muted:#a2aac4;--faint:#7f87a3;--primary:#7d97ff;--primary-strong:#a5b6ff;--primary-soft:#1c2547;--accent:#2fd3a0;--accent-soft:#0f3a2e;--warn:#f4a06a;--warn-soft:#3a1e10;--adv:#e39ad0;--adv-soft:#2c1730;--shadow:0 1px 2px rgb(0 0 0 / .4), 0 10px 30px rgb(0 0 0 / .35)}
+body{margin:0;font-family:'IBM Plex Sans',Segoe UI,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--primary);text-decoration:none}
+a:hover{color:var(--primary-strong)}
+.h{font-family:Geist,system-ui,sans-serif;font-weight:600;letter-spacing:-.02em}
+.k{font-family:'Geist Mono',ui-monospace,monospace}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
+.nav{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:10px;font-size:13.5px;font-weight:500;color:var(--muted);text-decoration:none}
+.nav:hover{background:var(--surface2);color:var(--text)}
+.navon{background:var(--primary-soft);color:var(--primary);font-weight:600}
+.grp{font-family:'Geist Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);padding:0 10px;margin:20px 0 6px}
+.bd{display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:2.5px 9px;font-size:11px;font-weight:600;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;gap:6px;border-radius:10px;border:1px solid var(--border);background:var(--surface);padding:7px 12px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;font-weight:500;color:var(--muted);cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:var(--primary);color:var(--text)}
+.btnp{background:var(--primary);border-color:transparent;color:#ffffff;font-weight:600}
+.btnp:hover{color:#ffffff;opacity:.9}
+.btns{background:var(--surface2);border-color:transparent;color:var(--text)}
+.btns:hover{background:var(--primary-soft);color:var(--primary)}
+.th{font-size:11px;font-weight:600;color:var(--faint);text-transform:uppercase;letter-spacing:.07em}
+.dot{width:7px;height:7px;border-radius:99px;flex:none}
+</style>
+</helmet>
+<div class="root" data-theme="{{ tema }}" style="display:flex;min-height:1000px;background:var(--bg);color:var(--text)">
+<aside style="width:238px;flex:none;display:flex;flex-direction:column;background:var(--surface);border-right:1px solid var(--border)">
+  <div style="display:flex;align-items:center;gap:10px;padding:18px 18px 4px">
+    <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="1" width="24" height="24" rx="7" fill="var(--primary)"></rect><circle cx="9" cy="9" r="2.4" fill="#ffffff"></circle><circle cx="17.5" cy="16.5" r="2.4" fill="var(--accent)"></circle><path d="M9 9 L17.5 16.5" stroke="#ffffff" stroke-opacity=".65" stroke-width="1.4"></path></svg>
+    <div style="min-width:0">
+      <div class="h" style="font-size:14.5px;line-height:1.2">Academia IA</div>
+      <div style="font-size:11.5px;color:var(--faint)">Administración</div>
+    </div>
+  </div>
+  <nav style="display:flex;flex-direction:column;gap:2px;padding:0 12px 18px;flex:1"><div class="grp">Operación</div><a href="#" class="nav"><span style="opacity:.7"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V19a1 1 0 0 1-1 1h-4v-5H9v5H5a1 1 0 0 1-1-1z"/></svg></span>Inicio</a><a href="#" class="nav navon"><span style="opacity:1"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M8 10h5M8 14h3"/></svg></span>Capacitaciones<span class="bd k" style="margin-left:auto;padding:1px 7px;font-size:10.5px;background:var(--surface2);color:var(--faint)">3</span></a><a href="#" class="nav"><span style="opacity:.7"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 15a2 2 0 0 1-2 2H8l-4 3V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"/><path d="M9.5 9.5a2.5 2.5 0 0 1 4.6 1.3c0 1.7-2.1 1.9-2.1 3.2"/></svg></span>Preguntas<span class="bd k" style="margin-left:auto;padding:1px 7px;font-size:10.5px;background:var(--warn-soft);color:var(--warn)">5</span></a><a href="#" class="nav"><span style="opacity:.7"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="2.5"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 16.2a6 6 0 0 0 0-8.4M4.9 4.9a10 10 0 0 0 0 14.2M19.1 19.1a10 10 0 0 0 0-14.2"/></svg></span>En vivo</a><div class="grp">Clientes</div><a href="#" class="nav"><span style="opacity:.7"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v14"/><path d="M14 10h4a2 2 0 0 1 2 2v8"/><path d="M3 20h18M7.5 8h3M7.5 12h3M7.5 16h3"/></svg></span>Empresas</a><a href="#" class="nav"><span style="opacity:.7"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9z"/><path d="M13 3v6h6M9 13h6M9 17h4"/></svg></span>Material a medida</a><div class="grp">Contenido</div><a href="#" class="nav"><span style="opacity:.7"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8.5 4.5L12 12 3.5 7.5z"/><path d="m3.5 12 8.5 4.5 8.5-4.5M3.5 16.5 12 21l8.5-4.5"/></svg></span>Módulos y portales</a><a href="#" class="nav"><span style="opacity:.7"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="11" rx="2"/><path d="M12 15v4M8.5 21l3.5-2 3.5 2"/></svg></span>Presentaciones</a></nav>
+  <div style="display:flex;align-items:center;gap:8px;padding:12px 14px;border-top:1px solid var(--border)">
+    <span style="width:28px;height:28px;border-radius:99px;display:grid;place-items:center;background:var(--surface2);color:var(--muted);font-size:11.5px;font-weight:600">MP</span>
+    <div style="min-width:0;flex:1">
+      <div style="font-size:12.5px;font-weight:600;line-height:1.2">Mike P.</div>
+      <div style="font-size:11px;color:var(--faint)">Administrador</div>
+    </div>
+    <button class="btn" style="padding:6px;border:0;background:transparent" aria-label="Cerrar sesión"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 17v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v1M19 12H9m7-3.5 3.5 3.5-3.5 3.5"/></svg></button>
+  </div>
+</aside>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<header style="display:flex;align-items:center;gap:16px;padding:0 30px;height:62px;flex:none;background:var(--surface);border-bottom:1px solid var(--border)">
+  <div style="min-width:0">
+    <div class="h" style="font-size:16.5px;line-height:1.25">Capacitaciones</div>
+    <div style="font-size:12px;color:var(--faint);line-height:1.3">8 en total · 3 abiertas · 35 asistentes registrados</div>
+  </div>
+  <div style="flex:1"></div>
+  <label style="display:flex;align-items:center;gap:8px;width:236px;padding:7px 11px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--faint)">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+    <span style="font-size:12.5px">Buscar empresa o código</span>
+    <span class="k" style="margin-left:auto;font-size:10.5px;padding:1px 5px;border:1px solid var(--border);border-radius:5px">⌘K</span>
+  </label>
+  <a href="#" class="btn">Exportar asistencia</a>
+  <a href="#" class="btn btnp">Nueva capacitación</a>
+</header>
+<main style="flex:1;padding:26px 30px 36px;display:flex;flex-direction:column;gap:22px">
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+  <div style="display:flex;gap:3px;padding:3px;background:var(--surface2);border-radius:11px"><button style="border:0;cursor:pointer;border-radius:9px;padding:6px 13px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;font-weight:600;background:var(--surface);color:var(--text);box-shadow:0 1px 2px rgb(20 26 56 / .1)">Abiertas · 3</button><button style="border:0;cursor:pointer;border-radius:9px;padding:6px 13px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;font-weight:500;background:transparent;color:var(--muted);box-shadow:none">Cerradas · 4</button><button style="border:0;cursor:pointer;border-radius:9px;padding:6px 13px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;font-weight:500;background:transparent;color:var(--muted);box-shadow:none">Todas · 8</button></div>
+  <div style="width:1px;height:24px;background:var(--border)"></div>
+  <button class="btn">Empresa <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+  <button class="btn">Plataforma <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+  <button class="btn">Contrato <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+  <div style="flex:1"></div>
+  <span style="font-size:12.5px;color:var(--faint)">Orden: por fecha de la sesión</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<section class="card" style="overflow:hidden;">
+  <div style="display:flex;align-items:center;gap:20px;padding:16px 20px">
+    <div style="flex:none;min-width:126px">
+      <span class="k" style="font-size:18px;font-weight:600;letter-spacing:.13em;color:var(--text)">FN-AGOSTO</span>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:5px"><span class="dot" style="background:var(--accent)"></span><span style="font-size:11.5px;color:var(--muted)">Abierta</span></div>
+    </div>
+    <div style="width:1px;align-self:stretch;background:var(--border);flex:none"></div>
+    <div style="min-width:0;flex:1">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span class="h" style="font-size:15.5px">Ferretería del Norte</span><span class="bd" style="background:var(--accent-soft);color:var(--accent)"><span class="dot" style="background:var(--accent)"></span>Bajo contrato</span>
+      </div>
+      <div style="font-size:12.5px;color:var(--muted);margin-top:3px">Capacitación de agosto</div>
+      <div style="font-size:12px;color:var(--faint);margin-top:1px">Mañana, viernes 21 de agosto · 09:30 · presencial, Santiago Centro</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex:none">
+      <a href="#" class="btn">Editar</a>
+      <a href="#" class="btn">Cerrar</a>
+      <a href="#" class="btn btnp">Abrir</a>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));gap:1px;background:var(--border);border-top:1px solid var(--border)">
+    <div style="background:var(--surface);padding:11px 20px"><div class="th" style="margin-bottom:5px">Alcance</div><div style="display:flex;align-items:center;gap:4px"><span class="h" style="width:22px;height:22px;border-radius:7px;display:grid;place-items:center;flex:none;background:#0B63CE;color:#ffffff;font-size:10px">M</span><span style="font-size:12.5px;color:var(--muted);margin-left:6px">6 de 9 módulos</span></div></div>
+    <div style="background:var(--surface);padding:11px 20px"><div class="th" style="margin-bottom:5px">Plan contratado</div><div style="font-size:12.5px">Microsoft 365 Copilot <span style="color:var(--faint)">·</span> licencia por usuario</div></div>
+    <div style="background:var(--surface);padding:11px 20px"><div class="th" style="margin-bottom:5px">Avance del grupo</div><span style="display:inline-flex;align-items:center;gap:9px"><span style="width:96px;height:6px;border-radius:99px;background:var(--surface2);overflow:hidden;display:block"><span style="display:block;height:100%;width:62%;border-radius:99px;background:var(--primary)"></span></span><span class="k" style="font-size:11.5px;color:var(--muted)">62%</span></span></div>
+    <div style="background:var(--surface);padding:11px 20px"><div class="th" style="margin-bottom:5px">Asistentes</div><div style="display:flex;align-items:center;gap:9px"><span style="font-size:12.5px">12 registrados</span><span class="bd" style="background:var(--warn-soft);color:var(--warn)">3 sin responder</span></div></div>
+  </div>
+</section>
+<section class="card" style="overflow:hidden;">
+  <div style="display:flex;align-items:center;gap:20px;padding:16px 20px">
+    <div style="flex:none;min-width:126px">
+      <span class="k" style="font-size:18px;font-weight:600;letter-spacing:.13em;color:var(--text)">AL-2608</span>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:5px"><span class="dot" style="background:var(--accent)"></span><span style="font-size:11.5px;color:var(--muted)">Abierta</span></div>
+    </div>
+    <div style="width:1px;align-self:stretch;background:var(--border);flex:none"></div>
+    <div style="min-width:0;flex:1">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span class="h" style="font-size:15.5px">Andes Logística</span><span class="bd" style="background:var(--accent-soft);color:var(--accent)"><span class="dot" style="background:var(--accent)"></span>Bajo contrato</span>
+      </div>
+      <div style="font-size:12.5px;color:var(--muted);margin-top:3px">Onboarding IA · turno tarde</div>
+      <div style="font-size:12px;color:var(--faint);margin-top:1px">Miércoles 26 de agosto · 15:00 · remota por Teams</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex:none">
+      <a href="#" class="btn">Editar</a>
+      <a href="#" class="btn">Cerrar</a>
+      <a href="#" class="btn btnp">Abrir</a>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));gap:1px;background:var(--border);border-top:1px solid var(--border)">
+    <div style="background:var(--surface);padding:11px 20px"><div class="th" style="margin-bottom:5px">Alcance</div><div style="display:flex;align-items:center;gap:4px"><span class="h" style="width:22px;height:22px;border-radius:7px;display:grid;place-items:center;flex:none;background:#0E7C63;color:#ffffff;font-size:10px">O</span><span class="h" style="width:22px;height:22px;border-radius:7px;display:grid;place-items:center;flex:none;background:#3B5BDB;color:#ffffff;font-size:10px">G</span><span style="font-size:12.5px;color:var(--muted);margin-left:6px">9 módulos</span></div></div>
+    <div style="background:var(--surface);padding:11px 20px"><div class="th" style="margin-bottom:5px">Plan contratado</div><div style="font-size:12.5px">ChatGPT Business <span style="color:var(--faint)">·</span> Google AI Pro</div></div>
+    <div style="background:var(--surface);padding:11px 20px"><div class="th" style="margin-bottom:5px">Avance del grupo</div><span style="display:inline-flex;align-items:center;gap:9px"><span style="width:96px;height:6px;border-radius:99px;background:var(--surface2);overflow:hidden;display:block"><span style="display:block;height:100%;width:34%;border-radius:99px;background:var(--primary)"></span></span><span class="k" style="font-size:11.5px;color:var(--muted)">34%</span></span></div>
+    <div style="background:var(--surface);padding:11px 20px"><div class="th" style="margin-bottom:5px">Asistentes</div><div style="display:flex;align-items:center;gap:9px"><span style="font-size:12.5px">17 registrados</span><span class="bd" style="background:var(--warn-soft);color:var(--warn)">2 sin responder</span></div></div>
+  </div>
+</section>
+<section class="card" style="overflow:hidden;">
+  <div style="display:flex;align-items:center;gap:20px;padding:16px 20px">
+    <div style="flex:none;min-width:126px">
+      <span class="k" style="font-size:18px;font-weight:600;letter-spacing:.13em;color:var(--text)">CV-PILOTO</span>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:5px"><span class="dot" style="background:var(--accent)"></span><span style="font-size:11.5px;color:var(--muted)">Abierta</span></div>
+    </div>
+    <div style="width:1px;align-self:stretch;background:var(--border);flex:none"></div>
+    <div style="min-width:0;flex:1">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span class="h" style="font-size:15.5px">Clínica Vallemar</span><span class="bd" style="background:var(--primary-soft);color:var(--primary)">Propia</span>
+      </div>
+      <div style="font-size:12.5px;color:var(--muted);margin-top:3px">Piloto con jefaturas</div>
+      <div style="font-size:12px;color:var(--faint);margin-top:1px">En curso desde el 12 de agosto · autoservicio</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex:none">
+      <a href="#" class="btn">Editar</a>
+      <a href="#" class="btn">Cerrar</a>
+      <a href="#" class="btn btnp">Abrir</a>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));gap:1px;background:var(--border);border-top:1px solid var(--border)">
+    <div style="background:var(--surface);padding:11px 20px"><div class="th" style="margin-bottom:5px">Alcance</div><div style="display:flex;align-items:center;gap:4px"><span class="h" style="width:22px;height:22px;border-radius:7px;display:grid;place-items:center;flex:none;background:#C15F3C;color:#ffffff;font-size:10px">C</span><span style="font-size:12.5px;color:var(--muted);margin-left:6px">4 módulos</span></div></div>
+    <div style="background:var(--surface);padding:11px 20px"><div class="th" style="margin-bottom:5px">Plan contratado</div><div style="font-size:12.5px"><span style="color:var(--faint)">Sin plan declarado</span></div></div>
+    <div style="background:var(--surface);padding:11px 20px"><div class="th" style="margin-bottom:5px">Avance del grupo</div><span style="display:inline-flex;align-items:center;gap:9px"><span style="width:96px;height:6px;border-radius:99px;background:var(--surface2);overflow:hidden;display:block"><span style="display:block;height:100%;width:88%;border-radius:99px;background:var(--primary)"></span></span><span class="k" style="font-size:11.5px;color:var(--muted)">88%</span></span></div>
+    <div style="background:var(--surface);padding:11px 20px"><div class="th" style="margin-bottom:5px">Asistentes</div><div style="display:flex;align-items:center;gap:9px"><span style="font-size:12.5px">6 registrados</span><span style="font-size:12.5px;color:var(--faint)">Ninguna</span></div></div>
+  </div>
+</section>
+<section class="card" style="overflow:hidden;opacity:.72">
+  <div style="display:flex;align-items:center;gap:20px;padding:16px 20px">
+    <div style="flex:none;min-width:126px">
+      <span class="k" style="font-size:18px;font-weight:600;letter-spacing:.13em;color:var(--faint);text-decoration:line-through">GS-JULIO</span>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:5px"><span class="dot" style="background:var(--faint)"></span><span style="font-size:11.5px;color:var(--muted)">Cerrada</span></div>
+    </div>
+    <div style="width:1px;align-self:stretch;background:var(--border);flex:none"></div>
+    <div style="min-width:0;flex:1">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span class="h" style="font-size:15.5px">Constructora Ribera</span><span class="bd" style="background:var(--accent-soft);color:var(--accent)"><span class="dot" style="background:var(--accent)"></span>Tercerizada</span>
+      </div>
+      <div style="font-size:12.5px;color:var(--muted);margin-top:3px">Programa julio · 3 sesiones</div>
+      <div style="font-size:12px;color:var(--faint);margin-top:1px">Cerrada el 17 de agosto · contratada por Grupo Sarmiento</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex:none">
+      <a href="#" class="btn">Editar</a>
+      <a href="#" class="btn">Reabrir</a>
+      <a href="#" class="btn btnp">Abrir</a>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));gap:1px;background:var(--border);border-top:1px solid var(--border)">
+    <div style="background:var(--surface);padding:11px 20px"><div class="th" style="margin-bottom:5px">Alcance</div><div style="display:flex;align-items:center;gap:4px"><span class="h" style="width:22px;height:22px;border-radius:7px;display:grid;place-items:center;flex:none;background:#0B63CE;color:#ffffff;font-size:10px">M</span><span class="h" style="width:22px;height:22px;border-radius:7px;display:grid;place-items:center;flex:none;background:#0E7C63;color:#ffffff;font-size:10px">O</span><span style="font-size:12.5px;color:var(--muted);margin-left:6px">12 módulos</span></div></div>
+    <div style="background:var(--surface);padding:11px 20px"><div class="th" style="margin-bottom:5px">Plan contratado</div><div style="font-size:12.5px">Microsoft 365 Copilot</div></div>
+    <div style="background:var(--surface);padding:11px 20px"><div class="th" style="margin-bottom:5px">Avance del grupo</div><span style="display:inline-flex;align-items:center;gap:9px"><span style="width:96px;height:6px;border-radius:99px;background:var(--surface2);overflow:hidden;display:block"><span style="display:block;height:100%;width:94%;border-radius:99px;background:var(--primary)"></span></span><span class="k" style="font-size:11.5px;color:var(--muted)">94%</span></span></div>
+    <div style="background:var(--surface);padding:11px 20px"><div class="th" style="margin-bottom:5px">Asistentes</div><div style="display:flex;align-items:center;gap:9px"><span style="font-size:12.5px">22 registrados</span><span style="font-size:12.5px;color:var(--faint)">14 respondidas</span></div></div>
+  </div>
+</section>
+<section class="card" style="display:flex;align-items:center;gap:20px;padding:15px 20px;background:var(--surface2);box-shadow:none">
+  <div style="flex:none;min-width:126px"><span class="k" style="font-size:18px;font-weight:600;letter-spacing:.13em;color:var(--text)">DEMO</span></div>
+  <div style="width:1px;align-self:stretch;background:var(--border);flex:none"></div>
+  <div style="flex:1;min-width:0">
+    <div style="display:flex;align-items:center;gap:8px"><span class="h" style="font-size:14.5px">Código de pruebas</span><span class="bd" style="background:var(--primary-soft);color:var(--primary)">Reservado</span></div>
+    <div style="font-size:12px;color:var(--faint);margin-top:2px">Abre el catálogo completo. No se cierra, no se borra y no puede asignarse a una capacitación real.</div>
+  </div>
+  <a href="#" class="btn">Abrir el portal</a>
+</section>
+</div>
+</main>
+</div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"tema":{"editor":"enum","options":["claro","oscuro"],"default":"claro","section":"Tema"},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { tema: this.props.tema ?? 'claro' };
+  }
+}
+</script>
+</body>
+</html>
