@@ -9,7 +9,9 @@ export const FECHA = new Intl.DateTimeFormat('es', {
 
 /** Peso de un archivo en la unidad en que se deja leer de un vistazo. */
 export function peso(bytes: number) {
+  if (bytes === 0) return '0 KB';
   if (bytes >= 1024 * 1024) return `${(bytes / 1024 / 1024).toFixed(1).replace('.', ',')} MB`;
+  // Nunca "0 KB" para un archivo que sí existe: uno de 300 bytes es 1 KB.
   return `${Math.max(1, Math.round(bytes / 1024))} KB`;
 }
 
