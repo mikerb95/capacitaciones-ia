@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { SectionTitle, SiteHeader } from '@/components/ui';
+import { AdminPage } from '@/components/admin-page';
+import { SectionTitle } from '@/components/ui';
 import { getModuleById, getPlatformIds } from '@/db/queries';
 import { AVAILABILITY_LABEL, AVAILABILITY_TONE } from '@/lib/plans';
 import { deleteModule, saveModule } from '../../actions';
@@ -51,14 +52,12 @@ export default async function ModuleFormPage({ params }: Params) {
   const mistakes = (mod?.mistakes ?? []).map((m) => `${m.bad} | ${m.good}`).join('\n');
 
   return (
-    <div className="min-h-screen bg-bg">
-      <SiteHeader
-        title={isNew ? 'Nuevo módulo' : `Editar: ${mod!.name}`}
-        subtitle={isNew ? undefined : mod!.platform.name}
-        back={{ href: '/admin', label: 'Volver al listado' }}
-      />
-
-      <main className="mx-auto max-w-[900px] px-4 py-8 sm:px-6">
+    <AdminPage
+      title={isNew ? 'Nuevo módulo' : `Editar: ${mod!.name}`}
+      subtitle={isNew ? undefined : mod!.platform.name}
+      back={{ href: '/admin/modulos', label: 'Módulos y portales' }}
+      max={900}
+    >
         <form action={saveModule} className="flex flex-col gap-8">
           {mod && <input type="hidden" name="id" value={mod.id} />}
 
@@ -334,8 +333,7 @@ export default async function ModuleFormPage({ params }: Params) {
               correr <code className="font-mono">npm run db:seed</code>.
             </p>
           </form>
-        )}
-      </main>
-    </div>
+      )}
+    </AdminPage>
   );
 }
