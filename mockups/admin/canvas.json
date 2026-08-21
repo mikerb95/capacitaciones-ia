@@ -4,7 +4,9 @@
     { "file": "Capacitaciones.dc.html", "x": 1560, "y": 0, "w": 1440, "h": 1000, "title": "Capacitaciones" },
     { "file": "Empresa.dc.html", "x": 3120, "y": 0, "w": 1440, "h": 940, "title": "Ficha de empresa" },
     { "file": "Contenido.dc.html", "x": 0, "y": 1220, "w": 1440, "h": 1020, "title": "Módulos y portales" },
-    { "file": "Material.dc.html", "x": 1560, "y": 1220, "w": 1440, "h": 900, "title": "Material y presentaciones" }
+    { "file": "Material.dc.html", "x": 1560, "y": 1220, "w": 1440, "h": 900, "title": "Material y presentaciones" },
+    { "file": "MovilInicio.dc.html", "x": 0, "y": 2480, "w": 390, "h": 844, "title": "Móvil · inicio" },
+    { "file": "MovilSesion.dc.html", "x": 470, "y": 2480, "w": 390, "h": 844, "title": "Móvil · sesión en curso" }
   ],
   "annotations": [
     {
@@ -23,10 +25,17 @@
     },
     {
       "id": "nota-contenido",
-      "x": 0,
-      "y": 2300,
-      "w": 620,
+      "x": 3120,
+      "y": 1220,
+      "w": 560,
       "text": "Contenido: lo que hoy es /admin. Cambia de lista larga por plataforma a pestañas de portal + una tabla con nivel, planes y estado, y el orden se arrastra en vez de subir y bajar de a un botón."
+    },
+    {
+      "id": "nota-movil",
+      "x": 940,
+      "y": 2480,
+      "w": 520,
+      "text": "Móvil · 390x844, solo lo que se usa en sesión\n\nDos pantallas para el teléfono: ver qué viene y abrir la sesión, y seguir en vivo quién entró, cuánto lleva cada uno y las preguntas.\n\nLas cinco pantallas de escritorio siguen siendo de escritorio: editar módulos, contratos y material no baja al teléfono.\n\nSin barra de estado ni teclado dibujados: en el teléfono real los pinta el sistema encima. Todo lo tocable mide 44px o más."
     }
   ],
   "launch": { "view": "canvas" }
