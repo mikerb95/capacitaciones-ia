@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { and, desc, eq } from 'drizzle-orm';
 import { db } from '@/db';
-import { questions } from '@/db/schema';
+import { questionVotes, questions } from '@/db/schema';
 import { cleanName } from '@/lib/name';
 import { QUESTION_GRACE_MS, QUESTION_MAX, QUESTION_MIN, type AskState } from '@/lib/questions';
 import { requireParticipant } from '@/lib/session';
@@ -84,5 +84,47 @@ export async function unask(formData: FormData) {
   if (Date.now() - question.createdAt.getTime() > QUESTION_GRACE_MS) return;
 
   await db.delete(questions).where(eq(questions.id, id));
+  revalidatePath('/preguntas');
+}
+
+/**
+ * "Yo también tengo esta duda", y también lo contrario: el mismo botón apretado
+ * de nuevo retira el voto. Un participante, un voto, y solo dentro de su propia
+ * capacitación.
+ *
+ * Sirve para dos cosas distintas: le dice al expositor por dónde empezar cuando
+ * hay veinte preguntas y diez minutos, y le ahorra a la gente escribir por
+ * quinta vez la duda que ya está anotada arriba.
+ */
+export async function vote(formData: FormData) {
+  const participant = await requireParticipant('/preguntas');
+  const id = Number(formData.get('id'));
+  if (!Number.isInteger(id)) return;
+
+  const question = await db.query.questions.findFirst({ where: eq(questions.id, id) });
+  if (!question) return;
+
+  // El voto es del grupo que está en esa capacitación, no de cualquiera que
+  // tenga el id a mano.
+  if (question.accessCodeId !== participant.accessCodeId) return;
+
+  // Sumarse a la propia duda no dice nada: quien preguntó ya la tiene.
+  if (!question.anonymous && question.participantId === participant.id) return;
+
+  const already = await db.query.questionVotes.findFirst({
+    where: and(eq(questionVotes.questionId, id), eq(questionVotes.participantId, participant.id)),
+  });
+
+  if (already) {
+    await db.delete(questionVotes).where(eq(questionVotes.id, already.id));
+  } else {
+    await db
+      .insert(questionVotes)
+      .values({ questionId: id, participantId: participant.id })
+      // Dos clics seguidos, o dos pestañas: el índice único manda, y el segundo
+      // no es un error que valga la pena mostrarle a nadie.
+      .onConflictDoNothing();
+  }
+
   revalidatePath('/preguntas');
 }
