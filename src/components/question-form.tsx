@@ -110,6 +110,8 @@ function Fields({
         </span>
       </label>
 
+      {notice}
+
       <button
         type="submit"
         disabled={pending || faltan > 0}
