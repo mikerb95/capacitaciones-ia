@@ -157,9 +157,10 @@ export async function saveModule(formData: FormData) {
 
   revalidatePath('/');
   revalidatePath('/admin');
+  revalidatePath('/admin/modulos');
   revalidatePath(`/${platformId}`);
   revalidatePath(`/${platformId}/${slug}`);
-  redirect('/admin');
+  redirect('/admin/modulos');
 }
 
 export async function deleteModule(formData: FormData) {
@@ -171,8 +172,9 @@ export async function deleteModule(formData: FormData) {
 
   revalidatePath('/');
   revalidatePath('/admin');
+  revalidatePath('/admin/modulos');
   if (platformId) revalidatePath(`/${platformId}`);
-  redirect('/admin');
+  redirect('/admin/modulos');
 }
 
 export async function moveModule(formData: FormData) {
@@ -198,5 +200,6 @@ export async function moveModule(formData: FormData) {
 
   revalidatePath('/');
   revalidatePath('/admin');
+  revalidatePath('/admin/modulos');
   revalidatePath(`/${current.platformId}`);
 }
