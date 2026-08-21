@@ -256,6 +256,7 @@ export function QuestionList({
   ownIds,
   removable,
   onRemove,
+  onVote,
   removeLabel = 'Borrar',
   defaultFilter = 'todas',
 }: {
@@ -264,6 +265,8 @@ export function QuestionList({
   extras?: Record<number, React.ReactNode>;
   /** Las firmadas por quien mira, que el servidor sí sabe cuáles son. */
   ownIds?: number[];
+  /** Suma o quita el "yo también". Solo la pasa el portal del asistente. */
+  onVote?: (formData: FormData) => void | Promise<void>;
   /** Las que todavía se pueden deshacer, dentro de la ventana de gracia. */
   removable?: number[];
   onRemove?: (formData: FormData) => void | Promise<void>;
