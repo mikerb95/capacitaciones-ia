@@ -73,8 +73,8 @@ function Fields({
             ? 'Una o dos frases bastan: lo que preguntarías en voz alta.'
             : faltan > 0
               ? `Un poco más de detalle: faltan ${faltan} ${faltan === 1 ? 'carácter' : 'caracteres'}.`
-              : restantes <= NEAR_MAX - QUESTION_MIN
-                ? `Te quedan ${restantes} caracteres.`
+              : body.length >= NEAR_MAX
+                ? `Te quedan ${restantes} ${restantes === 1 ? 'carácter' : 'caracteres'}.`
                 : 'Lista para enviar.'}
         </span>
       </label>
