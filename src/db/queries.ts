@@ -509,3 +509,56 @@ export type QuestionRow = Awaited<ReturnType<typeof getTrainingQuestions>>[numbe
 
 export type DeckRow = Awaited<ReturnType<typeof getDecks>>[number];
 export type DeckFull = NonNullable<Awaited<ReturnType<typeof getDeck>>>;
+
+/* ---------------------------------------------------------------- panel */
+
+/**
+ * Los dos números que el sidebar muestra al lado de su sección. Van aparte de
+ * la portada porque los pinta el layout, o sea todas las pantallas del panel:
+ * conviene que sean dos conteos y no las consultas completas.
+ */
+export async function getAdminNavCounts() {
+  const [open] = await db
+    .select({ n: sql<number>`count(*)` })
+    .from(accessCodes)
+    .where(and(eq(accessCodes.active, true), eq(accessCodes.system, false)));
+
+  const [drafts] = await db
+    .select({ n: sql<number>`count(*)` })
+    .from(modules)
+    .where(eq(modules.status, 'borrador'));
+
+  return { openCodes: open?.n ?? 0, drafts: drafts?.n ?? 0 };
+}
+
+/** Cuántos módulos hay publicados y cuántos siguen en borrador. */
+export async function getModuleCounts() {
+  const rows = await db
+    .select({ status: modules.status, n: sql<number>`count(*)` })
+    .from(modules)
+    .groupBy(modules.status);
+
+  const of = (status: string) => rows.find((r) => r.status === status)?.n ?? 0;
+  return { published: of('publicado'), draft: of('borrador') };
+}
+
+/**
+ * Las últimas preguntas, con a qué capacitación pertenecen. La portada las usa
+ * para la actividad reciente, así que trae pocas y con el texto recortado a lo
+ * que cabe en una línea.
+ */
+export async function getRecentQuestions(limit = 8) {
+  return db.query.questions.findMany({
+    orderBy: (q, { desc }) => [desc(q.createdAt)],
+    limit,
+    columns: { id: true, body: true, status: true, anonymous: true, name: true, createdAt: true },
+    with: {
+      accessCode: {
+        columns: { id: true, code: true, label: true },
+        with: { company: { columns: { name: true } } },
+      },
+    },
+  });
+}
+
+export type RecentQuestion = Awaited<ReturnType<typeof getRecentQuestions>>[number];
