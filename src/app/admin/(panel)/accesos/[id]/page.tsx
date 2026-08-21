@@ -4,7 +4,7 @@ import { field } from '@/components/form-kit';
 import { QuestionList } from '@/components/question-list';
 import { AdminPage } from '@/components/admin-page';
 import { getAccessCode, getCompanyOptions, getTrainingQuestions } from '@/db/queries';
-import { answerQuestion, deleteQuestion, updateAccessCode } from '../actions';
+import { answerInSession, answerQuestion, deleteQuestion, updateAccessCode } from '../actions';
 import { getScopeOptions } from '../scope-options';
 
 export const dynamic = 'force-dynamic';
