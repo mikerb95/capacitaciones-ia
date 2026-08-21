@@ -20,9 +20,18 @@ export const metadata = { title: 'Panel · Academia IA' };
 
 const DIA = new Intl.DateTimeFormat('es', { day: '2-digit', month: 'short', year: 'numeric' });
 
+/**
+ * El reloj se lee una sola vez por petición y desde fuera del render: leerlo
+ * durante el render es impuro, y además así toda la pantalla habla del mismo
+ * instante y no de tres microsegundos distintos.
+ */
+async function leerReloj() {
+  return new Date();
+}
+
 /** Cuánto hace, en la unidad más grande que todavía dice algo. */
-function hace(date: Date) {
-  const min = Math.round((Date.now() - date.getTime()) / 60000);
+function hace(date: Date, ahora: Date) {
+  const min = Math.round((ahora.getTime() - date.getTime()) / 60000);
   if (min < 1) return 'recién';
   if (min < 60) return `hace ${min} min`;
   const h = Math.round(min / 60);
@@ -83,12 +92,13 @@ type Pending = {
 /* --------------------------------------------------------------- pantalla */
 
 export default async function AdminHomePage() {
-  const [codes, platforms, companies, moduleCounts, recientes] = await Promise.all([
+  const [codes, platforms, companies, moduleCounts, recientes, ahora] = await Promise.all([
     getAccessCodes(),
     getComparison(),
     getCompanies(),
     getModuleCounts(),
     getRecentQuestions(6),
+    leerReloj(),
   ]);
 
   const questionCounts = await getQuestionCounts(codes.map((c) => c.id));
@@ -129,10 +139,9 @@ export default async function AdminHomePage() {
     });
   }
 
-  const ahora = Date.now();
   for (const company of companies) {
     if (!company.materialsUntil) continue;
-    const restan = Math.ceil((company.materialsUntil.getTime() - ahora) / 86400000);
+    const restan = Math.ceil((company.materialsUntil.getTime() - ahora.getTime()) / 86400000);
     if (restan > 30) continue;
     pendientes.push({
       key: `material-${company.id}`,
@@ -226,7 +235,7 @@ export default async function AdminHomePage() {
   return (
     <AdminPage
       title="Panel"
-      subtitle={DIA.format(new Date())}
+      subtitle={DIA.format(ahora)}
       max={1180}
       actions={
         <>
@@ -246,7 +255,7 @@ export default async function AdminHomePage() {
                 <span aria-hidden="true" className="size-[7px] rounded-full bg-accent" />
                 <span className="text-[12px] font-semibold text-muted">
                   {destacada.participants.length > 0
-                    ? `Con movimiento ${hace(new Date(lastActivity(destacada)))}`
+                    ? `Con movimiento ${hace(new Date(lastActivity(destacada)), ahora)}`
                     : 'Abierta, todavía sin nadie dentro'}
                 </span>
               </div>
@@ -389,7 +398,7 @@ export default async function AdminHomePage() {
                 {actividad.map((a, i) => (
                   <div key={`${a.at.getTime()}-${i}`} className="flex gap-3.5 py-2">
                     <span className="w-[62px] flex-none pt-px font-mono text-[11.5px] text-faint">
-                      {hace(a.at)}
+                      {hace(a.at, ahora)}
                     </span>
                     <div className="min-w-0">
                       <div className="text-[13px] leading-snug">{a.text}</div>
