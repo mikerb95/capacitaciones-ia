@@ -1,9 +1,8 @@
 import { notFound } from 'next/navigation';
 import { AccessCodeForm } from '@/components/access-code-form';
 import { field } from '@/components/form-kit';
-import { AdminLogoutButton } from '@/components/admin-logout-button';
 import { QuestionList } from '@/components/question-list';
-import { SiteHeader } from '@/components/ui';
+import { AdminPage } from '@/components/admin-page';
 import { getAccessCode, getCompanyOptions, getTrainingQuestions } from '@/db/queries';
 import { answerQuestion, deleteQuestion, updateAccessCode } from '../actions';
 import { getScopeOptions } from '../scope-options';
@@ -32,20 +31,17 @@ export default async function EditarAccesoPage({ params }: Props) {
   const sinResponder = questions.filter((q) => q.status === 'abierta').length;
 
   return (
-    <div className="min-h-screen bg-bg">
-      <SiteHeader
-        title={`Código ${code.code}`}
-        subtitle={
-          code.contractor
-            ? `${code.company?.name ?? code.label} · vía ${code.contractor.name}`
-            : (code.company?.name ?? code.label)
-        }
-        back={{ href: '/admin/accesos', label: 'Códigos de acceso' }}
-      >
-        <AdminLogoutButton />
-      </SiteHeader>
-
-      <main className="mx-auto flex max-w-[900px] flex-col gap-6 px-4 py-8 sm:px-6">
+    <AdminPage
+      title={`Código ${code.code}`}
+      subtitle={
+        code.contractor
+          ? `${code.company?.name ?? code.label} · vía ${code.contractor.name}`
+          : (code.company?.name ?? code.label)
+      }
+      back={{ href: '/admin/accesos', label: 'Capacitaciones' }}
+      max={900}
+    >
+      <div className="flex flex-col gap-6">
         <AccessCodeForm
           action={updateAccessCode}
           platforms={platforms}
@@ -119,7 +115,7 @@ export default async function EditarAccesoPage({ params }: Props) {
             )}
           </QuestionList>
         </section>
-      </main>
-    </div>
+      </div>
+    </AdminPage>
   );
 }
