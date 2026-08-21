@@ -96,7 +96,7 @@ export default async function ModulesPage() {
                         Ver
                       </Link>
                       <Link
-                        href={`/admin/modules/${m.id}`}
+                        href={`/admin/modulos/${m.id}`}
                         className="rounded-md bg-surface-2 px-2.5 py-1 text-[12.5px] font-medium text-text transition-colors hover:bg-primary-soft hover:text-primary"
                       >
                         Editar
