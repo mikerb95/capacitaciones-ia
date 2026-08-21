@@ -68,6 +68,12 @@ export default async function PreguntasPage() {
                 ? 'todavía ninguna'
                 : `${questions.length} en total${pendientes > 0 ? `, ${pendientes} sin responder` : ''}`}
             </span>
+            {questions.length > 0 && (
+              <p className="w-full text-[12.5px] leading-relaxed text-faint">
+                Si alguien ya preguntó lo que ibas a preguntar, marca &laquo;yo también tengo esta
+                duda&raquo;: así sabemos cuáles conviene responder primero.
+              </p>
+            )}
           </div>
 
           <QuestionList
