@@ -11,6 +11,11 @@ export const dynamic = 'force-dynamic';
 
 export const metadata = { title: 'Preguntas · Academia IA' };
 
+/** El reloj, leído fuera del render: durante el render sería impuro. */
+async function leerReloj() {
+  return Date.now();
+}
+
 export default async function PreguntasPage() {
   const participant = await requireParticipant('/preguntas');
   const questions = await getTrainingQuestions(participant.accessCodeId);
