@@ -1,13 +1,13 @@
 import Link from 'next/link';
-import { AdminLogoutButton } from '@/components/admin-logout-button';
-import { Abbr, LevelBadge, PlatformMark, SiteHeader, StatusBadge } from '@/components/ui';
+import { AdminAction, AdminPage } from '@/components/admin-page';
+import { Abbr, LevelBadge, PlatformMark, StatusBadge } from '@/components/ui';
 import { moduleLogo, platformLogo } from '@/lib/brand-logos';
 import { getComparison } from '@/db/queries';
-import { moveModule } from './actions';
+import { moveModule } from '../actions';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Administrar contenido · Academia IA' };
+export const metadata = { title: 'Módulos y portales · Academia IA' };
 
 function MoveButton({ id, direction }: { id: number; direction: 'up' | 'down' }) {
   return (
