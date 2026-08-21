@@ -65,6 +65,10 @@ export default async function PreguntasPage() {
           <QuestionList
             questions={questions}
             empty="Nadie ha preguntado nada todavía. Estrena el buzón: si tú tienes la duda, es probable que la tenga alguien más."
+            ownIds={propias.map((q) => q.id)}
+            removable={borrables.map((q) => q.id)}
+            onRemove={unask}
+            removeLabel="Me arrepentí, bórrala"
           />
         </section>
       </main>
