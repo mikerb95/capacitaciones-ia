@@ -50,7 +50,8 @@ export function AdminPage({
             </h1>
             {subtitle && <p className="truncate text-[12.5px] text-faint">{subtitle}</p>}
           </div>
-          <div className="no-print flex items-center gap-2">
+          {/* Envuelve en pantalla angosta: si no, "Salir" se sale del borde. */}
+          <div className="no-print flex flex-wrap items-center justify-end gap-2">
             {actions}
             <ThemeToggle />
             <AdminLogoutButton />
