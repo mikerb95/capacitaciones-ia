@@ -937,6 +937,7 @@ export const participantsRelations = relations(participants, ({ one, many }) => 
   }),
   views: many(moduleViews),
   questions: many(questions),
+  questionVotes: many(questionVotes),
 }));
 
 export const questionsRelations = relations(questions, ({ one, many }) => ({
