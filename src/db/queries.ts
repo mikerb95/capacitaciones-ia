@@ -13,6 +13,7 @@ import {
   participants,
   platformPlans,
   platforms,
+  questionVotes,
   questions,
 } from './schema';
 
