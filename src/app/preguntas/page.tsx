@@ -19,7 +19,7 @@ async function leerReloj() {
 export default async function PreguntasPage() {
   const participant = await requireParticipant('/preguntas');
   const [questions, ahora] = await Promise.all([
-    getTrainingQuestions(participant.accessCodeId),
+    getTrainingQuestions(participant.accessCodeId, participant.id),
     leerReloj(),
   ]);
 
