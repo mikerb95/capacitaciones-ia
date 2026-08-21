@@ -95,7 +95,12 @@ export async function getPlatform(id: string) {
 
 export async function getPlatformIds() {
   return db
-    .select({ id: platforms.id, name: platforms.name, color: platforms.color })
+    .select({
+      id: platforms.id,
+      name: platforms.name,
+      initial: platforms.initial,
+      color: platforms.color,
+    })
     .from(platforms)
     .orderBy(asc(platforms.sortOrder));
 }
