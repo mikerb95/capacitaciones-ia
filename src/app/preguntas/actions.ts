@@ -18,7 +18,7 @@ const str = (data: FormData, key: string) => ((data.get(key) as string | null) ?
  * pregunta. Marcada como anónima no se guarda ni el nombre ni el vínculo con el
  * participante, así que después nadie puede deshacerlo, ni siquiera el admin.
  */
-export async function ask(_prev: AskState, formData: FormData): Promise<AskState> {
+export async function ask(prev: AskState, formData: FormData): Promise<AskState> {
   const participant = await requireParticipant('/preguntas');
 
   const body = str(formData, 'pregunta').slice(0, QUESTION_MAX);
