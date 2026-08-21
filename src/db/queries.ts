@@ -62,6 +62,37 @@ export async function getScopeCatalog() {
   });
 }
 
+/**
+ * Catálogo del entrenador de prompts. Trae los casos por área y los prompts
+ * solo como identificadores porque acá no se pintan: lo único que hace falta
+ * saber es si el módulo tiene con qué entrenar. El contenido completo se lee
+ * ya dentro del módulo, con `getModule`.
+ */
+export async function getTrainerCatalog() {
+  return db.query.platforms.findMany({
+    orderBy: (p) => [asc(p.sortOrder)],
+    columns: { id: true, name: true, portalName: true, color: true, initial: true },
+    with: {
+      modules: {
+        columns: {
+          id: true,
+          slug: true,
+          name: true,
+          abbr: true,
+          color: true,
+          level: true,
+          summary: true,
+        },
+        orderBy: (m) => [asc(m.sortOrder)],
+        with: {
+          roles: { columns: { id: true } },
+          prompts: { columns: { id: true } },
+        },
+      },
+    },
+  });
+}
+
 /** Portal de una IA: plataforma completa con sus módulos y todo el detalle. */
 export async function getPlatform(id: string) {
   return db.query.platforms.findFirst({
