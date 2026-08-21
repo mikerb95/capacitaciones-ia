@@ -939,13 +939,22 @@ export const participantsRelations = relations(participants, ({ one, many }) => 
   questions: many(questions),
 }));
 
-export const questionsRelations = relations(questions, ({ one }) => ({
+export const questionsRelations = relations(questions, ({ one, many }) => ({
   accessCode: one(accessCodes, {
     fields: [questions.accessCodeId],
     references: [accessCodes.id],
   }),
   participant: one(participants, {
     fields: [questions.participantId],
+    references: [participants.id],
+  }),
+  votes: many(questionVotes),
+}));
+
+export const questionVotesRelations = relations(questionVotes, ({ one }) => ({
+  question: one(questions, { fields: [questionVotes.questionId], references: [questions.id] }),
+  participant: one(participants, {
+    fields: [questionVotes.participantId],
     references: [participants.id],
   }),
 }));
