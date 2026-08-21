@@ -86,9 +86,33 @@ export default async function EditarAccesoPage({ params }: Props) {
             extras={Object.fromEntries(
               questions.map((question) => [
                 question.id,
-                // Plegado: con quince preguntas, quince campos de texto
-                // abiertos no dejan leer ninguna.
-                <details key={question.id} className="group mt-3">
+                <div key={question.id}>
+                  {/*
+                    En vivo casi nunca se escribe la respuesta: se contesta
+                    hablando. Por eso este botón va a la vista y no dentro del
+                    desplegable, que es donde se responde con calma después.
+                  */}
+                  {question.status !== 'respondida' && (
+                    <form action={answerInSession} className="mt-3">
+                      <input type="hidden" name="id" value={question.id} />
+                      <button
+                        type="submit"
+                        className={`rounded-full border px-3 py-1 text-[12.5px] font-medium transition-colors ${
+                          question.status === 'en_sesion'
+                            ? 'border-accent bg-accent-soft text-accent'
+                            : 'border-line bg-surface text-muted hover:border-primary hover:text-text'
+                        }`}
+                      >
+                        {question.status === 'en_sesion'
+                          ? '✓ Respondida en la sesión'
+                          : 'Respondida en la sesión'}
+                      </button>
+                    </form>
+                  )}
+
+                  {/* Plegado: con quince preguntas, quince campos de texto
+                      abiertos no dejan leer ninguna. */}
+                  <details className="group mt-3">
                   <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 text-[12.5px] font-semibold text-primary">
                     <span aria-hidden className="transition-transform group-open:rotate-90">
                       ›
