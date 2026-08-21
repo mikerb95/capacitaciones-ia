@@ -4,7 +4,13 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { eq } from 'drizzle-orm';
 import { db } from '@/db';
-import { COMPANY_KINDS, companies, companyContacts, type CompanyKind } from '@/db/schema';
+import {
+  accessCodes,
+  COMPANY_KINDS,
+  companies,
+  companyContacts,
+  type CompanyKind,
+} from '@/db/schema';
 import { freePanelKey } from '@/lib/company-access';
 
 const str = (data: FormData, key: string) => ((data.get(key) as string | null) ?? '').trim();
@@ -220,6 +226,48 @@ export async function deleteCompany(formData: FormData) {
   revalidatePath('/admin/empresas');
   revalidatePath('/admin/accesos');
   redirect('/admin/empresas');
+}
+
+/**
+ * Saca una capacitación de la ficha de la empresa sin borrarla: el código, sus
+ * asistentes y sus preguntas quedan donde estaban, solo dejan de colgar de
+ * este contrato y la capacitación desaparece del panel de la empresa.
+ *
+ * Hay dos formas de colgar, y cada una se desengancha distinto. Si la empresa
+ * era la capacitadora, se suelta solo esa punta: la capacitación sigue siendo
+ * de su destinataria, ahora como trabajo directo. Si era la destinataria, no
+ * queda nadie que reciba, y una capacitación sin destinataria no puede seguir
+ * marcada como dictada bajo contrato: vuelve a ser una capacitación propia,
+ * que es lo mismo que quedaría si se hubiera creado sin empresa.
+ */
+export async function detachCompanyCode(formData: FormData) {
+  const companyId = Number(str(formData, 'companyId'));
+  const codeId = Number(str(formData, 'codeId'));
+  if (!companyId || !codeId) return;
+
+  const code = await db.query.accessCodes.findFirst({ where: eq(accessCodes.id, codeId) });
+  if (!code) return;
+
+  const wasContractor = code.contractorId === companyId;
+  const wasCompany = code.companyId === companyId;
+  // El formulario dice de qué ficha viene, pero la relación se comprueba aquí.
+  if (!wasContractor && !wasCompany) return;
+
+  const changes = wasCompany
+    ? { companyId: null, contractorId: null, contracted: false }
+    : { contractorId: null };
+
+  await db
+    .update(accessCodes)
+    .set({ ...changes, updatedAt: new Date() })
+    .where(eq(accessCodes.id, codeId));
+
+  revalidatePath('/admin/empresas');
+  revalidatePath(`/admin/empresas/${companyId}`);
+  if (wasCompany && code.contractorId) revalidatePath(`/admin/empresas/${code.contractorId}`);
+  if (wasContractor && code.companyId) revalidatePath(`/admin/empresas/${code.companyId}`);
+  revalidatePath('/admin/accesos');
+  revalidatePath(`/admin/accesos/${codeId}`);
 }
 
 /** Rotar la clave cierra de inmediato las sesiones abiertas del panel. */

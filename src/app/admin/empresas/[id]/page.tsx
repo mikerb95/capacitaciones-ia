@@ -4,7 +4,13 @@ import { AdminLogoutButton } from '@/components/admin-logout-button';
 import { CompanyForm } from '@/components/company-form';
 import { SiteHeader } from '@/components/ui';
 import { getCompany } from '@/db/queries';
-import { deleteCompany, rotatePanelKey, toggleCompanyPanel, updateCompany } from '../actions';
+import {
+  deleteCompany,
+  detachCompanyCode,
+  rotatePanelKey,
+  toggleCompanyPanel,
+  updateCompany,
+} from '../actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -164,6 +170,17 @@ export default async function EmpresaPage({ params, searchParams }: Props) {
                   >
                     Editar
                   </Link>
+                  <form action={detachCompanyCode}>
+                    <input type="hidden" name="companyId" value={company.id} />
+                    <input type="hidden" name="codeId" value={code.id} />
+                    <button
+                      type="submit"
+                      title="Quita la capacitación de esta ficha. El código y sus asistentes quedan intactos: pasa a ser trabajo directo de la empresa que la recibe."
+                      className="rounded-md px-2.5 py-1 text-[12.5px] font-medium text-faint transition-colors hover:bg-[#fef2f2] hover:text-[#c2410c]"
+                    >
+                      Quitar
+                    </button>
+                  </form>
                 </li>
               ))}
             </ul>
@@ -234,6 +251,17 @@ export default async function EmpresaPage({ params, searchParams }: Props) {
                   >
                     Editar
                   </Link>
+                  <form action={detachCompanyCode}>
+                    <input type="hidden" name="companyId" value={company.id} />
+                    <input type="hidden" name="codeId" value={code.id} />
+                    <button
+                      type="submit"
+                      title="Quita la capacitación de esta ficha. El código y sus asistentes quedan intactos: vuelve a ser una capacitación propia, fuera de todo panel."
+                      className="rounded-md px-2.5 py-1 text-[12.5px] font-medium text-faint transition-colors hover:bg-[#fef2f2] hover:text-[#c2410c]"
+                    >
+                      Quitar
+                    </button>
+                  </form>
                 </li>
               ))}
             </ul>
