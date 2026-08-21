@@ -31,7 +31,7 @@ export default async function PreguntasPage() {
   const propias = questions.filter((q) => !q.anonymous && q.participantId === participant.id);
 
   const borrables = propias.filter(
-    (q) => q.status === 'abierta' && Date.now() - q.createdAt.getTime() < QUESTION_GRACE_MS,
+    (q) => q.status === 'abierta' && ahora - q.createdAt.getTime() < QUESTION_GRACE_MS,
   );
 
   return (
