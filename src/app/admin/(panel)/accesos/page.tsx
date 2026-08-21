@@ -256,60 +256,42 @@ export default async function AccesosPage({ searchParams }: Props) {
   return (
     <AdminPage
       title="Capacitaciones"
-        subtitle="La llave que entregas al inicio de cada capacitación, con quién la contrató, quién la recibe, su alcance y quienes entraron."
-        back={{ href: '/admin', label: 'Administrar contenido' }}
-      >
-        <Link
-          href="/admin/empresas"
-          className="rounded-[10px] border border-line bg-surface px-3 py-2 text-[12.5px] font-medium text-muted transition-colors hover:border-primary hover:text-text"
-        >
-          Empresas
-        </Link>
-        <Link
-          href="/admin/presentaciones"
-          className="rounded-[10px] border border-line bg-surface px-3 py-2 text-[12.5px] font-medium text-muted transition-colors hover:border-primary hover:text-text"
-        >
-          Presentaciones
-        </Link>
-        <Link
-          href="/admin/accesos/nuevo"
-          className="rounded-[10px] bg-primary px-3 py-2 text-[12.5px] font-semibold text-white transition-opacity hover:opacity-90"
-        >
-          Nuevo código
-        </Link>
-        <AdminLogoutButton />
-      </SiteHeader>
+      subtitle="La llave que entregas al inicio de cada capacitación, con quién la contrató, quién la recibe, su alcance y quienes entraron."
+      max={900}
+      actions={
+        <AdminAction href="/admin/accesos/nuevo" primary>
+          Nueva capacitación
+        </AdminAction>
+      }
+    >
+      {message && (
+        <p className="mb-5 rounded-[10px] bg-accent-soft px-4 py-2.5 text-[13px] text-accent">
+          {message}
+        </p>
+      )}
 
-      <main className="mx-auto max-w-[900px] px-4 py-8 sm:px-6">
-        {message && (
-          <p className="mb-5 rounded-[10px] bg-accent-soft px-4 py-2.5 text-[13px] text-accent">
-            {message}
-          </p>
-        )}
-
-        {codes.length === 0 ? (
-          <p className="rounded-card border border-line bg-surface-2 p-5 text-[13.5px] leading-relaxed text-muted">
-            Aún no hay códigos.{' '}
-            <Link href="/admin/accesos/nuevo" className="font-medium text-primary">
-              Crea el primero
-            </Link>
-            : es lo que dictas al inicio de la sesión para que la gente pueda entrar al material.
-          </p>
-        ) : (
-          <div className="flex flex-col gap-5">
-            {codes.map((code) => (
-              <CodeCard
-                key={code.id}
-                code={code}
-                index={index}
-                platformNames={platformNames}
-                totalModules={totalModules}
-                questions={questionCounts.get(code.id)}
-              />
-            ))}
-          </div>
-        )}
-      </main>
-    </div>
+      {codes.length === 0 ? (
+        <p className="rounded-card border border-line bg-surface-2 p-5 text-[13.5px] leading-relaxed text-muted">
+          Aún no hay códigos.{' '}
+          <Link href="/admin/accesos/nuevo" className="font-medium text-primary">
+            Crea el primero
+          </Link>
+          : es lo que dictas al inicio de la sesión para que la gente pueda entrar al material.
+        </p>
+      ) : (
+        <div className="flex flex-col gap-5">
+          {codes.map((code) => (
+            <CodeCard
+              key={code.id}
+              code={code}
+              index={index}
+              platformNames={platformNames}
+              totalModules={totalModules}
+              questions={questionCounts.get(code.id)}
+            />
+          ))}
+        </div>
+      )}
+    </AdminPage>
   );
 }
