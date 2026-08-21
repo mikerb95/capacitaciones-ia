@@ -242,7 +242,7 @@ export default async function MaterialesEmpresaPage({ params, searchParams }: Pr
                     <input type="hidden" name="from" value={`/admin/materiales/${company.id}`} />
                     <button
                       type="submit"
-                      className={`rounded-[10px] bg-surface-2 px-3 py-1.5 text-[12.5px] font-medium text-muted transition-colors hover:${AVISO}`}
+                      className="rounded-[10px] bg-surface-2 px-3 py-1.5 text-[12.5px] font-medium text-muted transition-colors hover:bg-[#fdebe2] hover:text-[#c2410c] dark:hover:bg-[#3a1e10] dark:hover:text-[#f4a06a]"
                     >
                       Borrar
                     </button>
