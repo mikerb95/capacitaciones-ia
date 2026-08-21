@@ -5,7 +5,7 @@ import { and, desc, eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { questions } from '@/db/schema';
 import { cleanName } from '@/lib/name';
-import { QUESTION_MAX, QUESTION_MIN, type AskState } from '@/lib/questions';
+import { QUESTION_GRACE_MS, QUESTION_MAX, QUESTION_MIN, type AskState } from '@/lib/questions';
 import { requireParticipant } from '@/lib/session';
 
 const str = (data: FormData, key: string) => ((data.get(key) as string | null) ?? '').trim();
