@@ -191,21 +191,20 @@ export function QuestionList({
   defaultFilter?: Filter;
 }) {
   const [filter, setFilter] = useState<Filter>(defaultFilter);
-  const [asked, setAsked] = useState<number[]>([]);
   const [flash, setFlash] = useState<number | null>(null);
+
+  const raw = useSyncExternalStore(subscribeAsked, askedSnapshot, serverSnapshot);
+  const asked = useMemo(() => parseIds(raw), [raw]);
 
   // Lo recién enviado: el formulario avisa con el id y aquí se guarda, se
   // marca como propia y se lleva a la vista, que si no la pregunta cae al
   // fondo de una lista larga y parece que no pasó nada.
   useEffect(() => {
-    setAsked(readAsked());
-
     const onAsked = (event: Event) => {
       const { questionId } = (event as CustomEvent<AskState>).detail ?? {};
       if (!questionId) return;
 
       rememberAsked(questionId);
-      setAsked(readAsked());
       setFilter('todas');
       setFlash(questionId);
     };
