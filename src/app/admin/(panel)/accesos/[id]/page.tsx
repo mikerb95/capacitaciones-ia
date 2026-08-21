@@ -118,7 +118,7 @@ export default async function EditarAccesoPage({ params }: Props) {
                     </div>
                   </form>
 
-                  <form action={deleteQuestion}>
+                  <form action={deleteQuestion} className="mt-2">
                     <input type="hidden" name="id" value={question.id} />
                     <button
                       type="submit"
@@ -127,7 +127,7 @@ export default async function EditarAccesoPage({ params }: Props) {
                       Borrar pregunta
                     </button>
                   </form>
-                </div>,
+                </details>,
               ]),
             )}
           />
