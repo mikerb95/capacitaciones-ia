@@ -107,8 +107,7 @@ export default async function ModulesPage() {
               </div>
             </section>
           ))}
-        </div>
-      </main>
-    </div>
+      </div>
+    </AdminPage>
   );
 }
