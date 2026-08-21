@@ -82,11 +82,21 @@ export default async function EditarAccesoPage({ params }: Props) {
           <QuestionList
             questions={questions}
             empty="Nadie preguntó nada con este código todavía."
+            defaultFilter={sinResponder > 0 ? 'abierta' : 'todas'}
             extras={Object.fromEntries(
               questions.map((question) => [
                 question.id,
-                <div key={question.id} className="mt-3 flex flex-col gap-2">
-                  <form action={answerQuestion} className="flex flex-col gap-2">
+                // Plegado: con quince preguntas, quince campos de texto
+                // abiertos no dejan leer ninguna.
+                <details key={question.id} className="group mt-3">
+                  <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 text-[12.5px] font-semibold text-primary">
+                    <span aria-hidden className="transition-transform group-open:rotate-90">
+                      ›
+                    </span>
+                    {question.answer ? 'Editar respuesta' : 'Responder'}
+                  </summary>
+
+                  <form action={answerQuestion} className="mt-2 flex flex-col gap-2">
                     <input type="hidden" name="id" value={question.id} />
                     <textarea
                       name="respuesta"
