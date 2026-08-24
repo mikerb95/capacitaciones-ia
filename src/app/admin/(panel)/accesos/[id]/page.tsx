@@ -39,6 +39,12 @@ export default async function EditarAccesoPage({ params }: Props) {
 
   const sinResponder = questions.filter((q) => q.status === 'abierta').length;
 
+  // Aquí sí manda el voto: es la pantalla que se mira con la sesión encima y
+  // diez minutos para preguntas, y lo que conviene contestar primero es la duda
+  // que comparte más gente. A igualdad de votos vuelve a mandar la fecha, lo
+  // más nuevo arriba, que es el orden en que llegan de la consulta.
+  const porInteres = [...questions].sort((a, b) => b.votes - a.votes);
+
   // Sin recorte guardado, el denominador del avance es el catálogo entero.
   const catalog = new Set(platforms.flatMap((p) => p.modules.map((m) => m.id)));
   const scopeIds = scopeSetOf(code.scope, catalog);
@@ -151,7 +157,7 @@ export default async function EditarAccesoPage({ params }: Props) {
             frontera. Por eso llega ya renderizado, en un mapa por id.
           */}
           <QuestionList
-            questions={questions}
+            questions={porInteres}
             empty="Nadie preguntó nada con este código todavía."
             defaultFilter={sinResponder > 0 ? 'abierta' : 'todas'}
             extras={Object.fromEntries(

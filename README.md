@@ -45,6 +45,8 @@ del proyecto, y correr el seed una vez contra la base de producción.
 | `/presentar/[slug]` | Vista de expositor, con control de la sesión en vivo |
 | `/vivo` | Vista de audiencia: se entra con el PIN |
 | `/preguntas` | Buzón del asistente: deja su duda, con nombre o en anónimo, y ve las del grupo |
+| `/entrenador` | Entrenador de prompts: los módulos que tienen casos con qué practicar |
+| `/entrenador/[plataforma]/[modulo]` | El ejercicio: se escribe el prompt a ciegas y después llega la revisión |
 
 El portal se cierra en `src/proxy.ts`. Cada sección entra por su lado: `/admin` con el login de
 `ADMIN_USER` y `ADMIN_PASS` (cookie firmada, formulario en `/admin/login`), `/empresa` con la
@@ -232,6 +234,46 @@ La pregunta cuelga del código de acceso, no del participante, y por eso sobrevi
 queda como registro de la capacitación de esa empresa y como material para preparar la siguiente.
 Se responde desde `/admin/accesos/[id]`, y la respuesta la ven quien preguntó (en `/preguntas`) y
 la empresa en su panel. Vaciar el campo de la respuesta devuelve la pregunta a pendiente.
+
+## Entrenador de prompts
+
+Leer prompts buenos no enseña a escribirlos. En `/entrenador` se hace al revés que en la ficha:
+primero sale un caso real (uno por cada fila de `module_roles`, que es lo único del contenido
+escrito desde el lado de quien tiene el problema), el asistente escribe su prompt **a ciegas**, y
+solo al enviarlo aparecen la revisión, los prompts modelo y los errores típicos del módulo.
+
+Ese orden es la única regla del ejercicio. Ver la rúbrica antes de escribir lo convierte en un
+dictado. Por eso el textarea se bloquea al enviar: no hay segunda oportunidad, como en la vida
+real. Un módulo sin casos por área no tiene entrenador y no aparece en la lista.
+
+**Nada se guarda.** Ni el intento, ni la calificación, ni que alguien entrenó. Se pierde al cerrar
+la página. Es lo mismo que se decidió con las preguntas anónimas y por la misma razón: es lo que
+hace que la gente se atreva a pegar el prompt malo de verdad.
+
+### Quién califica
+
+La calificación tiene que ser gratis y no se puede caer, así que hay una fila de evaluadores en
+`src/lib/evaluador.ts` y se pregunta en orden hasta que uno responda:
+
+1. **Gemini** (capa gratuita: 10 peticiones por minuto, 250.000 tokens).
+2. **Groq** (capa gratuita: 30 peticiones por minuto, 6.000 tokens).
+3. **La autocalificación**, que no es un proveedor: el portal arma un bloque con la rúbrica del
+   módulo y el intento, y el asistente lo pega en la herramienta que acaba de aprender a usar.
+
+Los topes de las capas gratuitas son **por llave, no por persona**: todas las empresas comparten
+la misma. Por eso importa el tercer escalón, que es el que hace que el entrenador funcione con
+las dos llaves agotadas, vencidas o sin configurar. Y no es un premio de consolación: obliga a
+usar la herramienta, que era el punto de la capacitación.
+
+Cada proveedor se salta solo si no tiene su llave, así que el portal arranca sin ninguna y va
+ganando escalones a medida que se agregan. Cualquier falla (sin cupo, llave vencida, modelo
+jubilado, proveedor caído) es lo mismo desde el código: se pasa al siguiente.
+
+La rúbrica son seis criterios fijos (`CRITERIOS` en `src/lib/entrenador.ts`), iguales para todas
+las plataformas porque lo que distingue un prompt bueno de uno malo no cambia entre herramientas.
+Lo que sí cambia por módulo son los errores típicos que van en las instrucciones del evaluador:
+eso es lo que hace que la crítica hable el idioma de esta capacitación y no el de un corrector
+genérico de internet.
 
 ## Estado del contenido
 
