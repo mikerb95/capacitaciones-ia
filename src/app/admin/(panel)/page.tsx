@@ -112,11 +112,18 @@ export default async function AdminHomePage() {
 
   const abiertas = codes.filter((c) => c.active && !c.system);
 
-  // Sin fecha de sesión en el esquema, la que manda es la que tuvo movimiento
-  // más reciente; si nadie ha entrado todavía, la última que se creó.
-  const destacada = [...abiertas].sort(
-    (a, b) => lastActivity(b) - lastActivity(a) || b.createdAt.getTime() - a.createdAt.getTime(),
-  )[0];
+  // Manda la que viene: la fecha más cercana que todavía no pasó. Las de
+  // autoservicio no tienen fecha, así que si no hay ninguna agendada se cae a
+  // la que tuvo movimiento más reciente, y si nadie ha entrado, a la más nueva.
+  const agendadas = abiertas
+    .filter((c) => c.sessionAt && c.sessionAt.getTime() >= ahora.getTime())
+    .sort((a, b) => a.sessionAt!.getTime() - b.sessionAt!.getTime());
+
+  const destacada =
+    agendadas[0] ??
+    [...abiertas].sort(
+      (a, b) => lastActivity(b) - lastActivity(a) || b.createdAt.getTime() - a.createdAt.getTime(),
+    )[0];
 
   const preguntasAbiertas = [...questionCounts.values()].reduce((n, q) => n + q.open, 0);
   const capacitadoras = companies.filter((c) => c.kind !== 'cliente').length;
