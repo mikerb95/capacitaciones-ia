@@ -157,7 +157,11 @@ function CodeCard({
                     size={22}
                     logo={platformLogo(p.id)}
                   />
-                  {count > 0 && <span className="text-[11.5px] text-faint">{count}</span>}
+                  {/* El desglose solo dice algo cuando hay más de una plataforma:
+                      con una sola repetiría el total que va justo al lado. */}
+                  {alcance.length > 1 && count > 0 && (
+                    <span className="text-[11.5px] text-faint">{count}</span>
+                  )}
                 </span>
               ) : null;
             })}
