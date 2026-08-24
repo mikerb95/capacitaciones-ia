@@ -39,6 +39,14 @@ export default async function EditarAccesoPage({ params }: Props) {
 
   const sinResponder = questions.filter((q) => q.status === 'abierta').length;
 
+  // Sin recorte guardado, el denominador del avance es el catálogo entero.
+  const catalog = new Set(platforms.flatMap((p) => p.modules.map((m) => m.id)));
+  const scopeIds = scopeSetOf(code.scope, catalog);
+  const avanceGrupo = progressOf(
+    code.participants.flatMap((p) => p.views.map((v) => v.moduleId)),
+    scopeIds,
+  );
+
   return (
     <AdminPage
       title={`Código ${code.code}`}
