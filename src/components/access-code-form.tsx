@@ -214,6 +214,23 @@ export function AccessCodeForm({
               />
             </Field>
           </div>
+
+          {/*
+            Sin fecha la capacitación es de autoservicio: el código queda
+            abierto y cada uno entra cuando puede. Con fecha, el panel sabe
+            cuál viene ahora y puede avisar de la de mañana.
+          */}
+          <div className="min-w-[210px]">
+            <Field label="Cuándo se dicta" hint="opcional">
+              <input
+                type="datetime-local"
+                name="sessionAt"
+                defaultValue={defaults.sessionAt}
+                aria-invalid={state.field === 'sessionAt'}
+                className={field}
+              />
+            </Field>
+          </div>
         </div>
       </Step>
 
