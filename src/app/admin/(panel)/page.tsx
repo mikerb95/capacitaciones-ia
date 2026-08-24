@@ -285,9 +285,11 @@ export default async function AdminHomePage() {
               <div className="mb-2 flex items-center gap-2">
                 <span aria-hidden="true" className="size-[7px] rounded-full bg-accent" />
                 <span className="text-[12px] font-semibold text-muted">
-                  {destacada.participants.length > 0
-                    ? `Con movimiento ${hace(new Date(lastActivity(destacada)), ahora)}`
-                    : 'Abierta, todavía sin nadie dentro'}
+                  {destacada.sessionAt && destacada.sessionAt.getTime() >= ahora.getTime()
+                    ? `Próxima capacitación · ${cuando(destacada.sessionAt, ahora)}`
+                    : destacada.participants.length > 0
+                      ? `Con movimiento ${hace(new Date(lastActivity(destacada)), ahora)}`
+                      : 'Abierta, todavía sin nadie dentro'}
                 </span>
               </div>
               <h2 className="font-display text-[24px] font-semibold leading-tight tracking-tight">
