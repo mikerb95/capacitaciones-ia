@@ -60,6 +60,60 @@ export default async function EditarAccesoPage({ params }: Props) {
           }}
         />
 
+        {/* ------------------------------------------------ los asistentes */}
+        <section className="overflow-hidden rounded-card border border-line bg-surface shadow-card">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-line px-5 py-4">
+            <h2 className="font-display text-[15.5px] font-semibold tracking-tight">Asistentes</h2>
+            <span className="text-[12.5px] text-faint">
+              quiénes entraron con el código y hasta dónde llegó cada uno
+            </span>
+            {code.participants.length > 0 && (
+              <span className="ml-auto flex items-center gap-2.5">
+                <span className="text-[12.5px] text-faint">avance del grupo</span>
+                <ProgressBar percent={avanceGrupo.percent} />
+              </span>
+            )}
+          </div>
+
+          {code.participants.length === 0 ? (
+            <p className="px-5 py-6 text-[13px] leading-relaxed text-faint">
+              Todavía no entra nadie con este código. En cuanto alguien lo use, aquí aparece con los
+              módulos que va abriendo.
+            </p>
+          ) : (
+            <ul>
+              {code.participants.map((p) => {
+                const avance = progressOf(
+                  p.views.map((v) => v.moduleId),
+                  scopeIds,
+                );
+
+                return (
+                  <li
+                    key={p.id}
+                    className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-line px-5 py-3 last:border-0"
+                  >
+                    <span
+                      className={`min-w-[140px] flex-1 truncate text-[13.5px] font-medium ${
+                        p.name ? '' : 'text-faint'
+                      }`}
+                    >
+                      {p.name ?? 'Sin nombre'}
+                    </span>
+                    <span className="text-[12px] text-faint" title={progressLabel(avance)}>
+                      {avance.done}/{avance.total}
+                    </span>
+                    <ProgressBar percent={avance.percent} width={72} />
+                    <span className="min-w-[128px] text-right text-[12px] text-faint">
+                      visto {FECHA.format(p.lastSeenAt)}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
+
         {/* ------------------------------------------------- las preguntas */}
         <section className="overflow-hidden rounded-card border border-line bg-surface shadow-card">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-line px-5 py-4">
