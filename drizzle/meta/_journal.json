@@ -127,6 +127,13 @@
       "when": 1787331677991,
       "tag": "0017_votos_de_preguntas",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "6",
+      "when": 1787541688369,
+      "tag": "0018_fecha_de_sesion",
+      "breakpoints": true
     }
   ]
 }
