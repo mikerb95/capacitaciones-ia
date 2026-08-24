@@ -20,14 +20,18 @@
     "materiales:subir": "tsx --env-file=.env.local scripts/subir-materiales-empresa.mts"
   },
   "dependencies": {
+    "@ai-sdk/google": "^4.0.50",
+    "@ai-sdk/groq": "^4.0.30",
     "@libsql/client": "^0.17.4",
     "@vercel/blob": "^2.8.0",
+    "ai": "^7.0.77",
     "country-flag-icons": "^1.6.20",
     "drizzle-orm": "^0.45.2",
     "next": "16.3.0",
     "node-html-parser": "^9.0.1",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
