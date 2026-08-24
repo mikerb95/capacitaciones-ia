@@ -255,6 +255,13 @@ export async function getAccessCode(id: number) {
       contractor: { columns: { id: true, name: true } },
       scope: { columns: { moduleId: true } },
       plans: { with: { plan: { columns: { key: true } } } },
+      // Quienes entraron: la ficha es el único sitio donde se ven uno por uno,
+      // porque el listado ahora resume el grupo en una sola barra.
+      participants: {
+        columns: { id: true, name: true, createdAt: true, lastSeenAt: true },
+        orderBy: (p, { desc }) => [desc(p.lastSeenAt)],
+        with: { views: { columns: { moduleId: true } } },
+      },
     },
   });
 }
