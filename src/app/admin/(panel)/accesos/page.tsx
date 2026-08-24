@@ -18,6 +18,14 @@ export const metadata = { title: 'Capacitaciones · Academia IA' };
 const ESTADOS = ['abiertas', 'cerradas', 'todas'] as const;
 type Estado = (typeof ESTADOS)[number];
 
+const CUANDO = new Intl.DateTimeFormat('es', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  hour: '2-digit',
+  minute: '2-digit',
+});
+
 type Props = {
   searchParams: Promise<{ creado?: string; guardado?: string; estado?: string }>;
 };
