@@ -41,6 +41,30 @@ function hace(date: Date, ahora: Date) {
   return DIA.format(date);
 }
 
+const CUANDO = new Intl.DateTimeFormat('es', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  hour: '2-digit',
+  minute: '2-digit',
+});
+
+/**
+ * Cuándo se dicta, dicho como lo diría una persona: hoy y mañana por su
+ * nombre, el resto con la fecha entera. Compara días del calendario, no horas,
+ * que es lo que hace que una sesión de las 09:00 de mañana siga siendo mañana
+ * a las 23:00 de hoy.
+ */
+function cuando(sessionAt: Date, ahora: Date) {
+  const dia = (d: Date) => Math.floor((d.getTime() - d.getTimezoneOffset() * 60000) / 86400000);
+  const faltan = dia(sessionAt) - dia(ahora);
+  const hora = sessionAt.toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' });
+
+  if (faltan === 0) return `Hoy a las ${hora}`;
+  if (faltan === 1) return `Mañana a las ${hora}`;
+  return CUANDO.format(sessionAt);
+}
+
 const dias = (n: number) => `${n} ${n === 1 ? 'día' : 'días'}`;
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 
