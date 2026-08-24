@@ -37,6 +37,8 @@ export type TrainingMode = 'propia' | 'directa' | 'tercerizada';
 export type AccessCodeDefaults = {
   code: string;
   label: string;
+  /** `YYYY-MM-DDTHH:mm`, que es lo que entiende un input datetime-local. */
+  sessionAt: string;
   mode: TrainingMode;
   companyId: number | null;
   contractorId: number | null;
