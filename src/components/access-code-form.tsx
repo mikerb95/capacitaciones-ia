@@ -226,7 +226,6 @@ export function AccessCodeForm({
                 type="datetime-local"
                 name="sessionAt"
                 defaultValue={defaults.sessionAt}
-                aria-invalid={state.field === 'sessionAt'}
                 className={field}
               />
             </Field>
