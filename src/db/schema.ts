@@ -534,6 +534,13 @@ export const accessCodes = sqliteTable(
     code: text('code').notNull(),
     label: text('label').notNull(),
     /**
+     * Cuándo se dicta la sesión. Opcional a propósito: hay capacitaciones sin
+     * fecha, las de autoservicio, donde el código queda abierto y cada uno
+     * entra cuando puede. Con fecha, el panel puede decir qué viene ahora;
+     * sin ella se guía por el último movimiento, que es lo que sabe.
+     */
+    sessionAt: integer('session_at', { mode: 'timestamp' }),
+    /**
      * La capacitación se dicta bajo contrato, en nombre de una empresa. Con
      * esto marcado la capacitación aparece en los paneles de las empresas
      * involucradas; sin marcar es una capacitación propia y nadie más la ve.
