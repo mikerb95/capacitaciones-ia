@@ -18,6 +18,18 @@ const FECHA = new Intl.DateTimeFormat('es', {
   minute: '2-digit',
 });
 
+/**
+ * Lo que entiende un `datetime-local`: `YYYY-MM-DDTHH:mm`, en la zona del
+ * servidor, que es la misma en la que se guardó desde el formulario.
+ */
+function paraInput(date: Date | null) {
+  if (!date) return '';
+  const dd = (n: number) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${dd(date.getMonth() + 1)}-${dd(date.getDate())}T${dd(
+    date.getHours(),
+  )}:${dd(date.getMinutes())}`;
+}
+
 type Props = { params: Promise<{ id: string }> };
 
 export async function generateMetadata({ params }: Props) {

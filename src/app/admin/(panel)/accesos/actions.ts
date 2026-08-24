@@ -247,6 +247,7 @@ export async function createAccessCode(
   await replaceScope(created.id, scope);
   await replacePlans(created.id, await plansOf(formData));
 
+  revalidatePath('/admin');
   revalidatePath('/admin/accesos');
   redirect(`/admin/accesos?creado=${code}`);
 }
@@ -281,6 +282,7 @@ export async function updateAccessCode(
   await replaceScope(id, scope);
   await replacePlans(id, await plansOf(formData));
 
+  revalidatePath('/admin');
   revalidatePath('/admin/accesos');
   revalidatePath(`/admin/accesos/${id}`);
   redirect(`/admin/accesos?guardado=${current.code}`);
@@ -299,6 +301,7 @@ export async function toggleAccessCode(formData: FormData) {
     .set({ active: !current.active, updatedAt: new Date() })
     .where(eq(accessCodes.id, id));
 
+  revalidatePath('/admin');
   revalidatePath('/admin/accesos');
 }
 
@@ -312,6 +315,7 @@ export async function deleteAccessCode(formData: FormData) {
 
   await db.delete(accessCodes).where(eq(accessCodes.id, id));
 
+  revalidatePath('/admin');
   revalidatePath('/admin/accesos');
   redirect('/admin/accesos');
 }
