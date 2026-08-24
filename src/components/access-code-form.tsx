@@ -51,6 +51,7 @@ export type AccessCodeDefaults = {
 const EMPTY: AccessCodeDefaults = {
   code: '',
   label: '',
+  sessionAt: '',
   mode: 'propia',
   companyId: null,
   contractorId: null,
