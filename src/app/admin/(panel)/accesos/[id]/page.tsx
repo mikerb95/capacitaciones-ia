@@ -3,11 +3,20 @@ import { AccessCodeForm } from '@/components/access-code-form';
 import { field } from '@/components/form-kit';
 import { QuestionList } from '@/components/question-list';
 import { AdminPage } from '@/components/admin-page';
+import { ProgressBar } from '@/components/ui';
 import { getAccessCode, getCompanyOptions, getTrainingQuestions } from '@/db/queries';
+import { progressLabel, progressOf, scopeSetOf } from '@/lib/progress';
 import { answerInSession, answerQuestion, deleteQuestion, updateAccessCode } from '../actions';
 import { getScopeOptions } from '../scope-options';
 
 export const dynamic = 'force-dynamic';
+
+const FECHA = new Intl.DateTimeFormat('es', {
+  day: '2-digit',
+  month: 'short',
+  hour: '2-digit',
+  minute: '2-digit',
+});
 
 type Props = { params: Promise<{ id: string }> };
 
