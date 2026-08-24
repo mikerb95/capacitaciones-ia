@@ -45,6 +45,7 @@ export type AccessCodeAction = (
 
 type Profile = {
   label: string;
+  sessionAt: Date | null;
   contracted: boolean;
   companyId: number | null;
   contractorId: number | null;
@@ -65,6 +66,7 @@ async function profileOf(formData: FormData): Promise<Profile | AccessCodeState>
 
   const base = {
     label: str(formData, 'label') || 'Capacitación sin nombre',
+    sessionAt: dateOrNull(str(formData, 'sessionAt')),
     notes: orNull(str(formData, 'notes')),
   };
 
