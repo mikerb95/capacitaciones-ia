@@ -118,9 +118,9 @@ function CodeCard({
           </div>
           {code.company && <p className="mt-0.5 text-[12.5px] text-muted">{code.label}</p>}
           <p className="mt-px truncate text-[12px] text-faint">
-            {code.contractor ? `Contratada por ${code.contractor.name}` : null}
-            {code.contractor && code.company?.industry ? ' · ' : null}
-            {code.company?.industry}
+            {code.sessionAt ? CUANDO.format(code.sessionAt) : 'Sin fecha, a su propio ritmo'}
+            {code.contractor ? ` · contratada por ${code.contractor.name}` : null}
+            {code.company?.industry ? ` · ${code.company.industry}` : null}
           </p>
         </div>
 
