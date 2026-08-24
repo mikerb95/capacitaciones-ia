@@ -86,6 +86,7 @@ export default async function EditarAccesoPage({ params }: Props) {
           defaults={{
             code: code.code,
             label: code.label,
+            sessionAt: paraInput(code.sessionAt),
             mode: !code.contracted ? 'propia' : code.contractorId ? 'tercerizada' : 'directa',
             companyId: code.companyId,
             contractorId: code.contractorId,
