@@ -19,6 +19,20 @@ import { RESERVED_CODES } from '@/lib/master-access';
 const str = (data: FormData, key: string) => ((data.get(key) as string | null) ?? '').trim();
 const orNull = (value: string) => (value.length ? value : null);
 
+/**
+ * Lo que manda un `datetime-local`: `YYYY-MM-DDTHH:mm`, sin zona horaria.
+ *
+ * Se interpreta en la zona del servidor, igual que el resto del panel formatea
+ * fechas con `Intl` sin zona. El efecto es que la hora se lee tal como se
+ * escribió, que es lo que importa; si algún día el servidor y quien dicta
+ * dejan de compartir zona, hay que fijarla en los dos sitios a la vez.
+ */
+function dateOrNull(value: string) {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
 export type AccessCodeState = {
   error?: string;
   field?: 'code' | 'label' | 'company' | 'contractor' | 'scope';
