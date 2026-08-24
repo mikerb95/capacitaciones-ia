@@ -59,6 +59,8 @@ export default async function EntrenadorModuloPage({ params }: Params) {
           retos={retos}
           prompts={mod.prompts.map((p) => ({ id: p.id, tag: p.tag, text: p.text }))}
           tropiezos={mod.mistakes.map((m) => ({ id: m.id, bad: m.bad, good: m.good }))}
+          platformId={platformId}
+          slug={slug}
           moduloNombre={mod.name}
           plataformaNombre={mod.platform.name}
         />
