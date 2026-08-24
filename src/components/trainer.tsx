@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
+import { calificar } from '@/app/entrenador/actions';
 import { CRITERIOS, type Reto } from '@/lib/entrenador';
+import type { Resultado } from '@/lib/evaluador';
 
 type PromptModelo = { id: number; tag: string; text: string };
 type Tropiezo = { id: number; bad: string; good: string };
@@ -10,6 +12,8 @@ type Props = {
   retos: Reto[];
   prompts: PromptModelo[];
   tropiezos: Tropiezo[];
+  platformId: string;
+  slug: string;
   moduloNombre: string;
   plataformaNombre: string;
 };
@@ -21,6 +25,8 @@ export function Trainer({
   retos,
   prompts,
   tropiezos,
+  platformId,
+  slug,
   moduloNombre,
   plataformaNombre,
 }: Props) {
@@ -28,12 +34,16 @@ export function Trainer({
   // Un intento por reto: quien vuelve atrás encuentra lo que había escrito.
   const [intentos, setIntentos] = useState<string[]>(() => retos.map(() => ''));
   const [revelados, setRevelados] = useState<boolean[]>(() => retos.map(() => false));
-  // Lo que la persona marcó de su propio prompt, por reto y por criterio.
+  const [resultados, setResultados] = useState<(Resultado | null)[]>(() => retos.map(() => null));
+  // Lo que la persona marcó de su propio prompt, cuando le toca calificarse sola.
   const [marcas, setMarcas] = useState<Record<string, boolean>>({});
+  const [error, setError] = useState<string | null>(null);
+  const [revisando, arrancar] = useTransition();
 
   const reto = retos[i];
   const intento = intentos[i] ?? '';
   const revelado = revelados[i] ?? false;
+  const resultado = resultados[i] ?? null;
   const suficiente = intento.trim().length >= MINIMO;
 
   function escribir(valor: string) {
@@ -41,7 +51,28 @@ export function Trainer({
   }
 
   function revelar() {
-    setRevelados((prev) => prev.map((v, n) => (n === i ? true : v)));
+    setError(null);
+    const posicion = i;
+
+    arrancar(async () => {
+      let veredicto: Resultado | null = null;
+
+      try {
+        const respuesta = await calificar(platformId, slug, reto.numero, intento);
+        if ('error' in respuesta) {
+          setError(respuesta.error);
+          return;
+        }
+        veredicto = respuesta;
+      } catch {
+        // La red se cayó o la acción falló. No se bloquea el ejercicio: se
+        // revela igual y la persona se califica con la lista de chequeo.
+        veredicto = null;
+      }
+
+      setResultados((prev) => prev.map((r, n) => (n === posicion ? veredicto : r)));
+      setRevelados((prev) => prev.map((v, n) => (n === posicion ? true : v)));
+    });
   }
 
   function marcar(criterioId: string) {
@@ -50,6 +81,8 @@ export function Trainer({
   }
 
   const marcados = CRITERIOS.filter((c) => marcas[`${i}:${c.id}`]).length;
+  const califico = resultado?.via === 'ia' ? resultado : null;
+  const cumplidos = califico?.veredicto.criterios.filter((c) => c.cumple).length ?? 0;
 
   return (
     <div className="flex flex-col gap-5">
@@ -108,7 +141,7 @@ export function Trainer({
           id="intento"
           value={intento}
           onChange={(e) => escribir(e.target.value)}
-          readOnly={revelado}
+          readOnly={revelado || revisando}
           rows={5}
           placeholder="Escribe aquí…"
           className="w-full resize-y rounded-xl border border-line bg-bg px-3.5 py-3 text-[14px] leading-relaxed text-text outline-none transition-colors placeholder:text-faint focus:border-[var(--tone)] read-only:text-muted"
@@ -118,15 +151,19 @@ export function Trainer({
           <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
             <button
               onClick={revelar}
-              disabled={!suficiente}
+              disabled={!suficiente || revisando}
               className="rounded-lg bg-[var(--tone)] px-4 py-2 text-[13px] font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-35"
             >
-              Ya lo escribí, muéstrame la revisión
+              {revisando ? 'Revisando…' : 'Ya lo escribí, muéstrame la revisión'}
             </button>
             <span className="text-[12px] text-faint">
-              {suficiente
-                ? 'Después de esto ya no se puede editar. Así funciona en la vida real.'
-                : 'Escribe algo primero. La revisión no sirve sobre una caja vacía.'}
+              {error
+                ? error
+                : revisando
+                  ? 'Un momento, lo estamos leyendo.'
+                  : suficiente
+                    ? 'Después de esto ya no se puede editar. Así funciona en la vida real.'
+                    : 'Escribe algo primero. La revisión no sirve sobre una caja vacía.'}
             </span>
           </div>
         )}
@@ -135,42 +172,39 @@ export function Trainer({
       {/* Todo lo de abajo aparece solo después de intentar */}
       {revelado && (
         <>
-          <section className="rounded-card border border-line bg-surface p-5 shadow-card">
-            <div className="mb-1.5 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-              <h3 className="font-display text-[15.5px] font-semibold tracking-tight">
-                Míralo contra estos seis
-              </h3>
-              <span className="font-mono text-[12px] text-muted">
-                {marcados} de {CRITERIOS.length}
-              </span>
-            </div>
-            <p className="mb-4 max-w-[62ch] text-[13px] leading-relaxed text-muted">
-              Marca solo lo que de verdad escribiste, no lo que tenías en la cabeza. Lo que quede
-              sin marcar es exactamente lo que la herramienta va a tener que adivinar.
-            </p>
+          {califico ? (
+            /* Lo calificó un modelo: los criterios vienen marcados y comentados */
+            <section className="rounded-card border border-line bg-surface p-5 shadow-card">
+              <div className="mb-1.5 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                <h3 className="font-display text-[15.5px] font-semibold tracking-tight">
+                  Tu prompt, revisado
+                </h3>
+                <span className="font-mono text-[12px] text-muted">
+                  {cumplidos} de {CRITERIOS.length}
+                </span>
+              </div>
+              <p className="mb-4 max-w-[62ch] text-[13.5px] leading-relaxed text-muted">
+                {califico.veredicto.resumen}
+              </p>
 
-            <ul className="flex flex-col gap-1.5">
-              {CRITERIOS.map((c) => {
-                const activo = Boolean(marcas[`${i}:${c.id}`]);
-                return (
-                  <li key={c.id}>
-                    <button
-                      onClick={() => marcar(c.id)}
-                      aria-pressed={activo}
-                      className={`flex w-full items-start gap-3 rounded-xl border p-3 text-left transition-colors ${
-                        activo
-                          ? 'border-[var(--tone-line)] bg-[var(--tone-soft)]'
-                          : 'border-line bg-bg hover:border-[var(--tone-line)]'
+              <ul className="flex flex-col gap-1.5">
+                {califico.veredicto.criterios.map((c) => {
+                  const criterio = CRITERIOS.find((x) => x.id === c.id);
+                  return (
+                    <li
+                      key={c.id}
+                      className={`flex items-start gap-3 rounded-xl border p-3 ${
+                        c.cumple ? 'border-line bg-accent-soft' : 'border-line bg-surface-2'
                       }`}
                     >
                       <span
-                        className={`mt-0.5 grid h-[18px] w-[18px] flex-none place-items-center rounded-md border transition-colors ${
-                          activo ? 'border-transparent bg-[var(--tone)]' : 'border-line bg-surface'
+                        className={`mt-0.5 grid h-[18px] w-[18px] flex-none place-items-center rounded-md ${
+                          c.cumple ? 'bg-accent' : 'bg-faint'
                         }`}
                         aria-hidden="true"
                       >
-                        {activo && (
-                          <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
+                        <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
+                          {c.cumple ? (
                             <path
                               d="M3.5 8.5 6.5 11.5 12.5 5"
                               stroke="white"
@@ -178,26 +212,131 @@ export function Trainer({
                               strokeLinecap="round"
                               strokeLinejoin="round"
                             />
-                          </svg>
-                        )}
+                          ) : (
+                            <path
+                              d="M4.5 4.5 11.5 11.5M11.5 4.5 4.5 11.5"
+                              stroke="white"
+                              strokeWidth="2.2"
+                              strokeLinecap="round"
+                            />
+                          )}
+                        </svg>
                       </span>
                       <span className="min-w-0 flex-1">
                         <span className="block text-[13.5px] font-semibold text-text">
-                          {c.titulo}
+                          {criterio?.titulo ?? c.id}
+                          <span className="sr-only">{c.cumple ? ': cumple' : ': no cumple'}</span>
                         </span>
                         <span className="mt-0.5 block text-[13px] leading-relaxed text-muted">
-                          {c.pregunta}
-                        </span>
-                        <span className="mt-1 block text-[12.5px] leading-relaxed text-faint">
-                          {c.ejemplo}
+                          {c.comentario}
                         </span>
                       </span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
+                    </li>
+                  );
+                })}
+              </ul>
+
+              <div className="mt-5 rounded-xl border border-[var(--tone-line)] bg-[var(--tone-soft)] p-4">
+                <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <h4 className="font-display text-[14px] font-semibold tracking-tight">
+                    Tu prompt con lo que le faltaba
+                  </h4>
+                  <span className="ml-auto flex items-center gap-2">
+                    <span className="font-mono text-[11px] text-faint">
+                      revisado por {califico.proveedor}
+                    </span>
+                    <Copiar texto={califico.veredicto.mejorado} />
+                  </span>
+                </div>
+                <p className="text-[13.5px] leading-relaxed whitespace-pre-wrap text-text">
+                  {califico.veredicto.mejorado}
+                </p>
+              </div>
+            </section>
+          ) : (
+            /* Sin cupo o sin llaves: se califica ella misma, y se lleva el paquete */
+            <section className="rounded-card border border-line bg-surface p-5 shadow-card">
+              <div className="mb-1.5 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                <h3 className="font-display text-[15.5px] font-semibold tracking-tight">
+                  Míralo contra estos seis
+                </h3>
+                <span className="font-mono text-[12px] text-muted">
+                  {marcados} de {CRITERIOS.length}
+                </span>
+              </div>
+              <p className="mb-4 max-w-[62ch] text-[13px] leading-relaxed text-muted">
+                Marca solo lo que de verdad escribiste, no lo que tenías en la cabeza. Lo que quede
+                sin marcar es exactamente lo que la herramienta va a tener que adivinar.
+              </p>
+
+              <ul className="flex flex-col gap-1.5">
+                {CRITERIOS.map((c) => {
+                  const activo = Boolean(marcas[`${i}:${c.id}`]);
+                  return (
+                    <li key={c.id}>
+                      <button
+                        onClick={() => marcar(c.id)}
+                        aria-pressed={activo}
+                        className={`flex w-full items-start gap-3 rounded-xl border p-3 text-left transition-colors ${
+                          activo
+                            ? 'border-[var(--tone-line)] bg-[var(--tone-soft)]'
+                            : 'border-line bg-bg hover:border-[var(--tone-line)]'
+                        }`}
+                      >
+                        <span
+                          className={`mt-0.5 grid h-[18px] w-[18px] flex-none place-items-center rounded-md border transition-colors ${
+                            activo ? 'border-transparent bg-[var(--tone)]' : 'border-line bg-surface'
+                          }`}
+                          aria-hidden="true"
+                        >
+                          {activo && (
+                            <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
+                              <path
+                                d="M3.5 8.5 6.5 11.5 12.5 5"
+                                stroke="white"
+                                strokeWidth="2.2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          )}
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-[13.5px] font-semibold text-text">
+                            {c.titulo}
+                          </span>
+                          <span className="mt-0.5 block text-[13px] leading-relaxed text-muted">
+                            {c.pregunta}
+                          </span>
+                          <span className="mt-1 block text-[12.5px] leading-relaxed text-faint">
+                            {c.ejemplo}
+                          </span>
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+
+              {resultado?.via === 'manual' && (
+                <div className="mt-5 rounded-xl border border-[var(--tone-line)] bg-[var(--tone-soft)] p-4">
+                  <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <h4 className="font-display text-[14px] font-semibold tracking-tight">
+                      O que te lo califique {plataformaNombre}
+                    </h4>
+                    <span className="ml-auto">
+                      <Copiar texto={resultado.paquete} etiqueta="Copiar para pegar allá" />
+                    </span>
+                  </div>
+                  <p className="text-[13px] leading-relaxed text-muted">
+                    Copia esto y pégalo en {plataformaNombre}. Va tu prompt con la rúbrica del
+                    módulo, así que te responde con la misma vara con la que calificamos acá. De
+                    paso practicas en la herramienta, que es de lo que se trataba.
+                  </p>
+                </div>
+              )}
+            </section>
+          )}
 
           {/* Los prompts modelo, que es contra lo que se compara el intento */}
           <section className="rounded-card border border-line bg-surface p-5 shadow-card">
@@ -211,7 +350,10 @@ export function Trainer({
 
             <ul className="flex flex-col gap-2.5">
               {prompts.map((p) => (
-                <li key={p.id} className="flex items-start gap-3 rounded-xl border border-line bg-bg p-3.5">
+                <li
+                  key={p.id}
+                  className="flex items-start gap-3 rounded-xl border border-line bg-bg p-3.5"
+                >
                   <span className="mt-0.5 flex-none rounded-full bg-surface-2 px-2 py-0.5 font-mono text-[11px] font-medium text-muted">
                     {p.tag}
                   </span>
@@ -270,7 +412,7 @@ export function Trainer({
   );
 }
 
-function Copiar({ texto }: { texto: string }) {
+function Copiar({ texto, etiqueta = 'Copiar' }: { texto: string; etiqueta?: string }) {
   const [copiado, setCopiado] = useState(false);
 
   async function copiar() {
@@ -288,7 +430,7 @@ function Copiar({ texto }: { texto: string }) {
       onClick={copiar}
       className="flex-none rounded-lg border border-line px-2.5 py-1 text-[12px] font-medium text-muted transition-colors hover:border-primary hover:text-primary"
     >
-      {copiado ? 'Copiado' : 'Copiar'}
+      {copiado ? 'Copiado' : etiqueta}
     </button>
   );
 }
