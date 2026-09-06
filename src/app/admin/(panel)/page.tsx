@@ -219,24 +219,52 @@ export default async function AdminHomePage() {
 
   /* --------------------------------------------------------- actividad */
 
-  const actividad = [
+  const sucesos = [
     ...codes.flatMap((c) =>
       c.participants.map((p) => ({
         at: p.createdAt,
+        // Quien entra sin dar nombre no aporta una línea propia: lo que
+        // interesa es cuánta gente entró, y eso se agrupa más abajo.
+        grupo: p.name ? null : `ingresos:${c.id}`,
         text: `${p.name ?? 'Alguien'} entró con ${c.code}`,
         sub: c.company?.name ?? c.label,
       })),
     ),
     ...recientes.map((q) => ({
       at: q.createdAt,
+      grupo: null,
       text: q.status === 'abierta' ? 'Nueva pregunta sin responder' : 'Se respondió una pregunta',
       sub: `${q.accessCode.company?.name ?? q.accessCode.label} · ${
         q.anonymous ? 'anónima' : (q.name ?? 'sin firmar')
       }`,
     })),
-  ]
-    .sort((a, b) => b.at.getTime() - a.at.getTime())
-    .slice(0, 6);
+  ].sort((a, b) => b.at.getTime() - a.at.getTime());
+
+  /**
+   * Seis "Alguien entró con X" seguidos no dicen seis veces más que uno: dicen
+   * que entraron seis. Los ingresos anónimos del mismo código se juntan en una
+   * línea con su cuenta, fechada en el más reciente.
+   */
+  const actividad: { at: Date; text: string; sub: string }[] = [];
+  const juntados = new Map<string, number>();
+
+  for (const s of sucesos) {
+    if (!s.grupo) {
+      actividad.push(s);
+      continue;
+    }
+    const donde = juntados.get(s.grupo);
+    if (donde === undefined) {
+      juntados.set(s.grupo, actividad.length);
+      actividad.push({ ...s, text: `1 persona entró con ${s.text.split('entró con ')[1]}` });
+    } else {
+      const fila = actividad[donde];
+      const n = Number(fila.text.match(/^(\d+) /)?.[1] ?? 1) + 1;
+      fila.text = `${n} personas entraron con ${s.text.split('entró con ')[1]}`;
+    }
+  }
+
+  actividad.splice(6);
 
   /* ------------------------------------------------------------ cifras */
 
