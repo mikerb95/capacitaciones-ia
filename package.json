@@ -15,6 +15,7 @@
     "db:seed:master": "tsx --env-file=.env.local src/db/seed/master.ts",
     "db:seed:demo": "tsx --env-file=.env.local src/db/seed/demo.ts",
     "logos": "tsx scripts/gen-logo-assets.mts",
+    "entrenador:probar": "tsx --env-file=.env.local scripts/probar-evaluador.ts",
     "materiales": "tsx --env-file=.env.local scripts/build-materiales.ts",
     "materiales:empresa": "tsx --env-file=.env.local scripts/build-materiales-empresa.mts",
     "materiales:subir": "tsx --env-file=.env.local scripts/subir-materiales-empresa.mts"
