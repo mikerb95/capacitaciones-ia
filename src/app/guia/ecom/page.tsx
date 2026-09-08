@@ -1,16 +1,16 @@
 import { QuoteEmailCard } from '@/components/quote-email-card';
 import { SiteHeader } from '@/components/ui';
 
-export const metadata = { title: 'Caso: sacos de yute · Academia IA' };
+export const metadata = { title: 'Caso: sacos de yute para café de exportación · Academia IA' };
 
 const RAW_TEXTIL = `De: Textil Envases del Sur <ventas@textilenvasesdelsur.com.ar>
 Asunto: Cotización sacos de yute - Pedido 20.000 unidades
 
 Estimado/a,
 
-Gracias por su consulta. Le acercamos el detalle de nuestra oferta:
+Gracias por su consulta. Le acercamos el detalle de nuestra oferta para envasar café verde de exportación:
 
-Producto: saco de yute 50 kg
+Producto: saco de yute 50 kg, grado exportación
 Cantidad: 20.000 unidades
 Precio unitario: USD 1,15 (IVA incluido)
 Total: USD 23.000
@@ -26,7 +26,7 @@ Textil Envases del Sur`;
 const RAW_LITORAL = `De: Yuteros del Litoral <pedidos@yuterosdellitoral.com>
 Asunto: Re: cotización sacos de yute
 
-Buenas tardes. Para el pedido de 20.000 sacos de yute de 50 kg les cotizamos a USD 1,28 + IVA el saco, puesto en su trilladora (el flete ya está incluido en ese precio, no se cobra aparte). La entrega la hacemos en 15 días hábiles desde que confirman el pedido, y pueden pagar a 30 días de recibida la mercadería. Cualquier consulta me escriben.
+Buenas tardes. Para el pedido de 20.000 sacos de yute de 50 kg para su café de exportación les cotizamos a USD 1,28 + IVA el saco, puesto en su planta de trilla (el flete ya está incluido en ese precio, no se cobra aparte). La entrega la hacemos en 15 días hábiles desde que confirman el pedido, y pueden pagar a 30 días de recibida la mercadería. Cualquier consulta me escriben.
 
 Saludos,
 Vanina Corvalán
@@ -37,7 +37,7 @@ Asunto: Presupuesto - sacos de yute
 
 Estimados,
 
-Adjuntamos presupuesto para su pedido:
+Adjuntamos presupuesto para su pedido de envases para café verde:
 
 Saco de yute 50 kg - Precio por millar: USD 1.240 (equivale a USD 1,24 por saco). Pedido de 20.000 sacos = 20 millares = USD 24.800. Precio sin IVA.
 
@@ -50,7 +50,7 @@ export default function GuiaEcomPage() {
   return (
     <div className="min-h-screen bg-bg">
       <SiteHeader
-        title="Caso: sacos de yute"
+        title="Caso: sacos de yute para café de exportación"
         subtitle="Recursos para el ejercicio de hoy"
         back={{ href: '/', label: 'Inicio' }}
       />
@@ -61,10 +61,12 @@ export default function GuiaEcomPage() {
             Adjudicar 20.000 sacos de yute
           </h2>
           <p className="mt-2 max-w-[68ch] text-[14px] leading-relaxed text-muted">
-            El coordinador de la cosecha tiene que resolver hoy a qué proveedor le compra 20.000
-            sacos de yute. Llegaron tres cotizaciones por correo, cada una con su propio formato.
-            Abajo están los tres correos tal cual entraron a la bandeja: úsalos como fuente para
-            pedirle a Copilot que arme la comparación y la decisión.
+            Trabajás en logística de una exportadora de café. Hay que envasar el lote de café verde
+            de la cosecha en sacos de yute antes de que salga el contenedor, y el coordinador tiene
+            que resolver hoy a qué proveedor le compra las 20.000 unidades. Llegaron tres
+            cotizaciones por correo, cada una con su propio formato. Abajo están los tres correos
+            tal cual entraron a la bandeja: úsalos como fuente para pedirle a Copilot que arme la
+            comparación y la decisión.
           </p>
         </section>
 
@@ -75,7 +77,7 @@ export default function GuiaEcomPage() {
           <p className="mt-1.5 text-[13px] leading-relaxed text-muted">
             Pídele a Copilot que arme una tabla comparativa de los tres correos y que recomiende a
             quién adjudicar, con el total real de cada oferta (impuestos y flete incluidos) y la
-            fecha de entrega. La cosecha empieza en 20 días.
+            fecha de entrega. El contenedor para exportación cierra reserva en 20 días.
           </p>
         </section>
 
@@ -88,12 +90,13 @@ export default function GuiaEcomPage() {
               <>
                 Estimado/a,
                 {'\n\n'}
-                Gracias por su consulta. Le acercamos el detalle de nuestra oferta:
+                Gracias por su consulta. Le acercamos el detalle de nuestra oferta para envasar
+                café verde de exportación:
                 {'\n\n'}
                 <table className="w-full border-collapse text-left text-[13px]">
                   <tbody>
                     {[
-                      ['Producto', 'Saco de yute 50 kg'],
+                      ['Producto', 'Saco de yute 50 kg, grado exportación'],
                       ['Cantidad', '20.000 unidades'],
                       ['Precio unitario', 'USD 1,15 (IVA incluido)'],
                       ['Total', 'USD 23.000'],
@@ -123,11 +126,11 @@ export default function GuiaEcomPage() {
             raw={RAW_LITORAL}
             body={
               <>
-                Buenas tardes. Para el pedido de 20.000 sacos de yute de 50 kg les cotizamos a USD
-                1,28 + IVA el saco, puesto en su trilladora (el flete ya está incluido en ese
-                precio, no se cobra aparte). La entrega la hacemos en 15 días hábiles desde que
-                confirman el pedido, y pueden pagar a 30 días de recibida la mercadería. Cualquier
-                consulta me escriben.
+                Buenas tardes. Para el pedido de 20.000 sacos de yute de 50 kg para su café de
+                exportación les cotizamos a USD 1,28 + IVA el saco, puesto en su planta de trilla
+                (el flete ya está incluido en ese precio, no se cobra aparte). La entrega la
+                hacemos en 15 días hábiles desde que confirman el pedido, y pueden pagar a 30 días
+                de recibida la mercadería. Cualquier consulta me escriben.
                 {'\n\n'}
                 Saludos,{'\n'}
                 Vanina Corvalán{'\n'}
@@ -144,7 +147,7 @@ export default function GuiaEcomPage() {
               <>
                 Estimados,
                 {'\n\n'}
-                Adjuntamos presupuesto para su pedido:
+                Adjuntamos presupuesto para su pedido de envases para café verde:
                 {'\n\n'}
                 Saco de yute 50 kg - Precio por millar: USD 1.240 (equivale a USD 1,24 por saco).
                 Pedido de 20.000 sacos = 20 millares = USD 24.800. Precio sin IVA.
