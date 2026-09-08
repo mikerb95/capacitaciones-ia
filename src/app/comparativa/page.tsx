@@ -6,7 +6,7 @@ import { requireScopedParticipant, scopeComparison } from '@/lib/scope';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Comparativa de módulos · Academia IA' };
+export const metadata = { title: 'Comparativa de módulos · Aula Virtual' };
 
 export default async function ComparativaPage() {
   const { participant, scope } = await requireScopedParticipant();

@@ -8,7 +8,7 @@ import { requireParticipant } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Sesión en vivo · Academia IA' };
+export const metadata = { title: 'Sesión en vivo · Aula Virtual' };
 
 // El PIN va en una cookie, no en la URL: así el nombre del asistente no queda
 // en el historial ni en una captura, y solo ve la sesión quien se registró.

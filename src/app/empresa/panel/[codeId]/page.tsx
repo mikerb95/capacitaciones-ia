@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props) {
   const { codeId } = await params;
   const company = await requireCompany();
   const training = (await getCompanyTrainings(company.id)).find((t) => t.id === Number(codeId));
-  return { title: training ? `${training.label} · ${company.name}` : 'Capacitación · Academia IA' };
+  return { title: training ? `${training.label} · ${company.name}` : 'Capacitación · Aula Virtual' };
 }
 
 export default async function CompanyTrainingPage({ params }: Props) {

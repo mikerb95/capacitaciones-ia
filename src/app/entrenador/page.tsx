@@ -7,7 +7,7 @@ import { getTrainerCatalog } from '@/db/queries';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Entrenador de prompts · Academia IA' };
+export const metadata = { title: 'Entrenador de prompts · Aula Virtual' };
 
 export default async function EntrenadorPage() {
   const { scope } = await requireScopedParticipant();

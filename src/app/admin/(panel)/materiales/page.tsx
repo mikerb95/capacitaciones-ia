@@ -8,7 +8,7 @@ import { FECHA, TOTAL_DOCS, chipVigencia, enCatalogo, peso, vigencia } from './f
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Materiales · Academia IA' };
+export const metadata = { title: 'Materiales · Aula Virtual' };
 
 /**
  * El reloj se lee fuera del render y una sola vez, para que toda la pantalla

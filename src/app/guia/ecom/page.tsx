@@ -1,7 +1,7 @@
 import { QuoteEmailCard } from '@/components/quote-email-card';
 import { SiteHeader } from '@/components/ui';
 
-export const metadata = { title: 'Caso: sacos de yute para café de exportación · Academia IA' };
+export const metadata = { title: 'Caso: sacos de yute para café de exportación · Aula Virtual' };
 
 const RAW_TEXTIL = `De: Textil Envases del Sur <ventas@textilenvasesdelsur.com.ar>
 Asunto: Cotización sacos de yute - Pedido 20.000 unidades

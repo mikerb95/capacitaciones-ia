@@ -2,7 +2,7 @@ import { CopyBlock } from '@/components/copy-block';
 import { SiteHeader } from '@/components/ui';
 
 export const metadata = {
-  title: 'Caso: correo a un proveedor por cambio en la entrega · Academia IA',
+  title: 'Caso: correo a un proveedor por cambio en la entrega · Aula Virtual',
 };
 
 const DATOS = `Proveedor: Yuteros del Litoral (contacto: Vanina Corvalán)

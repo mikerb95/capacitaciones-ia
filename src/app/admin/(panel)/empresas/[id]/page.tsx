@@ -31,7 +31,7 @@ function toDateInput(date: Date | null) {
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
   const company = await getCompany(Number(id));
-  return { title: company ? `${company.name} · Academia IA` : 'Empresa · Academia IA' };
+  return { title: company ? `${company.name} · Aula Virtual` : 'Empresa · Aula Virtual' };
 }
 
 export default async function EmpresaPage({ params, searchParams }: Props) {

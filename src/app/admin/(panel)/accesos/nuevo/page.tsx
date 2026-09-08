@@ -6,7 +6,7 @@ import { getScopeOptions } from '../scope-options';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Nuevo código · Academia IA' };
+export const metadata = { title: 'Nuevo código · Aula Virtual' };
 
 export default async function NuevoAccesoPage() {
   const [platforms, companies] = await Promise.all([getScopeOptions(), getCompanyOptions()]);

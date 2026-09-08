@@ -8,7 +8,7 @@ import { counterpart } from './counterpart';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Panel de tu empresa · Academia IA' };
+export const metadata = { title: 'Panel de tu empresa · Aula Virtual' };
 
 const fecha = new Intl.DateTimeFormat('es', { day: '2-digit', month: 'short', year: 'numeric' });
 

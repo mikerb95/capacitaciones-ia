@@ -13,7 +13,7 @@ import { deleteAccessCode, toggleAccessCode } from './actions';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Capacitaciones · Academia IA' };
+export const metadata = { title: 'Capacitaciones · Aula Virtual' };
 
 const ESTADOS = ['abiertas', 'cerradas', 'todas'] as const;
 type Estado = (typeof ESTADOS)[number];

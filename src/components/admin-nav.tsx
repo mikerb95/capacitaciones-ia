@@ -129,7 +129,7 @@ export function AdminSidebar({ counts }: { counts: NavCounts }) {
         <BrandMark />
         <div className="min-w-0">
           <div className="font-display text-[14.5px] font-semibold leading-tight tracking-tight">
-            Academia IA
+            Aula Virtual
           </div>
           <div className="text-[11.5px] text-faint">Administración</div>
         </div>

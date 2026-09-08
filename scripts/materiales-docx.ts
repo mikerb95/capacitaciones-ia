@@ -243,7 +243,7 @@ function brandLogo(id: string, client?: DocClient) {
  */
 function buildDoc(spec: DocSpec): Promise<Buffer> {
   const doc = new Document({
-    creator: 'Academia IA',
+    creator: 'Aula Virtual',
     title: spec.title,
     description: spec.description,
     styles: {

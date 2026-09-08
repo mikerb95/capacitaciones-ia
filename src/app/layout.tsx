@@ -13,7 +13,7 @@ const geist = Geist({ subsets: ['latin'], variable: '--font-geist' });
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' });
 
 export const metadata: Metadata = {
-  title: 'Academia IA · Comparativa de plataformas',
+  title: 'Aula Virtual · Comparativa de plataformas',
   description:
     'Módulos y capacidades de Copilot, Claude, Gemini y ChatGPT, para capacitaciones corporativas.',
 };

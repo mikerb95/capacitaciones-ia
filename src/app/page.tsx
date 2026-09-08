@@ -9,7 +9,7 @@ import { requireScopedParticipant, scopeComparison } from '@/lib/scope';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Academia IA' };
+export const metadata = { title: 'Aula Virtual' };
 
 /** El titular cuenta con palabras, y el alcance del código decide cuántas son. */
 const WORDS = ['Ninguna', 'Una', 'Dos', 'Tres', 'Cuatro', 'Cinco', 'Seis'];
@@ -24,7 +24,7 @@ export default async function Home() {
     <div className="flex min-h-screen flex-col bg-bg">
       <header className="flex items-center gap-3 px-4 py-4 sm:px-8">
         <span className="flex-1 font-display text-[15px] font-semibold tracking-tight">
-          Academia IA
+          Aula Virtual
         </span>
         <LeaveButton name={participant.name ?? undefined} />
         <ThemeToggle />

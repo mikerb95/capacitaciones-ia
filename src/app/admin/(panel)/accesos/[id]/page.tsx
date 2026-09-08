@@ -35,7 +35,7 @@ type Props = { params: Promise<{ id: string }> };
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
   const code = await getAccessCode(Number(id));
-  return { title: code ? `Código ${code.code} · Academia IA` : 'Código · Academia IA' };
+  return { title: code ? `Código ${code.code} · Aula Virtual` : 'Código · Aula Virtual' };
 }
 
 export default async function EditarAccesoPage({ params }: Props) {

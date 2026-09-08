@@ -19,7 +19,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props) {
   const company = await getCompany(Number((await params).id));
-  return { title: `${company?.name ?? 'Materiales'} · Materiales · Academia IA` };
+  return { title: `${company?.name ?? 'Materiales'} · Materiales · Aula Virtual` };
 }
 
 async function leerReloj() {

@@ -4,7 +4,7 @@ import { getCompanies, type CompanyRow } from '@/db/queries';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Empresas · Academia IA' };
+export const metadata = { title: 'Empresas · Aula Virtual' };
 
 const dia = new Intl.DateTimeFormat('es', { day: '2-digit', month: 'short', year: 'numeric' });
 

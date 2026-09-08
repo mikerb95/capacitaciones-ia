@@ -7,7 +7,7 @@ import { moveModule } from '../actions';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Módulos y portales · Academia IA' };
+export const metadata = { title: 'Módulos y portales · Aula Virtual' };
 
 function MoveButton({ id, direction }: { id: number; direction: 'up' | 'down' }) {
   return (

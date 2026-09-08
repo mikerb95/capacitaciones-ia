@@ -5,7 +5,7 @@ import { getCompanySession } from '@/lib/company-access';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Panel de tu empresa · Academia IA' };
+export const metadata = { title: 'Panel de tu empresa · Aula Virtual' };
 
 export default async function EmpresaLoginPage() {
   if (await getCompanySession()) redirect('/empresa/panel');

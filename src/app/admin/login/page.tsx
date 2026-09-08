@@ -5,7 +5,7 @@ import { adminAuthConfigured } from '@/lib/admin-auth';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Entrar al panel · Academia IA' };
+export const metadata = { title: 'Entrar al panel · Aula Virtual' };
 
 type Props = { searchParams: Promise<{ destino?: string }> };
 
@@ -27,7 +27,7 @@ export default async function AdminLoginPage({ searchParams }: Props) {
               Panel interno
             </p>
             <h1 className="mt-2 font-display text-[27px] font-semibold tracking-tight">
-              Academia IA
+              Aula Virtual
             </h1>
             <p className="mt-2 text-[14.5px] leading-relaxed text-muted">
               Esta zona es para el equipo: contenido, códigos de acceso y presentaciones.

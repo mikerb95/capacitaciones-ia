@@ -4,7 +4,7 @@ import { createCompany } from '../actions';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Nueva empresa · Academia IA' };
+export const metadata = { title: 'Nueva empresa · Aula Virtual' };
 
 export default function NuevaEmpresaPage() {
   return (

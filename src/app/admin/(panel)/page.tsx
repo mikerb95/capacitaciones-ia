@@ -16,7 +16,7 @@ import { progressOf, scopeSetOf } from '@/lib/progress';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Panel · Academia IA' };
+export const metadata = { title: 'Panel · Aula Virtual' };
 
 const DIA = new Intl.DateTimeFormat('es', { day: '2-digit', month: 'short', year: 'numeric' });
 

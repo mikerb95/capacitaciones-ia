@@ -6,7 +6,7 @@ import { getParticipant } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Entrar · Academia IA' };
+export const metadata = { title: 'Entrar · Aula Virtual' };
 
 type Props = { searchParams: Promise<{ destino?: string }> };
 
@@ -26,7 +26,7 @@ export default async function IngresarPage({ searchParams }: Props) {
       <main className="grid place-items-start justify-center px-4 pb-16">
         <div className="w-full max-w-[400px]">
           <div className="mb-7 text-center">
-            <h1 className="font-display text-[27px] font-semibold tracking-tight">Academia IA</h1>
+            <h1 className="font-display text-[27px] font-semibold tracking-tight">Aula Virtual</h1>
             <p className="mt-2 text-[14.5px] leading-relaxed text-muted">
               Escribe el código que te dieron al inicio de la capacitación. No pedimos nombre,
               correo ni teléfono.

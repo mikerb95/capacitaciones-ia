@@ -9,7 +9,7 @@ import { unask, vote } from './actions';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Preguntas · Academia IA' };
+export const metadata = { title: 'Preguntas · Aula Virtual' };
 
 /** El reloj, leído fuera del render: durante el render sería impuro. */
 async function leerReloj() {

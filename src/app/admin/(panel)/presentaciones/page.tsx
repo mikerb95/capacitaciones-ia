@@ -7,7 +7,7 @@ import { deleteDeck, importDeck } from './actions';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Presentaciones · Academia IA' };
+export const metadata = { title: 'Presentaciones · Aula Virtual' };
 
 const inputClass =
   'w-full rounded-[10px] border border-line bg-surface px-3 py-2 text-[13.5px] text-text outline-none transition-colors placeholder:text-faint focus:border-primary';
