@@ -580,7 +580,7 @@ export const geminiPlans: PlansSeed = {
 /* ------------------------------------------------------------------ Copilot */
 
 export const copilotPlans: PlansSeed = {
-  note: `${REVISION} con la página de precios de Microsoft 365 Copilot y la documentación de Copilot Studio. Precios de lista en dólares, sin impuestos, y sin contar la suscripción base de Microsoft 365, que va aparte.`,
+  note: `${REVISION} con la página de precios de Microsoft 365 Copilot y la documentación de Copilot Studio. Precios de lista en dólares, sin impuestos, y sin contar la suscripción base de Microsoft 365, que va aparte y subió de precio el 1 de julio de 2026.`,
   plans: [
     {
       key: 'chat',
@@ -594,11 +594,11 @@ export const copilotPlans: PlansSeed = {
     {
       key: 'business',
       name: 'Microsoft 365 Copilot Business',
-      price: 'USD 18 a 21 / usuario / mes',
+      price: 'USD 21 / usuario / mes',
       audience: 'Empresa',
       tier: 1,
       summary: 'Para organizaciones de menos de 300 usuarios.',
-      note: 'Copilot dentro de las apps y sobre los datos de trabajo.',
+      note: 'Copilot dentro de las apps y sobre los datos de trabajo. Precio promocional de USD 18 hasta el 30 de septiembre de 2026.',
     },
     {
       key: 'copilot',
@@ -643,9 +643,20 @@ export const copilotPlans: PlansSeed = {
       ],
     },
     {
+      key: 'anthropic',
+      name: 'Modelos de Anthropic (Sonnet 5)',
+      description: 'Desde agosto de 2026 el selector de modelos suma las opciones de Anthropic a las de OpenAI. En Word, Sonnet 5 quedó por defecto para el trabajo de más razonamiento.',
+      plans: [
+        { plan: 'chat', availability: 'no', note: 'El selector aparece dentro de las apps, que necesitan licencia.' },
+        { plan: 'business' },
+        { plan: 'copilot' },
+        { plan: 'studio' },
+      ],
+    },
+    {
       key: 'reasoning',
       name: 'Modelos de razonamiento (Researcher y Analyst)',
-      description: 'Los que usan los agentes de investigación y de análisis de datos.',
+      description: 'Los que usan los agentes de investigación y de análisis de datos. Al agregar Researcher al chat se puede escoger el modelo y el modo.',
       plans: [
         { plan: 'chat', availability: 'no' },
         { plan: 'business', availability: 'incluido', note: '25 consultas al mes entre los dos agentes.' },

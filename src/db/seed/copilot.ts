@@ -23,7 +23,7 @@ export const copilot: PlatformSeed = {
       "label": "módulos, de la aplicación al agente"
     },
     {
-      "value": "51",
+      "value": "54",
       "label": "prompts listos para copiar"
     },
     {
@@ -49,6 +49,12 @@ export const copilot: PlatformSeed = {
       "example": "\"Limpia esta base, calcula el margen por producto y déjame el resumen en una hoja nueva.\""
     },
     {
+      "kicker": "Work IQ",
+      "title": "Un solo chat, con interruptor",
+      "description": "El chat de web y el de trabajo quedaron unidos: el botón de Work IQ decide si la respuesta puede mirar los archivos, correos y chats de la empresa.",
+      "example": "\"Con los datos de trabajo activados: ¿qué quedó pendiente de este cliente?\""
+    },
+    {
       "kicker": "Permisos",
       "title": "Solo ve lo que tú ves",
       "description": "Respeta los permisos de tu cuenta: si no puedes abrir un archivo, Copilot tampoco.",
@@ -64,7 +70,7 @@ export const copilot: PlatformSeed = {
   "downloads": [
     {
       "title": "Guía de prompts",
-      "description": "Los 51 prompts del programa, agrupados por módulo y listos para copiar.",
+      "description": "Los 54 prompts del programa, agrupados por módulo y listos para copiar.",
       "meta": "PDF · 11 páginas",
       "href": "/api/materiales/copilot/guia-de-prompts.pdf"
     },
@@ -143,11 +149,19 @@ export const copilot: PlatformSeed = {
     },
     {
       "question": "¿Puedo escoger el modelo?",
-      "answer": "Sí. En Copilot Chat, Word, PowerPoint y Cowork aparece un selector de modelo con las opciones de OpenAI y de Anthropic que la empresa tenga habilitadas. La regla práctica: el modelo rápido para redactar y resumir, el modelo de razonamiento para análisis largos y trabajo de varios pasos."
+      "answer": "Sí. En Copilot Chat, Word, PowerPoint y Cowork aparece un selector de modelo con las opciones de OpenAI y de Anthropic que la empresa tenga habilitadas. En Word, Sonnet 5 de Anthropic quedó por defecto para el trabajo que exige más razonamiento, y al usar Researcher en el chat también se puede escoger modelo y modo. La regla práctica: el modelo rápido para redactar y resumir, el modelo de razonamiento para análisis largos y trabajo de varios pasos."
     },
     {
       "question": "¿Cowork se cobra aparte?",
       "answer": "Sí. Cowork necesita la licencia de Microsoft 365 Copilot y además consume créditos que se facturan por uso. Antes de lanzar una tarea larga, revisa con tu jefe el presupuesto de créditos del área."
+    },
+    {
+      "question": "¿Dónde se ve cuántos créditos consumimos?",
+      "answer": "En el tablero de consumo de Viva Insights, que muestra el gasto de créditos de Cowork y de las APIs de Work IQ. Lo ven los jefes con cinco personas o más a cargo, los analistas de Insights y los administradores; requiere que la empresa tenga configurada la facturación por uso."
+    },
+    {
+      "question": "¿Qué es el botón de Work IQ del chat?",
+      "answer": "Es el interruptor que decide si Copilot puede usar los datos de la empresa. Antes había dos chats separados, uno de web y otro de trabajo; ahora es uno solo y el botón, arriba a la izquierda, activa o apaga el acceso a archivos, correos y chats. Viene activado."
     },
     {
       "question": "¿Qué diferencia hay entre el chat, el modo agente y Cowork?",
@@ -190,7 +204,8 @@ export const copilot: PlatformSeed = {
       "outcomes": [
         "Preguntarle a Copilot apuntando a un archivo, una carpeta o una reunión concreta.",
         "Armar un notebook con las fuentes de un tema y sacar de ahí el resumen, el documento o el audio.",
-        "Saber cuándo cambiar de modelo y cuándo no vale la pena."
+        "Saber cuándo cambiar de modelo y cuándo no vale la pena.",
+        "Usar el botón de Work IQ para decidir si la respuesta se apoya en los datos de la empresa o solo en la web."
       ],
       "prompts": [
         {
@@ -229,12 +244,16 @@ export const copilot: PlatformSeed = {
           "description": "Con el menú de contexto adjuntas el archivo, la carpeta, la lista de SharePoint o la reunión. Sin fuente, Copilot contesta de forma general y sirve poco."
         },
         {
+          "title": "Decide si la pregunta usa datos de trabajo",
+          "description": "El chat de web y el de trabajo quedaron unidos en una sola ventana. Arriba a la izquierda está el botón de Work IQ: activado, Copilot entra a los archivos, correos y chats de la empresa; apagado, responde solo con información de la web. Viene activado por defecto."
+        },
+        {
           "title": "Revisa las citas",
-          "description": "Cada respuesta trae los documentos de donde salió. Ahora se abren dentro del mismo chat, así que revisar la fuente ya no cuesta nada."
+          "description": "Cada respuesta trae los documentos de donde salió. Ahora se abren dentro del mismo chat, así que revisar la fuente ya no cuesta nada. Desde Copilot Search el chat se abre en el panel derecho, sin perder los resultados de la búsqueda."
         },
         {
           "title": "Arma un notebook para los temas que vuelven",
-          "description": "Si un tema se repite todos los meses, junta ahí sus fuentes: el notebook queda listo para pedirle el resumen, el documento o el audio cada vez."
+          "description": "Si un tema se repite todos los meses, junta ahí sus fuentes: el notebook queda listo para pedirle el resumen, el documento o el audio cada vez. Además de archivos, ahora acepta correos de Outlook y reuniones de Teams como fuente."
         },
         {
           "title": "Cambia de modelo cuando el trabajo es largo",
@@ -270,6 +289,10 @@ export const copilot: PlatformSeed = {
         {
           "bad": "Pegar en el chat información de un cliente que no está en el entorno de la empresa.",
           "good": "Trabajar con archivos que ya viven en OneDrive o SharePoint y seguir la política de datos."
+        },
+        {
+          "bad": "Buscar la respuesta en la web con Work IQ apagado cuando el dato está en un archivo de la empresa.",
+          "good": "Mirar el botón de Work IQ antes de preguntar: define de dónde puede sacar la respuesta."
         }
       ],
       "mockTitle": "Copilot Chat",
@@ -290,7 +313,8 @@ export const copilot: PlatformSeed = {
         "Pasar de las notas de la reunión a una propuesta armada, con alcance, tiempos y precio.",
         "Reescribir un comunicado para el equipo en lenguaje claro, sin frases de manual.",
         "Resumir un contrato largo y sacar lo que la empresa se compromete a cumplir.",
-        "Aplicar de una todos los comentarios de una revisión con el modo agente."
+        "Aplicar de una todos los comentarios de una revisión con el modo agente.",
+        "Escoger el modelo del selector según el tipo de encargo: redactar o razonar."
       ],
       "prompts": [
         {
@@ -343,6 +367,10 @@ export const copilot: PlatformSeed = {
         {
           "title": "Confirma precios y fechas",
           "description": "Copilot puede inventarse un número. Todo precio, fecha y cantidad se confirma contra la fuente antes de enviar."
+        },
+        {
+          "title": "Revisa qué modelo está escogido",
+          "description": "Desde agosto de 2026 el menú de modelos de Word incluye los de Anthropic además de los de OpenAI, y Sonnet 5 quedó por defecto para el trabajo que exige más razonamiento. Para un ajuste corto de redacción, el modelo rápido alcanza."
         }
       ],
       "roles": [
@@ -393,12 +421,13 @@ export const copilot: PlatformSeed = {
       "level": "Intermedio",
       "summary": "Leer el informe de ventas, armar fórmulas, encontrar los datos raros y dejar las reglas del archivo escritas para que todos trabajen igual.",
       "intro": "Excel es donde más ayuda y donde más hay que revisar. Aquí aprendes a preguntarle a tu hoja, a leer con criterio lo que responde y a usar el modo agente sin perder el control del archivo.",
-      "meta": "6 prompts · 45 min",
+      "meta": "7 prompts · 45 min",
       "outcomes": [
         "Entender en dos frases un informe que te mandó otra área.",
         "Crear la columna de margen o de promedio y entender la fórmula que quedó.",
         "Encontrar los datos raros del mes y elegir el gráfico correcto para mostrarlos.",
-        "Dejar escritas las reglas del archivo para que el cierre salga igual todos los meses."
+        "Dejar escritas las reglas del archivo para que el cierre salga igual todos los meses.",
+        "Pedir un análisis con Python cuando el cálculo se sale de lo que resuelve una fórmula."
       ],
       "prompts": [
         {
@@ -424,6 +453,10 @@ export const copilot: PlatformSeed = {
         {
           "tag": "Proyección",
           "text": "Con los últimos 12 meses, proyecta las ventas del próximo trimestre y dime de qué supuestos partiste."
+        },
+        {
+          "tag": "Python",
+          "text": "Con Python, analiza la estacionalidad de estas ventas y déjame el gráfico y el código a la vista."
         }
       ],
       "baIntro": "El caso de la sesión: entender el informe de ventas y gastos que llega cada lunes.",
@@ -451,6 +484,10 @@ export const copilot: PlatformSeed = {
         {
           "title": "Revisa dos filas a mano",
           "description": "Toma dos filas al azar y verifica la cuenta. Si cuadran, la columna es confiable."
+        },
+        {
+          "title": "Para el análisis pesado, pídelo con Python",
+          "description": "Desde agosto de 2026, Editar con Copilot corre Python dentro del libro para estadística, simulaciones y gráficos que las fórmulas no dan. El código queda a la vista y se puede revisar."
         }
       ],
       "roles": [
@@ -825,12 +862,13 @@ export const copilot: PlatformSeed = {
       "level": "Avanzado",
       "summary": "Encargarle una tarea de varias horas que cruza correos, archivos y reuniones, y recibir el entregable terminado.",
       "intro": "Cowork no responde preguntas: hace el trabajo. Se le encarga una tarea larga, planea los pasos, usa varias aplicaciones y devuelve el resultado. Se cobra por uso, así que el módulo es tanto de técnica como de criterio.",
-      "meta": "5 prompts · 45 min",
+      "meta": "6 prompts · 45 min",
       "outcomes": [
         "Distinguir qué tarea vale la pena mandarle a Cowork y cuál se resuelve en el chat.",
         "Escribir un encargo con entregable, fuentes y criterios de calidad.",
         "Revisar el plan que propone antes de dejarlo correr.",
-        "Entender el consumo de créditos y cómo pedirlos en tu área."
+        "Entender el consumo de créditos, dónde se consultan y cómo pedirlos en tu área.",
+        "Pedir dentro de Cowork las imágenes del entregable, sin salir a otra herramienta."
       ],
       "prompts": [
         {
@@ -852,6 +890,10 @@ export const copilot: PlatformSeed = {
         {
           "tag": "Entrega",
           "text": "Entrégamelo como documento de Word con resumen ejecutivo de una página y el detalle en anexo."
+        },
+        {
+          "tag": "Imagen",
+          "text": "Genera la portada del informe con los colores de la marca y ajústala hasta que quede horizontal."
         }
       ],
       "baIntro": "El caso de la sesión: la revisión anual de los contratos de proveedores.",
@@ -878,7 +920,11 @@ export const copilot: PlatformSeed = {
         },
         {
           "title": "Mira lo que consumió",
-          "description": "Cada tarea gasta créditos según el modelo, el contexto y la duración. Anota el consumo de las primeras tareas para poder presupuestar el del área."
+          "description": "Cada tarea gasta créditos según el modelo, el contexto y la duración. Anota el consumo de las primeras tareas para poder presupuestar el del área. El tablero de consumo de Viva Insights muestra el gasto de créditos de Cowork y de las APIs de Work IQ."
+        },
+        {
+          "title": "Las imágenes también salen de acá",
+          "description": "Desde agosto de 2026 Cowork genera y edita imágenes con ChatGPT Images 2.0, así que la portada o el gráfico del entregable ya no hay que buscarlos afuera."
         }
       ],
       "roles": [
@@ -970,7 +1016,7 @@ export const copilot: PlatformSeed = {
         },
         {
           "title": "Escoge la herramienta según el alcance",
-          "description": "Si solo hay que responder con documentos y listas, Agent Builder dentro de Copilot alcanza. Si hay que conectar el ERP o disparar procesos, es Copilot Studio."
+          "description": "Si solo hay que responder con documentos y listas, Agent Builder dentro de Copilot alcanza. Si hay que conectar el ERP o disparar procesos, es Copilot Studio. Para lo que arma el área de sistemas están las APIs de Work IQ, con un solo punto de entrada REST para agentes y flujos."
         },
         {
           "title": "Pocas fuentes y vigentes",
@@ -1033,12 +1079,13 @@ export const copilot: PlatformSeed = {
       "level": "Avanzado",
       "summary": "Los dos agentes que vienen dentro del chat para lo que un prompt suelto no resuelve: una investigación con fuentes citadas o un análisis de datos con el paso a paso a la vista.",
       "intro": "Están adentro de Copilot Chat, en la sección Agents, y no reemplazan el chat normal: se usan cuando la pregunta necesita más tiempo de análisis. Researcher entrega un reporte con fuentes citadas, cruzando archivos de la empresa y la web. Analyst entrega un análisis de datos, con el código que corrió a la vista para poder revisarlo.",
-      "meta": "6 prompts · 40 min",
+      "meta": "7 prompts · 40 min",
       "outcomes": [
         "Distinguir cuándo conviene un reporte de Researcher en vez de una respuesta rápida del chat.",
         "Acotar las fuentes de Researcher a la empresa, a la web o a ambas, según el tema.",
         "Usar Analyst para cruzar varios archivos y pedirle el paso a paso, no solo el resultado.",
-        "Revisar el código y las citas antes de dar por buena una conclusión."
+        "Revisar el código y las citas antes de dar por buena una conclusión.",
+        "Escoger el modelo y el modo de Researcher según lo que se juegue la decisión."
       ],
       "prompts": [
         {
@@ -1064,6 +1111,10 @@ export const copilot: PlatformSeed = {
         {
           "tag": "Analyst",
           "text": "Con esta base, arma la proyección del próximo trimestre y el gráfico que la sustenta."
+        },
+        {
+          "tag": "Researcher",
+          "text": "Para esta investigación usa el modelo de razonamiento más profundo, aunque se demore más."
         }
       ],
       "baIntro": "El caso de la sesión: entender por qué cayeron las ventas de una línea de producto en el último trimestre.",
@@ -1079,6 +1130,10 @@ export const copilot: PlatformSeed = {
         {
           "title": "En Researcher, dile de dónde sacar la información",
           "description": "Se puede acotar a los archivos y correos de la empresa, a la web, o a ambos. Sin esa precisión, el reporte sale más genérico de lo que hace falta."
+        },
+        {
+          "title": "Escoge el modelo con el que va a investigar",
+          "description": "Desde agosto de 2026, al agregar Researcher al prompt aparece un selector de modelo y de modo. El modo más profundo se demora más y se justifica cuando el reporte va a sustentar una decisión; para un panorama rápido no hace falta."
         },
         {
           "title": "Responde las preguntas que te haga de vuelta",
