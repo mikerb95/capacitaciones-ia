@@ -1,9 +1,5 @@
-import { LeaveButton } from '@/components/leave-button';
 import { QuoteEmailCard } from '@/components/quote-email-card';
 import { SiteHeader } from '@/components/ui';
-import { requireParticipant } from '@/lib/session';
-
-export const dynamic = 'force-dynamic';
 
 export const metadata = { title: 'Caso: sacos de yute · Academia IA' };
 
@@ -50,18 +46,14 @@ Condiciones generales: entrega 30 días corridos desde la seña. Seña del 50% a
 Saludos,
 Bolsas San Martín`;
 
-export default async function GuiaEcomPage() {
-  const participant = await requireParticipant('/guia/ecom');
-
+export default function GuiaEcomPage() {
   return (
     <div className="min-h-screen bg-bg">
       <SiteHeader
         title="Caso: sacos de yute"
         subtitle="Recursos para el ejercicio de hoy"
         back={{ href: '/', label: 'Inicio' }}
-      >
-        <LeaveButton name={participant.name ?? undefined} />
-      </SiteHeader>
+      />
 
       <main className="mx-auto flex max-w-[820px] flex-col gap-6 px-4 py-8 sm:px-6">
         <section>
