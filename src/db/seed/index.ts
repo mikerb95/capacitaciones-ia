@@ -27,7 +27,6 @@ import { copilot } from './copilot';
 import { gemini } from './gemini';
 import { chatgpt } from './chatgpt';
 import { seedMasterAccess } from './master';
-import { seedDemoAccess } from './demo';
 
 // El orden acá es el orden en que se muestran en la comparativa.
 const SEEDS: PlatformSeed[] = [copilot, claude, gemini, chatgpt];
@@ -293,8 +292,6 @@ async function main() {
   }
   const master = await seedMasterAccess();
   console.log(`  código maestro ${master.code} listo`);
-  const demo = await seedDemoAccess();
-  console.log(`  código demo ${demo.code} listo`);
   console.log('Listo.');
 }
 
