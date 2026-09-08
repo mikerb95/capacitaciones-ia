@@ -15,6 +15,8 @@ const COMPANY_LOGIN = '/empresa';
  * cada uno el suyo: la cookie firmada del login del panel y la clave de la
  * empresa. /materiales también, pero por otra razón: no es una sección del
  * sitio sino el insumo del generador de PDF, y se cierra con su propia clave.
+ * /guia son recursos sueltos para los ejercicios en vivo, pensados para
+ * abrirse sin registrarse.
  */
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
@@ -55,6 +57,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|ingresar|vivo|presentar|materiales|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|webp|ico)$).*)',
+    '/((?!api|_next/static|_next/image|ingresar|vivo|presentar|materiales|guia|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|webp|ico)$).*)',
   ],
 };
