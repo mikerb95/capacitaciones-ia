@@ -1,10 +1,12 @@
 import type { PlatformSeed } from './types';
 
-// Contenido verificado contra la documentacion de OpenAI en agosto de 2026.
-// Dos cambios de producto respecto del esquema original:
+// Contenido verificado contra la documentacion de OpenAI en septiembre de 2026.
+// Cambios de producto respecto del esquema original:
 //   - Canvas salio de GPT-5.5: su funcion pasa a los bloques de escritura y de codigo.
 //   - Sora se descontinuo (app y web el 26 de abril de 2026), y su modulo se reemplaza
 //     por Company knowledge, que es lo que de verdad se usa en un entorno corporativo.
+//   - GPT-6 Astra (y Astra Pro) reemplazo a GPT-5.6 Sol como modelo de razonamiento
+//     insignia desde el 3 de septiembre de 2026. Luna y Terra siguen vigentes.
 
 const CO = {
   a: '#0E7C63',

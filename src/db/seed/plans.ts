@@ -96,12 +96,13 @@ export const chatgptPlans: PlansSeed = {
     },
     {
       key: 'thinking',
-      name: 'GPT-5.6 Sol (razonamiento)',
-      description: 'Piensa antes de responder. Es el que conviene para análisis, cálculo y decisiones.',
+      name: 'GPT-6 Astra (razonamiento)',
+      description:
+        'Piensa antes de responder. Reemplazó a GPT-5.6 Sol como modelo insignia: es el que conviene para análisis, cálculo y decisiones.',
       plans: [
         { plan: 'free', availability: 'no' },
         { plan: 'go', availability: 'no' },
-        { plan: 'plus' },
+        { plan: 'plus', availability: 'limitado', note: 'Solo dentro de ChatGPT Work y Codex, todavía no en el chat general.' },
         { plan: 'pro' },
         { plan: 'business' },
         { plan: 'enterprise' },
@@ -109,14 +110,14 @@ export const chatgptPlans: PlansSeed = {
     },
     {
       key: 'thinking-pro',
-      name: 'GPT-5.6 Sol Pro (razonamiento extendido)',
-      description: 'La variante más lenta y más cuidadosa, exclusiva del plan Pro.',
+      name: 'GPT-6 Astra Pro (razonamiento extendido)',
+      description: 'La variante más lenta y más cuidadosa, exclusiva de los planes de mayor cupo.',
       plans: [
         { plan: 'free', availability: 'no' },
         { plan: 'go', availability: 'no' },
         { plan: 'plus', availability: 'no' },
         { plan: 'pro' },
-        { plan: 'business', availability: 'limitado', note: 'Según lo que habilite el administrador.' },
+        { plan: 'business', availability: 'limitado', note: 'Cupo mayor en Business Premium que en Business Standard.' },
         { plan: 'enterprise', availability: 'limitado', note: 'Según lo que habilite el administrador.' },
       ],
     },
