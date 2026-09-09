@@ -169,6 +169,32 @@ export const platformSpecials = sqliteTable(
   (t) => [index('platform_specials_platform_idx').on(t.platformId)],
 );
 
+/**
+ * Qué plan hace falta para un diferencial. Sin filas, el diferencial se
+ * considera disponible en todos los planes: el contenido viejo no se rompe.
+ */
+export const platformSpecialPlans = sqliteTable(
+  'platform_special_plans',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    specialId: integer('special_id')
+      .notNull()
+      .references(() => platformSpecials.id, { onDelete: 'cascade' }),
+    planId: integer('plan_id')
+      .notNull()
+      .references(() => platformPlans.id, { onDelete: 'cascade' }),
+    availability: text('availability', { enum: AVAILABILITY })
+      .notNull()
+      .default('incluido'),
+    note: text('note'),
+  },
+  (t) => [
+    uniqueIndex('platform_special_plans_pair_idx').on(t.specialId, t.planId),
+    index('platform_special_plans_special_idx').on(t.specialId),
+    index('platform_special_plans_plan_idx').on(t.planId),
+  ],
+);
+
 export const platformDownloads = sqliteTable(
   'platform_downloads',
   {
@@ -784,6 +810,7 @@ export const platformPlansRelations = relations(platformPlans, ({ one, many }) =
   platform: one(platforms, { fields: [platformPlans.platformId], references: [platforms.id] }),
   models: many(platformModelPlans),
   modules: many(modulePlans),
+  specials: many(platformSpecialPlans),
 }));
 
 export const platformModelsRelations = relations(platformModels, ({ one, many }) => ({
