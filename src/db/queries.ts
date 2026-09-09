@@ -100,7 +100,10 @@ export async function getPlatform(id: string) {
     where: eq(platforms.id, id),
     with: {
       stats: { orderBy: bySort },
-      specials: { orderBy: bySort },
+      specials: {
+        orderBy: bySort,
+        with: { plans: { with: { plan: { columns: { key: true } } } } },
+      },
       downloads: { orderBy: bySort },
       practices: { orderBy: bySort },
       faqs: { orderBy: bySort },
