@@ -35,6 +35,15 @@ type ModelCard = {
   plans: PlanRef[];
 };
 
+type SpecialCard = {
+  id: number;
+  kicker: string;
+  title: string;
+  description: string;
+  example: string | null;
+  plans: PlanRef[];
+};
+
 function AvailabilityBadge({ refs, plan }: { refs: PlanRef[]; plan: string | null }) {
   const availability = availabilityIn(refs, plan);
   if (!availability) return null;
