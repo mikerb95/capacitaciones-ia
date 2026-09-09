@@ -317,8 +317,8 @@ export const claudePlans: PlansSeed = {
     },
     {
       key: 'fable',
-      name: 'Claude Fable 5',
-      description: 'Orientado a escritura y trabajo creativo de formato largo.',
+      name: 'Claude Fable 5.1',
+      description: 'Orientado a escritura y trabajo creativo de formato largo. Desde el 1 de septiembre de 2026 reemplaza a Fable 5, con un millón de tokens de contexto y hasta 45% menos costo en cargas agénticas.',
       plans: [
         { plan: 'free', availability: 'limitado', note: 'Acceso acotado.' },
         { plan: 'pro' },
@@ -459,8 +459,8 @@ export const geminiPlans: PlansSeed = {
   models: [
     {
       key: 'flash',
-      name: 'Gemini Omni Flash',
-      description: 'El modelo rápido, el que responde por defecto en el chat.',
+      name: 'Gemini 3.8 Flash',
+      description: 'El modelo rápido, el que responde por defecto en el chat. No confundir con Gemini Omni Flash, que es el modelo de generación de video.',
       plans: [
         { plan: 'free', availability: 'limitado', note: 'Cupo diario.' },
         { plan: 'plus', availability: 'limitado', note: 'Acceso acotado.' },
@@ -624,7 +624,7 @@ export const copilotPlans: PlansSeed = {
     {
       key: 'chat-model',
       name: 'Modelo base de Copilot Chat',
-      description: 'El modelo de OpenAI que responde en el chat web y en Copilot Chat.',
+      description: 'El modelo de OpenAI que responde en el chat web y en Copilot Chat. Desde septiembre de 2026 suma GPT-6 Astra al selector, junto al resto de la familia GPT-5.6.',
       plans: [
         { plan: 'chat', availability: 'limitado', note: 'Sin acceso a los datos de la empresa.' },
         { plan: 'business' },
@@ -668,7 +668,7 @@ export const copilotPlans: PlansSeed = {
     {
       key: 'studio-models',
       name: 'Modelos de Copilot Studio',
-      description: 'El catálogo de modelos que se puede elegir al construir un agente propio.',
+      description: 'El catálogo de modelos que se puede elegir al construir un agente propio. GPT-6 Astra se sumó al catálogo en septiembre de 2026, con despliegue gradual y controles de administrador.',
       plans: [
         { plan: 'chat', availability: 'no' },
         { plan: 'business', availability: 'limitado', note: 'Requiere capacidad de créditos contratada.' },
