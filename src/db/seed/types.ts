@@ -32,6 +32,8 @@ export type PlansSeed = {
   models: ModelSeed[];
   /** slug del módulo -> planes que lo incluyen */
   modules: Record<string, PlanRefSeed[]>;
+  /** key del diferencial -> planes que lo incluyen */
+  specials?: Record<string, PlanRefSeed[]>;
 };
 
 export type ModuleSeed = {
@@ -81,7 +83,7 @@ export type PlatformSeed = {
   helpText?: string;
   status: 'completo' | 'en-redaccion' | 'borrador';
   stats?: { value: string; label: string }[];
-  specials?: { kicker: string; title: string; description: string; example?: string }[];
+  specials?: { key: string; kicker: string; title: string; description: string; example?: string }[];
   downloads?: { title: string; description?: string; meta?: string; href?: string }[];
   practices?: { number: string; title: string; description: string }[];
   faqs?: { question: string; answer: string }[];

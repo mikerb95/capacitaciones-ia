@@ -37,30 +37,35 @@ export const copilot: PlatformSeed = {
   ],
   "specials": [
     {
+      "key": "dentro-de-office",
       "kicker": "Dentro de Office",
       "title": "En los archivos que ya existen",
       "description": "Copilot trabaja sobre el documento abierto, no sobre una copia pegada en un chat.",
       "example": "\"Resume este documento en cinco puntos y deja el detalle al final.\""
     },
     {
+      "key": "modo-agente",
       "kicker": "Modo agente",
       "title": "Le pides el resultado, no el paso",
       "description": "En Word, Excel y PowerPoint el modo agente planea los pasos solo y los ejecuta dentro del archivo. Tú revisas el trabajo terminado.",
       "example": "\"Limpia esta base, calcula el margen por producto y déjame el resumen en una hoja nueva.\""
     },
     {
+      "key": "work-iq",
       "kicker": "Work IQ",
       "title": "Un solo chat, con interruptor",
       "description": "El chat de web y el de trabajo quedaron unidos: el botón de Work IQ decide si la respuesta puede mirar los archivos, correos y chats de la empresa.",
       "example": "\"Con los datos de trabajo activados: ¿qué quedó pendiente de este cliente?\""
     },
     {
+      "key": "permisos",
       "kicker": "Permisos",
       "title": "Solo ve lo que tú ves",
       "description": "Respeta los permisos de tu cuenta: si no puedes abrir un archivo, Copilot tampoco.",
       "example": "\"¿Qué acordamos con este cliente en la última reunión?\""
     },
     {
+      "key": "cowork",
       "kicker": "Cowork",
       "title": "Tareas que duran horas, no minutos",
       "description": "Cowork encadena varias aplicaciones y te entrega el trabajo hecho, no un borrador. Se cobra aparte con créditos.",
