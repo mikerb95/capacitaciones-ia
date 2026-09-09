@@ -71,7 +71,7 @@ export const platformPlans = sqliteTable(
   ],
 );
 
-/** Modelo que ofrece la plataforma (GPT-5.6 Sol, Opus 5, Gemini 3.1 Pro...). */
+/** Modelo que ofrece la plataforma (GPT-6 Astra, Opus 5, Gemini 3.1 Pro...). */
 export const platformModels = sqliteTable(
   'platform_models',
   {
