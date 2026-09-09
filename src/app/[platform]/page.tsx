@@ -132,40 +132,17 @@ export default async function PlatformPage({ params, searchParams }: Params) {
             logo: moduleLogo(platform.id, m.slug),
             plans: m.plans,
           }))}
+          specials={platform.specials.map((s) => ({
+            id: s.id,
+            kicker: s.kicker,
+            title: s.title,
+            description: s.description,
+            example: s.example,
+            plans: s.plans,
+          }))}
+          specialTitle={platform.specialTitle ?? 'Lo que solo se hace acá'}
+          specialIntro={platform.specialIntro}
         />
-
-        {/* Diferenciales */}
-        {platform.specials.length > 0 && (
-          <section className="mb-16">
-            <SectionTitle
-              kicker="Diferenciales"
-              title={platform.specialTitle ?? 'Lo que solo se hace acá'}
-              intro={platform.specialIntro ?? undefined}
-            />
-            <div className="grid gap-4 md:grid-cols-3">
-              {platform.specials.map((s) => (
-                <Card key={s.id}>
-                  <div
-                    className="mb-2 inline-flex items-center gap-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.08em]"
-                    style={{ color: platform.color }}
-                  >
-                    <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />
-                    {s.kicker}
-                  </div>
-                  <h3 className="font-display text-[15.5px] font-semibold tracking-tight">
-                    {s.title}
-                  </h3>
-                  <p className="mt-2 text-[13.5px] leading-relaxed text-muted">{s.description}</p>
-                  {s.example && (
-                    <p className="mt-4 rounded-lg bg-surface-2 px-3.5 py-2.5 font-mono text-[12.5px] leading-relaxed text-muted">
-                      {s.example}
-                    </p>
-                  )}
-                </Card>
-              ))}
-            </div>
-          </section>
-        )}
 
         {/* Buenas prácticas */}
         {platform.practices.length > 0 && (
