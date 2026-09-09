@@ -8,4 +8,4 @@
  *
  * Se muestra en la portada y, dentro de la nota de planes, en cada portal.
  */
-export const MODELS_REVISION = 'agosto de 2026';
+export const MODELS_REVISION = 'septiembre de 2026';
