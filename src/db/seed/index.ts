@@ -86,10 +86,16 @@ async function seedPlatform(seed: PlatformSeed, sortOrder: number) {
       seed.stats.map((s, i) => ({ platformId: seed.id, ...s, sortOrder: i })),
     );
   }
+  const specialIds = new Map<string, number>();
   if (seed.specials?.length) {
-    await db.insert(platformSpecials).values(
-      seed.specials.map((s, i) => ({ platformId: seed.id, ...s, sortOrder: i })),
-    );
+    for (const [i, s] of seed.specials.entries()) {
+      const { key, ...rest } = s;
+      const [saved] = await db
+        .insert(platformSpecials)
+        .values({ platformId: seed.id, ...rest, sortOrder: i })
+        .returning({ id: platformSpecials.id });
+      specialIds.set(key, saved.id);
+    }
   }
   if (seed.downloads?.length) {
     await db.insert(platformDownloads).values(
@@ -183,6 +189,25 @@ async function seedPlatform(seed: PlatformSeed, sortOrder: number) {
     for (const m of staleModels) {
       await db.delete(platformModelPlans).where(eq(platformModelPlans.modelId, m.id));
       await db.delete(platformModels).where(eq(platformModels.id, m.id));
+    }
+
+    // En qué planes aparece cada diferencial. Sin filas queda "en todos", que
+    // es lo correcto para el contenido que todavía no se revisó.
+    for (const [key, specialId] of specialIds) {
+      const refs = planData.specials?.[key];
+      if (refs?.length) {
+        const rows = planRows(refs, planIds, `${seed.id}/especial ${key}`).map((r) => ({
+          specialId,
+          ...r,
+        }));
+        if (rows.length) await db.insert(platformSpecialPlans).values(rows);
+      }
+    }
+
+    for (const key of Object.keys(planData.specials ?? {})) {
+      if (!specialIds.has(key)) {
+        console.warn(`  ojo: plans.ts define "${seed.id}/especial ${key}", que ya no es un diferencial`);
+      }
     }
   }
 
