@@ -72,6 +72,9 @@ export function PlanExplorer({
   plans,
   models,
   modules,
+  specials,
+  specialTitle,
+  specialIntro,
   note,
   initialPlan,
   contractedPlan = null,
@@ -81,6 +84,9 @@ export function PlanExplorer({
   plans: PlanInfo[];
   models: ModelCard[];
   modules: ModuleCard[];
+  specials: SpecialCard[];
+  specialTitle: string;
+  specialIntro: string | null;
   note: string | null;
   initialPlan: string | null;
   /** El que quedó guardado en el código de la empresa, si lo hay. */
@@ -114,6 +120,7 @@ export function PlanExplorer({
 
   const visible = modules.filter((m) => applies(availabilityIn(m.plans, plan)));
   const hidden = modules.filter((m) => !applies(availabilityIn(m.plans, plan)));
+  const visibleSpecials = specials.filter((s) => applies(availabilityIn(s.plans, plan)));
   const href = (slug: string) => (plan ? `/${platformId}/${slug}?plan=${plan}` : `/${platformId}/${slug}`);
 
   return (
