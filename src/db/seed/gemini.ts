@@ -37,6 +37,7 @@ export const gemini: PlatformSeed = {
   ],
   specials: [
     {
+      key: 'live',
       kicker: 'Live',
       title: 'Voz y cámara en tiempo real',
       description:
@@ -45,6 +46,7 @@ export const gemini: PlatformSeed = {
         '"Estoy viendo el tablero eléctrico. ¿Qué significa esta luz roja y qué debo revisar primero?"',
     },
     {
+      key: 'workspace',
       kicker: 'Workspace',
       title: 'Dentro de Gmail, Docs y Sheets',
       description:
@@ -52,6 +54,7 @@ export const gemini: PlatformSeed = {
       example: '"Con este documento de Drive, redacta el correo de seguimiento al cliente."',
     },
     {
+      key: 'notebooklm',
       kicker: 'NotebookLM',
       title: 'Respuestas con la cita del documento',
       description:

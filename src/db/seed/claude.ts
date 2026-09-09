@@ -37,18 +37,21 @@ export const claude: PlatformSeed = {
   ],
   "specials": [
     {
+      "key": "contexto-largo",
       "kicker": "Contexto largo",
       "title": "Documentos completos, no fragmentos",
       "description": "Un contrato de 80 páginas entra entero en la conversación. Puedes preguntar por un numeral específico y pedir la cita textual.",
       "example": "\"Del contrato adjunto: ¿qué numeral habla de renovación automática? Cítalo.\""
     },
     {
+      "key": "skills",
       "kicker": "Skills",
       "title": "El procedimiento se ejecuta igual siempre",
       "description": "Lo que en otras herramientas queda en un prompt personal, acá se escribe una vez como skill y lo usa todo el equipo.",
       "example": "\"Aplica la skill cotizacion-estandar a este caso.\""
     },
     {
+      "key": "mcp",
       "kicker": "MCP",
       "title": "Se conecta a los sistemas de la empresa",
       "description": "CRM, repositorio de archivos o mesa de ayuda, con los permisos de quien pregunta y trazabilidad de la consulta.",

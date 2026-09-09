@@ -45,6 +45,7 @@ export const chatgpt: PlatformSeed = {
   ],
   specials: [
     {
+      key: 'gpts',
       kicker: 'GPTs',
       title: 'Asistentes propios por tarea',
       description:
@@ -53,6 +54,7 @@ export const chatgpt: PlatformSeed = {
         '"Eres el asistente de postventa. Respondes en máximo 150 palabras y nunca prometes fechas de entrega."',
     },
     {
+      key: 'agent-mode',
       kicker: 'Agent Mode',
       title: 'Ejecuta, no solo responde',
       description:
@@ -61,6 +63,7 @@ export const chatgpt: PlatformSeed = {
         '"Entra al portal del proveedor, descarga las cotizaciones del mes y ármame el comparativo."',
     },
     {
+      key: 'voz',
       kicker: 'Voz',
       title: 'Conversación sin teclado',
       description:
