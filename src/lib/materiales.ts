@@ -22,8 +22,12 @@ export type Material = {
   slug: string;
   title: string;
   kind: MaterialKind;
-  /** Cómo se produce: una ruta imprimible o el generador de DOCX del script. */
-  source: 'print' | 'docx';
+  /**
+   * Cómo se produce: una ruta imprimible, el generador de DOCX del script, o
+   * `upload`, para el documento que no tiene versión genérica y solo existe
+   * como material a medida que cada empresa sube desde su ficha.
+   */
+  source: 'print' | 'docx' | 'upload';
 };
 
 export const MATERIALES: Record<string, Material[]> = {
@@ -58,6 +62,8 @@ export const MATERIALES: Record<string, Material[]> = {
       source: 'print',
     },
     { slug: 'formato-para-tu-caso', title: 'Formato para tu caso', kind: 'docx', source: 'docx' },
+    { slug: 'sesion-1', title: 'Sesión 1', kind: 'pdf', source: 'upload' },
+    { slug: 'sesion-2', title: 'Sesión 2', kind: 'pdf', source: 'upload' },
   ],
 };
 

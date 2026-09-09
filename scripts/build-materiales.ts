@@ -32,7 +32,10 @@ const kb = (bytes: number) =>
 async function main() {
   const targets = Object.entries(MATERIALES)
     .filter(([id]) => !platformArg || id === platformArg)
-    .map(([id, docs]) => [id, docs.filter((d) => !docArg || d.slug === docArg)] as const)
+    .map(
+      ([id, docs]) =>
+        [id, docs.filter((d) => d.source !== 'upload' && (!docArg || d.slug === docArg))] as const,
+    )
     .filter(([, docs]) => docs.length > 0);
 
   if (targets.length === 0) {
