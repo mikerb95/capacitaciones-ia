@@ -19,6 +19,7 @@ import {
   platformPlans,
   platformModels,
   platformModelPlans,
+  platformSpecialPlans,
 } from '../schema';
 import { PLANS } from './plans';
 import type { PlatformSeed, PlanRefSeed } from './types';

@@ -733,6 +733,38 @@ export const copilotPlans: PlansSeed = {
       { plan: 'studio' },
     ],
   },
+  specials: {
+    'dentro-de-office': [
+      { plan: 'chat', availability: 'no' },
+      { plan: 'business' },
+      { plan: 'copilot' },
+      { plan: 'studio' },
+    ],
+    'modo-agente': [
+      { plan: 'chat', availability: 'no' },
+      { plan: 'business' },
+      { plan: 'copilot' },
+      { plan: 'studio' },
+    ],
+    'work-iq': [
+      { plan: 'chat', availability: 'no' },
+      { plan: 'business' },
+      { plan: 'copilot' },
+      { plan: 'studio' },
+    ],
+    permisos: [
+      { plan: 'chat', availability: 'no' },
+      { plan: 'business' },
+      { plan: 'copilot' },
+      { plan: 'studio' },
+    ],
+    cowork: [
+      { plan: 'chat', availability: 'no' },
+      { plan: 'business', availability: 'limitado', note: 'La licencia habilita el acceso, el uso se paga con créditos.' },
+      { plan: 'copilot', availability: 'limitado', note: 'La licencia habilita el acceso, el uso se paga con créditos.' },
+      { plan: 'studio' },
+    ],
+  },
 };
 
 export const PLANS: Record<string, PlansSeed> = {
