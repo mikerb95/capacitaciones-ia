@@ -838,8 +838,20 @@ export const platformStatsRelations = relations(platformStats, ({ one }) => ({
   platform: one(platforms, { fields: [platformStats.platformId], references: [platforms.id] }),
 }));
 
-export const platformSpecialsRelations = relations(platformSpecials, ({ one }) => ({
+export const platformSpecialsRelations = relations(platformSpecials, ({ one, many }) => ({
   platform: one(platforms, { fields: [platformSpecials.platformId], references: [platforms.id] }),
+  plans: many(platformSpecialPlans),
+}));
+
+export const platformSpecialPlansRelations = relations(platformSpecialPlans, ({ one }) => ({
+  special: one(platformSpecials, {
+    fields: [platformSpecialPlans.specialId],
+    references: [platformSpecials.id],
+  }),
+  plan: one(platformPlans, {
+    fields: [platformSpecialPlans.planId],
+    references: [platformPlans.id],
+  }),
 }));
 
 export const platformDownloadsRelations = relations(platformDownloads, ({ one }) => ({
