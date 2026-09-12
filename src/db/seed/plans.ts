@@ -767,9 +767,199 @@ export const copilotPlans: PlansSeed = {
   },
 };
 
+
+/* --------------------------------------------------------------------- Jira */
+
+export const jiraPlans: PlansSeed = {
+  note: `${REVISION} con la página de precios de Jira (atlassian.com/software/jira/pricing) y la documentación de créditos de Rovo (support.atlassian.com/rovo). Precios de lista en dólares, sin impuestos, calculados sobre 100 usuarios: Jira cobra por tramos, así que el valor por usuario baja al crecer el equipo. Los créditos de Rovo se agrupan a nivel de organización y se reinician cada mes sin acumularse.`,
+  plans: [
+    {
+      key: 'free',
+      name: 'Free',
+      price: 'USD 0',
+      audience: 'Empresa',
+      tier: 0,
+      summary: 'Hasta 10 usuarios, sin tarjeta y sin límite de tiempo.',
+      note: 'Sin Rovo: no hay chat, ni agentes, ni acciones de IA. 2 GB de almacenamiento y 100 ejecuciones de reglas al mes.',
+    },
+    {
+      key: 'standard',
+      name: 'Standard',
+      price: 'USD 9,05 / usuario / mes',
+      audience: 'Empresa',
+      tier: 1,
+      summary: 'El primer plan con Rovo, con un cupo mensual de créditos.',
+      note: '25 créditos de Rovo por usuario al mes. Buscar y resumir no consume créditos; el chat y los agentes sí.',
+    },
+    {
+      key: 'premium',
+      name: 'Premium',
+      price: 'USD 18,30 / usuario / mes',
+      audience: 'Empresa',
+      tier: 2,
+      summary: 'Cupo de IA casi triple y las capacidades avanzadas.',
+      note: '70 créditos por usuario al mes, Rovo Studio para armar agentes propios, sandbox y SLA del 99,9 %.',
+    },
+    {
+      key: 'enterprise',
+      name: 'Enterprise',
+      price: 'A convenir, solo anual',
+      audience: 'Empresa',
+      tier: 3,
+      summary: 'Contrato anual para organizaciones grandes, desde 801 usuarios.',
+      note: '150 créditos por usuario al mes, varios sitios bajo una organización, automatización sin tope y SLA del 99,95 %.',
+    },
+  ],
+  models: [
+    {
+      key: 'busqueda',
+      name: 'Búsqueda y resúmenes',
+      description:
+        'Buscar entre tickets y páginas, resumir un hilo y explicar un término. Es lo único de Rovo que no consume créditos.',
+      plans: [
+        { plan: 'free', availability: 'no' },
+        { plan: 'standard' },
+        { plan: 'premium' },
+        { plan: 'enterprise' },
+      ],
+    },
+    {
+      key: 'chat',
+      name: 'Rovo Chat',
+      description:
+        'La conversación con contexto de toda la instancia: estado, decisiones y traspasos. Cada respuesta gasta créditos.',
+      plans: [
+        { plan: 'free', availability: 'no' },
+        { plan: 'standard', availability: 'limitado', note: 'Con 25 créditos al mes conviene reservarlo para las consultas que de verdad cruzan proyectos.' },
+        { plan: 'premium' },
+        { plan: 'enterprise' },
+      ],
+    },
+    {
+      key: 'agentes',
+      name: 'Agentes de fábrica',
+      description:
+        'Los agentes que vienen con el producto: triaje de solicitudes, seguimiento de entregas, apoyo en guardia.',
+      plans: [
+        { plan: 'free', availability: 'no' },
+        { plan: 'standard', availability: 'limitado', note: 'Se pueden usar, pero el cupo se acaba rápido si corren sobre toda la cola.' },
+        { plan: 'premium' },
+        { plan: 'enterprise' },
+      ],
+    },
+    {
+      key: 'studio',
+      name: 'Rovo Studio',
+      description:
+        'Armar agentes propios con instrucciones, conocimiento y herramientas, y el razonamiento extendido para casos difíciles.',
+      plans: [
+        { plan: 'free', availability: 'no' },
+        { plan: 'standard', availability: 'no' },
+        { plan: 'premium' },
+        { plan: 'enterprise' },
+      ],
+    },
+    {
+      key: 'automation',
+      name: 'Acciones de IA en Automation',
+      description:
+        'La regla que lee el texto del ticket y decide: clasificar, priorizar, pedir lo que falta o redactar el aviso.',
+      plans: [
+        { plan: 'free', availability: 'no', note: 'Automation existe con 100 ejecuciones al mes, pero sin acciones de IA.' },
+        { plan: 'standard', availability: 'limitado', note: 'Cada ejecución con IA descuenta del cupo compartido de la organización.' },
+        { plan: 'premium' },
+        { plan: 'enterprise' },
+      ],
+    },
+    {
+      key: 'agente-virtual',
+      name: 'Agente virtual del portal',
+      description:
+        'El asistente que atiende en el portal de solicitudes, contesta desde la base de conocimiento y escala cuando no sabe.',
+      plans: [
+        { plan: 'free', availability: 'no' },
+        { plan: 'standard', availability: 'limitado', note: 'Es de Jira Service Management, que se licencia aparte. Su cupo de créditos es diez veces el de Jira.' },
+        { plan: 'premium', availability: 'limitado', note: 'Es de Jira Service Management, que se licencia aparte. Su cupo de créditos es diez veces el de Jira.' },
+        { plan: 'enterprise', availability: 'limitado', note: 'Es de Jira Service Management, que se licencia aparte. Su cupo de créditos es diez veces el de Jira.' },
+      ],
+    },
+  ],
+  modules: {
+    chat: [
+      { plan: 'free', availability: 'no' },
+      { plan: 'standard', availability: 'limitado', note: 'Se dicta completo, pero avisando que el cupo alcanza para unas pocas consultas por persona al mes.' },
+      { plan: 'premium' },
+      { plan: 'enterprise' },
+    ],
+    resumenes: [
+      { plan: 'free', availability: 'no' },
+      { plan: 'standard' },
+      { plan: 'premium' },
+      { plan: 'enterprise' },
+    ],
+    redaccion: [
+      { plan: 'free', availability: 'no' },
+      { plan: 'standard', availability: 'limitado', note: 'Redactar la descripción y los criterios consume créditos: sirve para el ticket importante, no para todos.' },
+      { plan: 'premium' },
+      { plan: 'enterprise' },
+    ],
+    busqueda: [
+      { plan: 'free', availability: 'limitado', note: 'JQL se puede usar, pero escrito a mano: sin Rovo no hay consulta en lenguaje natural.' },
+      { plan: 'standard' },
+      { plan: 'premium' },
+      { plan: 'enterprise' },
+    ],
+    automatizacion: [
+      { plan: 'free', availability: 'no', note: 'Sin acciones de IA y con 100 ejecuciones al mes, el módulo se queda sin caso.' },
+      { plan: 'standard', availability: 'limitado', note: 'Se arman las reglas, pero conviene dejarlas sobre una cola acotada.' },
+      { plan: 'premium' },
+      { plan: 'enterprise' },
+    ],
+    reportes: [
+      { plan: 'free', availability: 'no' },
+      { plan: 'standard', availability: 'limitado', note: 'El informe del sprint se puede pedir, pero cada armado descuenta del cupo del mes.' },
+      { plan: 'premium' },
+      { plan: 'enterprise' },
+    ],
+    servicio: [
+      { plan: 'free', availability: 'no' },
+      { plan: 'standard', availability: 'limitado', note: 'Requiere Jira Service Management, que se licencia aparte de Jira.' },
+      { plan: 'premium', availability: 'limitado', note: 'Requiere Jira Service Management, que se licencia aparte de Jira.' },
+      { plan: 'enterprise', availability: 'limitado', note: 'Requiere Jira Service Management, que se licencia aparte de Jira.' },
+    ],
+    agentes: [
+      { plan: 'free', availability: 'no' },
+      { plan: 'standard', availability: 'limitado', note: 'Solo los agentes que vienen de fábrica: armar uno propio necesita Rovo Studio, que es de Premium.' },
+      { plan: 'premium' },
+      { plan: 'enterprise' },
+    ],
+  },
+  specials: {
+    contexto: [
+      { plan: 'free', availability: 'no' },
+      { plan: 'standard' },
+      { plan: 'premium' },
+      { plan: 'enterprise' },
+    ],
+    agentes: [
+      { plan: 'free', availability: 'no' },
+      { plan: 'standard', availability: 'limitado', note: 'Con los agentes de fábrica. Los propios llegan con Rovo Studio en Premium.' },
+      { plan: 'premium' },
+      { plan: 'enterprise' },
+    ],
+    automatizacion: [
+      { plan: 'free', availability: 'no' },
+      { plan: 'standard', availability: 'limitado', note: 'Cada ejecución con IA descuenta del cupo compartido.' },
+      { plan: 'premium' },
+      { plan: 'enterprise' },
+    ],
+  },
+};
+
 export const PLANS: Record<string, PlansSeed> = {
   chatgpt: chatgptPlans,
   claude: claudePlans,
   gemini: geminiPlans,
   copilot: copilotPlans,
+  jira: jiraPlans,
 };
