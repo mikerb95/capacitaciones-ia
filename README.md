@@ -280,7 +280,7 @@ genérico de internet.
 
 | Plataforma | Módulos | Prompts | Estado |
 | --- | --- | --- | --- |
-| <img src="public/logos/copilot.png" width="16" height="16" alt=""> Microsoft 365 Copilot | 9 | 51 | Completo |
+| <img src="public/logos/copilot.png" width="16" height="16" alt=""> Microsoft 365 Copilot | 9 | 54 | Completo |
 | <img src="public/logos/claude.png" width="16" height="16" alt=""> Claude | 9 | 41 | Completo |
 | <img src="public/logos/gemini.png" width="16" height="16" alt=""> Gemini | 8 | 40 | Completo |
 | <img src="public/logos/chatgpt.png" width="16" height="16" alt=""> ChatGPT | 8 | 40 | Completo |
