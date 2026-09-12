@@ -44,6 +44,61 @@ export async function getComparison() {
   });
 }
 
+/** Un plan sin costo. Los seeds escriben el gratuito como "USD 0" o "Gratis". */
+const esGratis = (price: string) => /^\s*(usd\s*0|gratis|gratuito)\s*$/i.test(price);
+
+/**
+ * Resumen de las capacitaciones para la landing pública. Trae los conteos y no
+ * el temario: la landing argumenta, no dicta.
+ *
+ * Cuenta solo los módulos publicados, que es lo único que se puede prometer en
+ * una cotización, y el plan de empresa es el más barato que no es gratis: es el
+ * piso real desde el que la herramienta se puede usar en una organización.
+ */
+export async function getLandingSummary() {
+  const rows = await db.query.platforms.findMany({
+    orderBy: (p) => [asc(p.sortOrder)],
+    columns: { id: true, name: true, description: true, color: true, initial: true },
+    with: {
+      specials: {
+        columns: { kicker: true, title: true },
+        orderBy: (s) => [asc(s.sortOrder)],
+        limit: 2,
+      },
+      plans: {
+        columns: { name: true, price: true, audience: true },
+        orderBy: (p) => [asc(p.tier)],
+      },
+      modules: {
+        columns: { level: true },
+        where: (m, { eq }) => eq(m.status, 'publicado'),
+        with: {
+          prompts: { columns: { id: true } },
+          roles: { columns: { id: true } },
+        },
+      },
+    },
+  });
+
+  return rows.map((p) => ({
+    id: p.id,
+    name: p.name,
+    description: p.description,
+    color: p.color,
+    initial: p.initial,
+    specials: p.specials,
+    modules: p.modules.length,
+    prompts: p.modules.reduce((n, m) => n + m.prompts.length, 0),
+    roles: p.modules.reduce((n, m) => n + m.roles.length, 0),
+    levels: {
+      basico: p.modules.filter((m) => m.level === 'Básico').length,
+      intermedio: p.modules.filter((m) => m.level === 'Intermedio').length,
+      avanzado: p.modules.filter((m) => m.level === 'Avanzado').length,
+    },
+    plan: p.plans.find((x) => x.audience === 'Empresa' && !esGratis(x.price)) ?? null,
+  }));
+}
+
 /**
  * Catálogo para el paso de alcance del admin: lo justo para pintar el árbol de
  * módulos y, en cada uno, en qué planes entra. No se usa en la comparativa
