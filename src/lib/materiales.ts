@@ -51,6 +51,21 @@ export const MATERIALES: Record<string, Material[]> = {
       source: 'print',
     },
   ],
+  jira: [
+    { slug: 'guia-de-prompts', title: 'Guía de prompts', kind: 'pdf', source: 'print' },
+    {
+      slug: 'plantilla-de-agente',
+      title: 'Plantilla de agente de Rovo',
+      kind: 'docx',
+      source: 'docx',
+    },
+    {
+      slug: 'checklist-de-ticket',
+      title: 'Checklist del ticket bien escrito',
+      kind: 'pdf',
+      source: 'print',
+    },
+  ],
   copilot: [
     { slug: 'guia-de-prompts', title: 'Guía de prompts', kind: 'pdf', source: 'print' },
     { slug: 'tarjeta-de-atajos', title: 'Tarjeta de atajos', kind: 'pdf', source: 'print' },
@@ -176,6 +191,48 @@ export const CHECKLIST: Record<string, { intro: string; blocks: ChecklistBlock[]
           'El tono es el de la empresa, no el que trae el modelo por defecto.',
           'Corregí sobre el texto que ya estaba, sin arrancar de cero.',
           'Si quedó bueno, lo guardé como Gem o lo dejé donde el área lo vuelva a encontrar.',
+        ],
+      },
+    ],
+  },
+  jira: {
+    intro:
+      'Cuatro momentos del ticket en los que vale la pena parar treinta segundos. Lo que se escribe en Jira lo leen veinte personas y queda en el historial del proyecto: no se puede arreglar después con una aclaración por chat.',
+    blocks: [
+      {
+        title: 'Antes de crear el ticket',
+        items: [
+          'Conté qué hacía, qué pasó y qué esperaba, no la solución que se me ocurrió.',
+          'Puse los pasos reales para reproducirlo, aunque sean desordenados.',
+          'Dejé criterios de aceptación que alguien puede verificar, no deseos.',
+          'Le quité nombres, cédulas y montos reales del cliente.',
+        ],
+      },
+      {
+        title: 'Antes de creerle un dato a Rovo',
+        items: [
+          'Toda afirmación que va al comité trae la clave del ticket, y la abrí.',
+          'Confirmé las fechas y los compromisos en el comentario original.',
+          'Si dice que algo está bloqueado, verifiqué desde cuándo y por quién.',
+          'Si no encontró el dato, lo dice. Un estado supuesto no entra a una decisión.',
+        ],
+      },
+      {
+        title: 'Antes de que la IA escriba sola',
+        items: [
+          'La regla o el agente se probó en un proyecto de práctica, no en producción.',
+          'Puede comentar y sugerir; cerrar y reasignar sigue siendo de una persona.',
+          'Está escrito qué no debe hacer nunca y cuándo escala a alguien.',
+          'Tiene dueño, y alguien va a leer su registro esta semana.',
+        ],
+      },
+      {
+        title: 'Antes de darlo por cerrado',
+        items: [
+          'El resumen o la decisión quedó en el ticket, no solo en el chat.',
+          'Lo que va al cliente lo leí completo y le quité lo interno.',
+          'Si el prompt funcionó dos veces, lo dejé como filtro, regla o agente.',
+          'El artículo de la base de conocimiento quedó al día si el caso se repite.',
         ],
       },
     ],

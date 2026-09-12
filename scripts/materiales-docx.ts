@@ -34,6 +34,7 @@ const BRAND = {
   claude: 'C15F3C',
   gemini: '3B5BDB',
   copilot: '0B63CE',
+  jira: '0052CC',
 };
 
 const NONE = { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' };
@@ -845,6 +846,117 @@ export function formatoParaTuCaso(client?: DocClient): Promise<Buffer> {
   });
 }
 
+/** Plantilla de agente de Rovo de Jira. */
+export function plantillaDeAgente(client?: DocClient): Promise<Buffer> {
+  const brand = BRAND.jira;
+
+  return buildDoc({
+    client,
+    platform: 'Jira',
+    id: 'jira',
+    title: 'Plantilla de agente de Rovo',
+    description: 'Instrucciones, conocimiento, permisos y límites para armar el agente del área.',
+    lead: [
+      'Un agente de Rovo es un encargo permanente: unas instrucciones, el conocimiento con el que trabaja y lo que tiene permitido hacer dentro de Jira. Se arma una vez y queda disponible a toda hora, con el mismo criterio para todos.',
+      'Esta plantilla es para llenarla antes de sentarse a configurarlo. Al final queda un bloque listo para pegar en el campo de instrucciones del agente.',
+    ],
+    children: [
+      kicker('Cómo se usa', brand),
+      bullet('Parte de un procedimiento que el equipo ya hace a mano. Un agente automatiza un criterio, no lo inventa.'),
+      bullet('Llena los espacios subrayados. Lo que no aplique, bórralo.'),
+      bullet('Antes de activarlo, córrelo con los cinco casos de la sección 6, incluidos los dos que debería rechazar.'),
+
+      new Paragraph({ heading: HeadingLevel.HEADING_2, text: '1. Identidad' }),
+      hint('Qué encargo tiene y para qué equipo trabaja. Si atiende dos colas distintas, son dos agentes.'),
+      fill('Este agente se encarga de ', 30),
+      fill('para el equipo de ', 34),
+      fill('en el proyecto ', 36),
+
+      new Paragraph({ heading: HeadingLevel.HEADING_2, text: '2. Cuándo actúa' }),
+      hint('Qué lo dispara: un ticket nuevo, una etiqueta, una regla de Automation o alguien que lo invoca desde el chat.'),
+      fill('Se activa cuando ', 36),
+      fill('Solo sobre ', 44),
+      fill('No se activa si ', 38),
+
+      new Paragraph({ heading: HeadingLevel.HEADING_2, text: '3. Qué hace, paso a paso' }),
+      hint('El procedimiento tal como lo haría una persona nueva del equipo. Lo que quede ambiguo, el agente lo va a resolver improvisando.'),
+      fill('1. ', 52),
+      fill('2. ', 52),
+      fill('3. ', 52),
+
+      new Paragraph({ heading: HeadingLevel.HEADING_2, text: '4. Qué nunca hace' }),
+      hint('Aquí es donde se evitan los problemas. Cerrar tickets, prometer fechas, contestarle al cliente o tocar proyectos que no son suyos.'),
+      fill('Nunca ', 48),
+      fill('Cuando pase ', 42),
+      fill('escala a ', 45),
+
+      new Paragraph({ heading: HeadingLevel.HEADING_2, text: '5. Conocimiento y permisos' }),
+      hint(
+        'De dónde saca la información y qué tiene permitido escribir. Empieza por lo mínimo: comentar y etiquetar. Asignar y cerrar se habilitan cuando lleve semanas acertando.',
+      ),
+      table(
+        ['Fuente (proyecto o espacio)', 'Qué aporta', 'Dueño', 'Última revisión'],
+        docRows(client),
+        [30, 34, 20, 16],
+      ),
+      fill('Puede: ', 48),
+      fill('No puede: ', 46),
+
+      new Paragraph({ heading: HeadingLevel.HEADING_2, text: '6. Casos de prueba' }),
+      hint('Los casos normales siempre salen bien. Lo que define si sirve son estos.'),
+      table(
+        ['Caso', 'Qué debería hacer'],
+        [
+          ['El caso típico, completo y sin sorpresas', ''],
+          ['El ticket al que le falta un dato obligatorio', ''],
+          ['El duplicado de algo que ya está abierto', ''],
+          ['El que no le corresponde a este equipo', ''],
+          ['El urgente de verdad, que debe escalar de una', ''],
+        ],
+        [40, 60],
+      ),
+
+      new Paragraph({ heading: HeadingLevel.HEADING_2, text: '7. Dueño y revisión' }),
+      hint('Un agente sin dueño sigue corriendo con el criterio del año pasado y nadie se entera.'),
+      fill('Responsable del agente: ', 34, client?.brief.responsable),
+      fill('Cada cuánto se revisa su registro: ', 30, client?.brief.revision),
+      fill('Próxima revisión: ', 40),
+
+      new Paragraph({ pageBreakBefore: true, spacing: { after: 40 }, children: [] }),
+      new Paragraph({
+        heading: HeadingLevel.HEADING_2,
+        text: 'Instrucciones listas para pegar',
+      }),
+      hint(
+        'Copia este bloque en el campo de instrucciones del agente, ya con tus respuestas de las secciones 1 a 4.',
+      ),
+      pasteBlock(PEGAR_AGENTE.map((line) => fillPlaceholders(line, client?.holes ?? {}))),
+    ],
+  });
+}
+
+const PEGAR_AGENTE: string[] = [
+  'Te encargas de [tarea] para el equipo de [área], en el proyecto [clave].',
+  '',
+  'Cuando [disparador], haz esto en orden:',
+  '1. [paso]',
+  '2. [paso]',
+  '3. [paso]',
+  '',
+  'Trabaja solo con [proyecto o espacio] como fuente. Si el dato no está ahí,',
+  'dilo en el comentario en vez de suponerlo, y di dónde buscaste.',
+  '',
+  'Si al ticket le falta [dato obligatorio], pídelo en un comentario y déjalo',
+  'en espera del reportante. No sigas con el resto del procedimiento.',
+  '',
+  'Nunca [límite]. Cuando pase [caso], no lo resuelvas: escala a [responsable]',
+  'y explica en el comentario por qué lo escalas.',
+  '',
+  'Puedes comentar y etiquetar. No cierres ni reasignes tickets.',
+  '',
+  'Escribe en español, en tono [tono], y en máximo [120] palabras por comentario.',
+];
+
 /** Catálogo de generadores, por `plataforma/slug`. */
 export const DOCX_BUILDERS: Record<string, (client?: DocClient) => Promise<Buffer>> = {
   'chatgpt/plantilla-de-gpt': plantillaDeGpt,
@@ -852,4 +964,5 @@ export const DOCX_BUILDERS: Record<string, (client?: DocClient) => Promise<Buffe
   'claude/formato-de-skill': formatoDeSkill,
   'gemini/plantilla-de-gem': plantillaDeGem,
   'copilot/formato-para-tu-caso': formatoParaTuCaso,
+  'jira/plantilla-de-agente': plantillaDeAgente,
 };

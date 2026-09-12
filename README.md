@@ -1,7 +1,8 @@
 # Academia IA
 
 Portal de capacitaciones corporativas sobre IA. Compara los módulos de Microsoft Copilot,
-Claude, Gemini y ChatGPT, con un portal por herramienta y la ficha completa de cada módulo.
+Claude, Gemini, ChatGPT y Jira, con un portal por herramienta y la ficha completa de cada
+módulo.
 
 Stack: Next.js (App Router) + TypeScript + Tailwind CSS v4, Turso (libSQL) con Drizzle ORM,
 pensado para desplegar en Vercel.
@@ -78,9 +79,9 @@ Contraste | Compara el manual viejo con el nuevo y dime qué cambió.
 Cada portal arranca con un selector de plan: Free, Go, Plus, Pro, Business y Enterprise en
 ChatGPT; Free, Pro, Max, Team y Enterprise en Claude; gratis, AI Plus, AI Pro, AI Ultra y
 Workspace en Gemini; Copilot Chat, Copilot Business, Microsoft 365 Copilot y créditos de agente
-en Copilot. Al elegir uno, el listado de módulos se recorta a lo que ese plan habilita, la tabla
-de modelos muestra a cuál se llega y lo que queda fuera se despliega aparte, con el plan mínimo
-que haría falta.
+en Copilot; Free, Standard, Premium y Enterprise en Jira. Al elegir uno, el listado de módulos
+se recorta a lo que ese plan habilita, la tabla de modelos muestra a cuál se llega y lo que
+queda fuera se despliega aparte, con el plan mínimo que haría falta.
 
 El plan viaja en la URL (`/claude?plan=pro`), así que la ficha de cada módulo se abre con el
 mismo recorte y el enlace se puede mandar al cliente ya filtrado.
@@ -283,9 +284,16 @@ genérico de internet.
 | <img src="public/logos/claude.png" width="16" height="16" alt=""> Claude | 9 | 41 | Completo |
 | <img src="public/logos/gemini.png" width="16" height="16" alt=""> Gemini | 8 | 40 | Completo |
 | <img src="public/logos/chatgpt.png" width="16" height="16" alt=""> ChatGPT | 8 | 40 | Completo |
+| <img src="public/logos/jira.png" width="16" height="16" alt=""> Jira | 8 | 40 | Completo |
 
-Copilot y Claude vienen del contenido que ya existía en los mockups. Gemini y ChatGPT se
+Copilot y Claude vienen del contenido que ya existía en los mockups. Gemini, ChatGPT y Jira se
 redactaron completos en el mismo formato.
+
+Jira es el único portal que no es de un asistente de propósito general: los ocho módulos son
+de Rovo y de Atlassian Intelligence dentro de Jira, así que lo que en las otras plataformas
+son modelos, acá son capacidades de IA (chat, agentes, Studio, acciones en Automation y el
+agente virtual del portal de servicio). Los planes y los créditos de Rovo se verificaron
+contra la página de precios de Atlassian y su documentación de créditos en septiembre de 2026.
 
 El contenido de ChatGPT se verificó contra la documentación de OpenAI en agosto de 2026, y por
 eso dos módulos se apartan del esquema original: Canvas salió de GPT-5.5 y el módulo pasó a ser
