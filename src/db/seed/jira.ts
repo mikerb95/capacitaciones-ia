@@ -809,3 +809,229 @@ export const jira: PlatformSeed = {
       mockPanel:
         'Comprometido  28 pts\nEntregado     21 pts\nSe arrastra    7 pts\n\nBloqueados     2\nReabiertos     1',
     },
+    {
+      slug: 'servicio',
+      name: 'Service Management con IA',
+      shortName: 'Servicio',
+      abbr: 'SM',
+      color: CO.verde,
+      level: 'Intermedio',
+      category: 'Servicio',
+      meta: '5 prompts · 35 min',
+      summary:
+        'El agente virtual que contesta lo repetido en el portal y le deja al equipo lo que de verdad necesita a una persona.',
+      intro:
+        'La mitad de la cola de soporte son preguntas que ya están contestadas en alguna página. El agente virtual responde con la base de conocimiento, crea la solicitud cuando hace falta y escala cuando no sabe. Lo que se enseña acá es qué se le deja contestar y qué no.',
+      outcomes: [
+        'Sacar de la cola lo repetido sin que el usuario sienta que lo atendió un robot.',
+        'Escribir el artículo de la base de conocimiento que hoy se contesta por chat interno.',
+        'Definir qué escala a una persona y en cuánto tiempo.',
+      ],
+      prompts: [
+        {
+          tag: 'Cobertura',
+          text: 'Con los tickets de los últimos tres meses, ¿cuáles son las 10 preguntas que más se repiten y cuáles podría contestar solo el agente virtual?',
+        },
+        {
+          tag: 'Artículo',
+          text: 'Escribe el artículo de la base de conocimiento para [restablecer la contraseña del ERP]: pasos, requisitos y qué hacer si falla.',
+        },
+        {
+          tag: 'Respuesta',
+          text: 'Redacta la respuesta a este ticket con el tono de la empresa: reconoce el problema, di qué se está haciendo y cuál es el siguiente paso.',
+        },
+        {
+          tag: 'Escalamiento',
+          text: 'Define en qué casos este tipo de solicitud debe pasar a una persona de una vez, sin intentar resolverla en el portal.',
+        },
+        {
+          tag: 'Calidad',
+          text: 'Revisa las últimas respuestas del agente virtual y dime en cuáles contestó mal o se quedó corto.',
+        },
+      ],
+      baIntro:
+        'El caso de la sesión: la mesa de servicio interna, donde cuatro de cada diez solicitudes son accesos y contraseñas.',
+      before:
+        'El analista contesta lo mismo diez veces al día, y lo urgente de verdad espera detrás de esa fila.',
+      beforeTime: 'Cuatro de cada diez tickets, repetidos',
+      after:
+        'El agente virtual contesta el acceso y la contraseña en el portal, y el analista atiende lo que de verdad requiere criterio.',
+      afterTime: 'La fila baja a la mitad',
+      steps: [
+        {
+          title: 'Empieza por las tres preguntas más repetidas',
+          description:
+            'No se trata de cubrir todo el catálogo. Tres intenciones bien resueltas quitan más carga que veinte a medias.',
+        },
+        {
+          title: 'Arregla primero la base de conocimiento',
+          description:
+            'El agente contesta con lo que hay escrito. Si el artículo está desactualizado, la IA repite el error más rápido y a más gente.',
+        },
+        {
+          title: 'Define el escalamiento antes de encenderlo',
+          description:
+            'Qué no debe intentar contestar y en cuántos intentos pasa a una persona. Sin eso, el usuario queda atrapado en el portal.',
+        },
+        {
+          title: 'Revisa las conversaciones la primera semana',
+          description:
+            'Leer lo que contestó es el único control de calidad que existe. Ahí se ve qué intención falta y qué artículo hay que reescribir.',
+        },
+      ],
+      roles: [
+        {
+          role: 'Mesa de servicio',
+          task: 'Accesos y contraseñas',
+          detail:
+            'Deja lo repetido en el portal y dedica el turno a las incidencias que necesitan diagnóstico.',
+        },
+        {
+          role: 'Recursos humanos',
+          task: 'Preguntas del personal',
+          detail:
+            'Contesta vacaciones, certificados y permisos desde la política publicada, a toda hora.',
+        },
+        {
+          role: 'Calidad',
+          task: 'Revisión de respuestas',
+          detail:
+            'Audita lo que contestó el agente y convierte cada error en un artículo corregido.',
+        },
+      ],
+      mistakes: [
+        {
+          bad: 'Encenderlo sobre una base de conocimiento desactualizada.',
+          good: 'Revisar y fechar los artículos de las intenciones que va a atender.',
+        },
+        {
+          bad: 'Dejarlo contestar temas de nómina, salud o disciplinarios.',
+          good: 'Esos escalan de una a una persona, sin intento previo.',
+        },
+        {
+          bad: 'Esconder que quien contesta es un asistente.',
+          good: 'Decirlo y dar siempre la salida visible para hablar con alguien del equipo.',
+        },
+      ],
+      mockTitle: 'Portal de servicio',
+      mockPrompt: 'No puedo entrar al ERP, me dice usuario bloqueado.',
+      mockReply:
+        'El bloqueo se levanta desde el portal de identidad: entra con tu correo y usa "Desbloquear cuenta". Si sale error de dominio, es un caso para el equipo. ¿Te creo la solicitud?',
+      mockPanelTitle: 'Resuelto en el portal',
+      mockPanel:
+        'Intención  Acceso bloqueado\nArtículo   KB-14 (revisado en agosto)\n\nSin ticket creado\nEscala en el 2.º intento',
+    },
+    {
+      slug: 'agentes',
+      name: 'Rovo Agents',
+      shortName: 'Agents',
+      abbr: 'AG',
+      color: CO.rovo,
+      level: 'Avanzado',
+      category: 'Agentes',
+      meta: '5 prompts · 35 min',
+      summary:
+        'El procedimiento que hoy vive en la cabeza del líder, escrito una vez y ejecutado igual siempre.',
+      intro:
+        'Un agente es un encargo permanente: instrucciones, el conocimiento con el que trabaja y lo que tiene permitido hacer. Se arma en Rovo Studio describiéndolo en español y se invoca desde un ticket, desde el chat o desde una regla. Es el módulo donde la IA deja de asistir y empieza a hacer.',
+      outcomes: [
+        'Convertir un procedimiento repetido del área en un agente que cualquiera invoca.',
+        'Escribir instrucciones que no dejan lugar a la improvisación.',
+        'Decidir qué puede escribir el agente solo y qué queda para una persona.',
+      ],
+      prompts: [
+        {
+          tag: 'Diseño',
+          text: 'Quiero un agente que revise cada ticket nuevo de [proyecto] y verifique que tenga [pasos, versión y adjunto]. ¿Qué instrucciones le pongo?',
+        },
+        {
+          tag: 'Instrucciones',
+          text: 'Escribe las instrucciones de un agente de triaje para [área]: cómo clasifica, qué pregunta cuando falta un dato y cuándo escala.',
+        },
+        {
+          tag: 'Límites',
+          text: 'Para este agente, define qué no debe hacer nunca y en qué casos tiene que dejarle el caso a una persona.',
+        },
+        {
+          tag: 'Prueba',
+          text: 'Dame cinco casos de prueba para este agente, incluyendo dos donde debería negarse o escalar.',
+        },
+        {
+          tag: 'Ajuste',
+          text: 'El agente está clasificando como [urgente] cosas que no lo son. ¿Qué le corrijo en las instrucciones?',
+        },
+      ],
+      baIntro:
+        'El caso de la sesión: el triaje de los reportes que entran al equipo de producto, que hoy hace el líder cada mañana.',
+      before:
+        'Una persona lee cada reporte, decide si es error o solicitud, le pone prioridad y pregunta lo que falta. Cuando está en reunión, la cola espera.',
+      beforeTime: 'Depende de que una persona esté disponible',
+      after:
+        'El agente hace el primer pase a toda hora con el criterio escrito del equipo, y el líder revisa lo que el agente marcó como dudoso.',
+      afterTime: 'El criterio, disponible siempre',
+      steps: [
+        {
+          title: 'Parte de un procedimiento que ya existe',
+          description:
+            'Un agente automatiza un criterio, no lo inventa. Si el equipo no se pone de acuerdo en cómo se prioriza, el agente no lo va a resolver.',
+        },
+        {
+          title: 'Escribe las instrucciones como para alguien nuevo',
+          description:
+            'Qué hace, con qué información, en qué tono y qué no debe hacer nunca. Lo que quede ambiguo, lo resuelve improvisando.',
+        },
+        {
+          title: 'Pruébalo con los casos raros',
+          description:
+            'Los normales siempre salen bien. Lo que define si sirve son los casos incompletos, los duplicados y los que debería rechazar.',
+        },
+        {
+          title: 'Dale el permiso mínimo',
+          description:
+            'Que comente y sugiera antes de que asigne y cierre. Se le amplía el alcance cuando lleve semanas acertando, no antes.',
+        },
+      ],
+      roles: [
+        {
+          role: 'Producto',
+          task: 'Triaje de reportes',
+          detail:
+            'Clasifica y prioriza lo que entra con el criterio del equipo, a cualquier hora del día.',
+        },
+        {
+          role: 'Operaciones',
+          task: 'Revisión de solicitudes',
+          detail:
+            'Verifica que cada solicitud traiga lo obligatorio y pide lo que falta antes de que llegue al equipo.',
+        },
+        {
+          role: 'Calidad',
+          task: 'Revisión previa al cierre',
+          detail:
+            'Revisa que el ticket tenga evidencia y criterio cumplido antes de pasarlo a cerrado.',
+        },
+      ],
+      mistakes: [
+        {
+          bad: 'Armar el agente antes de que el equipo tenga claro el procedimiento.',
+          good: 'Escribir primero el criterio en una página y después volverlo agente.',
+        },
+        {
+          bad: 'Darle permiso de cerrar y reasignar desde el primer día.',
+          good: 'Empezar en modo sugerencia y ampliar cuando el registro lo respalde.',
+        },
+        {
+          bad: 'Dejarlo corriendo sin que nadie mire lo que hace.',
+          good: 'Ponerle dueño y revisar su registro cada semana, como a cualquier proceso.',
+        },
+      ],
+      mockTitle: 'Rovo · Agente de triaje',
+      mockPrompt: 'Revisa el reporte que acaba de entrar.',
+      mockReply:
+        'Clasificado como Error, prioridad Media: afecta a 3 usuarios y hay alternativa manual. Le falta la versión de la app, se la pedí al reportante en un comentario. No lo asigné: hay un ticket parecido abierto, SOP-198.',
+      mockPanelTitle: 'Configuración',
+      mockPanel:
+        'Conocimiento  Proyecto SOP + KB\nPuede         Comentar, etiquetar\nNo puede      Cerrar, reasignar\n\nDueño: equipo de producto',
+    },
+  ],
+};
