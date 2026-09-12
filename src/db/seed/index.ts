@@ -27,10 +27,11 @@ import { claude } from './claude';
 import { copilot } from './copilot';
 import { gemini } from './gemini';
 import { chatgpt } from './chatgpt';
+import { jira } from './jira';
 import { seedMasterAccess } from './master';
 
 // El orden acá es el orden en que se muestran en la comparativa.
-const SEEDS: PlatformSeed[] = [copilot, claude, gemini, chatgpt];
+const SEEDS: PlatformSeed[] = [copilot, claude, gemini, chatgpt, jira];
 
 /** Convierte las referencias por clave de plan en filas con el id ya resuelto. */
 function planRows(refs: PlanRefSeed[], planIds: Map<string, number>, where: string) {

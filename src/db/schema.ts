@@ -13,7 +13,7 @@ const timestamps = {
 /* ---------------------------------------------------------------- plataformas */
 
 export const platforms = sqliteTable('platforms', {
-  id: text('id').primaryKey(), // 'claude' | 'gemini' | 'chatgpt' | 'copilot'
+  id: text('id').primaryKey(), // 'claude' | 'gemini' | 'chatgpt' | 'copilot' | 'jira'
   name: text('name').notNull(),
   portalName: text('portal_name').notNull(),
   initial: text('initial').notNull(),
