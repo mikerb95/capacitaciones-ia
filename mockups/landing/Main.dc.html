@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#07090F;color:#EBEEF8;font-family:'IBM Plex Sans',Segoe UI,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:#7D97FF;text-decoration:none}
+  a:hover{color:#A5B6FF}
+  ::selection{background:#1C2547;color:#EBEEF8}
+  .mono{font-family:'Geist Mono',ui-monospace,monospace}
+  .disp{font-family:Geist,system-ui,sans-serif;letter-spacing:-0.03em}
+  .wrap{width:100%;max-width:1240px;margin:0 auto;padding-inline:clamp(20px,4vw,64px)}
+  .rise{animation:rise .7s cubic-bezier(.2,.7,.3,1) both}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .band{display:grid;grid-template-columns:minmax(280px,1.15fr) 208px minmax(300px,1.25fr) 176px;gap:32px;align-items:center}
+  .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0}
+  .metodo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+  .cta{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  @media (max-width:900px){
+    .band{grid-template-columns:1fr 1fr;gap:22px}
+    .metodo{grid-template-columns:1fr;gap:20px}
+  }
+  @media (max-width:640px){
+    .band{grid-template-columns:1fr;gap:18px}
+    .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:0}
+    .stats > div{border-left:0 !important;padding-left:0 !important;padding-right:16px !important;padding-top:22px !important}
+    .metodo{grid-template-columns:1fr}
+  }
+</style>
+</helmet>
+
+<div style="min-height:100%;background:#07090F;color:#EBEEF8;overflow:hidden;padding-bottom:0">
+
+  <!-- ============ fondo: rejilla fina + halo ============ -->
+  <div style="position:relative">
+    <div aria-hidden="true" style="position:absolute;inset:0;background-image:linear-gradient(#7D97FF 1px,transparent 1px),linear-gradient(90deg,#7D97FF 1px,transparent 1px);background-size:72px 72px;opacity:0.045;mask-image:linear-gradient(#000 0%,#000 55%,transparent 100%);-webkit-mask-image:linear-gradient(#000 0%,#000 55%,transparent 100%)"></div>
+    <div aria-hidden="true" style="position:absolute;top:-340px;left:50%;transform:translateX(-50%);width:1100px;height:700px;border-radius:50%;background:radial-gradient(closest-side,{{acento}} 0%,transparent 100%);opacity:0.17;filter:blur(20px)"></div>
+
+    <!-- ============ cabecera ============ -->
+    <header class="wrap" style="position:relative;display:flex;align-items:center;gap:16px;height:84px">
+      <div style="display:flex;align-items:center;gap:11px">
+        <svg width="24" height="24" viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="1" width="24" height="24" rx="7" fill="#141828" stroke="#2A3149"></rect><circle cx="9" cy="9" r="2.2" fill="#7D97FF"></circle><circle cx="17.5" cy="16.5" r="2.2" fill="#2FD3A0"></circle><path d="M9 9 L17.5 16.5" stroke="#7D97FF" stroke-opacity=".45" stroke-width="1.3"></path></svg>
+        <span class="disp" style="font-weight:600;font-size:15.5px">Academia IA</span>
+      </div>
+      <div style="flex:1"></div>
+      <span class="mono" style="font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#7F87A3">Capacitación corporativa</span>
+    </header>
+
+    <!-- ============ hero ============ -->
+    <section class="wrap rise" style="position:relative;padding-top:clamp(48px,7vw,104px);padding-bottom:clamp(40px,5vw,72px)">
+      <div style="display:inline-flex;align-items:center;gap:9px;padding:7px 14px 7px 11px;border:1px solid #2A3149;background:rgba(20,24,40,.6);border-radius:999px;margin-bottom:clamp(22px,3vw,34px)">
+        <span style="width:6px;height:6px;border-radius:50%;background:{{acento}};box-shadow:0 0 10px {{acento}}"></span>
+        <span class="mono" style="font-size:11.5px;letter-spacing:.11em;text-transform:uppercase;color:#A2AAC4">Cinco herramientas · un solo programa</span>
+      </div>
+
+      <h1 class="disp" style="margin:0;font-size:clamp(38px,5.4vw,74px);line-height:1.02;font-weight:600;max-width:16ch;text-wrap:balance">Tu equipo ya paga la IA. Enséñale a usarla.</h1>
+
+      <p style="margin:clamp(20px,2.4vw,30px) 0 0;font-size:clamp(16px,1.3vw,18.5px);line-height:1.6;color:#A2AAC4;max-width:62ch">Cinco portales de capacitación sobre las herramientas que tu empresa ya tiene licenciadas. Cuarenta y dos módulos armados con el trabajo de siempre: la propuesta, el contrato, el informe mensual, el ticket y la respuesta al cliente.</p>
+
+      <div class="cta" style="margin-top:clamp(28px,3vw,40px)">
+        <a href="#cotizar" style="display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 26px;border-radius:12px;background:{{acento}};color:#07090F;font-weight:600;font-size:15.5px;box-shadow:0 10px 40px -12px {{acento}}">Cotizar una capacitación
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </a>
+        <a href="#programa" style="display:inline-flex;align-items:center;height:52px;padding:0 22px;border-radius:12px;border:1px solid #2A3149;background:rgba(20,24,40,.5);color:#EBEEF8;font-weight:500;font-size:15.5px">Ver el temario</a>
+      </div>
+    </section>
+
+    <!-- ============ cifras ============ -->
+    <section class="wrap" style="position:relative;padding-bottom:clamp(56px,7vw,110px)">
+      <div class="stats" style="border-top:1px solid #1B2133">
+        <div style="padding:26px 24px 0 0">
+          <div class="disp mono" style="font-size:clamp(30px,3.2vw,42px);font-weight:500;color:#EBEEF8">05</div>
+          <div class="mono" style="margin-top:8px;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:#7F87A3">Herramientas</div>
+        </div>
+        <div style="padding:26px 24px 0;border-left:1px solid #1B2133">
+          <div class="disp mono" style="font-size:clamp(30px,3.2vw,42px);font-weight:500;color:#EBEEF8">42</div>
+          <div class="mono" style="margin-top:8px;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:#7F87A3">Módulos</div>
+        </div>
+        <div style="padding:26px 24px 0;border-left:1px solid #1B2133">
+          <div class="disp mono" style="font-size:clamp(30px,3.2vw,42px);font-weight:500;color:#EBEEF8">215</div>
+          <div class="mono" style="margin-top:8px;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:#7F87A3">Prompts</div>
+        </div>
+        <div style="padding:26px 24px 0;border-left:1px solid #1B2133">
+          <div class="disp mono" style="font-size:clamp(30px,3.2vw,42px);font-weight:500;color:#EBEEF8">126</div>
+          <div class="mono" style="margin-top:8px;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:#7F87A3">Casos por área</div>
+        </div>
+      </div>
+      <p class="mono" style="margin:22px 0 0;font-size:12px;color:#565F7A">Contenido revisado en septiembre de 2026 contra la documentación de cada fabricante.</p>
+    </section>
+  </div>
+
+  <!-- ============ el programa ============ -->
+  <section id="programa" class="wrap" style="padding-bottom:clamp(28px,3vw,44px)">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px">
+      <span class="mono" style="font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:{{acento}}">El programa</span>
+      <span style="flex:1;height:1px;background:linear-gradient(90deg,#2A3149,transparent)"></span>
+    </div>
+    <h2 class="disp" style="margin:0;font-size:clamp(28px,3.3vw,46px);line-height:1.08;font-weight:600;max-width:20ch">Ninguna gana en todo. Por eso son cinco.</h2>
+    <p style="margin:20px 0 0;font-size:clamp(15.5px,1.2vw,17.5px);line-height:1.65;color:#A2AAC4;max-width:74ch">Copilot manda donde el trabajo ya vive en Office. Claude, cuando hay que leer un contrato de ochenta páginas y citar el numeral. Gemini, si la empresa está en Workspace. ChatGPT, para armar asistentes por tarea. Jira, cuando el problema es la cola de tickets y no el documento. El temario se arma con las que tu empresa paga.</p>
+  </section>
+
+  <!-- ============ las cinco capacitaciones ============ -->
+  <section class="wrap" style="padding-bottom:clamp(56px,7vw,104px)">
+
+    <!-- 01 Copilot -->
+    <article class="band" style="position:relative;padding:30px 28px;border-top:1px solid #1B2133">
+      <div aria-hidden="true" style="position:absolute;left:0;top:0;width:260px;height:100%;background:radial-gradient(ellipse at 8% 50%,#0B63CE 0%,transparent 70%);opacity:.13;pointer-events:none"></div>
+      <div style="position:relative;display:flex;gap:16px;align-items:flex-start">
+        <img src="copilot.svg" alt="" style="width:38px;height:38px;flex:none;margin-top:2px">
+        <div>
+          <div style="display:flex;align-items:baseline;gap:10px">
+            <span class="mono" style="font-size:11px;color:#565F7A">01</span>
+            <h3 class="disp" style="margin:0;font-size:21px;font-weight:600">Microsoft 365 Copilot</h3>
+          </div>
+          <p style="margin:8px 0 0;font-size:14.5px;line-height:1.55;color:#A2AAC4">Word, Excel, PowerPoint, Teams y Outlook, más Chat, Cowork y agentes.</p>
+        </div>
+      </div>
+      <div style="position:relative">
+        <div style="display:flex;align-items:baseline;gap:7px">
+          <span class="disp mono" style="font-size:26px;font-weight:500">9</span>
+          <span class="mono" style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#7F87A3">módulos · 54 prompts</span>
+        </div>
+        <div style="display:flex;gap:3px;height:6px;margin-top:12px;border-radius:99px;overflow:hidden">
+          <span style="flex:4;background:#0B63CE"></span>
+          <span style="flex:2;background:#0B63CE;opacity:.62"></span>
+          <span style="flex:3;background:#0B63CE;opacity:.34"></span>
+        </div>
+        <div class="mono" style="margin-top:9px;font-size:11px;color:#565F7A">4 básico · 2 intermedio · 3 avanzado</div>
+      </div>
+      <div style="position:relative;display:flex;flex-direction:column;gap:12px">
+        <div>
+          <div class="mono" style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#0B63CE;filter:brightness(1.5)">Dentro de Office</div>
+          <div style="margin-top:3px;font-size:14.5px;line-height:1.45;color:#EBEEF8">En los archivos que ya existen, no en un chat aparte</div>
+        </div>
+        <div>
+          <div class="mono" style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#0B63CE;filter:brightness(1.5)">Modo agente</div>
+          <div style="margin-top:3px;font-size:14.5px;line-height:1.45;color:#EBEEF8">Le pides el resultado, no el paso</div>
+        </div>
+      </div>
+      <div style="position:relative;display:flex;flex-direction:column;gap:12px;align-items:flex-start">
+        <sc-if value="{{ precios }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:9px 12px;border:1px solid #2A3149;border-radius:10px;background:rgba(20,24,40,.55)">
+            <div class="mono" style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#7F87A3">Desde</div>
+            <div style="margin-top:3px;font-size:13px;font-weight:500;color:#EBEEF8">USD 21 / usuario</div>
+            <div class="mono" style="margin-top:2px;font-size:10.5px;color:#565F7A">Copilot Business</div>
+          </div>
+        </sc-if>
+        <a href="#cotizar" class="mono" style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase">Ver temario →</a>
+      </div>
+    </article>
+
+    <!-- 02 Claude -->
+    <article class="band" style="position:relative;padding:30px 28px;border-top:1px solid #1B2133">
+      <div aria-hidden="true" style="position:absolute;left:0;top:0;width:260px;height:100%;background:radial-gradient(ellipse at 8% 50%,#C15F3C 0%,transparent 70%);opacity:.15;pointer-events:none"></div>
+      <div style="position:relative;display:flex;gap:16px;align-items:flex-start">
+        <img src="claude.svg" alt="" style="width:38px;height:38px;flex:none;margin-top:2px">
+        <div>
+          <div style="display:flex;align-items:baseline;gap:10px">
+            <span class="mono" style="font-size:11px;color:#565F7A">02</span>
+            <h3 class="disp" style="margin:0;font-size:21px;font-weight:600">Claude</h3>
+          </div>
+          <p style="margin:8px 0 0;font-size:14.5px;line-height:1.55;color:#A2AAC4">Artifacts, proyectos por cliente, research con fuentes, skills y conexiones a los sistemas.</p>
+        </div>
+      </div>
+      <div style="position:relative">
+        <div style="display:flex;align-items:baseline;gap:7px">
+          <span class="disp mono" style="font-size:26px;font-weight:500">9</span>
+          <span class="mono" style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#7F87A3">módulos · 41 prompts</span>
+        </div>
+        <div style="display:flex;gap:3px;height:6px;margin-top:12px;border-radius:99px;overflow:hidden">
+          <span style="flex:2;background:#C15F3C"></span>
+          <span style="flex:4;background:#C15F3C;opacity:.62"></span>
+          <span style="flex:3;background:#C15F3C;opacity:.34"></span>
+        </div>
+        <div class="mono" style="margin-top:9px;font-size:11px;color:#565F7A">2 básico · 4 intermedio · 3 avanzado</div>
+      </div>
+      <div style="position:relative;display:flex;flex-direction:column;gap:12px">
+        <div>
+          <div class="mono" style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#C15F3C;filter:brightness(1.35)">Contexto largo</div>
+          <div style="margin-top:3px;font-size:14.5px;line-height:1.45;color:#EBEEF8">Documentos completos, no fragmentos</div>
+        </div>
+        <div>
+          <div class="mono" style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#C15F3C;filter:brightness(1.35)">MCP</div>
+          <div style="margin-top:3px;font-size:14.5px;line-height:1.45;color:#EBEEF8">Se conecta a los sistemas de la empresa</div>
+        </div>
+      </div>
+      <div style="position:relative;display:flex;flex-direction:column;gap:12px;align-items:flex-start">
+        <sc-if value="{{ precios }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:9px 12px;border:1px solid #2A3149;border-radius:10px;background:rgba(20,24,40,.55)">
+            <div class="mono" style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#7F87A3">Desde</div>
+            <div style="margin-top:3px;font-size:13px;font-weight:500;color:#EBEEF8">USD 20 / puesto</div>
+            <div class="mono" style="margin-top:2px;font-size:10.5px;color:#565F7A">Claude Team</div>
+          </div>
+        </sc-if>
+        <a href="#cotizar" class="mono" style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase">Ver temario →</a>
+      </div>
+    </article>
+
+    <!-- 03 Gemini -->
+    <article class="band" style="position:relative;padding:30px 28px;border-top:1px solid #1B2133">
+      <div aria-hidden="true" style="position:absolute;left:0;top:0;width:260px;height:100%;background:radial-gradient(ellipse at 8% 50%,#3B5BDB 0%,transparent 70%);opacity:.15;pointer-events:none"></div>
+      <div style="position:relative;display:flex;gap:16px;align-items:flex-start">
+        <img src="gemini.svg" alt="" style="width:38px;height:38px;flex:none;margin-top:2px">
+        <div>
+          <div style="display:flex;align-items:baseline;gap:10px">
+            <span class="mono" style="font-size:11px;color:#565F7A">03</span>
+            <h3 class="disp" style="margin:0;font-size:21px;font-weight:600">Gemini</h3>
+          </div>
+          <p style="margin:8px 0 0;font-size:14.5px;line-height:1.55;color:#A2AAC4">Live con voz y cámara, Deep Research, Canvas, Gems, NotebookLM y Gemini dentro de Workspace.</p>
+        </div>
+      </div>
+      <div style="position:relative">
+        <div style="display:flex;align-items:baseline;gap:7px">
+          <span class="disp mono" style="font-size:26px;font-weight:500">8</span>
+          <span class="mono" style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#7F87A3">módulos · 40 prompts</span>
+        </div>
+        <div style="display:flex;gap:3px;height:6px;margin-top:12px;border-radius:99px;overflow:hidden">
+          <span style="flex:3;background:#3B5BDB"></span>
+          <span style="flex:4;background:#3B5BDB;opacity:.62"></span>
+          <span style="flex:1;background:#3B5BDB;opacity:.34"></span>
+        </div>
+        <div class="mono" style="margin-top:9px;font-size:11px;color:#565F7A">3 básico · 4 intermedio · 1 avanzado</div>
+      </div>
+      <div style="position:relative;display:flex;flex-direction:column;gap:12px">
+        <div>
+          <div class="mono" style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#3B5BDB;filter:brightness(1.75)">Workspace</div>
+          <div style="margin-top:3px;font-size:14.5px;line-height:1.45;color:#EBEEF8">Dentro de Gmail, Docs y Sheets</div>
+        </div>
+        <div>
+          <div class="mono" style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#3B5BDB;filter:brightness(1.75)">NotebookLM</div>
+          <div style="margin-top:3px;font-size:14.5px;line-height:1.45;color:#EBEEF8">Respuestas con la cita del documento</div>
+        </div>
+      </div>
+      <div style="position:relative;display:flex;flex-direction:column;gap:12px;align-items:flex-start">
+        <sc-if value="{{ precios }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:9px 12px;border:1px solid #2A3149;border-radius:10px;background:rgba(20,24,40,.55)">
+            <div class="mono" style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#7F87A3">Desde</div>
+            <div style="margin-top:3px;font-size:13px;font-weight:500;color:#EBEEF8">USD 18 / usuario</div>
+            <div class="mono" style="margin-top:2px;font-size:10.5px;color:#565F7A">Workspace Business</div>
+          </div>
+        </sc-if>
+        <a href="#cotizar" class="mono" style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase">Ver temario →</a>
+      </div>
+    </article>
+
+    <!-- 04 ChatGPT -->
+    <article class="band" style="position:relative;padding:30px 28px;border-top:1px solid #1B2133">
+      <div aria-hidden="true" style="position:absolute;left:0;top:0;width:260px;height:100%;background:radial-gradient(ellipse at 8% 50%,#0E7C63 0%,transparent 70%);opacity:.16;pointer-events:none"></div>
+      <div style="position:relative;display:flex;gap:16px;align-items:flex-start">
+        <img src="chatgpt.svg" alt="" style="width:38px;height:38px;flex:none;margin-top:2px">
+        <div>
+          <div style="display:flex;align-items:baseline;gap:10px">
+            <span class="mono" style="font-size:11px;color:#565F7A">04</span>
+            <h3 class="disp" style="margin:0;font-size:21px;font-weight:600">ChatGPT</h3>
+          </div>
+          <p style="margin:8px 0 0;font-size:14.5px;line-height:1.55;color:#A2AAC4">Bloques de escritura, voz, GPTs propios, Deep Research, Agent Mode, Codex e imágenes.</p>
+        </div>
+      </div>
+      <div style="position:relative">
+        <div style="display:flex;align-items:baseline;gap:7px">
+          <span class="disp mono" style="font-size:26px;font-weight:500">8</span>
+          <span class="mono" style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#7F87A3">módulos · 40 prompts</span>
+        </div>
+        <div style="display:flex;gap:3px;height:6px;margin-top:12px;border-radius:99px;overflow:hidden">
+          <span style="flex:3;background:#0E7C63"></span>
+          <span style="flex:3;background:#0E7C63;opacity:.62"></span>
+          <span style="flex:2;background:#0E7C63;opacity:.34"></span>
+        </div>
+        <div class="mono" style="margin-top:9px;font-size:11px;color:#565F7A">3 básico · 3 intermedio · 2 avanzado</div>
+      </div>
+      <div style="position:relative;display:flex;flex-direction:column;gap:12px">
+        <div>
+          <div class="mono" style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#0E7C63;filter:brightness(1.9)">GPTs</div>
+          <div style="margin-top:3px;font-size:14.5px;line-height:1.45;color:#EBEEF8">Asistentes propios por tarea</div>
+        </div>
+        <div>
+          <div class="mono" style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#0E7C63;filter:brightness(1.9)">Agent Mode</div>
+          <div style="margin-top:3px;font-size:14.5px;line-height:1.45;color:#EBEEF8">Ejecuta, no solo responde</div>
+        </div>
+      </div>
+      <div style="position:relative;display:flex;flex-direction:column;gap:12px;align-items:flex-start">
+        <sc-if value="{{ precios }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:9px 12px;border:1px solid #2A3149;border-radius:10px;background:rgba(20,24,40,.55)">
+            <div class="mono" style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#7F87A3">Desde</div>
+            <div style="margin-top:3px;font-size:13px;font-weight:500;color:#EBEEF8">USD 20 a 25 / usuario</div>
+            <div class="mono" style="margin-top:2px;font-size:10.5px;color:#565F7A">ChatGPT Business</div>
+          </div>
+        </sc-if>
+        <a href="#cotizar" class="mono" style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase">Ver temario →</a>
+      </div>
+    </article>
+
+    <!-- 05 Jira -->
+    <article class="band" style="position:relative;padding:30px 28px;border-top:1px solid #1B2133;border-bottom:1px solid #1B2133">
+      <div aria-hidden="true" style="position:absolute;left:0;top:0;width:260px;height:100%;background:radial-gradient(ellipse at 8% 50%,#2684FF 0%,transparent 70%);opacity:.15;pointer-events:none"></div>
+      <div style="position:relative;display:flex;gap:16px;align-items:flex-start">
+        <img src="jira.svg" alt="" style="width:38px;height:38px;flex:none;margin-top:2px">
+        <div>
+          <div style="display:flex;align-items:baseline;gap:10px">
+            <span class="mono" style="font-size:11px;color:#565F7A">05</span>
+            <h3 class="disp" style="margin:0;font-size:21px;font-weight:600">Jira</h3>
+            <span class="mono" style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:{{acento}};border:1px solid #2A3149;border-radius:99px;padding:3px 8px">Nuevo</span>
+          </div>
+          <p style="margin:8px 0 0;font-size:14.5px;line-height:1.55;color:#A2AAC4">Rovo dentro de Jira: preguntar por el proyecto, resumir hilos, escribir tickets y delegar el triaje a un agente.</p>
+        </div>
+      </div>
+      <div style="position:relative">
+        <div style="display:flex;align-items:baseline;gap:7px">
+          <span class="disp mono" style="font-size:26px;font-weight:500">8</span>
+          <span class="mono" style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#7F87A3">módulos · 40 prompts</span>
+        </div>
+        <div style="display:flex;gap:3px;height:6px;margin-top:12px;border-radius:99px;overflow:hidden">
+          <span style="flex:3;background:#2684FF"></span>
+          <span style="flex:4;background:#2684FF;opacity:.62"></span>
+          <span style="flex:1;background:#2684FF;opacity:.34"></span>
+        </div>
+        <div class="mono" style="margin-top:9px;font-size:11px;color:#565F7A">3 básico · 4 intermedio · 1 avanzado</div>
+      </div>
+      <div style="position:relative;display:flex;flex-direction:column;gap:12px">
+        <div>
+          <div class="mono" style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#2684FF">Rovo Agents</div>
+          <div style="margin-top:3px;font-size:14.5px;line-height:1.45;color:#EBEEF8">El procedimiento se ejecuta igual siempre</div>
+        </div>
+        <div>
+          <div class="mono" style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#2684FF">Automation</div>
+          <div style="margin-top:3px;font-size:14.5px;line-height:1.45;color:#EBEEF8">La IA adentro de la regla, no al lado</div>
+        </div>
+      </div>
+      <div style="position:relative;display:flex;flex-direction:column;gap:12px;align-items:flex-start">
+        <sc-if value="{{ precios }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:9px 12px;border:1px solid #2A3149;border-radius:10px;background:rgba(20,24,40,.55)">
+            <div class="mono" style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#7F87A3">Desde</div>
+            <div style="margin-top:3px;font-size:13px;font-weight:500;color:#EBEEF8">USD 9,05 / usuario</div>
+            <div class="mono" style="margin-top:2px;font-size:10.5px;color:#565F7A">Jira Standard</div>
+          </div>
+        </sc-if>
+        <a href="#cotizar" class="mono" style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase">Ver temario →</a>
+      </div>
+    </article>
+
+    <p class="mono" style="margin:20px 0 0;font-size:12px;color:#565F7A">Los precios son de la licencia del fabricante, no de la capacitación. Se muestran para ubicar desde qué plan se puede dictar el temario completo.</p>
+  </section>
+
+  <!-- ============ método ============ -->
+  <section style="position:relative;background:#0A0D17;border-top:1px solid #1B2133;border-bottom:1px solid #1B2133">
+    <div aria-hidden="true" style="position:absolute;inset:0;background-image:linear-gradient(90deg,#7D97FF 1px,transparent 1px);background-size:72px 100%;opacity:.03;pointer-events:none"></div>
+    <div class="wrap" style="position:relative;padding-top:clamp(56px,6vw,92px);padding-bottom:clamp(56px,6vw,92px)">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px">
+        <span class="mono" style="font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:{{acento}}">Cómo se dicta</span>
+        <span style="flex:1;height:1px;background:linear-gradient(90deg,#2A3149,transparent)"></span>
+      </div>
+      <h2 class="disp" style="margin:0 0 clamp(34px,4vw,52px);font-size:clamp(28px,3.3vw,46px);line-height:1.08;font-weight:600;max-width:22ch">Leer prompts buenos no enseña a escribirlos.</h2>
+
+      <div class="metodo">
+        <div style="padding:26px;border:1px solid #2A3149;border-radius:14px;background:rgba(20,24,40,.55)">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="color:{{acento}}"><path d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6Z" stroke="currentColor" stroke-width="1.4"></path><path d="M4 4l16 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
+          <h3 class="disp" style="margin:18px 0 0;font-size:19px;font-weight:600">Se escribe a ciegas</h3>
+          <p style="margin:10px 0 0;font-size:14.5px;line-height:1.6;color:#A2AAC4">Primero sale un caso real del área y cada quien escribe su prompt sin ver la rúbrica. La revisión llega después, con los errores típicos de ese módulo. No se guarda nada: ni el intento, ni la nota, ni quién entrenó.</p>
+        </div>
+        <div style="padding:26px;border:1px solid #2A3149;border-radius:14px;background:rgba(20,24,40,.55)">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="color:{{acento}}"><path d="M4 6h16M4 12h10M4 18h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path><circle cx="18" cy="16" r="3.4" stroke="currentColor" stroke-width="1.4"></circle></svg>
+          <h3 class="disp" style="margin:18px 0 0;font-size:19px;font-weight:600">Se dicta lo que tu plan habilita</h3>
+          <p style="margin:10px 0 0;font-size:14.5px;line-height:1.6;color:#A2AAC4">El portal se abre con el plan que la empresa tiene contratado y el temario se recorta solo. Lo que queda fuera no se esconde: sale con el plan mínimo que haría falta, que suele ser la conversación más útil de la sesión.</p>
+        </div>
+        <div style="padding:26px;border:1px solid #2A3149;border-radius:14px;background:rgba(20,24,40,.55)">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="color:{{acento}}"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.4"></path><path d="M14 3v5h5M9 13h6M9 17h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
+          <h3 class="disp" style="margin:18px 0 0;font-size:19px;font-weight:600">Cada uno se lleva su material</h3>
+          <p style="margin:10px 0 0;font-size:14.5px;line-height:1.6;color:#A2AAC4">Guía de prompts, plantillas y checklist en PDF y Word, con el logo de tu empresa y los ejemplos de tu operación. Se descargan desde el portal y quedan para el que entre después.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ cierre ============ -->
+  <section id="cotizar" style="position:relative">
+    <div aria-hidden="true" style="position:absolute;bottom:-260px;left:50%;transform:translateX(-50%);width:900px;height:520px;border-radius:50%;background:radial-gradient(closest-side,{{acento}} 0%,transparent 100%);opacity:.15;filter:blur(14px);pointer-events:none"></div>
+    <div class="wrap" style="position:relative;padding-top:clamp(64px,7vw,110px);padding-bottom:clamp(48px,5vw,80px);text-align:center">
+      <h2 class="disp" style="margin:0 auto;font-size:clamp(30px,3.8vw,52px);line-height:1.06;font-weight:600;max-width:18ch">¿Con cuáles empezamos?</h2>
+      <p style="margin:20px auto 0;font-size:clamp(15.5px,1.2vw,17.5px);line-height:1.6;color:#A2AAC4;max-width:56ch">Cuéntanos qué licencias tiene la empresa y cuánta gente entra. Armamos el temario con lo que ya paga y dejamos por escrito qué se gana subiendo de plan.</p>
+      <div class="cta" style="justify-content:center;margin-top:clamp(28px,3vw,38px)">
+        <a href="mailto:[TU CORREO]" style="display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 26px;border-radius:12px;background:{{acento}};color:#07090F;font-weight:600;font-size:15.5px;box-shadow:0 10px 40px -12px {{acento}}">Cotizar una capacitación
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </a>
+      </div>
+      <div class="mono" style="margin-top:24px;font-size:12.5px;color:#7F87A3;display:flex;gap:18px;justify-content:center;flex-wrap:wrap">
+        <span>[TU CORREO]</span>
+        <span style="color:#2A3149">·</span>
+        <span>[TU TELÉFONO]</span>
+        <span style="color:#2A3149">·</span>
+        <span>[TU SITIO]</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ pie ============ -->
+  <footer class="wrap" style="padding-top:28px;padding-bottom:40px;border-top:1px solid #1B2133;display:flex;gap:18px;flex-wrap:wrap;align-items:baseline">
+    <span class="disp" style="font-size:14px;font-weight:600">Academia IA</span>
+    <span class="mono" style="font-size:11.5px;color:#565F7A">Capacitación corporativa en herramientas de IA</span>
+    <span style="flex:1"></span>
+    <span class="mono" style="font-size:11px;color:#565F7A;max-width:62ch">Microsoft, Anthropic, Google, OpenAI y Atlassian son marcas de sus respectivos dueños. Esta capacitación no está afiliada a ninguna de ellas.</span>
+  </footer>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"acento":{"editor":"color","default":"#7D97FF","options":["#7D97FF","#2FD3A0","#C15F3C","#E8B33A"],"section":"Marca"},"precios":{"editor":"boolean","default":true,"section":"Contenido"},"$preview":{"width":1440,"height":3200}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      acento: this.props.acento ?? '#7D97FF',
+      precios: this.props.precios ?? true,
+    };
+  }
+}
+</script>
+</body>
+</html>
