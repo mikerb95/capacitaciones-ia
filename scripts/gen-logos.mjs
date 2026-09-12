@@ -35,6 +35,7 @@ const WANTED = {
   sora: 'sora-openai',
   gemini: 'google-gemini',
   notebooklm: 'notebooklm',
+  jira: 'jira',
 };
 
 const entries = [];

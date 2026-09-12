@@ -12,6 +12,7 @@ export const PLATFORM_LOGOS: Record<string, string> = {
   claude: 'claude',
   gemini: 'gemini',
   chatgpt: 'chatgpt',
+  jira: 'jira',
 };
 
 const MODULE_LOGOS: Record<string, string> = {
