@@ -78,7 +78,7 @@ export default async function AcademiaPage() {
             </span>
           </span>
           <span className="flex-1" />
-          <span className={`${ETIQUETA} text-faint`}>Capacitación corporativa</span>
+          <span className={`${ETIQUETA} hidden text-faint sm:inline`}>Capacitación corporativa</span>
         </header>
 
         <section className="relative mx-auto w-full max-w-[1240px] px-5 pt-12 pb-10 sm:px-10 sm:pt-[104px] sm:pb-[72px]">
@@ -304,6 +304,10 @@ function Banda({ p, indice, ultima }: { p: Resumen; indice: number; ultima: bool
   const logo = platformLogo(p.id);
   const claro = `color-mix(in srgb, ${p.color} 45%, #EBEEF8)`;
 
+  // Varios planes del seed traen el precio escrito como "Desde USD 20 / mes".
+  // El rótulo del chip ya dice "Desde", así que se le quita al valor.
+  const precio = p.plan?.price.replace(/^desde\s+/i, '');
+
   const niveles = [
     { cuenta: p.levels.basico, opacidad: 1, nombre: 'básico' },
     { cuenta: p.levels.intermedio, opacidad: 0.62, nombre: 'intermedio' },
@@ -380,7 +384,7 @@ function Banda({ p, indice, ultima }: { p: Resumen; indice: number; ultima: bool
         {p.plan && (
           <div className="rounded-[10px] border border-line bg-surface px-3 py-2.5">
             <div className={`${ETIQUETA} text-[10px] tracking-[0.1em] text-faint`}>Desde</div>
-            <div className="mt-[3px] text-[13px] font-medium">{p.plan.price}</div>
+            <div className="mt-[3px] text-[13px] font-medium">{precio}</div>
             <div className="mt-0.5 font-mono text-[10.5px] text-[#565F7A]">{p.plan.name}</div>
           </div>
         )}
