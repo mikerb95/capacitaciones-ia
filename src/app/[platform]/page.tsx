@@ -1,8 +1,10 @@
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { PlanExplorer } from '@/components/plan-explorer';
 import { Card, PlatformMark, SectionTitle, SiteHeader, StatusBadge } from '@/components/ui';
-import { getPlatform, getPlatformIds } from '@/db/queries';
+import { getCourseProgress, getPlatform, getPlatformIds } from '@/db/queries';
 import { moduleLogo, platformLogo } from '@/lib/brand-logos';
+import { cursoEnAlcance, duracion, getCurso, resumir } from '@/lib/ruta';
 import { hasModule, hasPlatform, requireScopedParticipant } from '@/lib/scope';
 
 export const dynamic = 'force-dynamic';
@@ -24,7 +26,7 @@ export async function generateMetadata({ params }: Params) {
 }
 
 export default async function PlatformPage({ params, searchParams }: Params) {
-  const { scope, plans } = await requireScopedParticipant();
+  const { participant, scope, plans } = await requireScopedParticipant();
 
   const { platform: id } = await params;
   const { plan } = await searchParams;
@@ -37,6 +39,14 @@ export default async function PlatformPage({ params, searchParams }: Params) {
     ...found,
     modules: found.modules.filter((m) => hasModule(scope, m.id)),
   };
+
+  // La ruta guiada, si la plataforma tiene una. Se recorta con los mismos
+  // módulos que ve el portal, así los números de la tarjeta cuadran con el curso.
+  const cursoBase = getCurso(platform.id);
+  const curso = cursoBase
+    ? cursoEnAlcance(cursoBase, (slug) => platform.modules.some((m) => m.slug === slug))
+    : null;
+  const ruta = curso ? resumir(curso, await getCourseProgress(participant.id, platform.id)) : null;
 
   return (
     <div className="tone min-h-screen bg-bg" style={{ ['--tone' as string]: platform.color }}>
@@ -94,6 +104,43 @@ export default async function PlatformPage({ params, searchParams }: Params) {
             </dl>
           )}
         </section>
+
+        {curso && ruta && (
+          <section className="mb-16">
+            <Link
+              href={`/ruta/${platform.id}`}
+              className="group grid gap-5 rounded-card border border-[var(--tone-line)] bg-surface p-6 shadow-card transition-[box-shadow,background-color] hover:bg-[var(--tone-soft)] hover:shadow-lift sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:p-7"
+            >
+              <div className="min-w-0">
+                <p className="flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-muted">
+                  <span className="size-2 rounded-full bg-[var(--tone)]" aria-hidden="true" />
+                  {curso.subtitulo}
+                </p>
+                <h2 className="mt-2 font-display text-[22px] font-semibold tracking-tight sm:text-[26px]">
+                  {curso.titulo}
+                </h2>
+                <p className="mt-1.5 max-w-[64ch] text-[14px] leading-relaxed text-muted">
+                  {ruta.total} lecciones en {curso.niveles.length} niveles, prácticas revisadas por IA,
+                  exámenes y certificado. {duracion(ruta.minutosTotales)} de contenido, a tu ritmo.
+                </p>
+                {ruta.completadas > 0 && (
+                  <div className="mt-4 flex max-w-[360px] items-center gap-3">
+                    <span className="block h-1.5 flex-1 overflow-hidden rounded-full bg-surface-2">
+                      <span
+                        className="block h-full rounded-full bg-[var(--tone)]"
+                        style={{ width: `${ruta.porcentaje}%` }}
+                      />
+                    </span>
+                    <span className="font-mono text-[12px] text-muted">{ruta.porcentaje}%</span>
+                  </div>
+                )}
+              </div>
+              <span className="justify-self-start rounded-xl bg-[var(--tone)] px-5 py-3 text-[14px] font-semibold text-white transition-opacity group-hover:opacity-90">
+                {ruta.completadas > 0 ? 'Continuar la ruta' : 'Empezar la ruta'} &rarr;
+              </span>
+            </Link>
+          </section>
+        )}
 
         {/* Planes, modelos y módulos: el filtro por facturación manda sobre todo
             el listado, así que las tres cosas viven juntas. */}

@@ -18,7 +18,7 @@ type Props = {
  * El examen de nivel. Se contesta completo y se envía de una vez; la nota la
  * pone el servidor. Mientras no apruebe, la persona ve qué preguntas falló y
  * por qué su opción no era, pero no cuál era la correcta: para eso están las
- * lecciones, y el siguiente intento vuelve a mezclar el orden de las opciones.
+ * lecciones, y cada intento mezcla el orden de las opciones.
  */
 export function Examen({ platformId, slug, preguntas, aprobacion, previo, siguiente }: Props) {
   // Orden de opciones por intento. Se baraja en el cliente solo para mostrar:
@@ -72,7 +72,12 @@ export function Examen({ platformId, slug, preguntas, aprobacion, previo, siguie
         <div className="mt-5 flex flex-wrap items-center gap-3">
           <button
             type="button"
-            onClick={() => setEmpezado(true)}
+            onClick={() => {
+              // Se baraja al empezar y no al montar: en el servidor no hay azar
+              // que coincida con el del navegador.
+              setOrden(preguntas.map((p) => barajar(p.opciones.map((_, i) => i))));
+              setEmpezado(true);
+            }}
             className="rounded-lg bg-[var(--tone)] px-5 py-2.5 text-[13.5px] font-semibold text-white transition-opacity hover:opacity-90"
           >
             {previo.intentos ? (previo.aprobado ? 'Repasar el examen' : 'Intentar de nuevo') : 'Empezar el examen'}
