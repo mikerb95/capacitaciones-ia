@@ -112,6 +112,93 @@ body {
   --tone-line: color-mix(in srgb, var(--tone) 30%, var(--border));
 }
 
+/*
+ * La landing comercial (/academia) tiene paleta propia: no es el aula, es la
+ * pieza que se le manda a un cliente. Se declara acá y no en el componente
+ * porque tiene que responder al tema, y un `style` en línea no puede llevar
+ * media queries. Sigue los mismos tres estados que el portal: claro por
+ * defecto, oscuro si el sistema lo pide y no hay preferencia explícita, y
+ * oscuro forzado con data-theme.
+ *
+ * Además de los tokens del portal define los suyos, que son los que hacen que
+ * la atmósfera funcione en los dos temas: sobre negro los halos y la rejilla
+ * son luz que se suma, sobre blanco tienen que ser tinte que se resta, así que
+ * no basta con intercambiar el fondo.
+ */
+.landing {
+  color-scheme: light;
+
+  --bg: #f4f6fc;
+  --surface: #ffffff;
+  --surface-2: #edf1fb;
+  --border: #dce3f3;
+  --text: #101426;
+  --muted: #565f7a;
+  --faint: #8189a3;
+  --primary: #3b5bdb;
+
+  /* El filete que separa secciones, más tenue que el borde de una caja. */
+  --filete: #e1e7f5;
+  /* El gris del texto en mono de los pies. Un escalón por debajo de --faint. */
+  --tenue: #9aa1b8;
+  /* Sobre el botón del acento. */
+  --sobre-acento: #ffffff;
+  /* Con qué y cuánto se mezcla el color de marca para el rótulo del
+     diferencial: sobre blanco se oscurece apenas, sobre negro se aclara. */
+  --marca-pct: 88%;
+  --marca-tinte: #101426;
+  /* Los halos detrás de cada logo y el del titular, y la rejilla de fondo. */
+  --halo: 0.1;
+  --halo-hero: 0.13;
+  --rejilla: 0.05;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .landing {
+    color-scheme: dark;
+
+    --bg: #07090f;
+    --surface: rgb(20 24 40 / 0.55);
+    --surface-2: #0a0d17;
+    --border: #2a3149;
+    --text: #ebeef8;
+    --muted: #a2aac4;
+    --faint: #7f87a3;
+    --primary: #7d97ff;
+
+    --filete: #1b2133;
+    --tenue: #565f7a;
+    --sobre-acento: #07090f;
+    --marca-pct: 45%;
+    --marca-tinte: #ebeef8;
+    --halo: 0.14;
+    --halo-hero: 0.17;
+    --rejilla: 0.045;
+  }
+}
+
+:root[data-theme='dark'] .landing {
+  color-scheme: dark;
+
+  --bg: #07090f;
+  --surface: rgb(20 24 40 / 0.55);
+  --surface-2: #0a0d17;
+  --border: #2a3149;
+  --text: #ebeef8;
+  --muted: #a2aac4;
+  --faint: #7f87a3;
+  --primary: #7d97ff;
+
+  --filete: #1b2133;
+  --tenue: #565f7a;
+  --sobre-acento: #07090f;
+  --marca-pct: 45%;
+  --marca-tinte: #ebeef8;
+  --halo: 0.14;
+  --halo-hero: 0.17;
+  --rejilla: 0.045;
+}
+
 @media print {
   .no-print {
     display: none !important;

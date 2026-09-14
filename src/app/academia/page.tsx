@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import type { CSSProperties } from 'react';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { getLandingSummary } from '@/db/queries';
 import { platformLogo } from '@/lib/brand-logos';
 import { Logo } from '@/lib/logos';
@@ -14,25 +14,13 @@ export const metadata: Metadata = {
 };
 
 /**
- * La landing es la única página oscura del sitio y no sigue el interruptor de
- * tema: es una pieza comercial, no parte del aula. En vez de escribir los
- * colores a mano en cada clase, redefine los tokens del portal en el contenedor
- * y así se siguen usando `text-muted`, `border-line` y compañía.
+ * La landing no es el aula: es la pieza comercial, y por eso lleva paleta
+ * propia. Vive en `globals.css` bajo `.landing`, con sus tres estados de tema,
+ * porque los halos y la rejilla no se invierten solos al cambiar el fondo.
  */
-const PALETA = {
-  '--bg': '#07090F',
-  '--surface': 'rgba(20, 24, 40, 0.55)',
-  '--surface-2': '#0A0D17',
-  '--border': '#2A3149',
-  '--text': '#EBEEF8',
-  '--muted': '#A2AAC4',
-  '--faint': '#7F87A3',
-  '--primary': '#7D97FF',
-} as CSSProperties;
 
-/** Los filetes que separan secciones van más apagados que los bordes de caja. */
-const FILETE = '#1B2133';
-const ACENTO = '#7D97FF';
+/** El acento de la pieza. Es el `--primary` del portal, que ya sigue al tema. */
+const ACENTO = 'var(--primary)';
 
 const ETIQUETA = 'font-mono text-[11.5px] uppercase tracking-[0.12em]';
 
@@ -51,12 +39,12 @@ export default async function AcademiaPage() {
   );
 
   return (
-    <div className="min-h-screen overflow-hidden bg-bg text-text" style={PALETA}>
+    <div className="landing min-h-screen overflow-hidden bg-bg text-text">
       <div className="relative">
         {/* Rejilla fina que se desvanece hacia abajo, y el halo del titular. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.045]"
+          className="pointer-events-none absolute inset-0 opacity-[var(--rejilla)]"
           style={{
             backgroundImage: `linear-gradient(${ACENTO} 1px, transparent 1px), linear-gradient(90deg, ${ACENTO} 1px, transparent 1px)`,
             backgroundSize: '72px 72px',
@@ -66,7 +54,7 @@ export default async function AcademiaPage() {
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute -top-[340px] left-1/2 h-[700px] w-[1100px] -translate-x-1/2 rounded-full opacity-[0.17] blur-[20px]"
+          className="pointer-events-none absolute -top-[340px] left-1/2 h-[700px] w-[1100px] -translate-x-1/2 rounded-full opacity-[var(--halo-hero)] blur-[20px]"
           style={{ background: `radial-gradient(closest-side, ${ACENTO} 0%, transparent 100%)` }}
         />
 
@@ -79,10 +67,11 @@ export default async function AcademiaPage() {
           </span>
           <span className="flex-1" />
           <span className={`${ETIQUETA} hidden text-faint sm:inline`}>Capacitación corporativa</span>
+          <ThemeToggle />
         </header>
 
         <section className="relative mx-auto w-full max-w-[1240px] px-5 pt-12 pb-10 sm:px-10 sm:pt-[104px] sm:pb-[72px]">
-          <p className="mb-6 inline-flex items-center gap-2.5 rounded-full border border-line bg-[rgba(20,24,40,0.6)] py-[7px] pr-3.5 pl-[11px] sm:mb-[34px]">
+          <p className="mb-6 inline-flex items-center gap-2.5 rounded-full border border-line bg-surface py-[7px] pr-3.5 pl-[11px] sm:mb-[34px]">
             <span
               className="h-1.5 w-1.5 rounded-full"
               style={{ background: ACENTO, boxShadow: `0 0 10px ${ACENTO}` }}
@@ -106,8 +95,8 @@ export default async function AcademiaPage() {
               className="inline-flex h-[52px] items-center gap-2.5 rounded-xl px-6 text-[15.5px] font-semibold"
               style={{
                 background: ACENTO,
-                color: '#07090F',
-                boxShadow: `0 10px 40px -12px ${ACENTO}`,
+                color: 'var(--sobre-acento)',
+                boxShadow: '0 10px 40px -12px var(--primary)',
               }}
             >
               Cotizar una capacitación
@@ -115,7 +104,7 @@ export default async function AcademiaPage() {
             </a>
             <a
               href="#programa"
-              className="inline-flex h-[52px] items-center rounded-xl border border-line bg-[rgba(20,24,40,0.5)] px-5.5 text-[15.5px] font-medium"
+              className="inline-flex h-[52px] items-center rounded-xl border border-line bg-surface px-5.5 text-[15.5px] font-medium"
             >
               Ver el temario
             </a>
@@ -125,14 +114,14 @@ export default async function AcademiaPage() {
         <section className="relative mx-auto w-full max-w-[1240px] px-5 pb-14 sm:px-10 sm:pb-[110px]">
           <div
             className="grid grid-cols-2 border-t md:grid-cols-4"
-            style={{ borderColor: FILETE }}
+            style={{ borderColor: 'var(--filete)' }}
           >
             <Cifra valor={String(plataformas.length).padStart(2, '0')} etiqueta="Herramientas" />
             <Cifra valor={String(total.modulos)} etiqueta="Módulos" borde />
             <Cifra valor={String(total.prompts)} etiqueta="Prompts" borde />
             <Cifra valor={String(total.casos)} etiqueta="Casos por área" borde />
           </div>
-          <p className="mt-5 font-mono text-[12px] text-[#565F7A]">
+          <p className="mt-5 font-mono text-[12px] text-[var(--tenue)]">
             Contenido revisado en {MODELS_REVISION} contra la documentación de cada fabricante.
           </p>
         </section>
@@ -158,7 +147,7 @@ export default async function AcademiaPage() {
         {plataformas.map((p, i) => (
           <Banda key={p.id} p={p} indice={i + 1} ultima={i === plataformas.length - 1} />
         ))}
-        <p className="mt-5 font-mono text-[12px] text-[#565F7A]">
+        <p className="mt-5 font-mono text-[12px] text-[var(--tenue)]">
           Los precios son de la licencia del fabricante, no de la capacitación. Se muestran para
           ubicar desde qué plan se puede dictar el temario completo.
         </p>
@@ -166,11 +155,11 @@ export default async function AcademiaPage() {
 
       <section
         className="relative border-y bg-surface-2"
-        style={{ borderColor: FILETE }}
+        style={{ borderColor: 'var(--filete)' }}
       >
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.03]"
+          className="pointer-events-none absolute inset-0 opacity-[var(--rejilla)]"
           style={{
             backgroundImage: `linear-gradient(90deg, ${ACENTO} 1px, transparent 1px)`,
             backgroundSize: '72px 100%',
@@ -205,7 +194,7 @@ export default async function AcademiaPage() {
       <section id="cotizar" className="relative scroll-mt-10">
         <div
           aria-hidden
-          className="pointer-events-none absolute -bottom-[260px] left-1/2 h-[520px] w-[900px] -translate-x-1/2 rounded-full opacity-[0.15] blur-[14px]"
+          className="pointer-events-none absolute -bottom-[260px] left-1/2 h-[520px] w-[900px] -translate-x-1/2 rounded-full opacity-[var(--halo-hero)] blur-[14px]"
           style={{ background: `radial-gradient(closest-side, ${ACENTO} 0%, transparent 100%)` }}
         />
         <div className="relative mx-auto w-full max-w-[1240px] px-5 pt-16 pb-12 text-center sm:px-10 sm:pt-[110px] sm:pb-20">
@@ -222,8 +211,8 @@ export default async function AcademiaPage() {
               className="inline-flex h-[52px] items-center gap-2.5 rounded-xl px-6 text-[15.5px] font-semibold"
               style={{
                 background: ACENTO,
-                color: '#07090F',
-                boxShadow: `0 10px 40px -12px ${ACENTO}`,
+                color: 'var(--sobre-acento)',
+                boxShadow: '0 10px 40px -12px var(--primary)',
               }}
             >
               Cotizar una capacitación
@@ -242,14 +231,14 @@ export default async function AcademiaPage() {
 
       <footer
         className="mx-auto flex w-full max-w-[1240px] flex-wrap items-baseline gap-4 border-t px-5 pt-7 pb-10 sm:px-10"
-        style={{ borderColor: FILETE }}
+        style={{ borderColor: 'var(--filete)' }}
       >
         <span className="font-display text-[14px] font-semibold">Academia IA</span>
-        <span className="font-mono text-[11.5px] text-[#565F7A]">
+        <span className="font-mono text-[11.5px] text-[var(--tenue)]">
           Capacitación corporativa en herramientas de IA
         </span>
         <span className="flex-1" />
-        <span className="max-w-[62ch] font-mono text-[11px] text-[#565F7A]">
+        <span className="max-w-[62ch] font-mono text-[11px] text-[var(--tenue)]">
           Microsoft, Anthropic, Google, OpenAI y Atlassian son marcas de sus respectivos dueños.
           Esta capacitación no está afiliada a ninguna de ellas.
         </span>
@@ -278,7 +267,7 @@ function Rotulo({ children }: { children: React.ReactNode }) {
       </span>
       <span
         className="h-px flex-1"
-        style={{ background: `linear-gradient(90deg, ${FILETE}, transparent)` }}
+        style={{ background: 'linear-gradient(90deg, var(--filete), transparent)' }}
       />
     </div>
   );
@@ -288,7 +277,7 @@ function Cifra({ valor, etiqueta, borde }: { valor: string; etiqueta: string; bo
   return (
     <div
       className={`px-0 pt-6 pr-6 md:pl-6 ${borde ? 'md:border-l' : ''}`}
-      style={borde ? { borderColor: FILETE } : undefined}
+      style={borde ? { borderColor: 'var(--filete)' } : undefined}
     >
       <div className="font-mono text-[30px] font-medium sm:text-[42px]">{valor}</div>
       <div className={`mt-2 ${ETIQUETA} tracking-[0.1em] text-faint`}>{etiqueta}</div>
@@ -302,7 +291,7 @@ function Cifra({ valor, etiqueta, borde }: { valor: string; etiqueta: string; bo
  */
 function Banda({ p, indice, ultima }: { p: Resumen; indice: number; ultima: boolean }) {
   const logo = platformLogo(p.id);
-  const claro = `color-mix(in srgb, ${p.color} 45%, #EBEEF8)`;
+  const claro = `color-mix(in srgb, ${p.color} var(--marca-pct), var(--marca-tinte))`;
 
   // Varios planes del seed traen el precio escrito como "Desde USD 20 / mes".
   // El rótulo del chip ya dice "Desde", así que se le quita al valor.
@@ -317,11 +306,11 @@ function Banda({ p, indice, ultima }: { p: Resumen; indice: number; ultima: bool
   return (
     <article
       className={`relative grid gap-5 border-t px-0 py-7 sm:gap-8 sm:px-7 md:grid-cols-2 lg:grid-cols-[minmax(280px,1.15fr)_208px_minmax(300px,1.25fr)_176px] lg:items-center ${ultima ? 'border-b' : ''}`}
-      style={{ borderColor: FILETE }}
+      style={{ borderColor: 'var(--filete)' }}
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute top-0 left-0 h-full w-[260px] opacity-[0.14]"
+        className="pointer-events-none absolute top-0 left-0 h-full w-[260px] opacity-[var(--halo)]"
         style={{ background: `radial-gradient(ellipse at 8% 50%, ${p.color} 0%, transparent 70%)` }}
       />
 
@@ -338,7 +327,7 @@ function Banda({ p, indice, ultima }: { p: Resumen; indice: number; ultima: bool
         )}
         <div>
           <div className="flex items-baseline gap-2.5">
-            <span className="font-mono text-[11px] text-[#565F7A]">
+            <span className="font-mono text-[11px] text-[var(--tenue)]">
               {String(indice).padStart(2, '0')}
             </span>
             <h3 className="font-display text-[21px] font-semibold tracking-tight">{p.name}</h3>
@@ -364,7 +353,7 @@ function Banda({ p, indice, ultima }: { p: Resumen; indice: number; ultima: bool
             />
           ))}
         </div>
-        <div className="mt-2.5 font-mono text-[11px] text-[#565F7A]">
+        <div className="mt-2.5 font-mono text-[11px] text-[var(--tenue)]">
           {niveles.map((n) => `${n.cuenta} ${n.nombre}`).join(' · ')}
         </div>
       </div>
@@ -385,7 +374,7 @@ function Banda({ p, indice, ultima }: { p: Resumen; indice: number; ultima: bool
           <div className="rounded-[10px] border border-line bg-surface px-3 py-2.5">
             <div className={`${ETIQUETA} text-[10px] tracking-[0.1em] text-faint`}>Desde</div>
             <div className="mt-[3px] text-[13px] font-medium">{precio}</div>
-            <div className="mt-0.5 font-mono text-[10.5px] text-[#565F7A]">{p.plan.name}</div>
+            <div className="mt-0.5 font-mono text-[10.5px] text-[var(--tenue)]">{p.plan.name}</div>
           </div>
         )}
         <a
@@ -422,10 +411,10 @@ function Practica({
 function Marca() {
   return (
     <svg width="24" height="24" viewBox="0 0 26 26" aria-hidden="true">
-      <rect x="1" y="1" width="24" height="24" rx="7" fill="#141828" stroke="#2A3149" />
-      <circle cx="9" cy="9" r="2.2" fill="#7D97FF" />
-      <circle cx="17.5" cy="16.5" r="2.2" fill="#2FD3A0" />
-      <path d="M9 9 L17.5 16.5" stroke="#7D97FF" strokeOpacity=".45" strokeWidth="1.3" />
+      <rect x="1" y="1" width="24" height="24" rx="7" fill="var(--surface)" stroke="var(--border)" />
+      <circle cx="9" cy="9" r="2.2" fill="var(--primary)" />
+      <circle cx="17.5" cy="16.5" r="2.2" fill="var(--accent)" />
+      <path d="M9 9 L17.5 16.5" stroke="var(--primary)" strokeOpacity=".45" strokeWidth="1.3" />
     </svg>
   );
 }
