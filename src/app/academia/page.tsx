@@ -221,9 +221,9 @@ export default async function AcademiaPage() {
           </div>
           <div className="mt-6 flex flex-wrap justify-center gap-4.5 font-mono text-[12.5px] text-faint">
             <span>{CONTACTO.correo}</span>
-            <span className="text-line">·</span>
+            <span className="text-[var(--tenue)]">·</span>
             <span>{CONTACTO.telefono}</span>
-            <span className="text-line">·</span>
+            <span className="text-[var(--tenue)]">·</span>
             <span>{CONTACTO.sitio}</span>
           </div>
         </div>
