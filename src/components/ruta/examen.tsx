@@ -222,9 +222,9 @@ export function Examen({ platformId, slug, preguntas, aprobacion, previo, siguie
 
 function Dato({ valor, etiqueta }: { valor: string; etiqueta: string }) {
   return (
-    <div className="rounded-xl bg-surface-2 px-2 py-3">
-      <dd className="font-display text-[20px] font-semibold tracking-tight">{valor}</dd>
+    <div className="flex flex-col-reverse rounded-xl bg-surface-2 px-2 py-3">
       <dt className="text-[12px] text-muted">{etiqueta}</dt>
+      <dd className="font-display text-[20px] font-semibold tracking-tight">{valor}</dd>
     </div>
   );
 }
