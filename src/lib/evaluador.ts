@@ -58,7 +58,7 @@ export type Resultado =
  * pueden cambiar por variable de entorno sin tocar código, que es lo que hace
  * falta cuando el proveedor mueve su catálogo (pasa cada pocos meses).
  */
-function proveedores(): { nombre: string; modelo: LanguageModel }[] {
+export function proveedores(): { nombre: string; modelo: LanguageModel }[] {
   const lista: { nombre: string; modelo: LanguageModel }[] = [];
 
   const google = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
@@ -85,7 +85,7 @@ function proveedores(): { nombre: string; modelo: LanguageModel }[] {
 }
 
 /** Cuánto se espera a un proveedor antes de pasar al siguiente. */
-const ESPERA_MS = 12_000;
+export const ESPERA_MS = 12_000;
 
 /**
  * Tope de lo que se manda a calificar. No es por seguridad, es por el tope de

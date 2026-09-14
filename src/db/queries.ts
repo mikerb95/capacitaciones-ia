@@ -6,6 +6,7 @@ import {
   accessCodes,
   attendees,
   companies,
+  courseProgress,
   decks,
   liveSessions,
   moduleViews,
@@ -570,6 +571,89 @@ export async function recordModuleView(participantId: number, moduleId: number) 
       target: [moduleViews.participantId, moduleViews.moduleId],
       set: { views: sql`${moduleViews.views} + 1`, lastSeenAt: now },
     });
+}
+
+/* ------------------------------------------------------------ ruta guiada */
+
+/** Los módulos de una plataforma por slug, para cruzar el temario con el alcance. */
+export async function getModuleIdsBySlug(platformId: string) {
+  const rows = await db
+    .select({ id: modules.id, slug: modules.slug })
+    .from(modules)
+    .where(eq(modules.platformId, platformId));
+  return new Map(rows.map((r) => [r.slug, r.id]));
+}
+
+/** Todo lo que una persona lleva de un curso. Pocas filas: una por lección tocada. */
+export async function getCourseProgress(participantId: number, courseId: string) {
+  return db
+    .select({
+      lessonSlug: courseProgress.lessonSlug,
+      completed: courseProgress.completed,
+      score: courseProgress.score,
+      attempts: courseProgress.attempts,
+      result: courseProgress.result,
+      completedAt: courseProgress.completedAt,
+    })
+    .from(courseProgress)
+    .where(
+      and(eq(courseProgress.participantId, participantId), eq(courseProgress.courseId, courseId)),
+    );
+}
+
+/**
+ * Anota avance en una lección. Es acumulativo a propósito: una lección
+ * completada no se "descompleta" por un intento peor después, el puntaje que
+ * queda es el mejor, y cada envío suma un intento. Así repasar un examen ya
+ * aprobado nunca le cuesta nada a nadie.
+ */
+export async function saveCourseProgress(
+  participantId: number,
+  courseId: string,
+  lessonSlug: string,
+  entry: { completed?: boolean; score?: number | null; attempt?: boolean; result?: string | null },
+) {
+  const now = new Date();
+  const completed = entry.completed ?? false;
+  const score = entry.score ?? null;
+  const result = entry.result ?? null;
+
+  const [row] = await db
+    .insert(courseProgress)
+    .values({
+      participantId,
+      courseId,
+      lessonSlug,
+      completed,
+      score,
+      attempts: entry.attempt ? 1 : 0,
+      result,
+      completedAt: completed ? now : null,
+      updatedAt: now,
+    })
+    .onConflictDoUpdate({
+      target: [courseProgress.participantId, courseProgress.courseId, courseProgress.lessonSlug],
+      set: {
+        completed: sql`max(${courseProgress.completed}, ${completed ? 1 : 0})`,
+        score:
+          score === null
+            ? sql`${courseProgress.score}`
+            : sql`max(coalesce(${courseProgress.score}, 0), ${score})`,
+        attempts: sql`${courseProgress.attempts} + ${entry.attempt ? 1 : 0}`,
+        result: result === null ? sql`${courseProgress.result}` : result,
+        completedAt: completed
+          ? sql`coalesce(${courseProgress.completedAt}, ${Math.floor(now.getTime() / 1000)})`
+          : sql`${courseProgress.completedAt}`,
+        updatedAt: now,
+      },
+    })
+    .returning({
+      completed: courseProgress.completed,
+      score: courseProgress.score,
+      attempts: courseProgress.attempts,
+    });
+
+  return row;
 }
 
 /* ---------------------------------------------------------------- preguntas */

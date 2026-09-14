@@ -711,6 +711,40 @@ export const moduleViews = sqliteTable(
   ],
 );
 
+/**
+ * Avance en la ruta guiada de una plataforma. El temario vive en código
+ * (`src/lib/ruta`), así que la lección se identifica por curso y slug, sin
+ * llave foránea: si una lección se retira del temario, su fila queda huérfana
+ * y simplemente deja de contarse.
+ *
+ * Una fila por persona y lección. `completed` es lo que cuenta para el avance;
+ * `score` guarda el mejor puntaje (exámenes y prácticas) y `attempts` cuántas
+ * veces se envió, que es lo que distingue un examen reprobado de uno sin
+ * intentar. `result` es texto libre para lo que no es un puntaje, como el
+ * nivel de partida que deja el diagnóstico.
+ */
+export const courseProgress = sqliteTable(
+  'course_progress',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    participantId: integer('participant_id')
+      .notNull()
+      .references(() => participants.id, { onDelete: 'cascade' }),
+    courseId: text('course_id').notNull(),
+    lessonSlug: text('lesson_slug').notNull(),
+    completed: integer('completed', { mode: 'boolean' }).notNull().default(false),
+    score: integer('score'),
+    attempts: integer('attempts').notNull().default(0),
+    result: text('result'),
+    completedAt: integer('completed_at', { mode: 'timestamp' }),
+    ...timestamps,
+  },
+  (t) => [
+    uniqueIndex('course_progress_lesson_idx').on(t.participantId, t.courseId, t.lessonSlug),
+    index('course_progress_participant_idx').on(t.participantId, t.courseId),
+  ],
+);
+
 /* --------------------------------------------------------------- preguntas */
 
 /**
