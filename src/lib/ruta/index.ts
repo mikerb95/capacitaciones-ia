@@ -10,6 +10,7 @@ import type {
   RegistroLeccion,
   Unidad,
 } from './tipos';
+// (Pregunta ya estaba importado arriba; se usa ahora también en cursoEnAlcance)
 
 export * from './tipos';
 
@@ -35,13 +36,42 @@ export function getCurso(platformId: string): Curso | null {
  * El curso recortado al alcance del código: se van las unidades cuyo módulo no
  * entra en la capacitación. Las unidades sin módulo (los fundamentos, el cierre)
  * se quedan siempre, porque no dependen de un producto que la empresa pague.
+ *
+ * Dentro de las unidades que sí se quedan, un examen puede tener preguntas de
+ * un módulo fuera de alcance (así arma un curso como Copilot, con exámenes de
+ * cierre que evalúan varios módulos a la vez): esas preguntas se recortan una
+ * por una, y si al examen le quedan menos de tres, la lección entera se va. El
+ * diagnóstico se recorta con la misma regla, pregunta por pregunta.
  */
 export function cursoEnAlcance(curso: Curso, moduloVisible: (slug: string) => boolean): Curso {
+  const enAlcance = (p: Pregunta) => !p.modulo || moduloVisible(p.modulo);
+
+  const unidades = curso.unidades
+    .filter((u) => !u.modulo || moduloVisible(u.modulo))
+    .map((u) => ({
+      ...u,
+      lecciones: u.lecciones.filter((l) => {
+        if (l.tipo !== 'examen') return true;
+        return l.preguntas.filter(enAlcance).length >= MINIMO_PREGUNTAS_EXAMEN;
+      }),
+    }))
+    .map((u) => ({
+      ...u,
+      lecciones: u.lecciones.map((l) =>
+        l.tipo === 'examen' ? { ...l, preguntas: l.preguntas.filter(enAlcance) } : l,
+      ),
+    }))
+    .filter((u) => u.lecciones.length > 0);
+
   return {
     ...curso,
-    unidades: curso.unidades.filter((u) => !u.modulo || moduloVisible(u.modulo)),
+    unidades,
+    diagnostico: curso.diagnostico.filter(enAlcance),
   };
 }
+
+/** Bajo esto un examen deja de medir algo y se retira en vez de mostrarse vacío. */
+const MINIMO_PREGUNTAS_EXAMEN = 3;
 
 export type LeccionUbicada = {
   leccion: Leccion;
