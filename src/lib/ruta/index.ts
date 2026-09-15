@@ -1,3 +1,4 @@
+import { copilotCurso } from './copilot';
 import { jiraCurso } from './jira';
 import type {
   Curso,
