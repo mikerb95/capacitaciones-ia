@@ -5,7 +5,7 @@ import { Copiar } from './copiar';
  * Pinta el contenido de una lección. Cada tipo de bloque tiene una sola forma
  * de verse en todo el curso, así quien lo recorre aprende a leer la página: lo
  * teñido del color del curso es la idea clave, lo naranja es un aviso, lo que
- * parece Jira es un ejemplo de pantalla.
+ * parece una pantalla del producto es un ejemplo.
  */
 export function Bloques({ bloques }: { bloques: Bloque[] }) {
   return (
