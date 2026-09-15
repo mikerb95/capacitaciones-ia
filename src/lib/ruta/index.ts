@@ -20,6 +20,7 @@ export * from './tipos';
  */
 const CURSOS: Record<string, Curso> = {
   jira: jiraCurso,
+  copilot: copilotCurso,
 };
 
 /** La llave del diagnóstico en la tabla de avance. No choca con ninguna lección. */
