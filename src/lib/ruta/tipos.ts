@@ -51,6 +51,25 @@ export type Bloque =
       tipo: 'tablero';
       titulo?: string;
       columnas: { nombre: string; tarjetas: { clave: string; texto: string }[] }[];
+    }
+  | {
+      tipo: 'correo';
+      titulo?: string;
+      de: string;
+      para: string;
+      asunto: string;
+      cuerpo: string;
+      adjuntos?: string[];
+    }
+  | {
+      tipo: 'hoja';
+      titulo?: string;
+      columnas: string[];
+      filas: string[][];
+      /** La barra de fórmula, cuando la lección la explica. */
+      formula?: { celda: string; texto: string };
+      /** Índices de filas a resaltar, para "los datos raros". */
+      resaltar?: number[];
     };
 
 /** Pregunta de opción única. Cada opción explica por qué es o no es, que es donde se aprende. */
@@ -58,6 +77,13 @@ export type Pregunta = {
   id: string;
   enunciado: string;
   opciones: { texto: string; correcta?: boolean; explicacion: string }[];
+  /**
+   * El módulo del portal que evalúa, cuando la pregunta vive en un examen o el
+   * diagnóstico. Si el código de acceso no incluye ese módulo, la pregunta se
+   * recorta junto con la unidad: ver `cursoEnAlcance`. Sin `modulo` la pregunta
+   * es transversal y nunca se recorta.
+   */
+  modulo?: string;
 };
 
 /** Criterio de la rúbrica de una práctica. Pregunta de sí o no, igual que en el entrenador. */
