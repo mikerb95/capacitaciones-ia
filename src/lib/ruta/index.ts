@@ -10,7 +10,6 @@ import type {
   RegistroLeccion,
   Unidad,
 } from './tipos';
-// (Pregunta ya estaba importado arriba; se usa ahora también en cursoEnAlcance)
 
 export * from './tipos';
 
