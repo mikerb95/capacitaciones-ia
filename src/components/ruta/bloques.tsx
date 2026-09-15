@@ -223,5 +223,89 @@ function BloqueUno({ bloque: b }: { bloque: Bloque }) {
           </div>
         </figure>
       );
+
+    case 'correo':
+      return (
+        <figure className="overflow-hidden rounded-card border border-line bg-surface shadow-card">
+          {b.titulo && (
+            <figcaption className="border-b border-line bg-surface-2 px-4 py-2 font-mono text-[10.5px] font-medium uppercase tracking-[0.1em] text-faint">
+              {b.titulo}
+            </figcaption>
+          )}
+          <dl className="grid gap-1.5 border-b border-line bg-surface-2 px-4 py-3 text-[12.5px]">
+            <div className="grid grid-cols-[52px_1fr] gap-2">
+              <dt className="text-faint">De</dt>
+              <dd className="font-medium text-text">{b.de}</dd>
+            </div>
+            <div className="grid grid-cols-[52px_1fr] gap-2">
+              <dt className="text-faint">Para</dt>
+              <dd className="font-medium text-text">{b.para}</dd>
+            </div>
+            <div className="grid grid-cols-[52px_1fr] gap-2">
+              <dt className="text-faint">Asunto</dt>
+              <dd className="font-semibold text-text">{b.asunto}</dd>
+            </div>
+          </dl>
+          <div className="p-4">
+            <p className="whitespace-pre-line text-[13.5px] leading-relaxed text-muted">{b.cuerpo}</p>
+            {b.adjuntos && b.adjuntos.length > 0 && (
+              <ul className="mt-3 flex flex-wrap gap-2">
+                {b.adjuntos.map((a) => (
+                  <li
+                    key={a}
+                    className="rounded-lg bg-surface-2 px-2.5 py-1 font-mono text-[11px] text-faint"
+                  >
+                    {a}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </figure>
+      );
+
+    case 'hoja':
+      return (
+        <figure className="overflow-hidden rounded-card border border-line bg-surface shadow-card">
+          {b.titulo && (
+            <figcaption className="border-b border-line bg-surface-2 px-4 py-2 text-[12.5px] font-semibold text-muted">
+              {b.titulo}
+            </figcaption>
+          )}
+          {b.formula && (
+            <div className="flex items-center gap-2 border-b border-line bg-surface-2 px-4 py-2 font-mono text-[12px]">
+              <span className="font-semibold text-faint">{b.formula.celda}</span>
+              <span className="text-muted">{b.formula.texto}</span>
+            </div>
+          )}
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[480px] border-collapse text-[12.5px]">
+              <thead>
+                <tr>
+                  {b.columnas.map((c) => (
+                    <th
+                      key={c}
+                      className="border-b border-line bg-surface-2 px-3 py-2 text-left font-semibold uppercase tracking-wide text-faint"
+                    >
+                      {c}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {b.filas.map((fila, i) => (
+                  <tr key={i} className={b.resaltar?.includes(i) ? 'bg-[var(--tone-soft)]' : ''}>
+                    {fila.map((celda, j) => (
+                      <td key={j} className="border-b border-line px-3 py-2 text-text">
+                        {celda}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </figure>
+      );
   }
 }
