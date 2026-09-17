@@ -148,6 +148,13 @@
       "when": 1789363423793,
       "tag": "0020_ruta_guiada",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "6",
+      "when": 1789607937331,
+      "tag": "0021_ajustes",
+      "breakpoints": true
     }
   ]
 }

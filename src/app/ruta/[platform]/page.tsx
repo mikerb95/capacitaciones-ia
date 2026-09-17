@@ -17,15 +17,16 @@ export async function generateMetadata({ params }: Params) {
 
 /**
  * Portada de la ruta guiada: la promesa, el avance propio, el temario completo
- * y el camino al certificado. Es la página a la que se vuelve cada vez, así que
- * lo primero que se ve es "continuar donde quedaste", no la descripción.
+ * y, si el panel lo tiene encendido, el camino al certificado. Es la página a
+ * la que se vuelve cada vez, así que lo primero que se ve es "continuar donde
+ * quedaste", no la descripción.
  */
 export default async function RutaPage({ params }: Params) {
   const { platform } = await params;
   const cargado = await cargarCurso(platform);
   if (!cargado) notFound();
 
-  const { curso, registros } = cargado;
+  const { curso, registros, certificados } = cargado;
   const resumen = resumir(curso, registros);
   const lecciones = leccionesDe(curso);
   const porSlug = new Map(registros.map((r) => [r.lessonSlug, r]));
@@ -72,13 +73,17 @@ export default async function RutaPage({ params }: Params) {
                   {empezo ? 'Continuar' : 'Empezar desde cero'}
                   <span className="ml-1.5 font-normal opacity-85">· {resumen.siguiente.leccion.titulo}</span>
                 </Link>
-              ) : (
+              ) : certificados ? (
                 <Link
                   href={`/ruta/${platform}/certificado`}
                   className="rounded-xl bg-[var(--tone)] px-5 py-3 text-[14px] font-semibold text-white shadow-card transition-opacity hover:opacity-90"
                 >
                   Ver mi certificado
                 </Link>
+              ) : (
+                <span className="rounded-xl bg-[var(--tone-soft)] px-5 py-3 text-[14px] font-semibold text-[var(--tone)]">
+                  Ruta completada
+                </span>
               )}
               <Link
                 href={`/ruta/${platform}/diagnostico`}
@@ -122,17 +127,19 @@ export default async function RutaPage({ params }: Params) {
                 </li>
               )}
             </ul>
-            <Link
-              href={`/ruta/${platform}/certificado`}
-              className={`mt-4 flex items-center justify-between rounded-xl px-3.5 py-2.5 text-[13px] font-semibold transition-colors ${
-                resumen.certificable
-                  ? 'bg-accent-soft text-accent hover:opacity-90'
-                  : 'bg-surface-2 text-muted hover:text-text'
-              }`}
-            >
-              {resumen.certificable ? 'Tu certificado está listo' : 'Qué pide el certificado'}
-              <span aria-hidden="true">&rarr;</span>
-            </Link>
+            {certificados && (
+              <Link
+                href={`/ruta/${platform}/certificado`}
+                className={`mt-4 flex items-center justify-between rounded-xl px-3.5 py-2.5 text-[13px] font-semibold transition-colors ${
+                  resumen.certificable
+                    ? 'bg-accent-soft text-accent hover:opacity-90'
+                    : 'bg-surface-2 text-muted hover:text-text'
+                }`}
+              >
+                {resumen.certificable ? 'Tu certificado está listo' : 'Qué pide el certificado'}
+                <span aria-hidden="true">&rarr;</span>
+              </Link>
+            )}
           </aside>
         </section>
 
@@ -173,7 +180,9 @@ export default async function RutaPage({ params }: Params) {
               ['Diagnóstico', 'Diez preguntas para saber desde qué nivel te conviene arrancar. Cinco minutos.'],
               ['Lecciones cortas', 'Entre 10 y 20 minutos, con ejemplos de pantalla y una comprobación al final.'],
               ['Prácticas revisadas', 'Resuelves un caso real y una IA te revisa con la rúbrica de la práctica.'],
-              ['Exámenes y certificado', 'Un examen por nivel y un proyecto final. Aprobados todos, tienes tu certificado.'],
+              certificados
+                ? ['Exámenes y certificado', 'Un examen por nivel y un proyecto final. Aprobados todos, tienes tu certificado.']
+                : ['Exámenes', 'Un examen por nivel y un proyecto final que integra todo lo aprendido.'],
             ].map(([titulo, texto], i) => (
               <li key={titulo} className="rounded-card border border-line bg-surface p-5 shadow-card">
                 <span className="grid size-8 place-items-center rounded-full bg-[var(--tone-soft)] font-mono text-[13px] font-semibold text-[var(--tone)]">
@@ -277,22 +286,24 @@ export default async function RutaPage({ params }: Params) {
         </section>
 
         {/* Certificado */}
-        <section className="mt-16 flex flex-wrap items-center gap-6 rounded-card bg-[var(--tone-soft)] p-6 sm:p-8">
-          <div className="min-w-[240px] flex-1">
-            <p className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-muted">Al final</p>
-            <h2 className="mt-1.5 font-display text-[22px] font-semibold tracking-tight">Un certificado que dice qué sabes hacer</h2>
-            <p className="mt-2 max-w-[60ch] text-[14.5px] leading-relaxed text-muted">
-              Se obtiene aprobando los {resumen.examenes.total} exámenes con 80% o más y el proyecto final. No cuenta
-              clics: cuenta lo que demostraste.
-            </p>
-          </div>
-          <Link
-            href={`/ruta/${platform}/certificado`}
-            className="rounded-xl bg-[var(--tone)] px-5 py-3 text-[14px] font-semibold text-white transition-opacity hover:opacity-90"
-          >
-            {resumen.certificable ? 'Ver mi certificado' : 'Ver requisitos'}
-          </Link>
-        </section>
+        {certificados && (
+          <section className="mt-16 flex flex-wrap items-center gap-6 rounded-card bg-[var(--tone-soft)] p-6 sm:p-8">
+            <div className="min-w-[240px] flex-1">
+              <p className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-muted">Al final</p>
+              <h2 className="mt-1.5 font-display text-[22px] font-semibold tracking-tight">Un certificado que dice qué sabes hacer</h2>
+              <p className="mt-2 max-w-[60ch] text-[14.5px] leading-relaxed text-muted">
+                Se obtiene aprobando los {resumen.examenes.total} exámenes con 80% o más y el proyecto final. No cuenta
+                clics: cuenta lo que demostraste.
+              </p>
+            </div>
+            <Link
+              href={`/ruta/${platform}/certificado`}
+              className="rounded-xl bg-[var(--tone)] px-5 py-3 text-[14px] font-semibold text-white transition-opacity hover:opacity-90"
+            >
+              {resumen.certificable ? 'Ver mi certificado' : 'Ver requisitos'}
+            </Link>
+          </section>
+        )}
       </main>
     </div>
   );

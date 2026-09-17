@@ -756,6 +756,18 @@ export const courseProgress = sqliteTable(
  * pila de pendientes porque ya no hay nada que hacer con ella, pero no finge
  * tener respuesta guardada. Si después alguien la escribe, pasa a `respondida`.
  */
+/**
+ * Ajustes generales del sitio, uno por fila. Clave y valor en texto para que
+ * sumar un ajuste nuevo no pida otra migración; quien lo lee decide el tipo.
+ */
+export const settings = sqliteTable('settings', {
+  key: text('key').primaryKey(),
+  value: text('value').notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
 export const QUESTION_STATUS = ['abierta', 'respondida', 'en_sesion'] as const;
 
 /**
@@ -1075,3 +1087,4 @@ export type ModuleView = typeof moduleViews.$inferSelect;
 export type Question = typeof questions.$inferSelect;
 export type QuestionStatus = (typeof QUESTION_STATUS)[number];
 export type QuestionVote = typeof questionVotes.$inferSelect;
+export type Setting = typeof settings.$inferSelect;

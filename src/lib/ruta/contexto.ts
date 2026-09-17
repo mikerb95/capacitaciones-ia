@@ -1,4 +1,5 @@
 import { getCourseProgress, getModuleIdsBySlug } from '@/db/queries';
+import { certificadosHabilitados } from '@/lib/ajustes';
 import { hasModule, hasPlatform, requireScopedParticipant } from '@/lib/scope';
 import { cursoEnAlcance, getCurso } from './index';
 
@@ -13,9 +14,10 @@ export async function cargarCurso(platformId: string) {
   const base = getCurso(platformId);
   if (!base || !hasPlatform(scope, platformId)) return null;
 
-  const [moduleIds, registros] = await Promise.all([
+  const [moduleIds, registros, certificados] = await Promise.all([
     getModuleIdsBySlug(platformId),
     getCourseProgress(participant.id, platformId),
+    certificadosHabilitados(),
   ]);
 
   const curso = cursoEnAlcance(base, (slug) => {
@@ -23,7 +25,7 @@ export async function cargarCurso(platformId: string) {
     return id !== undefined && hasModule(scope, id);
   });
 
-  return { participant, curso, registros, moduleIds };
+  return { participant, curso, registros, moduleIds, certificados };
 }
 
 export type CursoCargado = NonNullable<Awaited<ReturnType<typeof cargarCurso>>>;

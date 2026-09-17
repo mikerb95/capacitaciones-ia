@@ -26,7 +26,9 @@ export default async function CertificadoPage({ params }: Params) {
   const cargado = await cargarCurso(platform);
   if (!cargado) notFound();
 
-  const { curso, registros, participant } = cargado;
+  // Con los certificados apagados desde el panel, la página no existe.
+  const { curso, registros, participant, certificados } = cargado;
+  if (!certificados) notFound();
   const resumen = resumir(curso, registros);
   const porSlug = new Map(registros.map((r) => [r.lessonSlug, r]));
 

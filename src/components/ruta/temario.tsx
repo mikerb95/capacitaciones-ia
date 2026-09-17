@@ -13,6 +13,7 @@ type Props = {
   registros: RegistroLeccion[];
   actual?: string;
   partida: NivelKey | null;
+  certificados: boolean;
 };
 
 /**
@@ -20,7 +21,7 @@ type Props = {
  * el estado de cada una. Es la barra lateral de las plataformas de cursos, y
  * sirve para lo mismo: saber dónde estás y saltar sin volver a la portada.
  */
-export function Temario({ curso, registros, actual, partida }: Props) {
+export function Temario({ curso, registros, actual, partida, certificados }: Props) {
   const porSlug = new Map(registros.map((r) => [r.lessonSlug, r]));
   const orden = curso.niveles.map((n) => n.key);
 
@@ -71,19 +72,21 @@ export function Temario({ curso, registros, actual, partida }: Props) {
           </div>
         );
       })}
-      <Link
-        href={`/ruta/${curso.platformId}/certificado`}
-        aria-current={actual === 'certificado' ? 'page' : undefined}
-        className={`flex items-center gap-2.5 rounded-lg px-2 py-2 text-[13px] font-semibold transition-colors ${
-          actual === 'certificado' ? 'bg-[var(--tone-soft)] text-text' : 'text-muted hover:bg-surface-2 hover:text-text'
-        }`}
-      >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-          <circle cx="8" cy="6" r="3.5" />
-          <path d="m5.8 9 -1 5 3.2-1.6L11.2 14l-1-5" strokeLinejoin="round" />
-        </svg>
-        Certificado
-      </Link>
+      {certificados && (
+        <Link
+          href={`/ruta/${curso.platformId}/certificado`}
+          aria-current={actual === 'certificado' ? 'page' : undefined}
+          className={`flex items-center gap-2.5 rounded-lg px-2 py-2 text-[13px] font-semibold transition-colors ${
+            actual === 'certificado' ? 'bg-[var(--tone-soft)] text-text' : 'text-muted hover:bg-surface-2 hover:text-text'
+          }`}
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+            <circle cx="8" cy="6" r="3.5" />
+            <path d="m5.8 9 -1 5 3.2-1.6L11.2 14l-1-5" strokeLinejoin="round" />
+          </svg>
+          Certificado
+        </Link>
+      )}
     </nav>
   );
 }

@@ -4,6 +4,7 @@ import { PlanExplorer } from '@/components/plan-explorer';
 import { Card, PlatformMark, SectionTitle, SiteHeader, StatusBadge } from '@/components/ui';
 import { getCourseProgress, getPlatform, getPlatformIds } from '@/db/queries';
 import { moduleLogo, platformLogo } from '@/lib/brand-logos';
+import { certificadosHabilitados } from '@/lib/ajustes';
 import { cursoEnAlcance, duracion, getCurso, resumir } from '@/lib/ruta';
 import { hasModule, hasPlatform, requireScopedParticipant } from '@/lib/scope';
 
@@ -47,6 +48,7 @@ export default async function PlatformPage({ params, searchParams }: Params) {
     ? cursoEnAlcance(cursoBase, (slug) => platform.modules.some((m) => m.slug === slug))
     : null;
   const ruta = curso ? resumir(curso, await getCourseProgress(participant.id, platform.id)) : null;
+  const certificados = curso ? await certificadosHabilitados() : false;
 
   return (
     <div className="tone min-h-screen bg-bg" style={{ ['--tone' as string]: platform.color }}>
@@ -121,7 +123,7 @@ export default async function PlatformPage({ params, searchParams }: Params) {
                 </h2>
                 <p className="mt-1.5 max-w-[64ch] text-[14px] leading-relaxed text-muted">
                   {ruta.total} lecciones en {curso.niveles.length} niveles, prácticas revisadas por IA,
-                  exámenes y certificado. {duracion(ruta.minutosTotales)} de contenido, a tu ritmo.
+                  exámenes{certificados ? ' y certificado' : ''}. {duracion(ruta.minutosTotales)} de contenido, a tu ritmo.
                 </p>
                 {ruta.completadas > 0 && (
                   <div className="mt-4 flex max-w-[360px] items-center gap-3">

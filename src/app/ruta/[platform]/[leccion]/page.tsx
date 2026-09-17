@@ -42,7 +42,7 @@ export default async function LeccionPage({ params }: Params) {
   const cargado = await cargarCurso(platform);
   if (!cargado) notFound();
 
-  const { curso, registros, participant, moduleIds } = cargado;
+  const { curso, registros, participant, moduleIds, certificados } = cargado;
   const found = buscarLeccion(curso, slug);
   if (!found) notFound();
 
@@ -65,7 +65,9 @@ export default async function LeccionPage({ params }: Params) {
   const posterior = lista[indice + 1];
   const siguiente = posterior
     ? { href: `/ruta/${platform}/${posterior.leccion.slug}`, titulo: posterior.leccion.titulo }
-    : { href: `/ruta/${platform}/certificado`, titulo: 'Tu certificado' };
+    : certificados
+      ? { href: `/ruta/${platform}/certificado`, titulo: 'Tu certificado' }
+      : { href: `/ruta/${platform}`, titulo: 'Volver al curso' };
 
   return (
     <div className="tone min-h-screen bg-bg" style={{ ['--tone' as string]: nivel.color }}>
@@ -92,12 +94,12 @@ export default async function LeccionPage({ params }: Params) {
             </span>
           </summary>
           <div className="border-t border-line p-2">
-            <Temario curso={curso} registros={registros} actual={slug} partida={resumen.partida} />
+            <Temario curso={curso} registros={registros} actual={slug} partida={resumen.partida} certificados={certificados} />
           </div>
         </details>
         <aside className="hidden lg:block">
           <div className="sticky top-[76px] max-h-[calc(100vh-96px)] overflow-y-auto rounded-card border border-line bg-surface p-2 shadow-card">
-            <Temario curso={curso} registros={registros} actual={slug} partida={resumen.partida} />
+            <Temario curso={curso} registros={registros} actual={slug} partida={resumen.partida} certificados={certificados} />
           </div>
         </aside>
 
