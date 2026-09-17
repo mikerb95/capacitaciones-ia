@@ -275,6 +275,13 @@ export const geminiCurso: Curso = {
               texto:
                 'Si el chat se queda corto, no se pierde nada: lo que ya escribiste sirve como punto de partida para Canvas o para el encargo de Deep Research.',
             },
+            {
+              tipo: 'nota',
+              tono: 'dato',
+              titulo: 'El selector de modelo',
+              texto:
+                'Arriba del chat se elige el modelo. Los nombres cambian cada pocos meses, así que la regla práctica es la que no cambia: el modelo rápido para redactar, resumir y responder del día a día; el modelo que razona más, para cuando la tarea tiene varios pasos o hay que analizar algo con cuidado. Si una respuesta se queda corta, cambiar de modelo es lo segundo que se prueba, después de mejorar el pedido.',
+            },
           ],
           chequeo: [
             {
@@ -807,7 +814,7 @@ export const geminiCurso: Curso = {
                 'Escena: quién aparece, qué hace y dónde.',
                 'Estilo: ilustración plana, foto realista, línea simple.',
                 'Paleta y formato: los colores de la marca, horizontal o vertical, dónde va el espacio libre.',
-                'Sin texto dentro: los letreros generados suelen salir con errores. El texto se pone después, en Slides o en Docs.',
+                'El texto dentro de la imagen: los modelos actuales ya escriben letreros legibles, pero para una pieza que se publica conviene pedir la imagen sin texto y ponerlo en Slides o en Docs, donde se corrige sin regenerar nada.',
               ],
             },
             {
@@ -822,17 +829,17 @@ export const geminiCurso: Curso = {
               tono: 'ojo',
               titulo: 'Cuándo no',
               texto:
-                'Las piezas de marca, las que van a clientes y cualquier imagen que parezca una foto real de la operación pasan por el área de diseño o comunicaciones. Una imagen generada nunca se presenta como una foto de algo que pasó. Las imágenes que crea Gemini llevan una marca de agua invisible que permite identificarlas como generadas.',
+                'Las piezas de marca, las que van a clientes y cualquier imagen que parezca una foto real de la operación pasan por el área de diseño o comunicaciones. Una imagen generada nunca se presenta como una foto de algo que pasó. Toda imagen creada con Gemini lleva una marca de agua invisible y metadatos que la identifican como generada, aunque el sello visible en la esquina se pueda desactivar en los ajustes. Que sea rastreable no reemplaza decirlo.',
             },
           ],
           chequeo: [
             {
               id: 'q1',
-              enunciado: 'La imagen generada tiene un letrero con letras deformes. ¿Qué es lo más práctico?',
+              enunciado: 'La imagen de la circular necesita un título y todavía hay que cambiarle la redacción dos veces. ¿Qué es lo más práctico?',
               opciones: [
                 {
-                  texto: 'Regenerarla hasta que el texto salga bien.',
-                  explicacion: 'El texto dentro de las imágenes generadas es poco confiable; puedes gastar muchos intentos.',
+                  texto: 'Regenerar la imagen con el texto nuevo cada vez.',
+                  explicacion: 'Cada regeneración cambia también la escena que ya estaba bien.',
                 },
                 {
                   texto: 'Pedirla sin texto y poner el letrero después en Slides o Docs.',
@@ -840,8 +847,8 @@ export const geminiCurso: Curso = {
                   explicacion: 'Correcto.',
                 },
                 {
-                  texto: 'Usarla así, nadie lo nota.',
-                  explicacion: 'Un letrero deforme se nota y le quita seriedad a la pieza.',
+                  texto: 'Dejar el título fuera de la circular.',
+                  explicacion: 'La pieza necesita el mensaje; lo que se evita es tenerlo quemado dentro de la imagen.',
                 },
               ],
             },
@@ -1087,7 +1094,14 @@ export const geminiCurso: Curso = {
             {
               tipo: 'texto',
               texto:
-                'En Meet, la función de tomar notas deja un documento en Drive con el resumen y los siguientes pasos, y lo comparte con quien organizó la reunión. Si no pudiste entrar, ese documento es lo primero que abres.',
+                'En Meet, la función de tomar notas deja un documento en Drive con el resumen, los compromisos y la transcripción, y lo comparte con quien organizó la reunión. Si no pudiste entrar, ese documento es lo primero que abres. La misma función existe para reuniones presenciales desde el celular, y el administrador de la empresa decide si viene activada.',
+            },
+            {
+              tipo: 'nota',
+              tono: 'dato',
+              titulo: 'Antes de enviar, una tarjeta de confirmación',
+              texto:
+                'Cuando le pides algo que sale hacia afuera, como enviar un correo o crear una reunión, Gemini muestra primero una tarjeta con lo que va a hacer para que lo revises, edites y confirmes. Esa tarjeta es el momento de leer, no un paso que se salta.',
             },
             {
               tipo: 'nota',
@@ -1154,6 +1168,13 @@ export const geminiCurso: Curso = {
               titulo: 'En el panel de Sheets',
               pregunta: '¿Qué sucursales cayeron más de 10% contra agosto y cuánto?',
               respuesta: 'Dos sucursales: Occidente cayó 20,7% y Centro 12,4%. Las demás están por encima de -2%.',
+            },
+            {
+              tipo: 'nota',
+              tono: 'dato',
+              titulo: 'Más allá de Drive',
+              texto:
+                'El panel lateral funciona igual en Gmail, Drive, Docs, Sheets, Slides y Chat, y puede armar una presentación completa tomando el contenido de un documento y el formato de un mazo anterior. Además, la empresa puede conectar herramientas de terceros, como el CRM o el gestor de tareas, para consultarlas sin cambiar de pestaña. Qué conectores están activos lo decide el administrador.',
             },
             {
               tipo: 'nota',
@@ -1274,7 +1295,7 @@ export const geminiCurso: Curso = {
               tono: 'dato',
               titulo: 'Más allá de preguntar',
               texto:
-                'Desde el mismo cuaderno se pueden generar guías de estudio, líneas de tiempo y resúmenes en audio para escuchar en el camino. Todo sale de las mismas fuentes.',
+                'Desde el mismo cuaderno se generan otras salidas con las mismas fuentes: resúmenes en audio y en video para escuchar o mostrar, mapas de ideas, líneas de tiempo, tablas de datos, un mazo de diapositivas y material de estudio como cuestionarios y fichas. El texto se exporta a Docs y las tablas a Sheets.',
             },
           ],
           chequeo: [
@@ -1542,9 +1563,9 @@ export const geminiCurso: Curso = {
             {
               tipo: 'nota',
               tono: 'dato',
-              titulo: 'Cuándo no',
+              titulo: 'Cuándo no, y qué hacer después',
               texto:
-                'Lo que se resuelve en dos líneas, lo que depende de datos internos que no están en la web, o lo que ya está en tus manuales (eso es NotebookLM) no necesita Deep Research.',
+                'Lo que se resuelve en dos líneas, lo que depende de datos internos que no están en la web, o lo que ya está en tus manuales (eso es NotebookLM) no necesita Deep Research. Cuando el informe sí llega, no tiene que quedarse en informe: desde ahí se abre Canvas para convertirlo en el resumen de una página, en la presentación del comité o en material de capacitación.',
             },
           ],
           chequeo: [
@@ -1689,7 +1710,7 @@ export const geminiCurso: Curso = {
             {
               tipo: 'texto',
               texto:
-                'Veo genera clips de pocos segundos a partir de una descripción. Sirve para lo que hoy no alcanza el presupuesto de producción: un recordatorio de seguridad, un clip de apoyo en una capacitación, una idea de campaña para mostrarla antes de grabarla de verdad. Lo que no hace bien es una pieza larga de una sola vez: se genera corto y se monta después.',
+                'Veo genera clips cortos a partir de una descripción, con sonido incluido. Cada clip dura pocos segundos, del orden de cuatro a ocho, así que una pieza más larga se arma encadenando clips: o se extiende la escena desde el final del anterior, o se generan varios del mismo estilo y se montan. Sirve para lo que hoy no alcanza el presupuesto de producción: un recordatorio de seguridad, un clip de apoyo en una capacitación, una idea de campaña para mostrarla antes de grabarla de verdad.',
             },
             {
               tipo: 'lista',
@@ -1720,7 +1741,7 @@ export const geminiCurso: Curso = {
               tono: 'dato',
               titulo: 'Marcado como generado',
               texto:
-                'Los videos que produce Veo llevan una marca de agua que los identifica como generados con IA. Eso no reemplaza avisarlo: si el clip va a público externo, se dice.',
+                'Los videos que produce Veo llevan una marca de agua invisible y metadatos que los identifican como generados con IA, aunque el sello visible se pueda desactivar en los ajustes. Eso no reemplaza avisarlo: si el clip va a público externo, se dice. Desde el mismo Gemini puedes preguntarle por una imagen o un video si lo generó un modelo de Google.',
             },
           ],
           chequeo: [
