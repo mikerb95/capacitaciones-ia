@@ -343,7 +343,7 @@ export const chatgptCurso: Curso = {
               tono: 'dato',
               titulo: 'Las consultas tienen cupo',
               texto:
-                'Deep Research y Agent Mode tienen un número de usos por periodo según el plan. Gastarlas en lo que una pregunta normal resuelve deja al equipo sin ellas cuando de verdad hacen falta.',
+                'Deep Research y Agent Mode tienen un número de usos por periodo según el plan. Gastarlos en lo que una pregunta normal resuelve deja al equipo sin ellos cuando de verdad hacen falta.',
             },
           ],
           chequeo: [
