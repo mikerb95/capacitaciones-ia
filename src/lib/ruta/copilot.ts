@@ -418,6 +418,7 @@ export const copilotCurso: Curso = {
             },
             {
               id: 'e2',
+              planExcluido: ['chat'],
               enunciado: 'Activas Work IQ y le preguntas por un proyecto. ¿Qué archivos puede usar Copilot?',
               opciones: [
                 {

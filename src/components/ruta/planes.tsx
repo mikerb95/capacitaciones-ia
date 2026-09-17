@@ -24,10 +24,11 @@ export function InsigniaPlan({ availability }: { availability: Availability }) {
  * La barra de "estás viendo el curso filtrado", arriba de todo.
  *
  * Sin ella el recorte es invisible: alguien que entra con el plan gratis ve un
- * temario más corto y no sabe por qué, o al revés, se encuentra Work IQ entre
- * los fundamentos y cree que el filtro no funciona. Los fundamentos se ven
- * siempre porque no cuelgan de ningún módulo: son justamente las lecciones que
- * explican qué licencia hace falta para cada cosa.
+ * temario más corto y no sabe por qué. La mayoría de los fundamentos se ven en
+ * cualquier plan porque no dependen de ningún módulo pago, pero una lección
+ * suelta puede pedir una función que el plan elegido no habilita (Work IQ en
+ * el plan gratis, por ejemplo) y en ese caso también se recorta: ver
+ * `planExcluido` en los tipos de la ruta.
  */
 export function AvisoPlan({
   platform,
@@ -68,8 +69,7 @@ export function AvisoPlan({
         Filtrado para {elegido.name} ({elegido.price})
       </span>
       <p className="min-w-0 flex-1 text-[12.5px] leading-snug text-muted">
-        Se ocultaron las unidades que este plan no habilita. Las lecciones de fundamentos se ven siempre:
-        ahí se explica qué hace cada licencia y qué queda en los planes de pago.
+        Se ocultaron las unidades y lecciones que este plan no habilita.
       </p>
       <Link
         href={rutaConPlan(platform, null, '#temario')}

@@ -78,17 +78,35 @@ export function cursoEnAlcance(curso: Curso, moduloVisible: (slug: string) => bo
 /**
  * Segundo recorte, aplicado solo cuando hay un plan de facturación elegido:
  * saca las lecciones sueltas que un plan no habilita (`planExcluido`), aunque
- * vivan en una unidad sin módulo y por eso `cursoEnAlcance` las deje pasar.
- * Si una unidad se queda sin lecciones, se va entera.
+ * vivan en una unidad sin módulo y por eso `cursoEnAlcance` las deje pasar. Una
+ * pregunta de examen o diagnóstico se recorta igual que en `cursoEnAlcance`, y
+ * si a un examen le quedan menos de tres, la lección entera se va.
  */
 export function cursoSegunPlan(curso: Curso, planKey: string | null): Curso {
   if (!planKey) return curso;
 
+  const enPlan = (p: Pregunta) => !p.planExcluido?.includes(planKey);
+
   const unidades = curso.unidades
     .map((u) => ({ ...u, lecciones: u.lecciones.filter((l) => !l.planExcluido?.includes(planKey)) }))
+    .map((u) => ({
+      ...u,
+      lecciones: u.lecciones.filter((l) => {
+        if (l.tipo !== 'examen') return true;
+        return l.preguntas.filter(enPlan).length >= MINIMO_PREGUNTAS_EXAMEN;
+      }),
+    }))
+    .map((u) => ({
+      ...u,
+      lecciones: u.lecciones.map((l) => (l.tipo === 'examen' ? { ...l, preguntas: l.preguntas.filter(enPlan) } : l)),
+    }))
     .filter((u) => u.lecciones.length > 0);
 
-  return { ...curso, unidades };
+  return {
+    ...curso,
+    unidades,
+    diagnostico: curso.diagnostico.filter(enPlan),
+  };
 }
 
 /** Bajo esto un examen deja de medir algo y se retira en vez de mostrarse vacío. */

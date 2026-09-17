@@ -84,6 +84,8 @@ export type Pregunta = {
    * es transversal y nunca se recorta.
    */
   modulo?: string;
+  /** Igual que `Leccion.planExcluido`, pero para una pregunta suelta de examen o diagnóstico. */
+  planExcluido?: string[];
 };
 
 /** Criterio de la rúbrica de una práctica. Pregunta de sí o no, igual que en el entrenador. */
