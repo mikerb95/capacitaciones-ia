@@ -167,14 +167,18 @@ export async function guardarDiagnostico(
   }
 
   const nivel = nivelDePartida(curso, preguntas, respuestas);
-  const porNivel = curso.niveles.map((n) => {
-    const del = preguntas.filter((p) => p.nivel === n.key);
-    return {
-      nivel: n.key,
-      total: del.length,
-      aciertos: del.filter((p) => p.opciones[respuestas[p.id]]?.correcta).length,
-    };
-  });
+  // Un nivel puede quedar sin preguntas cuando el alcance recorta sus módulos:
+  // no se muestra, en vez de pintar una barra vacía con 0/0.
+  const porNivel = curso.niveles
+    .map((n) => {
+      const del = preguntas.filter((p) => p.nivel === n.key);
+      return {
+        nivel: n.key,
+        total: del.length,
+        aciertos: del.filter((p) => p.opciones[respuestas[p.id]]?.correcta).length,
+      };
+    })
+    .filter((n) => n.total > 0);
   const aciertos = porNivel.reduce((s, n) => s + n.aciertos, 0);
 
   await saveCourseProgress(participant.id, platformId, DIAGNOSTICO, {
