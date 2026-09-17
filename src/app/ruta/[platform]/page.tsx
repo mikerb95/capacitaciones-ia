@@ -33,7 +33,8 @@ export default async function RutaPage({ params, searchParams }: Params) {
   const cargado = await cargarCurso(platform, planPedido);
   if (!cargado) notFound();
 
-  const { curso, cursoCompleto, registros, certificados, planes, plan, planContratado, notaDePlan } = cargado;
+  const { curso, cursoCompleto, registros, certificados, planes, plan, planContratado, disponibilidad, notaDePlan } =
+    cargado;
   const resumen = resumir(curso, registros);
   // El certificado no se recorta con el plan: pide el curso entero, igual que
   // en su propia página. Con un plan puesto, lo que se ve arriba es el avance
@@ -215,6 +216,28 @@ export default async function RutaPage({ params, searchParams }: Params) {
           <p className="mb-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-faint">Temario</p>
           <h2 className="font-display text-[22px] font-semibold tracking-tight">De cero a experto, nivel por nivel</h2>
 
+          <div className="mt-6">
+            <SelectorPlan
+              platform={platform}
+              planes={planes}
+              plan={plan}
+              contratado={planContratado}
+              recorte={{
+                dentro: resumen.total,
+                total: totalCompleto,
+                minutos: resumen.minutosTotales,
+                unidadesFuera,
+              }}
+            />
+          </div>
+
+          {niveles.length === 0 && (
+            <p className="mt-6 rounded-card border border-line bg-surface-2 p-6 text-[14px] leading-relaxed text-muted">
+              Este plan no habilita ninguna de las unidades de tu capacitación. Elige otro plan arriba para ver el
+              temario completo.
+            </p>
+          )}
+
           <div className="mt-7 flex flex-col gap-10">
             {niveles.map((nivel) => {
               const unidades = curso.unidades.filter((u) => u.nivel === nivel.key);
@@ -237,13 +260,23 @@ export default async function RutaPage({ params, searchParams }: Params) {
                       const hechas = unidad.lecciones.filter((l) => porSlug.get(l.slug)?.completed).length;
                       const minutos = unidad.lecciones.reduce((n, l) => n + l.minutos, 0);
                       const pct = Math.round((hechas / unidad.lecciones.length) * 100);
+                      // Con un plan puesto, lo que queda en pantalla se puede usar. Lo que
+                      // hay que avisar es el recorte: "sí, pero con límites".
+                      const limitada = unidad.modulo && disponibilidad(unidad.modulo) === 'limitado';
+                      const nota = unidad.modulo ? notaDePlan(unidad.modulo) : null;
 
                       return (
                         <article key={unidad.slug} className="min-w-0 rounded-card border border-line bg-surface shadow-card">
                           <header className="flex flex-wrap items-start gap-x-6 gap-y-3 p-5">
                             <div className="min-w-0 flex-1 basis-[220px]">
-                              <h3 className="font-display text-[17px] font-semibold tracking-tight">{unidad.titulo}</h3>
+                              <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+                                <h3 className="font-display text-[17px] font-semibold tracking-tight">{unidad.titulo}</h3>
+                                {limitada && <InsigniaPlan availability="limitado" />}
+                              </div>
                               <p className="mt-1 max-w-[62ch] text-[13.5px] leading-relaxed text-muted">{unidad.descripcion}</p>
+                              {limitada && nota && (
+                                <p className="mt-1.5 max-w-[62ch] text-[12.5px] leading-snug text-faint">{nota}</p>
+                              )}
                             </div>
                             <div className="w-full sm:w-44">
                               <p className="mb-1.5 flex justify-between text-[12px] text-muted">
