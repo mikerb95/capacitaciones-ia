@@ -9,6 +9,7 @@ import { Examen } from '@/components/ruta/examen';
 import { EstadoIcono, NivelChip, TIPO_ETIQUETA, TipoIcono, tipoDe } from '@/components/ruta/piezas';
 import { Practica } from '@/components/ruta/practica';
 import { Temario } from '@/components/ruta/temario';
+import { InsigniaPlan, leccionConPlan, rutaConPlan } from '@/components/ruta/planes';
 import { getPlatformName, recordModuleView } from '@/db/queries';
 import {
   buscarLeccion,
@@ -23,9 +24,12 @@ import { cargarCurso } from '@/lib/ruta/contexto';
 
 export const dynamic = 'force-dynamic';
 
-type Params = { params: Promise<{ platform: string; leccion: string }> };
+type Params = {
+  params: Promise<{ platform: string; leccion: string }>;
+  searchParams: Promise<{ plan?: string }>;
+};
 
-export async function generateMetadata({ params }: Params) {
+export async function generateMetadata({ params }: Pick<Params, 'params'>) {
   const { platform, leccion } = await params;
   const curso = getCurso(platform);
   const found = curso && buscarLeccion(curso, leccion);
@@ -38,16 +42,39 @@ export async function generateMetadata({ params }: Params) {
  * comprobación, una práctica o un examen), y el "siguiente" solo se ofrece
  * cuando esa actividad está resuelta.
  */
-export default async function LeccionPage({ params }: Params) {
+export default async function LeccionPage({ params, searchParams }: Params) {
   const { platform, leccion: slug } = await params;
-  const cargado = await cargarCurso(platform);
+  const { plan: planPedido } = await searchParams;
+  const cargado = await cargarCurso(platform, planPedido);
   if (!cargado) notFound();
 
-  const { curso, registros, participant, moduleIds, certificados } = cargado;
+  const {
+    cursoCompleto,
+    registros,
+    participant,
+    moduleIds,
+    certificados,
+    plan,
+    planElegido,
+    disponibilidad,
+    notaDePlan,
+    planMinimo,
+  } = cargado;
+
+  // A una lección que el plan oculta solo se llega por un enlace directo o por
+  // un cambio de plan a media ruta. No se esconde: se abre con un aviso arriba
+  // y con el temario completo al costado, porque ocultarla dejaría a la
+  // persona mirando un 404 sin entender qué pasó.
+  const enPlan = buscarLeccion(cargado.curso, slug) !== null;
+  const curso = enPlan ? cargado.curso : cursoCompleto;
   const found = buscarLeccion(curso, slug);
   if (!found) notFound();
 
   const { leccion, unidad, indice, numero } = found;
+  const fueraDePlan = !enPlan && planElegido !== null;
+  const limitada = unidad.modulo ? disponibilidad(unidad.modulo) === 'limitado' : false;
+  const notaModulo = unidad.modulo ? notaDePlan(unidad.modulo) : null;
+  const minimo = unidad.modulo && fueraDePlan ? planMinimo(unidad.modulo) : null;
   const nivel = curso.niveles.find((n) => n.key === unidad.nivel)!;
   const registro = registros.find((r) => r.lessonSlug === slug);
   const estado = estadoDe(registro);
@@ -66,17 +93,17 @@ export default async function LeccionPage({ params }: Params) {
   const anterior = lista[indice - 1];
   const posterior = lista[indice + 1];
   const siguiente = posterior
-    ? { href: `/ruta/${platform}/${posterior.leccion.slug}`, titulo: posterior.leccion.titulo }
+    ? { href: leccionConPlan(platform, posterior.leccion.slug, plan), titulo: posterior.leccion.titulo }
     : certificados
       ? { href: `/ruta/${platform}/certificado`, titulo: 'Tu certificado' }
-      : { href: `/ruta/${platform}`, titulo: 'Volver al curso' };
+      : { href: rutaConPlan(platform, plan), titulo: 'Volver al curso' };
 
   return (
     <div className="tone min-h-screen bg-bg" style={{ ['--tone' as string]: nivel.color }}>
       <SiteHeader
         title={curso.titulo}
         subtitle={`${nivel.titulo} · ${unidad.titulo}`}
-        back={{ href: `/ruta/${platform}`, label: 'Volver al curso' }}
+        back={{ href: rutaConPlan(platform, plan), label: 'Volver al curso' }}
         search={<Buscador plataforma={{ id: platform, name: nombre ?? curso.titulo }} />}
       >
         <span className="hidden items-center gap-2 text-[12px] text-muted sm:flex">
@@ -210,7 +237,7 @@ export default async function LeccionPage({ params }: Params) {
           <nav className="no-print mt-12 grid gap-3 border-t border-line pt-6 sm:grid-cols-2">
             {anterior ? (
               <Link
-                href={`/ruta/${platform}/${anterior.leccion.slug}`}
+                href={leccionConPlan(platform, anterior.leccion.slug, plan)}
                 className="rounded-card border border-line bg-surface p-4 shadow-card transition-colors hover:bg-[var(--tone-soft)]"
               >
                 <span className="block text-[12px] text-faint">&larr; Anterior</span>
