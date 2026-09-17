@@ -1,15 +1,8 @@
 import { getCourseProgress, getModuleIdsBySlug, getPlatformPlanMatrix } from '@/db/queries';
 import { certificadosHabilitados } from '@/lib/ajustes';
-import { applies, availabilityIn, entryPlan, noteIn, type PlanInfo, type PlanRef } from '@/lib/plans';
+import { SIN_PLAN, applies, availabilityIn, entryPlan, noteIn, type PlanInfo, type PlanRef } from '@/lib/plans';
 import { hasModule, hasPlatform, requireScopedParticipant } from '@/lib/scope';
 import { cursoEnAlcance, getCurso } from './index';
-
-/**
- * Valor del parámetro `?plan=` que apaga el filtro. Hace falta uno explícito
- * porque la ausencia del parámetro significa otra cosa: "usa el plan que tiene
- * contratado la empresa".
- */
-export const SIN_PLAN = 'todos';
 
 /**
  * El plan con el que se mira la ruta: el que pide la URL, y si no hay, el que

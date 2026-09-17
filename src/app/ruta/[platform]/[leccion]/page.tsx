@@ -124,16 +124,46 @@ export default async function LeccionPage({ params, searchParams }: Params) {
             </span>
           </summary>
           <div className="border-t border-line p-2">
-            <Temario curso={curso} registros={registros} actual={slug} partida={resumen.partida} certificados={certificados} />
+            <Temario curso={curso} registros={registros} actual={slug} partida={resumen.partida} certificados={certificados} plan={plan} />
           </div>
         </details>
         <aside className="hidden lg:block">
           <div className="sticky top-[76px] max-h-[calc(100vh-96px)] overflow-y-auto rounded-card border border-line bg-surface p-2 shadow-card">
-            <Temario curso={curso} registros={registros} actual={slug} partida={resumen.partida} certificados={certificados} />
+            <Temario curso={curso} registros={registros} actual={slug} partida={resumen.partida} certificados={certificados} plan={plan} />
           </div>
         </aside>
 
         <main className="mx-auto w-full max-w-[780px] min-w-0">
+          {fueraDePlan && planElegido && (
+            <div className="mb-6 rounded-card border border-dashed border-line bg-surface-2 p-4">
+              <p className="flex items-center gap-2 text-[13.5px] font-semibold">
+                <span className="size-1.5 flex-none rounded-full bg-[var(--tone)]" aria-hidden="true" />
+                Esto no entra en {planElegido.name}
+              </p>
+              <p className="mt-1.5 max-w-[62ch] text-[13.5px] leading-relaxed text-muted">
+                {minimo
+                  ? `Lo que enseña esta lección necesita ${minimo.name} o superior.`
+                  : 'Lo que enseña esta lección no está habilitado en ese plan.'}{' '}
+                Puedes hacerla igual, pero con tu licencia actual no vas a poder aplicarla en tu trabajo.
+              </p>
+              <Link
+                href={rutaConPlan(platform, plan, '#temario')}
+                className="mt-2.5 inline-flex text-[13px] font-semibold text-[var(--tone)] underline-offset-4 hover:underline"
+              >
+                Volver a lo que sí cubre tu plan &rarr;
+              </Link>
+            </div>
+          )}
+
+          {!fueraDePlan && limitada && notaModulo && planElegido && (
+            <div className="mb-6 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 rounded-card bg-surface-2 px-4 py-3">
+              <InsigniaPlan availability="limitado" />
+              <p className="min-w-0 flex-1 text-[13px] leading-relaxed text-muted">
+                En {planElegido.name}: {notaModulo}
+              </p>
+            </div>
+          )}
+
           <div className="flex flex-wrap items-center gap-2 text-[12.5px] text-muted">
             <NivelChip nivel={nivel} corto />
             <span aria-hidden="true">/</span>

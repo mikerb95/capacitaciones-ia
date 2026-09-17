@@ -18,6 +18,12 @@ export type PlanInfo = {
   tier: number;
 };
 
+/**
+ * Valor de `?plan=` que apaga el filtro. Hace falta uno explícito porque la
+ * ausencia del parámetro significa otra cosa: "usa el plan contratado".
+ */
+export const SIN_PLAN = 'todos';
+
 export const AVAILABILITY_LABEL: Record<Availability, string> = {
   incluido: 'Incluido',
   limitado: 'Con límites',

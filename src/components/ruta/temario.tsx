@@ -7,6 +7,7 @@ import {
   type RegistroLeccion,
 } from '@/lib/ruta';
 import { EstadoIcono, TipoIcono } from './piezas';
+import { leccionConPlan } from './planes';
 
 type Props = {
   curso: Curso;
@@ -14,6 +15,8 @@ type Props = {
   actual?: string;
   partida: NivelKey | null;
   certificados: boolean;
+  /** El plan con el que se está mirando la ruta, para no perderlo al saltar. */
+  plan?: string | null;
 };
 
 /**
@@ -21,7 +24,7 @@ type Props = {
  * el estado de cada una. Es la barra lateral de las plataformas de cursos, y
  * sirve para lo mismo: saber dónde estás y saltar sin volver a la portada.
  */
-export function Temario({ curso, registros, actual, partida, certificados }: Props) {
+export function Temario({ curso, registros, actual, partida, certificados, plan = null }: Props) {
   const porSlug = new Map(registros.map((r) => [r.lessonSlug, r]));
   const orden = curso.niveles.map((n) => n.key);
 
@@ -48,7 +51,7 @@ export function Temario({ curso, registros, actual, partida, certificados }: Pro
                     return (
                       <li key={l.slug}>
                         <Link
-                          href={`/ruta/${curso.platformId}/${l.slug}`}
+                          href={leccionConPlan(curso.platformId, l.slug, plan)}
                           aria-current={esActual ? 'page' : undefined}
                           className={`flex items-start gap-2.5 rounded-lg px-2 py-1.5 text-[13px] leading-snug transition-colors ${
                             esActual

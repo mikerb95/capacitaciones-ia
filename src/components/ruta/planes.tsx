@@ -1,7 +1,6 @@
 import Link from 'next/link';
-import { AVAILABILITY_LABEL, AVAILABILITY_TONE, type PlanInfo } from '@/lib/plans';
+import { AVAILABILITY_LABEL, AVAILABILITY_TONE, SIN_PLAN, type PlanInfo } from '@/lib/plans';
 import type { Availability } from '@/db/schema';
-import { SIN_PLAN } from '@/lib/ruta/contexto';
 
 /** El enlace a la ruta con un plan puesto. `null` es "todos los planes". */
 export const rutaConPlan = (platform: string, plan: string | null, hash = '') =>
