@@ -4,7 +4,7 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import { getLandingSummary } from '@/db/queries';
 import { platformLogo } from '@/lib/brand-logos';
 import { Logo } from '@/lib/logos';
-import { MODELS_REVISION } from '@/lib/revision';
+import { MODELS_REVISION, platformRevision } from '@/lib/revision';
 
 export const dynamic = 'force-dynamic';
 
@@ -163,6 +163,25 @@ export default async function AcademiaPage() {
           Los precios son de la licencia del fabricante, no de la capacitación. Se muestran para
           ubicar desde qué plan se puede dictar el temario completo.
         </p>
+      </section>
+
+      <section
+        id="actualizaciones"
+        className="mx-auto w-full max-w-[1240px] scroll-mt-10 px-5 pb-14 sm:px-10 sm:pb-[104px]"
+      >
+        <Rotulo>Al día</Rotulo>
+        <h2 className="max-w-[22ch] font-display text-[28px] leading-[1.08] font-semibold tracking-[-0.03em] sm:text-[46px]">
+          Las herramientas cambian cada mes. El temario también.
+        </h2>
+        <p className="mt-5 max-w-[68ch] text-[15.5px] leading-relaxed text-muted sm:text-[17.5px]">
+          Cada capacitación se revisa por separado contra lo que el fabricante lanzó o retiró. Esta
+          es la última vez que se tocó cada una.
+        </p>
+        <ul className="mt-8 grid gap-3 sm:mt-11 sm:grid-cols-2 lg:grid-cols-5">
+          {plataformas.map((p) => (
+            <Actualizacion key={p.id} p={p} />
+          ))}
+        </ul>
       </section>
 
       <section
@@ -405,6 +424,40 @@ function Banda({ p, indice, ultima }: { p: Resumen; indice: number; ultima: bool
         </a>
       </div>
     </article>
+  );
+}
+
+/** La fecha de la última revisión de una capacitación, con su logo. */
+function Actualizacion({ p }: { p: Resumen }) {
+  const logo = platformLogo(p.id);
+  const revision = platformRevision(p.id);
+
+  return (
+    <li className="flex items-center gap-3.5 rounded-card border border-line bg-surface px-4.5 py-4 transition-shadow hover:shadow-[0_8px_30px_-16px_var(--primary)]">
+      {logo ? (
+        <Logo name={logo} size={30} className="flex-none" />
+      ) : (
+        <span
+          className="grid h-[30px] w-[30px] flex-none place-items-center rounded-[8px] font-display text-[13px] font-semibold text-white"
+          style={{ background: p.color }}
+        >
+          {p.initial}
+        </span>
+      )}
+      <div className="min-w-0">
+        <div className="font-display text-[16px] font-semibold tracking-tight">{p.name}</div>
+        <div className={`mt-1 ${ETIQUETA} text-[10px] tracking-[0.08em] text-faint`}>
+          Actualizado
+        </div>
+        {revision ? (
+          <time dateTime={revision.iso} className="font-mono text-[12.5px]">
+            {revision.texto}
+          </time>
+        ) : (
+          <span className="font-mono text-[12.5px] text-[var(--tenue)]">Sin fecha</span>
+        )}
+      </div>
+    </li>
   );
 }
 
