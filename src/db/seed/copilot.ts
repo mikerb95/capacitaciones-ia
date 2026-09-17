@@ -262,7 +262,11 @@ export const copilot: PlatformSeed = {
         },
         {
           "title": "Cambia de modelo cuando el trabajo es largo",
-          "description": "Para redactar y resumir, el modelo rápido. Para análisis de varios pasos, escoge el modelo de razonamiento en el selector."
+          "description": "Para redactar y resumir, el modelo rápido. Para análisis de varios pasos, escoge el modelo de razonamiento en el selector. Si una respuesta no convence, Intentar de nuevo la genera otra vez, y ahí mismo puedes escoger otro modelo para correr el mismo prompt sin empezar la conversación de cero."
+        },
+        {
+          "title": "Comparte la respuesta con un enlace",
+          "description": "En Más opciones (...) de una respuesta, Compartir respuesta genera un enlace con la respuesta y el prompt que la produjo; con Compartir arriba de la conversación se comparte el chat completo. Quien abre el enlace no gana acceso a los archivos citados: solo ve lo que ya tenía permiso de ver. La organización puede desactivar esta opción."
         }
       ],
       "roles": [
@@ -372,6 +376,10 @@ export const copilot: PlatformSeed = {
         {
           "title": "Confirma precios y fechas",
           "description": "Copilot puede inventarse un número. Todo precio, fecha y cantidad se confirma contra la fuente antes de enviar."
+        },
+        {
+          "title": "Pide los enlaces en el mismo encargo",
+          "description": "Desde agosto de 2026 Copilot inserta hipervínculos en el documento y les da formato. Pídelos junto con el texto (\"enlaza cada norma a su página oficial\") y haz clic en cada uno antes de enviar: un enlace roto se nota más que uno que falta."
         },
         {
           "title": "Revisa qué modelo está escogido",
@@ -703,6 +711,10 @@ export const copilot: PlatformSeed = {
           "description": "Puedes pedir \"¿qué me perdí?\" en cualquier momento, sin interrumpir a nadie."
         },
         {
+          "title": "Si la reunión es en varios idiomas, pide el resumen en el tuyo",
+          "description": "En Configuración de idioma, Traducir a, escoges el idioma de los subtítulos y la transcripción, y el resumen sale en ese mismo idioma al terminar. Sirve en español, inglés, portugués, francés, alemán, italiano, japonés, coreano y chino simplificado, y solo lo usan los participantes con licencia de Copilot o de Teams Premium."
+        },
+        {
           "title": "Pide compromisos, no resúmenes",
           "description": "Un resumen es texto; una lista con responsable y fecha es la que se puede cobrar el lunes siguiente."
         },
@@ -920,16 +932,24 @@ export const copilot: PlatformSeed = {
           "description": "Cowork propone los pasos. Ahí se corrigen las suposiciones equivocadas, que es mucho más barato que corregir el resultado."
         },
         {
+          "title": "Ajusta el modelo y el esfuerzo a la tarea",
+          "description": "Junto a la caja de texto están el selector de modelo, que por defecto queda en Auto, y el nivel de esfuerzo de razonamiento: Medio por defecto, Ligero para lo simple, y Alto, Extra alto o Máximo para el análisis de fondo. Más esfuerzo da un resultado más completo, pero tarda más y gasta más créditos."
+        },
+        {
           "title": "Verifica por muestra",
           "description": "No hay que revisar los 40 contratos, pero sí cinco. Si la muestra cuadra, el entregable es confiable."
         },
         {
           "title": "Mira lo que consumió",
-          "description": "Cada tarea gasta créditos según el modelo, el contexto y la duración. Anota el consumo de las primeras tareas para poder presupuestar el del área. El tablero de consumo de Viva Insights muestra el gasto de créditos de Cowork y de las APIs de Work IQ."
+          "description": "Cada tarea gasta créditos según el modelo, el contexto y las herramientas que usa. Escribe /cost en la conversación para ver lo que lleva la tarea, lo que usaste en el mes, cuánto te queda y cuándo se reinicia el cupo; consultarlo no gasta créditos. Anota el consumo de las primeras tareas para poder presupuestar el del área. El tablero de consumo de Viva Insights muestra el gasto de créditos de Cowork y de las APIs de Work IQ."
         },
         {
           "title": "Las imágenes también salen de acá",
           "description": "Desde agosto de 2026 Cowork genera y edita imágenes con ChatGPT Images 2.0, así que la portada o el gráfico del entregable ya no hay que buscarlos afuera."
+        },
+        {
+          "title": "Deja lo que se repite en Automatizaciones",
+          "description": "La pestaña que antes se llamaba Programadas ahora es Automatizaciones. Ahí quedan las tareas con horario (\"cada viernes arma el informe de estado\", hasta 25) y las que se disparan con un evento, como un correo de cierto remitente o una mención en un canal de Teams. Lo que envía correos o mensajes queda en borrador y pide tu aprobación antes de salir."
         }
       ],
       "roles": [
