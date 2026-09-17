@@ -10,6 +10,7 @@ import {
   decks,
   liveSessions,
   moduleViews,
+  modulePlans,
   modules,
   participants,
   platformPlans,
@@ -591,6 +592,52 @@ export async function getModuleIdsBySlug(platformId: string) {
     .from(modules)
     .where(eq(modules.platformId, platformId));
   return new Map(rows.map((r) => [r.slug, r.id]));
+}
+
+/**
+ * Los planes de una plataforma y qué plan habilita el módulo de cada unidad.
+ *
+ * Es la misma matriz que usa el portal, traída por slug de módulo porque la
+ * ruta no conoce los ids: sus unidades apuntan a un módulo por slug. Un módulo
+ * sin filas se considera disponible en todos los planes, igual que en el
+ * portal.
+ */
+export async function getPlatformPlanMatrix(platformId: string) {
+  const [plans, rows] = await Promise.all([
+    db
+      .select({
+        key: platformPlans.key,
+        name: platformPlans.name,
+        price: platformPlans.price,
+        audience: platformPlans.audience,
+        summary: platformPlans.summary,
+        note: platformPlans.note,
+        tier: platformPlans.tier,
+      })
+      .from(platformPlans)
+      .where(eq(platformPlans.platformId, platformId))
+      .orderBy(asc(platformPlans.sortOrder)),
+    db
+      .select({
+        slug: modules.slug,
+        availability: modulePlans.availability,
+        note: modulePlans.note,
+        planKey: platformPlans.key,
+      })
+      .from(modulePlans)
+      .innerJoin(modules, eq(modulePlans.moduleId, modules.id))
+      .innerJoin(platformPlans, eq(modulePlans.planId, platformPlans.id))
+      .where(eq(modules.platformId, platformId)),
+  ]);
+
+  const porModulo = new Map<string, PlanRef[]>();
+  for (const r of rows) {
+    const refs = porModulo.get(r.slug) ?? [];
+    refs.push({ availability: r.availability, note: r.note, plan: { key: r.planKey } });
+    porModulo.set(r.slug, refs);
+  }
+
+  return { plans, porModulo };
 }
 
 /** Todo lo que una persona lleva de un curso. Pocas filas: una por lección tocada. */
