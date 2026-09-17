@@ -16,7 +16,6 @@ import { hashPassword, passwordProblem } from '@/lib/cuenta/passwords';
 import {
   TOKEN_TTL_MIN,
   consumeToken,
-  findToken,
   isValidEmail,
   issueToken,
   normalizeEmail,
@@ -157,7 +156,8 @@ async function sendLink(email: string, destination: string): Promise<AccountForm
     accessCodeId: await anonymousCodeId(),
     destination,
   });
-  if (!token) return { error: TOO_MANY, values: { email } };
+  // Con el tope alcanzado se responde igual: avisarlo delataría que la cuenta existe.
+  if (!token) return { sent: email };
 
   const mail = await sendSignInEmail({
     to: email,
@@ -178,7 +178,8 @@ export async function requestReset(_prev: AccountFormState, formData: FormData):
   if (!account) return { sent: email };
 
   const token = await issueToken({ email, purpose: 'recuperar' });
-  if (!token) return { error: TOO_MANY, values: { email } };
+  // Con el tope alcanzado se responde igual: avisarlo delataría que la cuenta existe.
+  if (!token) return { sent: email };
 
   const mail = await sendResetEmail({
     to: email,
@@ -197,7 +198,7 @@ const EXPIRED = 'Este enlace ya se usó o venció. Pide uno nuevo.';
  * los antivirus de correo visitan los enlaces antes que la persona, y si el
  * solo hecho de abrirlo lo gastara, llegaría vencido.
  */
-export async function useSignInLink(_prev: AccountFormState, formData: FormData): Promise<AccountFormState> {
+export async function redeemSignInLink(_prev: AccountFormState, formData: FormData): Promise<AccountFormState> {
   const token = await consumeToken(str(formData, 't'), 'entrar');
   if (!token) return { error: EXPIRED };
 
@@ -214,9 +215,7 @@ export async function setNewPassword(_prev: AccountFormState, formData: FormData
   if (problem) return { error: problem };
   if (password !== raw(formData, 'confirmacion')) return { error: 'Las dos contraseñas no coinciden.' };
 
-  // Se revisa antes de gastarlo, para que un error de tipeo no queme el enlace.
-  if (!(await findToken(str(formData, 't'), 'recuperar'))) return { error: EXPIRED };
-
+  // El enlace se gasta recién acá, después de validar: un error de tipeo no lo quema.
   const token = await consumeToken(str(formData, 't'), 'recuperar');
   if (!token) return { error: EXPIRED };
 
