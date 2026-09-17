@@ -1,4 +1,5 @@
 import { asc, desc, eq, and, inArray, or, isNull, sql } from 'drizzle-orm';
+import type { PlanRef } from '@/lib/plans';
 import { db } from './index';
 import {
   accessCodeModules,

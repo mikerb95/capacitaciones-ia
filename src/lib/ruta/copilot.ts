@@ -254,7 +254,7 @@ export const copilotCurso: Curso = {
               tono: 'dato',
               titulo: 'El modelo también se escoge',
               texto:
-                'En Copilot Chat, Word, PowerPoint y Cowork hay un selector de modelo, con opciones de OpenAI y, desde agosto de 2026, de Anthropic. La regla práctica: el modelo rápido para redactar y resumir, el modelo de razonamiento para análisis largos y trabajo de varios pasos.',
+                'En Copilot Chat, Word, Excel, PowerPoint y Cowork hay un selector de modelo, con opciones de OpenAI y de Anthropic (Opus 5 y Sonnet 5, y en Cowork también Fable 5.1) según lo que habilite la empresa. En Cowork, además, se elige el nivel de esfuerzo de razonamiento: más alto es más completo, pero más lento y gasta más créditos. La regla práctica: el modelo rápido para redactar y resumir, el modelo de razonamiento para análisis largos y trabajo de varios pasos.',
             },
             {
               tipo: 'texto',

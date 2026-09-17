@@ -154,7 +154,7 @@ export const copilot: PlatformSeed = {
     },
     {
       "question": "¿Puedo escoger el modelo?",
-      "answer": "Sí. En Copilot Chat, Word, PowerPoint y Cowork aparece un selector de modelo con las opciones de OpenAI y de Anthropic que la empresa tenga habilitadas. En Word, Sonnet 5 de Anthropic quedó por defecto para el trabajo que exige más razonamiento, y al usar Researcher en el chat también se puede escoger modelo y modo. La regla práctica: el modelo rápido para redactar y resumir, el modelo de razonamiento para análisis largos y trabajo de varios pasos."
+      "answer": "Sí. En Copilot Chat, Word, Excel, PowerPoint y Cowork aparece un selector de modelo con las opciones de OpenAI y de Anthropic que la empresa tenga habilitadas (Opus 5 y Sonnet 5, y en Cowork también Fable 5.1). En Word, Sonnet 5 de Anthropic quedó por defecto para el trabajo que exige más razonamiento, y al usar Researcher en el chat también se puede escoger modelo y modo. La regla práctica: el modelo rápido para redactar y resumir, el modelo de razonamiento para análisis largos y trabajo de varios pasos."
     },
     {
       "question": "¿Cowork se cobra aparte?",

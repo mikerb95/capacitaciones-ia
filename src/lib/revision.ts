@@ -21,7 +21,7 @@ export const MODELS_REVISION = 'septiembre de 2026';
 export const PLATFORM_REVISIONS: Record<string, string> = {
   claude: '2026-09-09',
   chatgpt: '2026-09-09',
-  copilot: '2026-09-09',
+  copilot: '2026-09-17',
   gemini: '2026-09-09',
   jira: '2026-09-12',
 };

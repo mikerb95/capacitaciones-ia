@@ -599,7 +599,7 @@ export const copilotPlans: PlansSeed = {
       audience: 'Empresa',
       tier: 1,
       summary: 'Para organizaciones de menos de 300 usuarios.',
-      note: 'Copilot dentro de las apps y sobre los datos de trabajo. Precio promocional de USD 18 hasta el 30 de septiembre de 2026.',
+      note: 'Copilot dentro de las apps y sobre los datos de trabajo. Precio promocional de USD 18 para compras con compromiso anual hechas entre el 1 de julio y el 31 de diciembre de 2026, solo el primer año. Pagando mes a mes cuesta USD 25,20.',
     },
     {
       key: 'copilot',
@@ -645,8 +645,8 @@ export const copilotPlans: PlansSeed = {
     },
     {
       key: 'anthropic',
-      name: 'Modelos de Anthropic (Sonnet 5)',
-      description: 'Desde agosto de 2026 el selector de modelos suma las opciones de Anthropic a las de OpenAI. En Word, Sonnet 5 quedó por defecto para el trabajo de más razonamiento.',
+      name: 'Modelos de Anthropic (Opus 5, Sonnet 5 y Fable 5.1)',
+      description: 'El selector de modelos suma las opciones de Anthropic a las de OpenAI. Opus 5 llegó en julio de 2026 a Word, Excel, PowerPoint, Copilot Chat, Cowork y Copilot Studio; en Word, Sonnet 5 quedó por defecto para el trabajo de más razonamiento desde agosto; y Cowork ya ofrece también Fable 5.1. El administrador puede apagar toda la familia de Anthropic para la organización.',
       plans: [
         { plan: 'chat', availability: 'no', note: 'El selector aparece dentro de las apps, que necesitan licencia.' },
         { plan: 'business' },
