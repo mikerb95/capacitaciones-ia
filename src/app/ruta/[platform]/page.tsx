@@ -4,7 +4,7 @@ import { Buscador } from '@/components/buscador';
 import { SiteHeader } from '@/components/ui';
 import { getPlatformName } from '@/db/queries';
 import { Anillo, Barra, EstadoIcono, NivelChip, TIPO_ETIQUETA, TipoIcono, tipoDe } from '@/components/ruta/piezas';
-import { InsigniaPlan, SelectorPlan, leccionConPlan, rutaConPlan } from '@/components/ruta/planes';
+import { InsigniaPlan, SelectorPlan, leccionConPlan } from '@/components/ruta/planes';
 import { getCurso, duracion, estadoDe, leccionesDe, resumir } from '@/lib/ruta';
 import { cargarCurso } from '@/lib/ruta/contexto';
 
