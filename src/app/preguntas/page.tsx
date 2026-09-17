@@ -1,3 +1,4 @@
+import { Buscador } from '@/components/buscador';
 import { QuestionForm } from '@/components/question-form';
 import { QuestionList } from '@/components/question-list';
 import { LeaveButton } from '@/components/leave-button';
@@ -40,6 +41,7 @@ export default async function PreguntasPage() {
         title="Preguntas"
         subtitle={participant.accessCode.label}
         back={{ href: '/', label: 'Volver al portal' }}
+        search={<Buscador />}
       >
         <LeaveButton name={participant.name ?? undefined} />
       </SiteHeader>

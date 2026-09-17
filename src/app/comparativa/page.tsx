@@ -1,3 +1,4 @@
+import { Buscador } from '@/components/buscador';
 import { ComparisonView } from '@/components/comparison-view';
 import { LeaveButton } from '@/components/leave-button';
 import { SiteHeader } from '@/components/ui';
@@ -19,6 +20,7 @@ export default async function ComparativaPage() {
         title="Comparativa de módulos"
         subtitle={`${platforms.length} plataformas · ${totalModules} módulos`}
         back={{ href: '/', label: 'Inicio' }}
+        search={<Buscador />}
       >
         <LeaveButton name={participant.name ?? undefined} />
       </SiteHeader>

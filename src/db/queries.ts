@@ -196,6 +196,15 @@ export async function getPlatformIds() {
     .orderBy(asc(platforms.sortOrder));
 }
 
+/** Solo el nombre visible de una plataforma, para rótulos sueltos. */
+export async function getPlatformName(id: string) {
+  const row = await db.query.platforms.findFirst({
+    where: eq(platforms.id, id),
+    columns: { name: true },
+  });
+  return row?.name ?? null;
+}
+
 /** Un módulo con todo su detalle, para la ficha y para el admin. */
 export async function getModule(platformId: string, slug: string) {
   return db.query.modules.findFirst({

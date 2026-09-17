@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { after } from 'next/server';
+import { Buscador } from '@/components/buscador';
 import { SiteHeader } from '@/components/ui';
 import { Bloques } from '@/components/ruta/bloques';
 import { Chequeo } from '@/components/ruta/chequeo';
@@ -8,7 +9,7 @@ import { Examen } from '@/components/ruta/examen';
 import { EstadoIcono, NivelChip, TIPO_ETIQUETA, TipoIcono, tipoDe } from '@/components/ruta/piezas';
 import { Practica } from '@/components/ruta/practica';
 import { Temario } from '@/components/ruta/temario';
-import { recordModuleView } from '@/db/queries';
+import { getPlatformName, recordModuleView } from '@/db/queries';
 import {
   buscarLeccion,
   duracion,
@@ -61,6 +62,7 @@ export default async function LeccionPage({ params }: Params) {
   }
 
   const lista = leccionesDe(curso);
+  const nombre = await getPlatformName(platform);
   const anterior = lista[indice - 1];
   const posterior = lista[indice + 1];
   const siguiente = posterior
@@ -75,6 +77,7 @@ export default async function LeccionPage({ params }: Params) {
         title={curso.titulo}
         subtitle={`${nivel.titulo} · ${unidad.titulo}`}
         back={{ href: `/ruta/${platform}`, label: 'Volver al curso' }}
+        search={<Buscador plataforma={{ id: platform, name: nombre ?? curso.titulo }} />}
       >
         <span className="hidden items-center gap-2 text-[12px] text-muted sm:flex">
           <span className="block h-1.5 w-24 overflow-hidden rounded-full bg-surface-2">

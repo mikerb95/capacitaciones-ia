@@ -126,7 +126,7 @@ export function PlanExplorer({
   return (
     <>
       {plans.length > 0 && (
-        <section className="mb-16">
+        <section id="planes" className="ancla mb-16">
           <SectionTitle
             kicker="Facturación"
             title="Elige el plan del cliente"
@@ -260,7 +260,7 @@ export function PlanExplorer({
         </section>
       )}
 
-      <section className="mb-16">
+      <section id="modulos" className="ancla mb-16">
         <SectionTitle
           kicker="Contenido"
           title="Módulos del programa"
@@ -352,7 +352,7 @@ export function PlanExplorer({
       </section>
 
       {visibleSpecials.length > 0 && (
-        <section className="mb-16">
+        <section id="diferenciales" className="ancla mb-16">
           <SectionTitle
             kicker="Diferenciales"
             title={specialTitle}

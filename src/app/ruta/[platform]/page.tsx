@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { Buscador } from '@/components/buscador';
 import { SiteHeader } from '@/components/ui';
+import { getPlatformName } from '@/db/queries';
 import { Anillo, Barra, EstadoIcono, NivelChip, TIPO_ETIQUETA, TipoIcono, tipoDe } from '@/components/ruta/piezas';
 import { getCurso, duracion, estadoDe, leccionesDe, resumir } from '@/lib/ruta';
 import { cargarCurso } from '@/lib/ruta/contexto';
@@ -28,6 +30,7 @@ export default async function RutaPage({ params }: Params) {
 
   const { curso, registros, certificados } = cargado;
   const resumen = resumir(curso, registros);
+  const nombre = await getPlatformName(platform);
   const lecciones = leccionesDe(curso);
   const porSlug = new Map(registros.map((r) => [r.lessonSlug, r]));
   const orden = curso.niveles.map((n) => n.key);
@@ -42,6 +45,7 @@ export default async function RutaPage({ params }: Params) {
         title={curso.titulo}
         subtitle={curso.subtitulo}
         back={{ href: `/${platform}`, label: 'Volver al portal' }}
+        search={<Buscador plataforma={{ id: platform, name: nombre ?? curso.titulo }} />}
       />
 
       <main className="mx-auto max-w-[1120px] px-4 py-10 sm:px-6 sm:py-12">

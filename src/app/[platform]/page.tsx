@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { Ancla } from '@/components/ancla';
+import { Buscador } from '@/components/buscador';
 import { PlanExplorer } from '@/components/plan-explorer';
 import { Card, PlatformMark, SectionTitle, SiteHeader, StatusBadge } from '@/components/ui';
 import { getCourseProgress, getPlatform, getPlatformIds } from '@/db/queries';
@@ -56,7 +58,9 @@ export default async function PlatformPage({ params, searchParams }: Params) {
         title={platform.portalName}
         subtitle={platform.tagline ?? undefined}
         back={{ href: '/', label: 'Inicio' }}
+        search={<Buscador plataforma={{ id: platform.id, name: platform.name }} />}
       />
+      <Ancla />
 
       <main className="mx-auto max-w-[1200px] px-4 py-10 sm:px-6 sm:py-12">
         {/* Hero */}
@@ -195,7 +199,7 @@ export default async function PlatformPage({ params, searchParams }: Params) {
 
         {/* Buenas prácticas */}
         {platform.practices.length > 0 && (
-          <section className="mb-16">
+          <section id="practicas" className="ancla mb-16">
             <SectionTitle kicker="Método" title="Cuatro prácticas que valen para todo" />
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {platform.practices.map((p) => (
@@ -213,13 +217,14 @@ export default async function PlatformPage({ params, searchParams }: Params) {
 
         {/* Preguntas frecuentes */}
         {platform.faqs.length > 0 && (
-          <section className="mb-16">
+          <section id="faq" className="ancla mb-16">
             <SectionTitle kicker="Dudas" title="Preguntas frecuentes" />
             <div className="flex flex-col gap-2.5">
               {platform.faqs.map((f) => (
                 <details
                   key={f.id}
-                  className="group rounded-card border border-line bg-surface px-5 py-4 shadow-card"
+                  id={`faq-${f.id}`}
+                  className="ancla group rounded-card border border-line bg-surface px-5 py-4 shadow-card"
                 >
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-display text-[14.5px] font-semibold tracking-tight">
                     {f.question}
@@ -242,7 +247,7 @@ export default async function PlatformPage({ params, searchParams }: Params) {
         {/* Material y enlaces */}
         <section className="grid gap-10 md:grid-cols-2">
           {platform.downloads.length > 0 && (
-            <div>
+            <div id="material" className="ancla">
               <SectionTitle kicker="Material" title="Para llevarse" />
               <div className="flex flex-col gap-2.5">
                 {platform.downloads.map((d) => (

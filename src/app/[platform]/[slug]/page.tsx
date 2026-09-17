@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { after } from 'next/server';
+import { Ancla } from '@/components/ancla';
+import { Buscador } from '@/components/buscador';
 import { PromptList } from '@/components/prompt-list';
 import { Abbr, Card, LevelBadge, SectionTitle, SiteHeader } from '@/components/ui';
 import { moduleLogo } from '@/lib/brand-logos';
@@ -64,7 +66,9 @@ export default async function ModulePage({ params, searchParams }: Params) {
         title={mod.name}
         subtitle={mod.platform.portalName}
         back={{ href: `/${platformId}${keep}`, label: `Volver a ${mod.platform.name}` }}
+        search={<Buscador plataforma={{ id: platformId, name: mod.platform.name }} />}
       />
+      <Ancla />
 
       <main className="mx-auto max-w-[1000px] px-4 py-8 sm:px-6">
         {/* Encabezado del módulo */}

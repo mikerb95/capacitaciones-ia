@@ -33,7 +33,8 @@ export function PromptList({ prompts }: { prompts: Prompt[] }) {
       {prompts.map((p) => (
         <li
           key={p.id}
-          className="flex items-start gap-3 rounded-card border border-line bg-surface p-3.5 shadow-card"
+          id={`prompt-${p.id}`}
+          className="ancla flex items-start gap-3 rounded-card border border-line bg-surface p-3.5 shadow-card"
         >
           <span className="mt-0.5 flex-none rounded-full bg-surface-2 px-2 py-0.5 font-mono text-[11px] font-medium text-muted">
             {p.tag}

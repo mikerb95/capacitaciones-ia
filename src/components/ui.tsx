@@ -111,11 +111,14 @@ export function SiteHeader({
   title,
   subtitle,
   back,
+  search,
   children,
 }: {
   title: string;
   subtitle?: string;
   back?: { href: string; label: string };
+  /** El buscador. En móvil baja a su propia fila, a todo el ancho. */
+  search?: React.ReactNode;
   children?: React.ReactNode;
 }) {
   return (
@@ -144,6 +147,9 @@ export function SiteHeader({
           </h1>
           {subtitle && <p className="truncate text-[12.5px] text-faint">{subtitle}</p>}
         </div>
+        {search && (
+          <div className="no-print order-last w-full sm:order-none sm:w-auto">{search}</div>
+        )}
         <div className="no-print flex items-center gap-2">
           {children}
           <ThemeToggle />

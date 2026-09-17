@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Buscador } from '@/components/buscador';
 import { LeaveButton } from '@/components/leave-button';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { PlatformMark, StatusBadge } from '@/components/ui';
@@ -22,10 +23,13 @@ export default async function Home() {
 
   return (
     <div className="flex min-h-screen flex-col bg-bg">
-      <header className="flex items-center gap-3 px-4 py-4 sm:px-8">
+      <header className="flex flex-wrap items-center gap-3 px-4 py-4 sm:px-8">
         <span className="flex-1 font-display text-[15px] font-semibold tracking-tight">
           Aula Virtual
         </span>
+        <div className="order-last w-full sm:order-none sm:w-auto">
+          <Buscador />
+        </div>
         <LeaveButton name={participant.name ?? undefined} />
         <ThemeToggle />
       </header>
