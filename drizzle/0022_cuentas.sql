@@ -20,6 +20,7 @@ CREATE TABLE `email_tokens` (
 	`name` text,
 	`password_hash` text,
 	`destination` text,
+	`ip_hash` text,
 	`expires_at` integer NOT NULL,
 	`used_at` integer,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
@@ -28,5 +29,7 @@ CREATE TABLE `email_tokens` (
 --> statement-breakpoint
 CREATE UNIQUE INDEX `email_tokens_hash_idx` ON `email_tokens` (`token_hash`);--> statement-breakpoint
 CREATE INDEX `email_tokens_email_idx` ON `email_tokens` (`email`,`created_at`);--> statement-breakpoint
+CREATE INDEX `email_tokens_ip_idx` ON `email_tokens` (`ip_hash`,`created_at`);--> statement-breakpoint
+CREATE INDEX `email_tokens_created_idx` ON `email_tokens` (`created_at`);--> statement-breakpoint
 ALTER TABLE `participants` ADD `account_id` integer REFERENCES accounts(id) ON DELETE set null;--> statement-breakpoint
 CREATE INDEX `participants_account_idx` ON `participants` (`account_id`);

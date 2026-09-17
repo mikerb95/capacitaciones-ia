@@ -1,6 +1,7 @@
 'use server';
 
 import { and, eq } from 'drizzle-orm';
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { db } from '@/db';
 import { accessCodes } from '@/db/schema';
@@ -19,6 +20,7 @@ import {
   isValidEmail,
   issueToken,
   normalizeEmail,
+  type IssueResult,
 } from '@/lib/cuenta/tokens';
 import { safeDestination } from '@/lib/destination';
 import { sendResetEmail, sendSignInEmail, siteUrl } from '@/lib/email';
@@ -48,7 +50,18 @@ async function anonymousCodeId() {
 
 const linkUrl = (token: string) => `${siteUrl()}/cuenta/enlace?t=${encodeURIComponent(token)}`;
 
-const TOO_MANY = 'Ya te enviamos varios enlaces hace poco. Revisa tu correo o intenta en unos minutos.';
+// En Vercel la plataforma escribe este encabezado, así que el primer valor es
+// la IP real de quien pide y no algo que el navegador pueda inventar.
+async function clientIp() {
+  const h = await headers();
+  return h.get('x-forwarded-for')?.split(',')[0]?.trim() || h.get('x-real-ip') || null;
+}
+
+const BLOCKED: Record<Extract<IssueResult, { blocked: unknown }>['blocked'], string> = {
+  email: 'Ya te enviamos varios enlaces hace poco. Revisa tu correo o intenta en unos minutos.',
+  ip: 'Hubo demasiadas solicitudes desde tu conexión. Intenta de nuevo en unos minutos.',
+  daily: 'Por hoy se alcanzó el límite de correos del sitio. Intenta mañana, o entra solo con el código.',
+};
 const SEND_FAILED = 'No pudimos enviar el correo. Intenta de nuevo en unos minutos.';
 
 /**
@@ -91,19 +104,20 @@ export async function register(_prev: AccountFormState, formData: FormData): Pro
     passwordHash = await hashPassword(password);
   }
 
-  const token = await issueToken({
+  const issued = await issueToken({
     email,
     purpose: 'entrar',
     accessCodeId,
     name,
     passwordHash,
     destination: safeDestination(str(formData, 'destino')),
+    ip: await clientIp(),
   });
-  if (!token) return { error: TOO_MANY, values };
+  if ('blocked' in issued) return { error: BLOCKED[issued.blocked], values };
 
   const mail = await sendSignInEmail({
     to: email,
-    url: linkUrl(token),
+    url: linkUrl(issued.token),
     expiresMinutes: TOKEN_TTL_MIN.entrar,
     signup: true,
   });
@@ -150,23 +164,32 @@ async function sendLink(email: string, destination: string): Promise<AccountForm
   const account = await findAccountByEmail(email);
   if (!account) return { sent: email };
 
-  const token = await issueToken({
+  const issued = await issueToken({
     email,
     purpose: 'entrar',
     accessCodeId: await anonymousCodeId(),
     destination,
+    ip: await clientIp(),
   });
-  // Con el tope alcanzado se responde igual: avisarlo delataría que la cuenta existe.
-  if (!token) return { sent: email };
+  if ('blocked' in issued) return silentlyBlocked(email, issued.blocked);
 
   const mail = await sendSignInEmail({
     to: email,
-    url: linkUrl(token),
+    url: linkUrl(issued.token),
     expiresMinutes: TOKEN_TTL_MIN.entrar,
     signup: false,
   });
   if (!mail.ok && !mail.skipped) return { error: SEND_FAILED, values: { email } };
 
+  return { sent: email };
+}
+
+/**
+ * En el ingreso y la recuperación los topes no se avisan: solo se llega a
+ * ellos cuando la cuenta existe, y el aviso lo delataría. Queda en el log.
+ */
+function silentlyBlocked(email: string, reason: string): AccountFormState {
+  console.warn(`Enlace no enviado (tope ${reason})`);
   return { sent: email };
 }
 
@@ -177,13 +200,12 @@ export async function requestReset(_prev: AccountFormState, formData: FormData):
   const account = await findAccountByEmail(email);
   if (!account) return { sent: email };
 
-  const token = await issueToken({ email, purpose: 'recuperar' });
-  // Con el tope alcanzado se responde igual: avisarlo delataría que la cuenta existe.
-  if (!token) return { sent: email };
+  const issued = await issueToken({ email, purpose: 'recuperar', ip: await clientIp() });
+  if ('blocked' in issued) return silentlyBlocked(email, issued.blocked);
 
   const mail = await sendResetEmail({
     to: email,
-    url: linkUrl(token),
+    url: linkUrl(issued.token),
     expiresMinutes: TOKEN_TTL_MIN.recuperar,
   });
   if (!mail.ok && !mail.skipped) return { error: SEND_FAILED, values: { email } };

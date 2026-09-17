@@ -11,10 +11,26 @@ export const TOKEN_TTL_MIN: Record<TokenPurpose, number> = {
   recuperar: 30,
 };
 
-// Enlaces por correo en la ventana. Tope contra quien usa el formulario para
-// llenarle el buzón a otro, y contra el gasto en Resend.
-const MAX_PER_WINDOW = 3;
+/**
+ * Topes de envío. Cada enlace es un correo que se paga en la cuota de Resend
+ * (el plan gratis da 100 al día), así que se frena en tres niveles:
+ *
+ * - por correo, contra quien llena el buzón de otra persona;
+ * - por IP, contra quien prueba con muchas direcciones distintas;
+ * - por día y en total, como último seguro si lo anterior no alcanza, por
+ *   ejemplo con IPs rotativas. Se ajusta con `EMAIL_DAILY_LIMIT`.
+ */
 const WINDOW_MIN = 15;
+const MAX_PER_EMAIL = 3;
+const MAX_PER_IP = 6;
+const DEFAULT_DAILY_LIMIT = 90;
+
+function dailyLimit() {
+  const n = Number(process.env.EMAIL_DAILY_LIMIT);
+  return Number.isInteger(n) && n > 0 ? n : DEFAULT_DAILY_LIMIT;
+}
+
+export type IssueResult = { token: string } | { blocked: 'email' | 'ip' | 'daily' };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const EMAIL_MAX = 254;
@@ -26,8 +42,9 @@ export const isValidEmail = (email: string) => email.length <= EMAIL_MAX && EMAI
 const hashToken = (token: string) => createHash('sha256').update(token).digest('hex');
 
 /**
- * Crea un enlace y devuelve el token en claro, que solo viaja en el correo.
- * Devuelve null si ese correo ya pidió demasiados enlaces hace poco.
+ * Crea un enlace y devuelve el token en claro, que solo viaja en el correo, o
+ * el tope que lo impidió. Los enlaces cuentan aunque el correo no salga: el
+ * tope mide lo que se intentó enviar.
  */
 export async function issueToken(params: {
   email: string;
@@ -36,15 +53,27 @@ export async function issueToken(params: {
   name?: string | null;
   passwordHash?: string | null;
   destination?: string | null;
-}) {
+  ip?: string | null;
+}): Promise<IssueResult> {
   const now = Date.now();
-  const since = new Date(now - WINDOW_MIN * 60_000);
+  // En segundos, que es como se guarda: en `sql` crudo Drizzle no convierte fechas.
+  const since = Math.floor((now - WINDOW_MIN * 60_000) / 1000);
+  const ipHash = params.ip ? hashToken(`ip:${params.ip}`) : null;
 
-  const [{ recent }] = await db
-    .select({ recent: sql<number>`count(*)` })
+  const [counts] = await db
+    .select({
+      email: sql<number>`coalesce(sum(${emailTokens.email} = ${params.email} and ${emailTokens.createdAt} > ${since}), 0)`,
+      ip: ipHash
+        ? sql<number>`coalesce(sum(${emailTokens.ipHash} = ${ipHash} and ${emailTokens.createdAt} > ${since}), 0)`
+        : sql<number>`0`,
+      day: sql<number>`count(*)`,
+    })
     .from(emailTokens)
-    .where(and(eq(emailTokens.email, params.email), gt(emailTokens.createdAt, since)));
-  if (recent >= MAX_PER_WINDOW) return null;
+    .where(gt(emailTokens.createdAt, new Date(now - 24 * 60 * 60_000)));
+
+  if (counts.email >= MAX_PER_EMAIL) return { blocked: 'email' };
+  if (counts.ip >= MAX_PER_IP) return { blocked: 'ip' };
+  if (counts.day >= dailyLimit()) return { blocked: 'daily' };
 
   const token = randomBytes(32).toString('base64url');
   await db.insert(emailTokens).values({
@@ -55,11 +84,12 @@ export async function issueToken(params: {
     name: params.name ?? null,
     passwordHash: params.passwordHash ?? null,
     destination: params.destination ?? null,
+    ipHash,
     expiresAt: new Date(now + TOKEN_TTL_MIN[params.purpose] * 60_000),
     createdAt: new Date(now),
   });
 
-  return token;
+  return { token };
 }
 
 /** Enlace vigente y sin usar, o null. No lo gasta: eso lo hace `consumeToken`. */

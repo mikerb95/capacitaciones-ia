@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "ce558844-6fa1-4d6a-8484-97a7d5ee838a",
+  "id": "5f39b08a-624f-4276-8b85-ed64923cc4d7",
   "prevId": "2ed6ad8c-196a-489f-980d-9250ed9b164e",
   "tables": {
     "access_code_modules": {
@@ -1058,6 +1058,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "ip_hash": {
+          "name": "ip_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "expires_at": {
           "name": "expires_at",
           "type": "integer",
@@ -1093,6 +1100,21 @@
           "name": "email_tokens_email_idx",
           "columns": [
             "email",
+            "created_at"
+          ],
+          "isUnique": false
+        },
+        "email_tokens_ip_idx": {
+          "name": "email_tokens_ip_idx",
+          "columns": [
+            "ip_hash",
+            "created_at"
+          ],
+          "isUnique": false
+        },
+        "email_tokens_created_idx": {
+          "name": "email_tokens_created_idx",
+          "columns": [
             "created_at"
           ],
           "isUnique": false

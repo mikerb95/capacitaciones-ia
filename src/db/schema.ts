@@ -705,6 +705,8 @@ export const emailTokens = sqliteTable(
     name: text('name'),
     passwordHash: text('password_hash'),
     destination: text('destination'),
+    // Hash de la IP que lo pidió, para el tope por IP. No se guarda la IP en claro.
+    ipHash: text('ip_hash'),
     expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
     usedAt: integer('used_at', { mode: 'timestamp' }),
     createdAt: integer('created_at', { mode: 'timestamp' })
@@ -714,6 +716,8 @@ export const emailTokens = sqliteTable(
   (t) => [
     uniqueIndex('email_tokens_hash_idx').on(t.tokenHash),
     index('email_tokens_email_idx').on(t.email, t.createdAt),
+    index('email_tokens_ip_idx').on(t.ipHash, t.createdAt),
+    index('email_tokens_created_idx').on(t.createdAt),
   ],
 );
 
