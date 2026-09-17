@@ -204,3 +204,32 @@ body {
     display: none !important;
   }
 }
+
+/* Destino de un ancla del buscador: queda debajo del header fijo y se marca un momento. */
+.ancla {
+  scroll-margin-top: 6rem;
+}
+
+[data-destacado] {
+  animation: destacado 1.8s ease-out;
+}
+
+@keyframes destacado {
+  0%,
+  30% {
+    box-shadow:
+      0 0 0 2px var(--tone, var(--primary)),
+      var(--shadow);
+  }
+  100% {
+    box-shadow:
+      0 0 0 2px transparent,
+      var(--shadow);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-destacado] {
+    animation: none;
+  }
+}
