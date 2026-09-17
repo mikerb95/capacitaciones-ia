@@ -19,7 +19,8 @@ const COMPANY_LOGIN = '/empresa';
  * /guia son recursos sueltos para los ejercicios en vivo, pensados para
  * abrirse sin registrarse, y /academia es la landing comercial: es lo único
  * que tiene que poder abrir alguien que todavía no es cliente, y por eso es
- * también lo que ve quien entra a la raíz sin sesión.
+ * también lo que ve quien entra a la raíz sin sesión. /temario es la vista
+ * pública del programa de un curso, para compartirla antes de vender.
  */
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
@@ -64,6 +65,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|ingresar|cuenta|academia|vivo|presentar|materiales|guia|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|webp|ico)$).*)',
+    '/((?!api|_next/static|_next/image|ingresar|cuenta|academia|vivo|presentar|materiales|guia|temario|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|webp|ico)$).*)',
   ],
 };
