@@ -2,6 +2,7 @@
 
 import { refresh } from 'next/cache';
 import { saveCourseProgress } from '@/db/queries';
+import { SIN_PLAN } from '@/lib/plans';
 import {
   DIAGNOSTICO,
   buscarLeccion,
@@ -29,8 +30,10 @@ import {
 
 type Fallo = { error: string };
 
+// El curso entero, sin el recorte del plan: quien llegó a una lección que su
+// plan no habilita igual puede terminarla y que le quede guardada.
 async function leccionDe(platformId: string, slug: string) {
-  const cargado = await cargarCurso(platformId);
+  const cargado = await cargarCurso(platformId, SIN_PLAN);
   if (!cargado) return null;
   const ubicada = buscarLeccion(cargado.curso, slug);
   if (!ubicada) return null;
@@ -157,7 +160,7 @@ export async function guardarDiagnostico(
   platformId: string,
   respuestas: Record<string, number>,
 ): Promise<Fallo | ResultadoDiagnostico> {
-  const cargado = await cargarCurso(platformId);
+  const cargado = await cargarCurso(platformId, SIN_PLAN);
   if (!cargado) return { error: 'Esta ruta no está en tu capacitación.' };
 
   const { curso, participant } = cargado;

@@ -7,7 +7,8 @@ import { and, eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { accessCodes, participants } from '@/db/schema';
 import { codeProblem, normalizeCode } from '@/lib/access-code';
-import { SESSION_COOKIE, SESSION_MAX_AGE } from '@/lib/session';
+import { safeDestination } from '@/lib/destination';
+import { SESSION_COOKIE, setSessionCookie } from '@/lib/session';
 
 export type EnterState = {
   error?: string;
@@ -15,11 +16,6 @@ export type EnterState = {
 };
 
 const str = (data: FormData, key: string) => ((data.get(key) as string | null) ?? '').trim();
-
-/** Solo rutas internas: evita que `?destino=` mande a otro dominio. */
-function safeDestination(raw: string) {
-  return raw.startsWith('/') && !raw.startsWith('//') ? raw : '/';
-}
 
 /**
  * Entrada al portal: el código de la capacitación y nada más. No hay nombre,
@@ -42,14 +38,7 @@ export async function enter(_prev: EnterState, formData: FormData): Promise<Ente
 
   const token = await anonymousToken(accessCode.id);
 
-  const jar = await cookies();
-  jar.set(SESSION_COOKIE, token, {
-    httpOnly: true,
-    sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
-    path: '/',
-    maxAge: SESSION_MAX_AGE,
-  });
+  await setSessionCookie(token);
 
   redirect(safeDestination(str(formData, 'destino')));
 }

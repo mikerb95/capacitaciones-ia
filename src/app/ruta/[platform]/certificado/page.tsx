@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { SiteHeader } from '@/components/ui';
 import { Certificado } from '@/components/ruta/certificado';
 import { EstadoIcono } from '@/components/ruta/piezas';
+import { SIN_PLAN } from '@/lib/plans';
 import { duracion, estadoDe, getCurso, leccionesDe, resumir } from '@/lib/ruta';
 import { cargarCurso } from '@/lib/ruta/contexto';
 
@@ -23,7 +24,8 @@ export async function generateMetadata({ params }: Params) {
  */
 export default async function CertificadoPage({ params }: Params) {
   const { platform } = await params;
-  const cargado = await cargarCurso(platform);
+  // El diploma no se recorta con el plan: mide el curso entero.
+  const cargado = await cargarCurso(platform, SIN_PLAN);
   if (!cargado) notFound();
 
   // Con los certificados apagados desde el panel, la página no existe.

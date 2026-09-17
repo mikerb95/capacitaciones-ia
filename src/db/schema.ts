@@ -648,6 +648,76 @@ export const accessCodePlans = sqliteTable(
 );
 
 /**
+ * Cuenta de un asistente. Es opcional: al portal se sigue entrando solo con el
+ * código, y la cuenta existe para que el avance sea de la persona y no del
+ * navegador. Una cuenta sirve para varias capacitaciones: cada código deja su
+ * propia fila en `participants`, con su avance aparte.
+ *
+ * Solo existen cuentas con el correo confirmado, porque la fila se crea recién
+ * cuando se usa el enlace del correo. El correo se usa para iniciar sesión y
+ * para nada más: ni campañas, ni anuncios, ni se comparte con terceros.
+ */
+export const accounts = sqliteTable(
+  'accounts',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    // Siempre en minúsculas y sin espacios, que es como se busca.
+    email: text('email').notNull(),
+    name: text('name').notNull(),
+    // Nulo en quien entra solo con enlace. Formato `scrypt$N$r$p$salt$hash`.
+    passwordHash: text('password_hash'),
+    // Freno a quien prueba contraseñas: tras varios fallos seguidos, la cuenta
+    // no acepta contraseña por un rato. El enlace por correo sigue sirviendo.
+    failedLogins: integer('failed_logins').notNull().default(0),
+    lockedUntil: integer('locked_until', { mode: 'timestamp' }),
+    lastLoginAt: integer('last_login_at', { mode: 'timestamp' }),
+    ...timestamps,
+  },
+  (t) => [uniqueIndex('accounts_email_idx').on(t.email)],
+);
+
+export const EMAIL_TOKEN_PURPOSES = ['entrar', 'recuperar'] as const;
+
+/**
+ * Enlaces de un solo uso que se mandan por correo. `entrar` sirve para el
+ * registro y para el ingreso sin contraseña; `recuperar`, para elegir una
+ * contraseña nueva.
+ *
+ * Se guardan por correo y no por cuenta porque el registro todavía no tiene
+ * cuenta: lo que se pidió al registrarse (nombre, contraseña, capacitación)
+ * espera acá y se aplica recién cuando alguien demuestra que el correo es suyo.
+ * Así nadie puede dejarle una contraseña puesta a una dirección ajena.
+ *
+ * Del enlace solo se guarda el hash: con una copia de la base no se puede
+ * entrar a ninguna cuenta.
+ */
+export const emailTokens = sqliteTable(
+  'email_tokens',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    email: text('email').notNull(),
+    purpose: text('purpose', { enum: EMAIL_TOKEN_PURPOSES }).notNull(),
+    tokenHash: text('token_hash').notNull(),
+    // Capacitación a la que queda vinculada la cuenta al usar el enlace.
+    accessCodeId: integer('access_code_id').references(() => accessCodes.id, {
+      onDelete: 'set null',
+    }),
+    name: text('name'),
+    passwordHash: text('password_hash'),
+    destination: text('destination'),
+    expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+    usedAt: integer('used_at', { mode: 'timestamp' }),
+    createdAt: integer('created_at', { mode: 'timestamp' })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (t) => [
+    uniqueIndex('email_tokens_hash_idx').on(t.tokenHash),
+    index('email_tokens_email_idx').on(t.email, t.createdAt),
+  ],
+);
+
+/**
  * Quien entró con un código. El token es lo que viaja en la cookie: así la
  * sesión se puede revocar desde la base y la cookie no lleva datos personales.
  */
@@ -669,6 +739,9 @@ export const participants = sqliteTable(
     // No verifica nada: el portal no protege nada que valga suplantar.
     nameKey: text('name_key').notNull().default(''),
     token: text('token').notNull(),
+    // Nulo en quien entró solo con el código. Con cuenta, `nameKey` pasa a ser
+    // `cuenta:<id>`, y el índice único deja una sola fila por cuenta y código.
+    accountId: integer('account_id').references(() => accounts.id, { onDelete: 'set null' }),
     lastSeenAt: integer('last_seen_at', { mode: 'timestamp' })
       .notNull()
       .default(sql`(unixepoch())`),
@@ -678,6 +751,7 @@ export const participants = sqliteTable(
     uniqueIndex('participants_token_idx').on(t.token),
     uniqueIndex('participants_code_name_idx').on(t.accessCodeId, t.nameKey),
     index('participants_code_idx').on(t.accessCodeId),
+    index('participants_account_idx').on(t.accountId),
   ],
 );
 
@@ -1022,10 +1096,18 @@ export const accessCodeModulesRelations = relations(accessCodeModules, ({ one })
   module: one(modules, { fields: [accessCodeModules.moduleId], references: [modules.id] }),
 }));
 
+export const accountsRelations = relations(accounts, ({ many }) => ({
+  participants: many(participants),
+}));
+
 export const participantsRelations = relations(participants, ({ one, many }) => ({
   accessCode: one(accessCodes, {
     fields: [participants.accessCodeId],
     references: [accessCodes.id],
+  }),
+  account: one(accounts, {
+    fields: [participants.accountId],
+    references: [accounts.id],
   }),
   views: many(moduleViews),
   questions: many(questions),
@@ -1080,6 +1162,8 @@ export type AccessCode = typeof accessCodes.$inferSelect;
 export type AccessCodeModule = typeof accessCodeModules.$inferSelect;
 export type AccessCodePlan = typeof accessCodePlans.$inferSelect;
 export type Participant = typeof participants.$inferSelect;
+export type Account = typeof accounts.$inferSelect;
+export type EmailToken = typeof emailTokens.$inferSelect;
 export type Company = typeof companies.$inferSelect;
 export type CompanyKind = (typeof COMPANY_KINDS)[number];
 export type CompanyContact = typeof companyContacts.$inferSelect;

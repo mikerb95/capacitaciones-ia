@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { SiteHeader } from '@/components/ui';
 import { Diagnostico } from '@/components/ruta/diagnostico';
+import { SIN_PLAN } from '@/lib/plans';
 import { getCurso, type NivelKey } from '@/lib/ruta';
 import { cargarCurso } from '@/lib/ruta/contexto';
 
@@ -16,7 +17,9 @@ export async function generateMetadata({ params }: Params) {
 
 export default async function DiagnosticoPage({ params }: Params) {
   const { platform } = await params;
-  const cargado = await cargarCurso(platform);
+  // Sin recorte de plan: mide el nivel sobre el curso entero, y así coincide
+  // con lo que la acción vuelve a leer al guardar.
+  const cargado = await cargarCurso(platform, SIN_PLAN);
   if (!cargado) notFound();
 
   const { curso } = cargado;
