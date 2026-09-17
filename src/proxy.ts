@@ -17,7 +17,8 @@ const COMPANY_LOGIN = '/empresa';
  * sitio sino el insumo del generador de PDF, y se cierra con su propia clave.
  * /guia son recursos sueltos para los ejercicios en vivo, pensados para
  * abrirse sin registrarse, y /academia es la landing comercial: es lo único
- * que tiene que poder abrir alguien que todavía no es cliente.
+ * que tiene que poder abrir alguien que todavía no es cliente, y por eso es
+ * también lo que ve quien entra a la raíz sin sesión.
  */
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
@@ -48,10 +49,14 @@ export async function proxy(request: NextRequest) {
 
   if (request.cookies.has(SESSION_COOKIE)) return NextResponse.next();
 
+  // La raíz del sitio es la landing para quien no tiene sesión. Se reescribe
+  // en vez de redirigir para que la dirección que se comparte siga siendo `/`.
+  if (pathname === '/') return NextResponse.rewrite(new URL('/academia', request.url));
+
   const url = new URL('/ingresar', request.url);
 
   // Para volver a donde iba después de registrarse.
-  if (pathname !== '/') url.searchParams.set('destino', `${pathname}${search}`);
+  url.searchParams.set('destino', `${pathname}${search}`);
 
   return NextResponse.redirect(url);
 }

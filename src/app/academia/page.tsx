@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { getLandingSummary } from '@/db/queries';
 import { platformLogo } from '@/lib/brand-logos';
@@ -66,7 +67,18 @@ export default async function AcademiaPage() {
             </span>
           </span>
           <span className="flex-1" />
-          <span className={`${ETIQUETA} hidden text-faint sm:inline`}>Capacitación corporativa</span>
+          <Link
+            href="/empresa"
+            className="hidden text-[13.5px] font-medium text-muted transition-colors hover:text-text sm:inline"
+          >
+            Panel de empresa
+          </Link>
+          <Link
+            href="/ingresar"
+            className="inline-flex h-9 items-center rounded-[10px] border border-line bg-surface px-3.5 text-[13.5px] font-semibold transition-colors hover:border-primary"
+          >
+            Entrar al aula
+          </Link>
           <ThemeToggle />
         </header>
 
@@ -238,7 +250,15 @@ export default async function AcademiaPage() {
           Capacitación corporativa en herramientas de IA
         </span>
         <span className="flex-1" />
-        <span className="max-w-[62ch] font-mono text-[11px] text-[var(--tenue)]">
+        <nav className="flex gap-4 text-[12.5px] text-faint">
+          <Link href="/ingresar" className="transition-colors hover:text-primary">
+            Aula Virtual
+          </Link>
+          <Link href="/empresa" className="transition-colors hover:text-primary">
+            Panel de empresa
+          </Link>
+        </nav>
+        <span className="basis-full font-mono text-[11px] text-[var(--tenue)]">
           Microsoft, Anthropic, Google, OpenAI y Atlassian son marcas de sus respectivos dueños.
           Esta capacitación no está afiliada a ninguna de ellas.
         </span>
