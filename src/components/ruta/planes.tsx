@@ -20,6 +20,67 @@ export function InsigniaPlan({ availability }: { availability: Availability }) {
   );
 }
 
+/**
+ * La barra de "estás viendo el curso filtrado", arriba de todo.
+ *
+ * Sin ella el recorte es invisible: alguien que entra con el plan gratis ve un
+ * temario más corto y no sabe por qué, o al revés, se encuentra Work IQ entre
+ * los fundamentos y cree que el filtro no funciona. Los fundamentos se ven
+ * siempre porque no cuelgan de ningún módulo: son justamente las lecciones que
+ * explican qué licencia hace falta para cada cosa.
+ */
+export function AvisoPlan({
+  platform,
+  elegido,
+  planes,
+}: {
+  platform: string;
+  /** El plan con el que se está mirando, o `null` si se ve todo. */
+  elegido: PlanInfo | null;
+  planes: PlanInfo[];
+}) {
+  if (planes.length === 0) return null;
+
+  if (!elegido) {
+    return (
+      <div className="mb-6 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-card bg-surface-2 px-4 py-2.5">
+        <span className="flex items-center gap-2 text-[13px] font-semibold">
+          <span className="size-1.5 flex-none rounded-full bg-faint" aria-hidden="true" />
+          Sin filtro de plan
+        </span>
+        <p className="min-w-0 flex-1 text-[12.5px] leading-snug text-muted">
+          Se muestra el curso completo, con funciones de todas las licencias.
+        </p>
+        <Link
+          href={`/ruta/${platform}#temario`}
+          className="text-[12.5px] font-semibold text-muted underline-offset-4 hover:text-text hover:underline"
+        >
+          Filtrar por plan
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-6 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-card bg-[var(--tone-soft)] px-4 py-2.5">
+      <span className="flex items-center gap-2 text-[13px] font-semibold">
+        <span className="size-1.5 flex-none rounded-full bg-[var(--tone)]" aria-hidden="true" />
+        Filtrado para {elegido.name} ({elegido.price})
+      </span>
+      <p className="min-w-0 flex-1 text-[12.5px] leading-snug text-muted">
+        Se ocultaron las unidades que este plan no habilita. Las lecciones de fundamentos se ven siempre:
+        ahí se explica qué hace cada licencia y qué queda en los planes de pago.
+      </p>
+      <Link
+        href={rutaConPlan(platform, null, '#temario')}
+        className="text-[12.5px] font-semibold text-[var(--tone)] underline-offset-4 hover:underline"
+      >
+        Ver el curso completo
+      </Link>
+    </div>
+  );
+}
+
 type Props = {
   platform: string;
   planes: PlanInfo[];

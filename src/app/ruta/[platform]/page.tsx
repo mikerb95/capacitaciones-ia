@@ -4,7 +4,7 @@ import { Buscador } from '@/components/buscador';
 import { SiteHeader } from '@/components/ui';
 import { getPlatformName } from '@/db/queries';
 import { Anillo, Barra, EstadoIcono, NivelChip, TIPO_ETIQUETA, TipoIcono, tipoDe } from '@/components/ruta/piezas';
-import { InsigniaPlan, SelectorPlan, leccionConPlan } from '@/components/ruta/planes';
+import { AvisoPlan, InsigniaPlan, SelectorPlan, leccionConPlan } from '@/components/ruta/planes';
 import { getCurso, duracion, estadoDe, leccionesDe, resumir } from '@/lib/ruta';
 import { cargarCurso } from '@/lib/ruta/contexto';
 
@@ -41,6 +41,7 @@ export default async function RutaPage({ params, searchParams }: Params) {
     planes,
     plan,
     planContratado,
+    planElegido,
     disponibilidad,
     notaDePlan,
     participant,
@@ -71,6 +72,8 @@ export default async function RutaPage({ params, searchParams }: Params) {
       />
 
       <main className="mx-auto max-w-[1120px] px-4 py-10 sm:px-6 sm:py-12">
+        <AvisoPlan platform={platform} elegido={planElegido} planes={planes} />
+
         {/* Hero y avance */}
         <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
           <div>

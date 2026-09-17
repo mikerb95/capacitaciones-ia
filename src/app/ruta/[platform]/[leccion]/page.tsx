@@ -9,7 +9,7 @@ import { Examen } from '@/components/ruta/examen';
 import { EstadoIcono, NivelChip, TIPO_ETIQUETA, TipoIcono, tipoDe } from '@/components/ruta/piezas';
 import { Practica } from '@/components/ruta/practica';
 import { Temario } from '@/components/ruta/temario';
-import { InsigniaPlan, leccionConPlan, rutaConPlan } from '@/components/ruta/planes';
+import { AvisoPlan, InsigniaPlan, leccionConPlan, rutaConPlan } from '@/components/ruta/planes';
 import { getPlatformName, recordModuleView } from '@/db/queries';
 import {
   buscarLeccion,
@@ -54,6 +54,7 @@ export default async function LeccionPage({ params, searchParams }: Params) {
     participant,
     moduleIds,
     certificados,
+    planes,
     plan,
     planElegido,
     disponibilidad,
@@ -134,6 +135,9 @@ export default async function LeccionPage({ params, searchParams }: Params) {
         </aside>
 
         <main className="mx-auto w-full max-w-[780px] min-w-0">
+          {/* Con la lección fuera de plan manda el aviso de abajo, que ya nombra el plan. */}
+          {!fueraDePlan && plan && <AvisoPlan platform={platform} elegido={planElegido} planes={planes} />}
+
           {fueraDePlan && planElegido && (
             <div className="mb-6 rounded-card border border-dashed border-line bg-surface-2 p-4">
               <p className="flex items-center gap-2 text-[13.5px] font-semibold">
