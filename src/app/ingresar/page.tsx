@@ -19,7 +19,10 @@ export default async function IngresarPage({ searchParams }: Props) {
 
   return (
     <div className="grid min-h-screen grid-rows-[auto_1fr] bg-bg">
-      <div className="flex justify-end p-4">
+      <div className="flex items-center justify-between p-4">
+        <Link href="/" className="text-[13px] text-faint transition-colors hover:text-primary">
+          ← Academia IA
+        </Link>
         <ThemeToggle />
       </div>
 
