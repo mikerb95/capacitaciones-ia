@@ -4,14 +4,18 @@ import { Buscador } from '@/components/buscador';
 import { SiteHeader } from '@/components/ui';
 import { getPlatformName } from '@/db/queries';
 import { Anillo, Barra, EstadoIcono, NivelChip, TIPO_ETIQUETA, TipoIcono, tipoDe } from '@/components/ruta/piezas';
+import { InsigniaPlan, SelectorPlan, leccionConPlan, rutaConPlan } from '@/components/ruta/planes';
 import { getCurso, duracion, estadoDe, leccionesDe, resumir } from '@/lib/ruta';
 import { cargarCurso } from '@/lib/ruta/contexto';
 
 export const dynamic = 'force-dynamic';
 
-type Params = { params: Promise<{ platform: string }> };
+type Params = {
+  params: Promise<{ platform: string }>;
+  searchParams: Promise<{ plan?: string }>;
+};
 
-export async function generateMetadata({ params }: Params) {
+export async function generateMetadata({ params }: Pick<Params, 'params'>) {
   const { platform } = await params;
   const curso = getCurso(platform);
   return curso ? { title: curso.titulo } : {};
@@ -23,13 +27,20 @@ export async function generateMetadata({ params }: Params) {
  * la que se vuelve cada vez, así que lo primero que se ve es "continuar donde
  * quedaste", no la descripción.
  */
-export default async function RutaPage({ params }: Params) {
+export default async function RutaPage({ params, searchParams }: Params) {
   const { platform } = await params;
-  const cargado = await cargarCurso(platform);
+  const { plan: planPedido } = await searchParams;
+  const cargado = await cargarCurso(platform, planPedido);
   if (!cargado) notFound();
 
-  const { curso, registros, certificados } = cargado;
+  const { curso, cursoCompleto, registros, certificados, planes, plan, planContratado, notaDePlan } = cargado;
   const resumen = resumir(curso, registros);
+  // El certificado no se recorta con el plan: pide el curso entero, igual que
+  // en su propia página. Con un plan puesto, lo que se ve arriba es el avance
+  // sobre lo que ese plan deja hacer; abajo se aclara qué pide el diploma.
+  const resumenTotal = plan ? resumir(cursoCompleto, registros) : resumen;
+  const totalCompleto = leccionesDe(cursoCompleto).length;
+  const unidadesFuera = cursoCompleto.unidades.length - curso.unidades.length;
   const nombre = await getPlatformName(platform);
   const lecciones = leccionesDe(curso);
   const porSlug = new Map(registros.map((r) => [r.lessonSlug, r]));
@@ -71,7 +82,7 @@ export default async function RutaPage({ params }: Params) {
             <div className="mt-7 flex flex-wrap items-center gap-3">
               {resumen.siguiente ? (
                 <Link
-                  href={`/ruta/${platform}/${resumen.siguiente.leccion.slug}`}
+                  href={leccionConPlan(platform, resumen.siguiente.leccion.slug, plan)}
                   className="rounded-xl bg-[var(--tone)] px-5 py-3 text-[14px] font-semibold text-white shadow-card transition-opacity hover:opacity-90"
                 >
                   {empezo ? 'Continuar' : 'Empezar desde cero'}
@@ -135,12 +146,12 @@ export default async function RutaPage({ params }: Params) {
               <Link
                 href={`/ruta/${platform}/certificado`}
                 className={`mt-4 flex items-center justify-between rounded-xl px-3.5 py-2.5 text-[13px] font-semibold transition-colors ${
-                  resumen.certificable
+                  resumenTotal.certificable
                     ? 'bg-accent-soft text-accent hover:opacity-90'
                     : 'bg-surface-2 text-muted hover:text-text'
                 }`}
               >
-                {resumen.certificable ? 'Tu certificado está listo' : 'Qué pide el certificado'}
+                {resumenTotal.certificable ? 'Tu certificado está listo' : 'Qué pide el certificado'}
                 <span aria-hidden="true">&rarr;</span>
               </Link>
             )}
@@ -251,7 +262,7 @@ export default async function RutaPage({ params }: Params) {
                               return (
                                 <li key={l.slug} className="border-b border-line last:border-0">
                                   <Link
-                                    href={`/ruta/${platform}/${l.slug}`}
+                                    href={leccionConPlan(platform, l.slug, plan)}
                                     className="group flex items-center gap-3 px-5 py-3 transition-colors hover:bg-[var(--tone-soft)]"
                                   >
                                     <EstadoIcono estado={estado} color={nivel.color} />
@@ -296,15 +307,21 @@ export default async function RutaPage({ params }: Params) {
               <p className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-muted">Al final</p>
               <h2 className="mt-1.5 font-display text-[22px] font-semibold tracking-tight">Un certificado que dice qué sabes hacer</h2>
               <p className="mt-2 max-w-[60ch] text-[14.5px] leading-relaxed text-muted">
-                Se obtiene aprobando los {resumen.examenes.total} exámenes con 80% o más y el proyecto final. No cuenta
-                clics: cuenta lo que demostraste.
+                Se obtiene aprobando los {resumenTotal.examenes.total} exámenes con 80% o más y el proyecto final. No
+                cuenta clics: cuenta lo que demostraste.
               </p>
+              {plan && unidadesFuera > 0 && (
+                <p className="mt-2 max-w-[60ch] text-[13.5px] leading-relaxed text-muted">
+                  El certificado mide el curso completo, también las unidades que tu plan no habilita. Para obtenerlo
+                  hay que ver todo el temario sin filtrar.
+                </p>
+              )}
             </div>
             <Link
               href={`/ruta/${platform}/certificado`}
               className="rounded-xl bg-[var(--tone)] px-5 py-3 text-[14px] font-semibold text-white transition-opacity hover:opacity-90"
             >
-              {resumen.certificable ? 'Ver mi certificado' : 'Ver requisitos'}
+              {resumenTotal.certificable ? 'Ver mi certificado' : 'Ver requisitos'}
             </Link>
           </section>
         )}
