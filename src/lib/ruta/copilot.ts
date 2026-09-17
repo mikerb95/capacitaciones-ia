@@ -29,7 +29,7 @@ export const copilotCurso: Curso = {
   titulo: 'Copilot en el trabajo, de cero a experto',
   subtitulo: 'Ruta guiada',
   descripcion:
-    'Un recorrido en cinco niveles: primero qué Copilot tienes y qué puede ver, después el chat, la bandeja y las reuniones, luego Word, Excel y PowerPoint, más adelante Researcher, Analyst y Cowork, y al final agentes y el sistema completo del equipo. Lecciones cortas, prácticas revisadas por IA y un examen por nivel.',
+    'Un recorrido por niveles: primero qué Copilot tienes y qué puede ver, después el chat, la bandeja y las reuniones, luego Word, Excel y PowerPoint, más adelante Researcher, Analyst y Cowork, y al final agentes y el sistema completo del equipo. Lecciones cortas, prácticas revisadas por IA y un examen por nivel.',
   color: C.azul,
   aprendizajes: [
     'Preguntar con las fuentes puestas y saber cuándo la respuesta usa datos de la empresa.',
@@ -956,7 +956,7 @@ export const copilotCurso: Curso = {
           tipo: 'examen',
           titulo: 'Examen del nivel 1',
           minutos: 12,
-          resumen: 'Ocho preguntas sobre Copilot Chat, Outlook y Teams. Se aprueba con 80%.',
+          resumen: 'Preguntas sobre el chat, el correo y las reuniones, según lo que incluya tu capacitación. Se aprueba con 80%.',
           aprobacion: 80,
           preguntas: [
             {
@@ -1559,7 +1559,7 @@ export const copilotCurso: Curso = {
           tipo: 'examen',
           titulo: 'Examen del nivel 2',
           minutos: 15,
-          resumen: 'Nueve preguntas sobre Word, PowerPoint y Excel. Se aprueba con 80%.',
+          resumen: 'Preguntas sobre Word, PowerPoint y Excel, según lo que incluya tu capacitación. Se aprueba con 80%.',
           aprobacion: 80,
           preguntas: [
             {
@@ -2052,7 +2052,7 @@ export const copilotCurso: Curso = {
           tipo: 'examen',
           titulo: 'Examen del nivel 3',
           minutos: 12,
-          resumen: 'Siete preguntas sobre Researcher, Analyst y Cowork. Se aprueba con 80%.',
+          resumen: 'Preguntas sobre Researcher, Analyst y Cowork, según lo que incluya tu capacitación. Se aprueba con 80%.',
           aprobacion: 80,
           preguntas: [
             {
@@ -2483,7 +2483,7 @@ export const copilotCurso: Curso = {
           tipo: 'examen',
           titulo: 'Examen del nivel 4',
           minutos: 10,
-          resumen: 'Seis preguntas sobre agentes, métricas y gobierno. Se aprueba con 80%.',
+          resumen: 'Preguntas sobre métricas, gobierno y, si tu capacitación los incluye, agentes. Se aprueba con 80%.',
           aprobacion: 80,
           preguntas: [
             {
