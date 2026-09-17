@@ -1,4 +1,5 @@
 import { copilotCurso } from './copilot';
+import { geminiCurso } from './gemini';
 import { jiraCurso } from './jira';
 import type {
   Curso,
@@ -21,6 +22,7 @@ export * from './tipos';
 const CURSOS: Record<string, Curso> = {
   jira: jiraCurso,
   copilot: copilotCurso,
+  gemini: geminiCurso,
 };
 
 /** La llave del diagnóstico en la tabla de avance. No choca con ninguna lección. */
