@@ -293,9 +293,9 @@ export default async function AcademiaPage() {
  * publicar: se dejan a la vista a propósito, para que se note si se olvidan.
  */
 const CONTACTO = {
-  correo: 'TU-CORREO@ejemplo.com',
-  telefono: '[TU TELÉFONO]',
-  sitio: '[TU SITIO]',
+  correo: 'mike@codebymike.net',
+  telefono: '3104641228',
+  sitio: 'codebymike.net',
 };
 
 /** El rótulo de sección: texto en versalitas y el filete que se va apagando. */
