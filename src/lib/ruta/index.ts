@@ -1,4 +1,5 @@
 import { chatgptCurso } from './chatgpt';
+import { claudeCurso } from './claude';
 import { copilotCurso } from './copilot';
 import { geminiCurso } from './gemini';
 import { jiraCurso } from './jira';
@@ -25,6 +26,7 @@ const CURSOS: Record<string, Curso> = {
   copilot: copilotCurso,
   chatgpt: chatgptCurso,
   gemini: geminiCurso,
+  claude: claudeCurso,
 };
 
 /** La llave del diagnóstico en la tabla de avance. No choca con ninguna lección. */
