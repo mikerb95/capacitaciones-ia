@@ -222,12 +222,7 @@ export default async function RutaPage({ params, searchParams }: Params) {
               planes={planes}
               plan={plan}
               contratado={planContratado}
-              recorte={{
-                dentro: resumen.total,
-                total: totalCompleto,
-                minutos: resumen.minutosTotales,
-                unidadesFuera,
-              }}
+              recorte={{ dentro: resumen.total, total: totalCompleto }}
             />
           </div>
 

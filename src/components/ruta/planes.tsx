@@ -27,8 +27,8 @@ type Props = {
   plan: string | null;
   /** El que guarda el código de acceso de la empresa, si lo hay. */
   contratado: string | null;
-  /** Lecciones y horas que quedan dentro y fuera del plan elegido. */
-  recorte: { dentro: number; total: number; minutos: number; unidadesFuera: number };
+  /** Lecciones que quedan dentro del plan elegido, sobre el total del curso. */
+  recorte: { dentro: number; total: number };
 };
 
 /**
@@ -84,14 +84,9 @@ export function SelectorPlan({ platform, planes, plan, contratado, recorte }: Pr
             <strong className="font-semibold text-text">
               {recorte.dentro} de {recorte.total} lecciones
             </strong>
-            {fuera > 0 && (
-              <>
-                {' '}
-                y se ocultaron {fuera} que {recorte.unidadesFuera === 1 ? 'pertenece' : 'pertenecen'} a
-                funciones que este plan no habilita
-              </>
-            )}
-            .
+            {fuera > 0
+              ? `. Quedaron fuera ${fuera}, de funciones que este plan no habilita.`
+              : '. Tu plan cubre el curso entero.'}
           </p>
           {elegido.note && <p className="mt-1.5 text-[13px] leading-relaxed text-faint">{elegido.note}</p>}
         </div>
