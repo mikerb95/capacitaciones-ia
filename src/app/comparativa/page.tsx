@@ -22,7 +22,7 @@ export default async function ComparativaPage() {
         back={{ href: '/', label: 'Inicio' }}
         search={<Buscador />}
       >
-        <LeaveButton name={participant.name ?? undefined} />
+        <LeaveButton name={participant.name ?? undefined} hasAccount={participant.accountId !== null} />
       </SiteHeader>
 
       <main className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6">

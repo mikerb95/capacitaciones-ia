@@ -33,8 +33,18 @@ export default async function RutaPage({ params, searchParams }: Params) {
   const cargado = await cargarCurso(platform, planPedido);
   if (!cargado) notFound();
 
-  const { curso, cursoCompleto, registros, certificados, planes, plan, planContratado, disponibilidad, notaDePlan } =
-    cargado;
+  const {
+    curso,
+    cursoCompleto,
+    registros,
+    certificados,
+    planes,
+    plan,
+    planContratado,
+    disponibilidad,
+    notaDePlan,
+    participant,
+  } = cargado;
   const resumen = resumir(curso, registros);
   // El certificado no se recorta con el plan: pide el curso entero, igual que
   // en su propia página. Con un plan puesto, lo que se ve arriba es el avance
@@ -155,6 +165,23 @@ export default async function RutaPage({ params, searchParams }: Params) {
                 {resumenTotal.certificable ? 'Tu certificado está listo' : 'Qué pide el certificado'}
                 <span aria-hidden="true">&rarr;</span>
               </Link>
+            )}
+            {participant.accountId === null ? (
+              <p className="mt-4 rounded-xl bg-primary-soft px-3.5 py-3 text-[12.5px] leading-relaxed text-text">
+                Este avance vive solo en este navegador.{' '}
+                <Link
+                  href={`/cuenta/crear?destino=${encodeURIComponent(`/ruta/${platform}`)}`}
+                  className="font-semibold text-primary underline decoration-primary/30 underline-offset-4 hover:decoration-primary"
+                >
+                  Crea una cuenta
+                </Link>{' '}
+                para no perderlo y seguir desde cualquier dispositivo.
+              </p>
+            ) : (
+              <p className="mt-4 flex items-center gap-2 text-[12px] text-faint">
+                <span className="size-1.5 rounded-full bg-accent" aria-hidden="true" />
+                Guardado en tu cuenta
+              </p>
             )}
           </aside>
         </section>

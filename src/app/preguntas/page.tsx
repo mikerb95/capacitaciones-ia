@@ -43,7 +43,7 @@ export default async function PreguntasPage() {
         back={{ href: '/', label: 'Volver al portal' }}
         search={<Buscador />}
       >
-        <LeaveButton name={participant.name ?? undefined} />
+        <LeaveButton name={participant.name ?? undefined} hasAccount={participant.accountId !== null} />
       </SiteHeader>
 
       <main className="mx-auto flex max-w-[760px] flex-col gap-5 px-4 py-8 sm:px-6">

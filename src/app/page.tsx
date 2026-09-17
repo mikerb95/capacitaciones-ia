@@ -30,7 +30,7 @@ export default async function Home() {
         <div className="order-last w-full sm:order-none sm:w-auto">
           <Buscador />
         </div>
-        <LeaveButton name={participant.name ?? undefined} />
+        <LeaveButton name={participant.name ?? undefined} hasAccount={participant.accountId !== null} />
         <ThemeToggle />
       </header>
 
