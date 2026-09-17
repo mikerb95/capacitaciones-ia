@@ -1,3 +1,4 @@
+import { chatgptCurso } from './chatgpt';
 import { copilotCurso } from './copilot';
 import { geminiCurso } from './gemini';
 import { jiraCurso } from './jira';
@@ -22,6 +23,7 @@ export * from './tipos';
 const CURSOS: Record<string, Curso> = {
   jira: jiraCurso,
   copilot: copilotCurso,
+  chatgpt: chatgptCurso,
   gemini: geminiCurso,
 };
 
