@@ -75,6 +75,22 @@ export function cursoEnAlcance(curso: Curso, moduloVisible: (slug: string) => bo
   };
 }
 
+/**
+ * Segundo recorte, aplicado solo cuando hay un plan de facturación elegido:
+ * saca las lecciones sueltas que un plan no habilita (`planExcluido`), aunque
+ * vivan en una unidad sin módulo y por eso `cursoEnAlcance` las deje pasar.
+ * Si una unidad se queda sin lecciones, se va entera.
+ */
+export function cursoSegunPlan(curso: Curso, planKey: string | null): Curso {
+  if (!planKey) return curso;
+
+  const unidades = curso.unidades
+    .map((u) => ({ ...u, lecciones: u.lecciones.filter((l) => !l.planExcluido?.includes(planKey)) }))
+    .filter((u) => u.lecciones.length > 0);
+
+  return { ...curso, unidades };
+}
+
 /** Bajo esto un examen deja de medir algo y se retira en vez de mostrarse vacío. */
 const MINIMO_PREGUNTAS_EXAMEN = 3;
 

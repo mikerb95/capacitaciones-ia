@@ -165,6 +165,10 @@ export const copilotCurso: Curso = {
           titulo: 'Work IQ y tus permisos',
           minutos: 14,
           resumen: 'El interruptor que decide si Copilot mira los datos de la empresa, y por qué nunca ve de más.',
+          // Copilot Chat gratis no tiene acceso a los datos de trabajo (ver
+          // modelo 'work-model' en el seed de planes): esta lección entera
+          // enseña una función que ese plan no habilita.
+          planExcluido: ['chat'],
           objetivos: [
             'Explicar qué activa el botón de Work IQ.',
             'Entender por qué Copilot nunca ve más de lo que tú ya puedes abrir.',

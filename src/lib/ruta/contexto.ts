@@ -2,7 +2,7 @@ import { getCourseProgress, getModuleIdsBySlug, getPlatformPlanMatrix } from '@/
 import { certificadosHabilitados } from '@/lib/ajustes';
 import { SIN_PLAN, applies, availabilityIn, entryPlan, noteIn, type PlanInfo, type PlanRef } from '@/lib/plans';
 import { hasModule, hasPlatform, requireScopedParticipant } from '@/lib/scope';
-import { cursoEnAlcance, getCurso } from './index';
+import { cursoEnAlcance, cursoSegunPlan, getCurso } from './index';
 
 /**
  * El plan con el que se mira la ruta: el que pide la URL, y si no hay, el que
@@ -55,7 +55,12 @@ export async function cargarCurso(platformId: string, planPedido?: string | null
   const plan = resolverPlan(planPedido, planContratado, matriz.plans);
   const refsDe = (modulo: string): PlanRef[] => matriz.porModulo.get(modulo) ?? [];
 
-  const curso = plan ? cursoEnAlcance(cursoCompleto, (slug) => applies(availabilityIn(refsDe(slug), plan))) : cursoCompleto;
+  const curso = plan
+    ? cursoSegunPlan(
+        cursoEnAlcance(cursoCompleto, (slug) => applies(availabilityIn(refsDe(slug), plan))),
+        plan,
+      )
+    : cursoCompleto;
 
   return {
     participant,

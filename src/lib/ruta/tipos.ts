@@ -96,6 +96,15 @@ type LeccionBase = {
   /** Duración estimada, para el temario y para el "te faltan X horas". */
   minutos: number;
   resumen: string;
+  /**
+   * Claves de plan de facturación que NO habilitan esta lección, aunque su
+   * unidad no dependa de ningún módulo (los fundamentos, por ejemplo). Sirve
+   * para la lección suelta que enseña a usar una función paga en medio de
+   * contenido transversal, como Work IQ en Copilot: el resto de fundamentos
+   * aplica a cualquier plan, esa lección puntual no. No toca el código de
+   * acceso de la empresa, solo el filtro de plan: ver `cursoSegunPlan`.
+   */
+  planExcluido?: string[];
 };
 
 export type Lectura = LeccionBase & {
