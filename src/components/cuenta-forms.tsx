@@ -108,7 +108,7 @@ export function RegisterForm({
           maxLength={80}
           defaultValue={state.values?.name}
           className={field}
-          placeholder="Como quieres que aparezca en tu certificado"
+          placeholder="Tu nombre y apellido"
         />
       </Field>
 
