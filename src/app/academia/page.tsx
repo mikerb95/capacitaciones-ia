@@ -174,8 +174,9 @@ export default async function AcademiaPage() {
           Las herramientas cambian cada mes. El temario también.
         </h2>
         <p className="mt-5 max-w-[68ch] text-[15.5px] leading-relaxed text-muted sm:text-[17.5px]">
-          Cada capacitación se revisa por separado contra lo que el fabricante lanzó o retiró. Esta
-          es la última vez que se tocó cada una.
+          Los modelos y planes de cada capacitación se revisan por separado contra la web del
+          fabricante: lo que lanzó, lo que retiró y lo que cambió de precio. Esta es la última
+          revisión de cada una.
         </p>
         <ul className="mt-8 grid gap-3 sm:mt-11 sm:grid-cols-2 lg:grid-cols-5">
           {plataformas.map((p) => (
@@ -427,7 +428,7 @@ function Banda({ p, indice, ultima }: { p: Resumen; indice: number; ultima: bool
   );
 }
 
-/** La fecha de la última revisión de una capacitación, con su logo. */
+/** La fecha de la última revisión de modelos y planes de una plataforma. */
 function Actualizacion({ p }: { p: Resumen }) {
   const logo = platformLogo(p.id);
   const revision = platformRevision(p.id);
@@ -447,7 +448,7 @@ function Actualizacion({ p }: { p: Resumen }) {
       <div className="min-w-0">
         <div className="font-display text-[16px] font-semibold tracking-tight">{p.name}</div>
         <div className={`mt-1 ${ETIQUETA} text-[10px] tracking-[0.08em] text-faint`}>
-          Actualizado
+          Modelos revisados
         </div>
         {revision ? (
           <time dateTime={revision.iso} className="font-mono text-[12.5px]">

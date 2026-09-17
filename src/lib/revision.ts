@@ -11,17 +11,19 @@
 export const MODELS_REVISION = 'septiembre de 2026';
 
 /**
- * Última actualización del contenido de cada capacitación, por id de
- * plataforma. Mismo criterio que `MODELS_REVISION`: se mueve a mano cuando se
- * toca el temario de ese producto, no cuando se corre el seed. Van en formato
- * ISO (`AAAA-MM-DD`) para poder ordenarlas y formatearlas en la portada.
+ * Cuándo se revisaron por última vez los modelos y planes de cada plataforma
+ * contra las páginas del fabricante, por id de plataforma. Mismo criterio que
+ * `MODELS_REVISION`: se mueve a mano solo cuando se vuelve a mirar la web del
+ * fabricante y se vuelcan los cambios al seed, no cuando se corrige un texto
+ * del temario. Van en formato ISO (`AAAA-MM-DD`) para formatearlas en la
+ * portada.
  */
 export const PLATFORM_REVISIONS: Record<string, string> = {
   claude: '2026-09-09',
-  chatgpt: '2026-09-16',
-  copilot: '2026-09-16',
-  gemini: '2026-09-17',
-  jira: '2026-09-14',
+  chatgpt: '2026-09-09',
+  copilot: '2026-09-09',
+  gemini: '2026-09-09',
+  jira: '2026-09-12',
 };
 
 const FORMATO_FECHA = new Intl.DateTimeFormat('es', {

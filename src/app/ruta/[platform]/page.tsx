@@ -224,9 +224,9 @@ export default async function RutaPage({ params }: Params) {
                       const pct = Math.round((hechas / unidad.lecciones.length) * 100);
 
                       return (
-                        <article key={unidad.slug} className="rounded-card border border-line bg-surface shadow-card">
+                        <article key={unidad.slug} className="min-w-0 rounded-card border border-line bg-surface shadow-card">
                           <header className="flex flex-wrap items-start gap-x-6 gap-y-3 p-5">
-                            <div className="min-w-[220px] flex-1">
+                            <div className="min-w-0 flex-1 basis-[220px]">
                               <h3 className="font-display text-[17px] font-semibold tracking-tight">{unidad.titulo}</h3>
                               <p className="mt-1 max-w-[62ch] text-[13.5px] leading-relaxed text-muted">{unidad.descripcion}</p>
                             </div>
