@@ -1929,143 +1929,160 @@ export const claudeCurso: Curso = {
       nivel: 'avanzado',
       modulo: 'code',
       titulo: 'Claude Code',
-      descripcion: 'Automatizar tareas de archivos y datos desde la terminal: renombrar, consolidar, limpiar y generar reportes.',
+      descripcion: 'Trabajar en un repositorio real desde la terminal: entender el código, hacer el cambio mínimo, probarlo y dejarlo listo para revisión.',
       lecciones: [
         {
-          slug: 'automatizar-sin-programar',
+          slug: 'claude-code-en-el-repo',
           tipo: 'lectura',
-          titulo: 'Automatizar sin saber programar',
-          minutos: 14,
-          resumen: 'Aunque se llame Code, la mayoría de los usos en la empresa no son de desarrollo.',
+          titulo: 'Claude Code en el repositorio',
+          minutos: 15,
+          resumen: 'Lee el código antes de tocarlo, y pide el cambio, no la reescritura.',
           objetivos: [
-            'Reconocer tareas de archivos y datos que se pueden automatizar sin programar.',
-            'Describir una tarea en palabras, no en código.',
+            'Usar Claude Code para entender una base de código antes de modificarla.',
+            'Pedir un cambio acotado en vez de una reescritura completa.',
+            'Reconocer qué archivos de contexto del repo conviene que Claude lea primero.',
           ],
           bloques: [
             {
               tipo: 'texto',
               texto:
-                'Aunque se llame Code, la mayoría de los usos en una empresa no son de desarrollo: son tareas repetitivas sobre archivos y datos que hoy alguien hace a mano, como consolidar decenas de archivos o limpiar una base de datos.',
+                'Claude Code corre en tu terminal, con acceso al repositorio: puede leer archivos, buscar dónde vive una función, correr los tests y editar código. La ventaja frente a pegar código en el chat es que ve el proyecto completo, no un fragmento suelto, y puede correr los comandos para comprobar que el cambio funciona.',
             },
             {
               tipo: 'prompt',
-              etiqueta: 'Consolidar',
-              texto: 'Une todos los Excel de esta carpeta en un solo archivo, agrega una columna con el nombre del archivo de origen.',
+              etiqueta: 'Entender antes de tocar',
+              texto: 'Antes de cambiar nada: ¿dónde se valida el login y qué pasa si el email viene en mayúsculas?',
             },
             {
               tipo: 'nota',
               tono: 'clave',
-              titulo: 'Describe la tarea en palabras',
+              titulo: 'El cambio mínimo, no la reescritura',
               texto:
-                '"Une, agrega columna de origen, avísame de los distintos". No necesitas saber el lenguaje: describe qué quieres, no cómo hacerlo.',
+                'Pedir "arregla el bug del login" es mejor que pedir "mejora el módulo de autenticación". Un cambio acotado se revisa rápido; una reescritura completa esconde el bug real entre cien líneas que no hacía falta tocar.',
+            },
+            {
+              tipo: 'nota',
+              tono: 'dato',
+              titulo: 'El contexto del repo',
+              texto:
+                'Muchos repos tienen un archivo de instrucciones (README, CONTRIBUTING, o uno propio del proyecto) con las convenciones del equipo: cómo se corren los tests, cómo se nombran las ramas, qué no se debe tocar. Pídele a Claude que lo lea antes de empezar.',
             },
           ],
           chequeo: [
             {
               id: 'q1',
-              enunciado: '¿Qué tipo de tareas resuelve Claude Code en la mayoría de los casos de empresa?',
+              enunciado: '¿Qué conviene pedir primero al enfrentar un bug reportado, antes de escribir cualquier cambio?',
               opciones: [
                 {
-                  texto: 'Solo desarrollo de software.',
-                  explicacion: 'La mayoría de los usos en la empresa son de archivos y datos, no desarrollo.',
+                  texto: 'Que reescriba el módulo completo para prevenir bugs futuros.',
+                  explicacion: 'Una reescritura amplía el riesgo y esconde el cambio real entre código que no hacía falta tocar.',
                 },
                 {
-                  texto: 'Tareas repetitivas sobre archivos y datos.',
+                  texto: 'Que explique dónde está el problema y por qué ocurre.',
                   correcta: true,
-                  explicacion: 'Correcto.',
+                  explicacion: 'Correcto: entender la causa antes de tocar código evita arreglar el síntoma equivocado.',
                 },
                 {
-                  texto: 'Ninguna, hace falta saber programar para usarlo.',
-                  explicacion: 'No hace falta saber programar: se describe la tarea en palabras.',
+                  texto: 'Que borre el archivo y empiece de nuevo.',
+                  explicacion: 'Eso descarta trabajo existente sin necesidad.',
                 },
               ],
             },
           ],
         },
         {
-          slug: 'trabajar-sobre-una-copia',
+          slug: 'commits-tests-y-pr',
           tipo: 'lectura',
-          titulo: 'Trabajar sobre una copia',
-          minutos: 14,
-          resumen: 'La primera regla de automatizar archivos es no tocar el original.',
+          titulo: 'Commits, tests y una PR que se pueda revisar',
+          minutos: 16,
+          resumen: 'Correr los tests antes de terminar, y dejar un commit que cuente por qué, no solo qué.',
           objetivos: [
-            'Trabajar siempre sobre una copia de los archivos originales.',
-            'Verificar el resultado contra un caso conocido antes de darlo por bueno.',
+            'Verificar un cambio corriendo los tests del proyecto, no solo revisando que compile.',
+            'Escribir un mensaje de commit y una descripción de PR que le sirvan a quien revisa.',
+            'Reconocer cuándo pedirle a Claude que separe un cambio en commits más chicos.',
           ],
           bloques: [
             {
               tipo: 'lista',
               ordenada: true,
               items: [
-                'Trabaja sobre una copia: siempre. La primera regla de automatizar archivos es no tocar el original.',
-                'Describe la tarea en palabras: qué hacer, qué avisar, qué marcar como raro.',
-                'Revisa el resultado contra un caso conocido: verifica una parte a mano; si cuadra, cuadran las demás.',
-                'Guarda el proceso: lo repetible es lo que ahorra tiempo de verdad, no la primera corrida.',
+                'Reproduce el bug primero: un test que falla antes del cambio y pasa después es la prueba de que se arregló.',
+                'Corre la batería de tests del proyecto, no solo el archivo que tocaste: un cambio chico puede romper algo en otro lado.',
+                'Pide un commit por cambio lógico, no uno solo gigante con todo mezclado.',
+                'Revisa el diff completo antes de dar por buena la tarea: que termine no significa que quedó bien.',
               ],
             },
             {
               tipo: 'nota',
               tono: 'ojo',
-              titulo: 'Correr el proceso sobre los archivos originales',
+              titulo: 'No te fíes de que "compila" o "no dio error"',
               texto:
-                'Copia la carpeta primero y trabaja sobre la copia. Un error en un proceso automatizado es más difícil de deshacer que uno manual.',
+                'Que el tipo de datos cuadre o que no salte una excepción no prueba que la función haga lo correcto. Pide que corra los tests existentes y, si el caso no estaba cubierto, que agregue uno.',
+            },
+            {
+              tipo: 'nota',
+              tono: 'clave',
+              titulo: 'El commit y la PR son para quien revisa, no para ti',
+              texto:
+                'Un mensaje de commit dice el porqué del cambio, no solo qué archivo se tocó. Una descripción de PR corta con el problema, la causa y cómo se probó ahorra rondas de preguntas.',
             },
           ],
           chequeo: [
             {
               id: 'q1',
-              enunciado: '¿Cuál es la primera regla al automatizar una tarea de archivos con Claude Code?',
+              enunciado: '¿Por qué correr toda la batería de tests del proyecto, y no solo el archivo que se modificó?',
               opciones: [
                 {
-                  texto: 'Trabajar siempre sobre una copia, no sobre el original.',
+                  texto: 'Porque un cambio chico puede romper algo en otra parte del código.',
                   correcta: true,
                   explicacion: 'Correcto.',
                 },
                 {
-                  texto: 'Hacerlo directamente sobre los archivos originales para ahorrar un paso.',
-                  explicacion: 'Un error sobre el original es más difícil de deshacer.',
+                  texto: 'Porque es un requisito sin ninguna razón práctica.',
+                  explicacion: 'Sí tiene una razón: detectar efectos que el cambio tuvo en otro lugar.',
                 },
                 {
-                  texto: 'Pedir siempre el resultado en PDF.',
-                  explicacion: 'El formato de salida no es la regla de seguridad principal.',
+                  texto: 'No hace falta si el código compila sin errores.',
+                  explicacion: 'Compilar sin errores no prueba que la lógica sea correcta.',
                 },
               ],
             },
           ],
         },
         {
-          slug: 'practica-consolidar-excels',
+          slug: 'practica-arreglar-el-bug',
           tipo: 'practica',
-          titulo: 'Práctica: consolidar los Excel de sucursales',
-          minutos: 20,
-          resumen: '40 archivos de ventas por sucursal que hay que unir cada mes.',
+          titulo: 'Práctica: el bug del login',
+          minutos: 22,
+          resumen: 'El login falla cuando el correo viene con mayúsculas, y ya hay tres reportes esta semana.',
           bloques: [
             {
               tipo: 'texto',
-              texto: 'Escribe el prompt para pedirle a Claude Code que resuelva este caso. Te revisamos contra una rúbrica de cinco puntos.',
+              texto:
+                'Escribe el prompt que le darías a Claude Code para resolver este caso de punta a punta: diagnóstico, cambio y verificación. Te revisamos contra una rúbrica de cinco puntos.',
             },
           ],
           caso: {
-            rol: 'Analista de contabilidad',
-            tarea: 'Consolidar los archivos de ventas del mes',
+            rol: 'Desarrollador backend',
+            tarea: 'Arreglar un bug reportado en producción',
             situacion:
-              '40 sucursales mandan cada una su Excel de ventas del mes, con las mismas columnas pero a veces alguna sucursal cambia el orden o le falta una columna.',
+              'Tres usuarios reportaron esta semana que no pueden iniciar sesión cuando escriben su correo con alguna letra en mayúscula (por ejemplo, Juan@empresa.com en vez de juan@empresa.com). El registro de cuentas sí acepta mayúsculas al crear el usuario. El equipo usa una batería de tests que corre con un solo comando.',
           },
-          consigna: 'Escribe el prompt para Claude Code.',
-          placeholder: 'Une los archivos de...',
+          consigna: 'Escribe el prompt para Claude Code, de diagnóstico a PR lista para revisión.',
+          placeholder: 'Reproduce el bug donde...',
           rubrica: [
-            { id: 'copia', titulo: 'Copia', pregunta: '¿Pide trabajar sobre una copia de la carpeta original?' },
-            { id: 'origen', titulo: 'Columna de origen', pregunta: '¿Pide agregar una columna con el nombre del archivo de origen?' },
-            { id: 'alerta', titulo: 'Alerta de distintos', pregunta: '¿Pide que avise cuáles archivos tienen columnas distintas?' },
-            { id: 'verificacion', titulo: 'Verificación', pregunta: '¿Menciona revisar una sucursal a mano antes de dar el consolidado por bueno?' },
-            { id: 'repetible', titulo: 'Repetible', pregunta: '¿Pide dejar el proceso guardado para el mes siguiente?' },
+            { id: 'diagnostico', titulo: 'Diagnóstico primero', pregunta: '¿Pide entender la causa antes de tocar código, no solo "arreglarlo"?' },
+            { id: 'alcance', titulo: 'Cambio acotado', pregunta: '¿Pide el cambio mínimo, sin reescribir todo el módulo de autenticación?' },
+            { id: 'test', titulo: 'Test de regresión', pregunta: '¿Pide un test que reproduzca el bug y falle antes del arreglo?' },
+            { id: 'suite', titulo: 'Batería completa', pregunta: '¿Pide correr toda la batería de tests, no solo el archivo tocado?' },
+            { id: 'entrega', titulo: 'Commit y descripción', pregunta: '¿Pide un mensaje de commit y una descripción de PR con el porqué del cambio?' },
           ],
           pistas: [
-            'El riesgo real no es unir los archivos, es no darse cuenta de cuál venía distinto.',
-            'Guardar el proceso es lo que hace que el mes que viene tome minutos, no una mañana.',
+            'El bug está en la comparación al iniciar sesión, no en el registro: por algo ahí sí acepta mayúsculas.',
+            'Un test que falla antes del cambio es la prueba de que el arreglo funciona, no solo una opinión.',
           ],
           solucion:
-            'Trabajando sobre una copia de la carpeta, une todos los Excel de ventas de las 40 sucursales en un solo archivo, agregando una columna con el nombre del archivo de origen. Si alguna sucursal tiene columnas distintas a las demás, sepáralas y avísame cuáles son en vez de forzarlas al mismo formato. Voy a revisar una sucursal a mano contra el archivo original antes de dar el consolidado por bueno. Deja el proceso guardado para poder repetirlo el mes que viene.',
+            'Antes de cambiar nada, explícame dónde se compara el correo al iniciar sesión y por qué falla cuando viene con mayúsculas, si el registro de cuentas sí las acepta. Escribe primero un test que reproduzca el bug (login con el correo en mayúsculas) y confirma que falla. Después haz el cambio mínimo para que pase, sin tocar el resto del módulo de autenticación. Corre toda la batería de tests del proyecto para confirmar que no rompiste nada más. Al final, déjame el mensaje de commit y una descripción corta de PR con el problema, la causa y cómo se probó.',
         },
       ],
     },
@@ -2166,40 +2183,40 @@ export const claudeCurso: Curso = {
             {
               id: 'e5',
               modulo: 'code',
-              enunciado: '¿Cuál es la primera regla al automatizar una tarea de archivos?',
+              enunciado: 'Ante un bug reportado, ¿qué conviene pedirle a Claude Code antes de escribir el arreglo?',
               opciones: [
                 {
-                  texto: 'Trabajar sobre una copia, no sobre el original.',
+                  texto: 'Que reescriba el módulo completo de una vez.',
+                  explicacion: 'Amplía el riesgo y esconde el cambio real entre código que no hacía falta tocar.',
+                },
+                {
+                  texto: 'Que explique la causa del problema.',
                   correcta: true,
-                  explicacion: 'Correcto.',
+                  explicacion: 'Correcto: entender la causa antes evita arreglar el síntoma equivocado.',
                 },
                 {
-                  texto: 'Hacerlo directamente sobre el original.',
-                  explicacion: 'Un error sobre el original es más difícil de deshacer.',
-                },
-                {
-                  texto: 'Pedir siempre el resultado en PDF.',
-                  explicacion: 'El formato no es la regla de seguridad principal.',
+                  texto: 'Que borre el archivo y lo vuelva a crear.',
+                  explicacion: 'Descarta trabajo existente sin necesidad.',
                 },
               ],
             },
             {
               id: 'e6',
               modulo: 'code',
-              enunciado: '¿Qué hace que automatizar una tarea ahorre tiempo de verdad, mes tras mes?',
+              enunciado: '¿Por qué correr toda la batería de tests del proyecto, no solo el archivo modificado?',
               opciones: [
                 {
-                  texto: 'Dejar el proceso guardado para repetirlo.',
+                  texto: 'Porque un cambio chico puede romper algo en otra parte del código.',
                   correcta: true,
-                  explicacion: 'Correcto: la primera corrida no es lo que ahorra tiempo, sí lo repetible.',
+                  explicacion: 'Correcto.',
                 },
                 {
-                  texto: 'Hacerlo rápido la primera vez.',
-                  explicacion: 'La velocidad de la primera corrida no es lo que ahorra tiempo después.',
+                  texto: 'Es un paso sin ninguna razón práctica.',
+                  explicacion: 'Sí tiene una razón: detectar efectos del cambio en otro lugar.',
                 },
                 {
-                  texto: 'Nada especial, cada mes se vuelve a describir la tarea.',
-                  explicacion: 'Repetir la descripción cada mes pierde la ventaja de guardarlo.',
+                  texto: 'No hace falta si el código compila sin errores.',
+                  explicacion: 'Compilar sin errores no prueba que la lógica sea correcta.',
                 },
               ],
             },
